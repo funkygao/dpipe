@@ -1,0 +1,12 @@
+[
+    {
+        "log_pattern": "/mnt/funplus/logs/fp_rstory/cache_set_fail.*.log",
+        "parsers": [],
+        "name": "memcache timeout"
+    },
+    {
+        "log_pattern": "/mnt/funplus/logs/fp_rstory/error.*.log",
+        "parsers": [],
+        "name": "mongodb exception"
+    },
+]
