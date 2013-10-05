@@ -1,8 +1,8 @@
 package main
 
 import (
+	//"encoding/json"
 	"flag"
-	"os"
 )
 
 type Option struct {
@@ -10,6 +10,12 @@ type Option struct {
 	config string
 	showversion bool
 	logfile string
+	debug bool
+}
+
+// load json conf file into struct
+func (this *Option) loadConf() {
+
 }
 
 func ParseFlags() (*Option, error) {
@@ -18,14 +24,10 @@ func ParseFlags() (*Option, error) {
 		config = flag.String("c", "conf/alser.json", "config json file")
 		logfile = flag.String("l", "", "log file name")
 		showversion = flag.Bool("version", false, "show version")
+		debug = flag.Bool("debug", false, "debug mode")
 	)
 	flag.Parse()
 
-	option := new(Option)
-	option.verbose = *verbose
-	option.logfile = *logfile
-	option.config = *config
-	option.showversion = *showversion
-	
+	option := &Option{*verbose, *config, *showversion, *logfile, *debug}
 	return option, nil
 }
