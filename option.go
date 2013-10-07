@@ -41,6 +41,8 @@ func parseFlags() (*Option) {
 	flag.Usage = func() {
 		fmt.Fprint(os.Stderr, usage)
 		flag.PrintDefaults()
+
+		cleanup()
 	}
 
 	flag.Parse()

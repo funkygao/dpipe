@@ -10,7 +10,7 @@ var (
 )
 
 const (
-	version = "0.1.a"
+	version = "0.1.b"
 	author = "gaopeng"
 )
 
