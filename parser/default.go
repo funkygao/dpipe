@@ -39,6 +39,9 @@ func extractLogInfo(data *json.Json) logInfo {
 	return info
 }
 
+type DefaultParser struct {
+}
+
 func (this DefaultParser) ParseLine(line string) (area string, ts uint64, data *json.Json) {
 	fields := strings.SplitN(line, LINE_SPLITTER, LINE_SPLIT_NUM)
 
