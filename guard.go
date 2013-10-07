@@ -9,10 +9,6 @@ import (
 )
 
 func guard(jsonConfig jsonConfig) {
-	if options.verbose {
-		logger.Printf("parsers: %v\n", jsonConfig.parsers())
-	}
-
 	parser.SetLogger(logger)
 	parser.SetVerbose(options.verbose)
 	parser.SetDebug(options.debug)
