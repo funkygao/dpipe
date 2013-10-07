@@ -13,12 +13,12 @@ func (this *DefaultParser) Name() string {
 	return this.name
 }
 
-func (this *DefaultParser) parseLine(line string) {
+func (this DefaultParser) ParseLine(line string) {
 	parts := strings.SplitN(line, ",", 3)
 	area, ts, js := parts[0], parts[1], parts[2]
-	println(area, ts, js)
+	println(area, ts, js, "go")
 }
 
-func (this *DefaultParser) getStats(duration time.Duration) {
+func (this DefaultParser) GetStats(duration time.Duration) {
 
 }

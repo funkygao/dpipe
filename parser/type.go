@@ -5,6 +5,6 @@ import (
 )
 
 type Parser interface {
-	parseLine(line string)
-	getStats(duration time.Duration)
+	ParseLine(line string)
+	GetStats(duration time.Duration)
 }

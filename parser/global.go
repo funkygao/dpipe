@@ -1,5 +1,10 @@
 package parser
 
+import (
+	"log"
+)
+
 var (
-	Parsers map[string] *Parser
+	logger *log.Logger
+	allParsers map[string] Parser
 )

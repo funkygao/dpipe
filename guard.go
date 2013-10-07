@@ -5,12 +5,15 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"./parser"
 )
 
 func guard(jsonConfig jsonConfig) {
 	if options.verbose {
 		logger.Printf("parsers: %v\n", jsonConfig.parsers())
 	}
+
+	parser.SetLogger(logger)
 
 	for _, item := range jsonConfig {
 		paths, err := filepath.Glob(item.Pattern)
@@ -39,7 +42,9 @@ func guard(jsonConfig jsonConfig) {
 					}
 				}
 
-				println(string(line))
+				for _, p := range item.Parsers {
+					parser.Dispatch(p, string(line))
+				}
 			}
 		}
 	}
