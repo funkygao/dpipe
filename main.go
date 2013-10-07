@@ -24,7 +24,7 @@ func main() {
 
 	config := loadConfig(options.config)
 	if options.verbose {
-		logger.Printf("%#v\n", config)
+		logger.Printf("%+v\n", *config)
 	}
 
 }

@@ -8,7 +8,7 @@ clean:
 	go clean
 
 test:
-	go test
+	@go test -v
 
 run:build
-	./alser
+	./alser -v
