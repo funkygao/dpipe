@@ -46,6 +46,7 @@ func (this DefaultParser) ParseLine(line string) (area string, ts uint64, data *
     if err != nil {
         panic(err)
     }
+	ts /= 1000
 
     data, err = json.NewJson([]byte(fields[2]))
     if err != nil {

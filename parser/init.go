@@ -1,9 +1,5 @@
 package parser
 
-import (
-    "log"
-)
-
 func init() {
     allParsers = make(map[string]Parser)
 
