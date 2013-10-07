@@ -6,6 +6,7 @@ install:
   - go get -u github.com/funkygao/alser
 script:
   - pushd $TRAVIS_BUILD_DIR
+  - mkdir -p var
   - go test
   - go test ./parser
   - popd
