@@ -17,3 +17,6 @@ run:build
 
 prepare:
 	@go get -u github.com/funkygao/alser/parser
+
+doc:
+	@go doc github.com/funkygao/alser/parser
