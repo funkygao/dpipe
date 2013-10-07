@@ -5,7 +5,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
-	"./parser"
+	"github.com/funkygao/alser/parser"
 )
 
 func guard(jsonConfig jsonConfig) {
