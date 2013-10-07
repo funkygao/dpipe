@@ -8,7 +8,7 @@ clean:
 	go clean
 
 test:
-	@go test -v
+	@go test -v ./parser
 
 run:build
 	@rm -f var/alser.lock
