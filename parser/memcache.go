@@ -3,15 +3,15 @@
 package parser
 
 import (
-	json "github.com/bitly/go-simplejson"
+    json "github.com/bitly/go-simplejson"
 )
 
 type MemcacheFailParser struct {
-	DefaultParser
+    DefaultParser
 }
 
 func (this MemcacheFailParser) ParseLine(line string) (area string, ts uint64, data *json.Json) {
-	area, ts, data = this.DefaultParser.ParseLine(line)
+    area, ts, data = this.DefaultParser.ParseLine(line)
 
-	return
+    return
 }

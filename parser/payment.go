@@ -3,5 +3,5 @@
 package parser
 
 type PaymentParser struct {
-	DefaultParser
+    DefaultParser
 }

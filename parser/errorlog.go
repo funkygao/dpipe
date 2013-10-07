@@ -3,5 +3,5 @@
 package parser
 
 type ErrorParser struct {
-	DefaultParser
+    DefaultParser
 }

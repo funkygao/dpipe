@@ -1,17 +1,17 @@
 package parser
 
 import (
-	"log"
+    "log"
 )
 
 var (
-	logger *log.Logger
-	allParsers map[string] Parser
-	verbose bool
-	debug bool
+    logger     *log.Logger
+    allParsers map[string]Parser
+    verbose    bool
+    debug      bool
 )
 
 const (
-	LINE_SPLITTER = ","
-	LINE_SPLIT_NUM = 3
+    LINE_SPLITTER  = ","
+    LINE_SPLIT_NUM = 3
 )

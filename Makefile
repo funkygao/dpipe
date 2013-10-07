@@ -20,3 +20,6 @@ prepare:
 
 doc:
 	@go doc github.com/funkygao/alser/parser
+
+fmt:
+	@gofmt -s -tabs=false -tabwidth=4 -w=true .

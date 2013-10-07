@@ -1,24 +1,24 @@
 package parser
 
 import (
-	"log"
+    "log"
 )
 
 func init() {
-	allParsers = make(map[string] Parser)
+    allParsers = make(map[string]Parser)
 
-	allParsers["DefaultParser"] = DefaultParser{}
-	allParsers["MemcacheFailParser"] = MemcacheFailParser{}
+    allParsers["DefaultParser"] = DefaultParser{}
+    allParsers["MemcacheFailParser"] = MemcacheFailParser{}
 }
 
 func SetLogger(l *log.Logger) {
-	logger = l
+    logger = l
 }
 
 func SetDebug(d bool) {
-	debug = d
+    debug = d
 }
 
 func SetVerbose(v bool) {
-	verbose = v
+    verbose = v
 }

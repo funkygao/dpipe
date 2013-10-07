@@ -1,9 +1,9 @@
 package main
 
 import (
-	"syscall"
+    "syscall"
 )
 
 func cleanup() {
-	syscall.Unlink(lockfile) // cleanup lock file
+    syscall.Unlink(lockfile) // cleanup lock file
 }

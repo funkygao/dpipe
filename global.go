@@ -1,28 +1,28 @@
 package main
 
 import (
-	"log"
+    "log"
 )
 
 var (
-	options *Option
-	logger *log.Logger
+    options *Option
+    logger  *log.Logger
 )
 
 const (
-	version = "0.1.b"
-	author = "gaopeng"
+    version = "0.1.b"
+    author  = "gaopeng"
 )
 
 const (
-	LOG_OPTIONS = log.LstdFlags | log.Lshortfile
-	LOG_OPTIONS_DEBUG = log.Ldate | log.Lshortfile | log.Ltime | log.Lmicroseconds
+    LOG_OPTIONS       = log.LstdFlags | log.Lshortfile
+    LOG_OPTIONS_DEBUG = log.Ldate | log.Lshortfile | log.Ltime | log.Lmicroseconds
 )
 
 const (
-	usage = `alser - FunPlus ALS log guard
+    usage = `alser - FunPlus ALS log guard
 
 Flags:
 `
-	lockfile = "var/alser.lock"
+    lockfile = "var/alser.lock"
 )
