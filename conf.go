@@ -5,15 +5,15 @@ import (
 	"encoding/json"
 )
 
-type Record struct {
-	Name string `json:"name"`
+type jsonItem struct {
+	Name string `json:"name"` // must be exported, else json can't unmarshal
+	Pattern string `json:"pattern"` // may not be same order as json file
 	Parsers []string
-	Pattern string
 }
 
-type Config []Record
+type jsonConfig []jsonItem
 
-func loadConfig(filename string) (config *Config)  {
+func loadConfig(filename string) (config jsonConfig)  {
 	file, e := os.Open(filename)
 	if e != nil {
 		panic(e)

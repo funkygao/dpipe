@@ -20,11 +20,14 @@ func main() {
 	}()
 
 	logger = newLogger(options)
-	logger.Println("started")
+	logger.Println("start...")
 
-	config := loadConfig(options.config)
+	jsonConfig := loadConfig(options.config)
+	logger.Printf("json config has %d items\n", len(jsonConfig))
 	if options.verbose {
-		logger.Printf("%+v\n", *config)
+		for i, item := range jsonConfig {
+			logger.Printf("[%2d] %+v\n", i, item)
+		}
 	}
 
 }
