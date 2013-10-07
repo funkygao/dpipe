@@ -24,13 +24,14 @@ func guard(jsonConfig jsonConfig) {
 
 		for _, logfile := range paths {
 			if options.verbose {
-				logger.Printf("%s", logfile)
+				logger.Printf("%s %v", logfile, item.Parsers)
 			}
 
 			file, err := os.Open(logfile)
 			if err != nil {
 				panic(err)
 			}
+			defer file.Close()
 
 			reader := bufio.NewReader(file)
 			for {
