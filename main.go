@@ -3,33 +3,23 @@ package main
 import (
 	"fmt"
 	"os"
-	"runtime"
-	"log"
-	//"time"
 )
 
 func init() {
-	
-}
-
-func initialize(option *Option, err error) {
-	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
-		os.Exit(1)
-	}
-
-	if option.showversion {
-		fmt.Fprintf(os.Stderr, "%s %s %s %s\n", "alser", version, runtime.GOOS, runtime.GOARCH)
-		os.Exit(0)
-	}
+	options = parseFlags()
+	options.validate()
 }
 
 func main() {
-	options, err := ParseFlags()
-	initialize(options, err)
+	defer func() {
+		if e := recover(); e != nil {
+			fmt.Fprintln(os.Stderr, e)
+		}
+	}()
 
-	//start := time.Now()
-	var logger *log.Logger = newLogger(options)
+	logger = newLogger(options)
 	logger.Println("started")
+
+	loadConfig(options.config)
 
 }

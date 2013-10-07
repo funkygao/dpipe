@@ -1,12 +1,18 @@
 [
     {
-        "log_pattern": "/mnt/funplus/logs/fp_rstory/cache_set_fail.*.log",
-        "parsers": [],
-        "name": "memcache timeout"
+        "name": "memcache set fail",
+        "parsers": [
+            "DefaultParser",
+            "PhpError"
+        ],
+        "pattern": "/mnt/funplus/logs/fp_rstory/cache_set_fail.*.log"
     },
     {
-        "log_pattern": "/mnt/funplus/logs/fp_rstory/error.*.log",
-        "parsers": [],
-        "name": "mongodb exception"
-    },
+        "name": "memcache set fail1",
+        "parsers": [
+            "DefaultParser",
+            "PhpError"
+        ],
+        "pattern": "/mnt/funplus/logs/fp_rstory/cache_set_fail.*.log"
+    }
 ]

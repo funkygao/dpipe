@@ -9,3 +9,6 @@ clean:
 
 test:
 	go test
+
+run:build
+	./alser
