@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"encoding/json"
 	"strings"
 	"time"
 )
@@ -14,9 +15,11 @@ func (this *DefaultParser) Name() string {
 }
 
 func (this DefaultParser) ParseLine(line string) {
-	parts := strings.SplitN(line, ",", 3)
-	area, ts, js := parts[0], parts[1], parts[2]
-	println(area, ts, js, "go")
+	fields := strings.SplitN(line, LINE_SPLITTER, 3)
+	area, ts, entry := fields[0], fields[1], fields[2]
+	var data logData
+	json.Unmarshal([]byte(entry), &data)
+	logger.Printf("%s %s %#v\n", area, ts, data)
 }
 
 func (this DefaultParser) GetStats(duration time.Duration) {

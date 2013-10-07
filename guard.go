@@ -14,6 +14,7 @@ func guard(jsonConfig jsonConfig) {
 	}
 
 	parser.SetLogger(logger)
+	parser.SetVerbose(options.verbose)
 
 	for _, item := range jsonConfig {
 		paths, err := filepath.Glob(item.Pattern)

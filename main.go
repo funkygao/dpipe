@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"runtime"
 	"runtime/debug"
 )
 
@@ -20,6 +21,8 @@ func init() {
 
 	options = parseFlags()
 	options.validate()
+
+	runtime.GOMAXPROCS(runtime.NumCPU()/2 + 1)
 }
 
 func main() {

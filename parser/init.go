@@ -13,3 +13,7 @@ func init() {
 func SetLogger(l *log.Logger) {
 	logger = l
 }
+
+func SetVerbose(v bool) {
+	verbose = v
+}
