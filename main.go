@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"runtime/debug"
 )
 
 func init() {
@@ -13,6 +14,7 @@ func init() {
 func main() {
 	defer func() {
 		if e := recover(); e != nil {
+			debug.PrintStack()
 			fmt.Fprintln(os.Stderr, e)
 		}
 	}()
@@ -20,6 +22,9 @@ func main() {
 	logger = newLogger(options)
 	logger.Println("started")
 
-	loadConfig(options.config)
+	config := loadConfig(options.config)
+	if options.verbose {
+		logger.Printf("%#v\n", config)
+	}
 
 }
