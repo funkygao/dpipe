@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 	"runtime/debug"
-	"syscall"
 )
 
 func init() {
@@ -25,7 +24,7 @@ func init() {
 
 func main() {
 	defer func() {
-		syscall.Unlink(lockfile) // cleanup lock file
+		cleanup()
 
 		if e := recover(); e != nil {
 			debug.PrintStack()
@@ -34,10 +33,10 @@ func main() {
 	}()
 
 	logger = newLogger(options)
-	logger.Println("start...")
+	logger.Println("starting...")
 
 	jsonConfig := loadConfig(options.config)
-	logger.Printf("json config has %d items\n", len(jsonConfig))
+	logger.Printf("json config has %d items to guard\n", len(jsonConfig))
 	if options.verbose {
 		for i, item := range jsonConfig {
 			logger.Printf("[%2d] %+v\n", i, item)

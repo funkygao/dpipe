@@ -21,6 +21,7 @@ func (this *Option) showVersionOnly() bool {
 
 func (this *Option) validate() {
 	if this.showVersionOnly() {
+		cleanup()
 		fmt.Fprintf(os.Stderr, "%s %s %s %s\n", "alser", version, runtime.GOOS, runtime.GOARCH)
 		os.Exit(0)
 	}

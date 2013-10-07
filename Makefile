@@ -11,4 +11,5 @@ test:
 	@go test -v
 
 run:build
-	./alser -v
+	@rm -f var/alser.lock
+	./alser -v -debug

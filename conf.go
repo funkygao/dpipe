@@ -13,6 +13,27 @@ type jsonItem struct {
 
 type jsonConfig []jsonItem
 
+func (this jsonConfig) parsers() []string {
+	r := make([]string, 0)
+	for _, item := range this {
+		for _, p := range item.Parsers {
+			exists := false
+			for _, parser := range r {
+				if p == parser {
+					exists = true
+					break
+				}
+			}
+
+			if !exists {
+				r = append(r, p)
+			}
+		}
+	}
+
+	return r
+}
+
 func loadConfig(filename string) (config jsonConfig)  {
 	file, e := os.Open(filename)
 	if e != nil {
