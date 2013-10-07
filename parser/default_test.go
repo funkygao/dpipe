@@ -24,9 +24,10 @@ func TestDefaultParserParseLine(t *testing.T) {
 		t.Error(err)
 	}
 	assert.Equal(t, "helpFriendsRewardAction", typ)
-	scriptId, err := data.Get("_log_info").Get("script_id").Int()
+	var expectedScriptId int64 = 3183040714
+	scriptId, err := data.Get("_log_info").Get("script_id").Int64()
 	if err != nil {
 		t.Error(err)
 	}
-	assert.Equal(t, 3183040714, scriptId)
+	assert.Equal(t, expectedScriptId, scriptId)
 }
