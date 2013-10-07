@@ -15,12 +15,6 @@ type logInfo struct {
 	ip string
 }
 
-func checkError(err error) {
-	if err != nil {
-		panic(err)
-	}
-}
-
 // extract _log_info fields from a log data entry
 func extractLogInfo(data *json.Json) logInfo {
 	var err error
