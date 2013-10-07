@@ -11,7 +11,6 @@ type Parser interface {
 }
 
 type DefaultParser struct {
-	name string
 }
 
 type MemcacheFailParser struct {
