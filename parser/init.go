@@ -11,14 +11,3 @@ func init() {
     allParsers["MemcacheFailParser"] = MemcacheFailParser{}
 }
 
-func SetLogger(l *log.Logger) {
-    logger = l
-}
-
-func SetDebug(d bool) {
-    debug = d
-}
-
-func SetVerbose(v bool) {
-    verbose = v
-}

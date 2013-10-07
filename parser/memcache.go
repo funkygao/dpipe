@@ -1,11 +1,10 @@
-// memcache set fail guard
-
 package parser
 
 import (
     json "github.com/bitly/go-simplejson"
 )
 
+// Memcache set fail log parser
 type MemcacheFailParser struct {
     DefaultParser
 }

@@ -33,6 +33,7 @@ func extractLogInfo(data *json.Json) logInfo {
     return info
 }
 
+// Parent parser for all
 type DefaultParser struct {
 }
 

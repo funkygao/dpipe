@@ -1,7 +1,6 @@
-// error log guard
-
 package parser
 
+// Errlog parser
 type ErrorParser struct {
     DefaultParser
 }
