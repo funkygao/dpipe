@@ -1,6 +1,10 @@
 package parser
 
+import (
+	"time"
+)
+
 type Parser interface {
 	parseLine(line string)
-	getStat(duration int32)
+	getStats(duration time.Duration)
 }

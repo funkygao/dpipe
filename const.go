@@ -19,4 +19,5 @@ const (
 
 Flags:
 `
+	lockfile = "var/alser.lock"
 )
