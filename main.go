@@ -40,11 +40,6 @@ func main() {
 
     jsonConfig := loadConfig(options.config)
     logger.Printf("json config has %d items to guard\n", len(jsonConfig))
-    if options.verbose {
-        for i, item := range jsonConfig {
-            logger.Printf("[%2d] %+v\n", i, item)
-        }
-    }
 
     guard(jsonConfig)
 
