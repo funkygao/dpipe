@@ -8,11 +8,43 @@
         "pattern": "/mnt/funplus/logs/fp_rstory/cache_set_fail.*.log"
     },
     {
-        "name": "memcache set fail1",
+        "name": "any error including exceptions",
         "parsers": [
             "DefaultParser",
             "PhpError"
         ],
-        "pattern": "/mnt/funplus/logs/fp_rstory/cache_set_fail.*.log"
+        "pattern": "/mnt/funplus/logs/fp_rstory/error.*.log"
+    },
+    {
+        "name": "cheat checking",
+        "parsers": [
+            "DefaultParser",
+            "PhpError"
+        ],
+        "pattern": "/mnt/funplus/logs/fp_rstory/cheat_check.*.log"
+    },
+    {
+        "name": "cheaters",
+        "parsers": [
+            "DefaultParser",
+            "PhpError"
+        ],
+        "pattern": "/mnt/funplus/logs/fp_rstory/cheater.*.log"
+    },
+    {
+        "name": "level up",
+        "parsers": [
+            "DefaultParser",
+            "PhpError"
+        ],
+        "pattern": "/mnt/funplus/logs/fp_rstory/level_up.*.log"
+    },
+    {
+        "name": "payments",
+        "parsers": [
+            "DefaultParser",
+            "PhpError"
+        ],
+        "pattern": "/mnt/funplus/logs/fp_rstory/payment.*.log"
     }
 ]
