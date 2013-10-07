@@ -1,4 +1,4 @@
-build:
+build:prepare
 	go build
 
 install:
@@ -14,3 +14,6 @@ test:conf_test.go parser/all_test.go
 run:build
 	@rm -f var/alser.lock
 	./alser -v -debug -test
+
+prepare:
+	@go get -u github.com/funkygao/alser/parser
