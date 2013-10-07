@@ -1,13 +1,13 @@
 package parser
 
 import (
-	"encoding/json"
 	"strings"
 	"time"
+	json "github.com/bitly/go-simplejson"
 	"strconv"
 )
 
-func (this DefaultParser) ParseLine(line string) (area string, ts uint64, data logData) {
+func (this DefaultParser) ParseLine(line string) (area string, ts uint64, data *json.Json) {
 	fields := strings.SplitN(line, LINE_SPLITTER, LINE_SPLIT_NUM)
 
 	area = fields[0]
@@ -16,16 +16,12 @@ func (this DefaultParser) ParseLine(line string) (area string, ts uint64, data l
 	if err != nil {
 		panic(err)
 	}
-	if err = json.Unmarshal([]byte(fields[2]), &data); err != nil {
+
+	data, err = json.NewJson([]byte(fields[2]))
+	if err != nil {
 		panic(err)
 	}
 
-	if debug && verbose {
-		logger.Printf("%s %#v", area, data)
-	}
-
-	//bb := make(map[string]interface {})
-	//json.Unmarshal([]byte(data["_log_info"]), &bb)
 	return
 }
 

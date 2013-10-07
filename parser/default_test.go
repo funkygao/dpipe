@@ -3,7 +3,6 @@ package parser
 import (
 	"testing"
 	"github.com/bmizerany/assert"
-	//"fmt"
 )
 
 func TestDefaultParserParseLine(t *testing.T) {
@@ -19,8 +18,15 @@ func TestDefaultParserParseLine(t *testing.T) {
 		t.Error("area: expected", extectedArea, "got", area)
 	}
 	assert.Equal(t, exptectedTs, ts)
-	assert.Equal(t, "helpFriendsRewardAction", data["type"])
-	//logInfo := data["_log_info"]
-	//fmt.Printf("%#v", data["_log_info"])
-	//assert.Equal(t, 3183040714, data["_log_info"]["script_id"])
+
+	typ, err := data.Get("type").String()
+	if err != nil {
+		t.Error(err)
+	}
+	assert.Equal(t, "helpFriendsRewardAction", typ)
+	scriptId, err := data.Get("_log_info").Get("script_id").Int()
+	if err != nil {
+		t.Error(err)
+	}
+	assert.Equal(t, 3183040714, scriptId)
 }
