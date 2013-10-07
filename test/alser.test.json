@@ -11,7 +11,8 @@
         "name": "any error including exceptions",
         "parsers": [
             "DefaultParser",
-            "PhpError"
+            "PhpError",
+            "ErrorLogParser"
         ],
         "pattern": "/mnt/funplus/logs/fp_rstory/error.*.log"
     },

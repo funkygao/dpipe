@@ -13,6 +13,7 @@ type Option struct {
 	showversion bool
 	logfile string
 	debug bool
+	test bool
 }
 
 func (this *Option) showVersionOnly() bool {
@@ -35,6 +36,7 @@ func parseFlags() (*Option) {
 		logfile = flag.String("l", "", "alser log file name")
 		showversion = flag.Bool("version", false, "show version")
 		debug = flag.Bool("debug", false, "debug mode")
+		test = flag.Bool("test", false, "test mode")
 	)
 	flag.Usage = func() {
 		fmt.Fprint(os.Stderr, usage)
@@ -43,5 +45,5 @@ func parseFlags() (*Option) {
 
 	flag.Parse()
 
-	return &Option{*verbose, *config, *showversion, *logfile, *debug}
+	return &Option{*verbose, *config, *showversion, *logfile, *debug, *test}
 }

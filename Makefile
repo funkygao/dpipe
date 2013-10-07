@@ -7,9 +7,10 @@ install:
 clean:
 	go clean
 
-test:
+test:conf_test.go parser/all_test.go
+	@go test -v
 	@go test -v ./parser
 
 run:build
 	@rm -f var/alser.lock
-	./alser -v -debug
+	./alser -v -debug -test
