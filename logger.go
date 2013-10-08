@@ -31,5 +31,5 @@ func newAlarmLogger() *log.Logger {
 		panic(err)
 	}
 
-	return log.New(logWriter, "", LOG_OPTIONS)
+	return log.New(logWriter, "", ALARM_OPTIONS)
 }

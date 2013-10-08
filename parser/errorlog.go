@@ -10,13 +10,14 @@ type ErrorLogParser struct {
 }
 
 // Constructor
-func newErrorLogParser() *ErrorLogParser {
-	parser := new(ErrorLogParser)
+func newErrorLogParser(chAlarm chan <- Alarm) *ErrorLogParser {
+	var parser *ErrorLogParser = new(ErrorLogParser)
+	parser.chAlarm = chAlarm
 	return parser
 }
 
-func (this ErrorLogParser) ParseLine(line string, ch chan<- Alarm) (area string, ts uint64, data *json.Json) {
-	area, ts, data = this.DefaultParser.ParseLine(line, ch)
+func (this ErrorLogParser) ParseLine(line string) (area string, ts uint64, data *json.Json) {
+	area, ts, data = this.DefaultParser.ParseLine(line)
 
 	return
 }

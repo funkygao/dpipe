@@ -25,6 +25,7 @@ const (
 )
 
 const (
+	ALARM_OPTIONS 	= log.LstdFlags
     LOG_OPTIONS       = log.LstdFlags | log.Lshortfile
     LOG_OPTIONS_DEBUG = log.Ldate | log.Lshortfile | log.Ltime | log.Lmicroseconds
 )

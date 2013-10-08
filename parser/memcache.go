@@ -10,26 +10,26 @@ type MemcacheFailParser struct {
 }
 
 // Constructor
-func newMemcacheFailParser() *MemcacheFailParser {
-	parser := new(MemcacheFailParser)
+func newMemcacheFailParser(chAlarm chan <- Alarm) *MemcacheFailParser {
+	var parser *MemcacheFailParser = new(MemcacheFailParser)
+	parser.chAlarm = chAlarm
 	return parser
 }
 
-func (this MemcacheFailParser) ParseLine(line string, ch chan<- Alarm) (area string, ts uint64, data *json.Json) {
-    area, ts, data = this.DefaultParser.ParseLine(line, ch)
+func (this MemcacheFailParser) ParseLine(line string) (area string, ts uint64, data *json.Json) {
+    area, ts, data = this.DefaultParser.ParseLine(line)
     key, err := data.Get("key").String()
     if err != nil {
         // not a memcache log
         return
     }
 
-	info := extractLogInfo(data)
+	logInfo := extractLogInfo(data)
 	infoData := make(map[string]string)
-	infoData["host"] = info.host
 	infoData["key"] = key
 
-	alarm := Alarm{Area: area, Info: infoData}
-	ch <- alarm
+	alarm := Alarm{Area: area, Host: logInfo.host, Info: infoData}
+	this.chAlarm <- alarm
 
     return
 }

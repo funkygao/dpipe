@@ -10,13 +10,14 @@ type PaymentParser struct {
 }
 
 // Constructor
-func newPaymentParser() *PaymentParser {
-	parser := new(PaymentParser)
+func newPaymentParser(chAlarm chan <- Alarm) *PaymentParser {
+	var parser *PaymentParser = new(PaymentParser)
+	parser.chAlarm = chAlarm
 	return parser
 }
 
-func (this PaymentParser) ParseLine(line string, ch chan<- Alarm) (area string, ts uint64, data *json.Json) {
-	area, ts, data = this.DefaultParser.ParseLine(line, ch)
+func (this PaymentParser) ParseLine(line string) (area string, ts uint64, data *json.Json) {
+	area, ts, data = this.DefaultParser.ParseLine(line)
 
 	return
 }

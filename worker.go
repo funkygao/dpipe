@@ -11,7 +11,7 @@ import (
 )
 
 // Each single log file is a worker
-func run_worker(logfile string, conf jsonItem, wg *sync.WaitGroup, chLines chan int, chAlarm chan parser.Alarm) {
+func run_worker(logfile string, conf jsonItem, wg *sync.WaitGroup, chLines chan int) {
     defer wg.Done()
 
     file, err := os.Open(logfile)
@@ -44,7 +44,7 @@ func run_worker(logfile string, conf jsonItem, wg *sync.WaitGroup, chLines chan 
         // a valid line scanned
         chLines <- 1
         for _, p := range conf.Parsers {
-            parser.Dispatch(p, string(line), chAlarm)
+            parser.Dispatch(p, string(line))
         }
     }
 

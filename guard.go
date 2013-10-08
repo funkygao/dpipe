@@ -32,6 +32,10 @@ func guard(jsonConfig jsonConfig) {
     var wg = new(sync.WaitGroup)
     chLines := make(chan int)
 	chAlarm := make(chan parser.Alarm, 1000)
+
+	// create all parsers at once
+	parser.NewParsers(jsonConfig.parsers(), chAlarm)
+
     for _, item := range jsonConfig {
         paths, err := filepath.Glob(item.Pattern)
         if err != nil {
@@ -41,7 +45,7 @@ func guard(jsonConfig jsonConfig) {
         for _, logfile := range paths {
             workerN++
             wg.Add(1)
-            go run_worker(logfile, item, wg, chLines, chAlarm)
+            go run_worker(logfile, item, wg, chLines)
         }
     }
 
@@ -58,6 +62,7 @@ func guard(jsonConfig jsonConfig) {
     go func() {
         wg.Wait()
         logger.Println("all", workerN, " workers finished")
+
         close(chLines)
 		close(chAlarm)
     }()
@@ -82,6 +87,6 @@ func runTicker(lines *int) {
 func runAlarmCollector(ch <-chan parser.Alarm) {
 	alarmLogger := newAlarmLogger()
 	for alarm := range ch {
-		alarmLogger.Printf("%s,%v,%v\n", alarm.Area, alarm.Duration, alarm.Info)
+		alarmLogger.Println(alarm)
 	}
 }
