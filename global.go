@@ -9,6 +9,11 @@ import (
 var (
     options *Option
     logger  *log.Logger
+
+    caredSignals = []os.Signal{
+        syscall.SIGTERM, syscall.SIGKILL, syscall.SIGINT,
+        syscall.SIGTERM, syscall.SIGKILL, syscall.SIGINT,
+    }
 )
 
 const (
@@ -27,9 +32,4 @@ const (
 Flags:
 `
     lockfile = "var/alser.lock"
-
-    caredSignals = []os.Signal{
-        syscall.SIGTERM, syscall.SIGKILL, syscall.SIGINT,
-        syscall.SIGTERM, syscall.SIGKILL, syscall.SIGINT,
-    }
 )
