@@ -1,4 +1,4 @@
-build:prepare
+build:
 	go build
 
 install:
@@ -18,7 +18,7 @@ run:build
 prepare:
 	@go get -u github.com/funkygao/alser/parser
 
-doc:
+doc:prepare
 	@go doc github.com/funkygao/alser/parser
 
 fmt:

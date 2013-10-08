@@ -22,7 +22,7 @@ func init() {
     options = parseFlags()
     options.validate()
 
-    runtime.GOMAXPROCS(runtime.NumCPU()/2 + 1)
+
 }
 
 func main() {
@@ -36,7 +36,9 @@ func main() {
     }()
 
     logger = newLogger(options)
-    logger.Println("starting...")
+	numCpu := runtime.NumCPU()/2 + 1
+	runtime.GOMAXPROCS(numCpu)
+	logger.Printf("starting with %d CPUs...\n", numCpu)
 
     jsonConfig := loadConfig(options.config)
     logger.Printf("json config has %d items to guard\n", len(jsonConfig))
