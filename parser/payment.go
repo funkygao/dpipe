@@ -3,24 +3,61 @@ package parser
 import (
 	"fmt"
 	json "github.com/bitly/go-simplejson"
-	"time"
+	_ "github.com/mattn/go-sqlite3"
 )
 
 // Payment log parser
 type PaymentParser struct {
-    DefaultParser
-	stats map[string]int
-	start time.Time
+    DbParser
 }
+
+const PAYMENT_CREATE_TABLE = `
+CREATE TABLE IF NOT EXISTS payment (
+	area CHAR(10),
+	host CHAR(20),
+	ts INT,
+	type VARCHAR(50),
+    uid INT(10) NULL,
+    level INT,
+    amount INT,
+    ref VARCHAR(50) NULL,
+    item VARCHAR(40),
+    PRIMARY KEY (uid)
+);
+`
 
 // Constructor
 func newPaymentParser(chAlarm chan <- Alarm) *PaymentParser {
 	var parser *PaymentParser = new(PaymentParser)
 	parser.chAlarm = chAlarm
 	parser.prefix = "P"
-	parser.stats = make(map[string]int)
-	parser.start = time.Now()
+
+	parser.createDB(PAYMENT_CREATE_TABLE, "var/payment.sqlite")
+
+	go parser.collectAlarm()
+
 	return parser
+}
+
+func (this PaymentParser) collectAlarm() {
+	for {
+		rows, err := this.db.Query("SELECT * FROM payment")
+		checkError(err)
+
+		for rows.Next() {
+			var area, host, typ string
+			var uid, ts int
+			err := rows.Scan(&area, &host, &ts, &typ, &uid)
+			checkError(err)
+			logger.Println("haha", area, host, typ, uid, ts)
+		}
+
+		time.Sleep(time.Second)
+	}
+
+	//delta := time.Since(this.start)
+	//this.chAlarm <- paymentAlarm{this.prefix, typ, uid, level, amount, ref, item, area, logInfo.host}
+
 }
 
 func (this PaymentParser) ParseLine(line string) (area string, ts uint64, data *json.Json) {
@@ -44,8 +81,9 @@ func (this PaymentParser) ParseLine(line string) (area string, ts uint64, data *
 	checkError(err)
 
 	logInfo := extractLogInfo(data)
-	//delta := time.Since(this.start)
-	this.chAlarm <- paymentAlarm{this.prefix, typ, uid, level, amount, ref, item, area, logInfo.host}
+
+	insert := "INSERT INTO payment(area, host, ts, type, uid, level, amount, ref, item) VALUES(?,?,?,?,?,?,?,?,?)"
+	this.insert(insert, area, logInfo.host, ts, typ, uid, level, amount, ref, item)
 
 	return
 }

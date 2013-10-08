@@ -14,6 +14,7 @@ var (
 const (
     LINE_SPLITTER  = ","
     LINE_SPLIT_NUM = 3
+	SQLITE3_DRIVER = "sqlite3"
 )
 
 // Pass through logger
