@@ -25,7 +25,7 @@ func guard(jsonConfig jsonConfig) {
             }
 
             file, err := os.Open(logfile)
-            if err != nil {
+            if err != nil && err != os.ErrExist {
                 panic(err)
             }
             defer file.Close()
