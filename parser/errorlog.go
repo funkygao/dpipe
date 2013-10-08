@@ -6,11 +6,11 @@ import (
 
 // Errlog parser
 type ErrorLogParser struct {
-    DefaultParser
+	DbParser
 }
 
 // Constructor
-func newErrorLogParser(chAlarm chan <- Alarm) *ErrorLogParser {
+func newErrorLogParser(chAlarm chan<- Alarm) *ErrorLogParser {
 	var parser *ErrorLogParser = new(ErrorLogParser)
 	parser.chAlarm = chAlarm
 	parser.prefix = "E"

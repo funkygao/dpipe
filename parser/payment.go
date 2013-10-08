@@ -9,7 +9,7 @@ import (
 
 // Payment log parser
 type PaymentParser struct {
-    DbParser
+	DbParser
 }
 
 const PAYMENT_CREATE_TABLE = `
@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS payment (
 `
 
 // Constructor
-func newPaymentParser(chAlarm chan <- Alarm) *PaymentParser {
+func newPaymentParser(chAlarm chan<- Alarm) *PaymentParser {
 	var parser *PaymentParser = new(PaymentParser)
 	parser.chAlarm = chAlarm
 	parser.prefix = "P"
@@ -41,11 +41,15 @@ func newPaymentParser(chAlarm chan <- Alarm) *PaymentParser {
 
 func (this PaymentParser) collectAlarm() {
 	for {
+		if this.stopped {
+			break
+		}
+
 		rows := this.query("select area,host,type, uid, ts from payment")
 		for rows.Next() {
 			var area, host, typ string
 			var uid, ts int
-			err := rows.Scan(&area, &host,  &typ, &uid, &ts)
+			err := rows.Scan(&area, &host, &typ, &uid, &ts)
 			checkError(err)
 			logger.Println("haha", area, host, typ, uid, ts)
 		}
@@ -87,10 +91,9 @@ func (this PaymentParser) ParseLine(line string) (area string, ts uint64, data *
 }
 
 type paymentAlarm struct {
-	prefix, typ string
-	uid, level, amount int
+	prefix, typ           string
+	uid, level, amount    int
 	ref, item, area, host string
-
 }
 
 func (this paymentAlarm) String() string {
