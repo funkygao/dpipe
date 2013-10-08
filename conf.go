@@ -48,7 +48,7 @@ func loadConfig(filename string) (config jsonConfig) {
 
     // in test mode, add test log
     if options.test {
-        config = append(config, jsonItem{Name: "test", Parsers: []string{"DefaultParser", "MemcacheFailParser"}, Pattern: "test/*.log"})
+        config = append(config, jsonItem{Name: "test", Parsers: []string{"ErrorLogParser", "MemcacheFailParser"}, Pattern: "test/*.log"})
     }
 
     return

@@ -15,10 +15,11 @@ run:build
 	@rm -f var/alser.lock
 	./alser -v -debug -test
 
-prepare:
+up:
+	@git push orgin master
 	@go get -u github.com/funkygao/alser/parser
 
-doc:prepare
+doc:up
 	@go doc github.com/funkygao/alser/parser
 
 fmt:

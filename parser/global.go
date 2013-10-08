@@ -6,7 +6,7 @@ import (
 
 var (
     logger     *log.Logger
-    allParsers map[string]Parser
+    allParsers map[string] Parser
     verbose    bool
     debug      bool
 )
