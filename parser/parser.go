@@ -7,9 +7,9 @@
       |                 |
       |          MemcacheFailParser
       |                 
-     ---------------------------
-    |              |   
-   PaymentParser ErrorLogParser
+     -------------------------------
+    |              |                |
+   PaymentParser ErrorLogParser PhpErrorLogParser
 
 */
 package parser
