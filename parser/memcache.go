@@ -20,17 +20,15 @@ func newMemcacheFailParser(chAlarm chan <- Alarm) *MemcacheFailParser {
 
 func (this MemcacheFailParser) ParseLine(line string) (area string, ts uint64, data *json.Json) {
     area, ts, data = this.DefaultParser.ParseLine(line)
-    key, err := data.Get("key").String()
+    _, err := data.Get("key").String()
     if err != nil {
         // not a memcache log
         return
     }
 
+	// alarm every occurence
 	logInfo := extractLogInfo(data)
-	infoData := make(map[string]string)
-	infoData["key"] = key
-
-	alarm := MemcacheAlarm{Area: area, Host: logInfo.host, Info: infoData}
+	alarm := MemcacheAlarm{Area: area, Host: logInfo.host, Time: time.Unix(int64(ts), 0)}
 	this.chAlarm <- alarm
 
     return
@@ -39,11 +37,9 @@ func (this MemcacheFailParser) ParseLine(line string) (area string, ts uint64, d
 type MemcacheAlarm struct {
 	Area string
 	Host string
-	Duration time.Duration
-	Info map[string]string
-	Count int
+	Time time.Time
 }
 
 func (this MemcacheAlarm) String() string {
-	return fmt.Sprintf("%s^%s^%v^%d^%v", this.Area, this.Host, this.Duration, this.Count, this.Info)
+	return fmt.Sprintf("%s^%s^%s", this.Area, this.Host, this.Time.Format("01-02-15:04:05"))
 }
