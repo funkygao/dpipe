@@ -3,7 +3,7 @@ alser
 
 ALS guard
 
-[![Build Status](https://secure.travis-ci.org/funkygao/alser.png)](http://travis-ci.org/funkygao/alser)
+[![Build Status](https://travis-ci.org/funkygao/alser.png?branch=master)](https://travis-ci.org/funkygao/alser)
 
 ### Importing
 

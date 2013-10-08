@@ -2,6 +2,8 @@ package main
 
 import (
     "log"
+    "os"
+    "syscall"
 )
 
 var (
@@ -25,4 +27,9 @@ const (
 Flags:
 `
     lockfile = "var/alser.lock"
+
+    caredSignals = []os.Signal{
+        syscall.SIGTERM, syscall.SIGKILL, syscall.SIGINT,
+        syscall.SIGTERM, syscall.SIGKILL, syscall.SIGINT,
+    }
 )
