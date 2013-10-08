@@ -10,6 +10,7 @@ import (
 // Parent parser for all
 type DefaultParser struct {
 	chAlarm chan<- Alarm
+	prefix string
 }
 
 func (this DefaultParser) ParseLine(line string) (area string, ts uint64, data *json.Json) {

@@ -15,6 +15,7 @@ type MemcacheFailParser struct {
 func newMemcacheFailParser(chAlarm chan <- Alarm) *MemcacheFailParser {
 	var parser *MemcacheFailParser = new(MemcacheFailParser)
 	parser.chAlarm = chAlarm
+	parser.prefix = "M"
 	return parser
 }
 
@@ -28,18 +29,19 @@ func (this MemcacheFailParser) ParseLine(line string) (area string, ts uint64, d
 
 	// alarm every occurence
 	logInfo := extractLogInfo(data)
-	alarm := MemcacheAlarm{Area: area, Host: logInfo.host, Time: time.Unix(int64(ts), 0)}
+	alarm := memcacheAlarm{this.prefix, area, logInfo.host, time.Unix(int64(ts), 0)}
 	this.chAlarm <- alarm
 
     return
 }
 
-type MemcacheAlarm struct {
-	Area string
-	Host string
-	Time time.Time
+type memcacheAlarm struct {
+	prefix string
+	area string
+	host string
+	time time.Time
 }
 
-func (this MemcacheAlarm) String() string {
-	return fmt.Sprintf("%s^%s^%s", this.Area, this.Host, this.Time.Format("01-02-15:04:05"))
+func (this memcacheAlarm) String() string {
+	return fmt.Sprintf("%s^%s^%s^%s", this.prefix, this.area, this.host, this.time.Format("01-02-15:04:05"))
 }

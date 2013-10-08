@@ -32,6 +32,6 @@ func extractLogInfo(data *json.Json) logInfo {
 	info.host, err = infoBody.Get("host").String()
 	checkError(err)
 	info.ip, err = infoBody.Get("ip").String()
-	checkError(err)
+	//checkError(err)
 	return info
 }
