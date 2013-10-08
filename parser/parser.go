@@ -1,15 +1,15 @@
 /*
-                DefaultParser
-                    |
-        ------------------------------
-       |                              |
-      DbParser            --------------------
-       |                 |
-       |          MemcacheFailParser
-       |                 
-      ---------------------------
-     |              |   
-    PaymentParser ErrorLogParser
+               DefaultParser
+                   |
+       ------------------------------
+      |                              |
+     DbParser            --------------------
+      |                 |
+      |          MemcacheFailParser
+      |                 
+     ---------------------------
+    |              |   
+   PaymentParser ErrorLogParser
 
 */
 package parser
@@ -35,6 +35,8 @@ func NewParsers(parsers []string, chAlarm chan<- Alarm) {
 			allParsers["ErrorLogParser"] = newErrorLogParser(chAlarm)
 		case "PaymentParser":
 			allParsers["PaymentParser"] = newPaymentParser(chAlarm)
+		case "PhpErrorLogParser":
+			allParsers["PhpErrorLogParser"] = newPhpErrorLogParser(chAlarm)
 		default:
 			logger.Println("invalid parser:", p)
 		}
