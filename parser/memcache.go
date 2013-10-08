@@ -1,7 +1,9 @@
 package parser
 
 import (
+	"fmt"
     json "github.com/bitly/go-simplejson"
+	"time"
 )
 
 // Memcache set fail log parser
@@ -28,8 +30,20 @@ func (this MemcacheFailParser) ParseLine(line string) (area string, ts uint64, d
 	infoData := make(map[string]string)
 	infoData["key"] = key
 
-	alarm := Alarm{Area: area, Host: logInfo.host, Info: infoData}
+	alarm := MemcacheAlarm{Area: area, Host: logInfo.host, Info: infoData}
 	this.chAlarm <- alarm
 
     return
+}
+
+type MemcacheAlarm struct {
+	Area string
+	Host string
+	Duration time.Duration
+	Info map[string]string
+	Count int
+}
+
+func (this MemcacheAlarm) String() string {
+	return fmt.Sprintf("%s^%s^%v^%d^%v", this.Area, this.Host, this.Duration, this.Count, this.Info)
 }
