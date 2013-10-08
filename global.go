@@ -36,4 +36,5 @@ Flags:
 `
     lockfile = "var/alser.lock"
 	tick = 5 // 5 seconds
+	tailSleep = 5 // 5 seconds between tail reading
 )
