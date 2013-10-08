@@ -10,7 +10,7 @@ import (
 )
 
 // Each single log file is a worker
-func run_worker(logfile string, item jsonItem, wg *sync.WaitGroup, chLines chan int) {
+func run_worker(logfile string, conf jsonItem, wg *sync.WaitGroup, chLines chan int) {
     defer wg.Done()
 
     file, err := os.Open(logfile)
@@ -21,7 +21,7 @@ func run_worker(logfile string, item jsonItem, wg *sync.WaitGroup, chLines chan 
     defer file.Close()
 
     if options.verbose {
-        logger.Printf("%s started with %v", logfile, item.Parsers)
+        logger.Printf("%s started with %v", logfile, conf.Parsers)
     }
 
     reader := bufio.NewReader(file)
@@ -42,7 +42,7 @@ func run_worker(logfile string, item jsonItem, wg *sync.WaitGroup, chLines chan 
 
         // a valid line scanned
         chLines <- 1
-        for _, p := range item.Parsers {
+        for _, p := range conf.Parsers {
             parser.Dispatch(p, string(line))
         }
     }

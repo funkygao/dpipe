@@ -13,7 +13,7 @@ var (
 
     caredSignals = []os.Signal{
         syscall.SIGTERM, syscall.SIGKILL, syscall.SIGINT,
-        syscall.SIGTERM, syscall.SIGKILL, syscall.SIGINT,
+		syscall.SIGHUP, syscall.SIGSTOP, syscall.SIGQUIT,
     }
 
     ticker *time.Ticker

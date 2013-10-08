@@ -1,11 +1,13 @@
 /*
            main
              |
-             | goN
+             | goN(wait group)
              |
      -----------------------
     |       |       |       |
    log1    log2    ...     logN
+    |       |       |       |
+  parsers parsers        parsers
 
 */
 package main
