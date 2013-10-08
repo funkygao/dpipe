@@ -2,7 +2,8 @@ package main
 
 import (
     "bufio"
-    "github.com/funkygao/alser/parser"
+    //"github.com/funkygao/alser/parser"
+	"./parser"
     "io"
     "os"
     "sync"

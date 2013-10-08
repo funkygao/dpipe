@@ -35,6 +35,7 @@ const (
 Flags:
 `
     lockfile  = "var/alser.lock"
+	alarmlog  = "var/alarm.log"
     tick      = 5 // 5 seconds
     tailSleep = 1 // 1 seconds between tail reading
 )

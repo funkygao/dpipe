@@ -1,8 +1,8 @@
 /*
            main
-             |
-             | goN(wait group)
-             |
+           ^  |
+     alarm |  | goN(wait group)
+           |  V
      -----------------------
     |       |       |       |
    log1    log2    ...     logN
@@ -13,7 +13,8 @@
 package main
 
 import (
-    "github.com/funkygao/alser/parser"
+    //"github.com/funkygao/alser/parser"
+	"./parser"
     "github.com/funkygao/gofmt"
     "path/filepath"
     "runtime"
@@ -58,6 +59,7 @@ func guard(jsonConfig jsonConfig) {
         wg.Wait()
         logger.Println("all", workerN, " workers finished")
         close(chLines)
+		close(chAlarm)
     }()
 
     // collect how many lines scanned
@@ -75,11 +77,11 @@ func runTicker(lines *int) {
         logger.Printf("goroutine: %d, mem: %s, lines: %d\n",
             runtime.NumGoroutine(), gofmt.ByteSize(ms.Alloc), *lines)
     }
-
 }
 
-func runAlarmCollector(ch chan parser.Alarm) {
+func runAlarmCollector(ch <-chan parser.Alarm) {
+	alarmLogger := newAlarmLogger()
 	for alarm := range ch {
-		logger.Printf("ALARM %s %v %v\n", alarm.Area, alarm.Duration, alarm.Info)
+		alarmLogger.Printf("%s,%v,%v\n", alarm.Area, alarm.Duration, alarm.Info)
 	}
 }

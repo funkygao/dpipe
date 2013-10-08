@@ -12,7 +12,7 @@ import (
 type DefaultParser struct {
 }
 
-func (this DefaultParser) ParseLine(line string, ch chan Alarm) (area string, ts uint64, data *json.Json) {
+func (this DefaultParser) ParseLine(line string, ch chan<- Alarm) (area string, ts uint64, data *json.Json) {
     fields := strings.SplitN(line, LINE_SPLITTER, LINE_SPLIT_NUM)
 
     area = fields[0]

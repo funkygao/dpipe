@@ -15,8 +15,8 @@ func newPaymentParser() *PaymentParser {
 	return parser
 }
 
-func (this PaymentParser) ParseLine(line string, ch chan Alarm) (area string, ts uint64, data *json.Json) {
-	area, ts, data = this.DefaultParser.ParseLine(line)
+func (this PaymentParser) ParseLine(line string, ch chan<- Alarm) (area string, ts uint64, data *json.Json) {
+	area, ts, data = this.DefaultParser.ParseLine(line, ch)
 
 	return
 }

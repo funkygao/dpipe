@@ -24,3 +24,12 @@ func newLogger(option *Option) *log.Logger {
 
     return log.New(logWriter, prefix, LOG_OPTIONS)
 }
+
+func newAlarmLogger() *log.Logger {
+	logWriter, err := os.OpenFile(alarmlog, os.O_APPEND|os.O_CREATE|os.O_RDWR, 0644)
+	if err != nil {
+		panic(err)
+	}
+
+	return log.New(logWriter, "", LOG_OPTIONS)
+}
