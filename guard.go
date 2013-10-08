@@ -1,19 +1,21 @@
 /*
             main
-
+              |
+              | goN
+              |
+      -----------------------
+     |       |       |       |
     log1    log2    ...     logN
 
 */
 package main
 
 import (
-    "bufio"
     "github.com/funkygao/alser/parser"
 	"github.com/funkygao/gofmt"
-    "io"
-    "os"
     "path/filepath"
 	"runtime"
+	"sync"
 	"time"
 )
 
@@ -22,11 +24,10 @@ func guard(jsonConfig jsonConfig) {
     parser.SetVerbose(options.verbose)
     parser.SetDebug(options.debug)
 
-	if options.tick > 0 {
-		ticker = time.NewTicker(time.Second * time.Duration(options.tick))
-		go runTicker()
-	}
-
+	var lines int = 0
+	var workerN int = 0
+	var wg = new(sync.WaitGroup)
+	chLines := make(chan int)
     for _, item := range jsonConfig {
         paths, err := filepath.Glob(item.Pattern)
         if err != nil {
@@ -34,43 +35,40 @@ func guard(jsonConfig jsonConfig) {
         }
 
         for _, logfile := range paths {
-            if options.verbose {
-                logger.Printf("%s %v", logfile, item.Parsers)
-            }
-
-            file, err := os.Open(logfile)
-            if err != nil && err != os.ErrExist {
-                panic(err)
-            }
-            defer file.Close()
-
-            reader := bufio.NewReader(file)
-            for {
-                line, _, err := reader.ReadLine()
-                if err != nil {
-                    if err == io.EOF {
-                        break
-                    } else {
-                        panic(err)
-                    }
-                }
-
-                for _, p := range item.Parsers {
-                    parser.Dispatch(p, string(line))
-                }
-            }
+			workerN ++
+			wg.Add(1)
+			go run_worker(logfile, item, wg, chLines)
         }
     }
 
-	time.Sleep(time.Second * 100)
+	if options.tick > 0 {
+		ticker = time.NewTicker(time.Second * time.Duration(options.tick))
+		go runTicker(&lines)
+	}
 
+	logger.Println(workerN, "workers started")
+
+	// wait for all workers finish
+	go func() {
+		wg.Wait()
+		logger.Println("all", workerN, " workers finished")
+		close(chLines)
+	}()
+
+	// collect how many lines scanned
+	for l := range chLines {
+		lines += l
+	}
+
+	logger.Println("all lines scaned:", lines)
 }
 
-func runTicker() {
+func runTicker(lines *int) {
+	ms := new(runtime.MemStats)
 	for _ = range ticker.C {
-		ms := new(runtime.MemStats)
 		runtime.ReadMemStats(ms)
-		logger.Println("goroutine:", runtime.NumGoroutine(), "mem:", gofmt.ByteSize(ms.Alloc))
+		logger.Printf("goroutine: %d, mem: %s, lines: %d\n",
+			runtime.NumGoroutine(), gofmt.ByteSize(ms.Alloc), *lines)
 	}
 
 }
