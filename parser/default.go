@@ -10,7 +10,6 @@ import (
 // Parent parser for all
 type DefaultParser struct {
 	chAlarm chan<- Alarm
-	prefix  string
 	stopped bool
 }
 

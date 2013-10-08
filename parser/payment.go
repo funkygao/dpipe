@@ -30,16 +30,20 @@ CREATE TABLE IF NOT EXISTS payment (
 func newPaymentParser(chAlarm chan<- Alarm) *PaymentParser {
 	var parser *PaymentParser = new(PaymentParser)
 	parser.chAlarm = chAlarm
-	parser.prefix = "P"
 
 	parser.createDB(PAYMENT_CREATE_TABLE, "var/payment.sqlite")
 
-	go parser.collectAlarm()
+	go parser.collectAlarms()
 
 	return parser
 }
 
-func (this PaymentParser) collectAlarm() {
+// 在单位时间内:
+// 哪个用户支付的金额超过了阀值
+// 哪个地区的支付金额超过了阀值
+// 非type=OK的数量超过了阀值
+// 某主机上来的支付金额超过了阀值
+func (this PaymentParser) collectAlarms() {
 	for {
 		if this.stopped {
 			break
@@ -58,7 +62,7 @@ func (this PaymentParser) collectAlarm() {
 	}
 
 	//delta := time.Since(this.start)
-	//this.chAlarm <- paymentAlarm{this.prefix, typ, uid, level, amount, ref, item, area, logInfo.host}
+	//this.chAlarm <- paymentAlarm{typ, uid, level, amount, ref, item, area, logInfo.host}
 
 }
 
@@ -91,11 +95,11 @@ func (this PaymentParser) ParseLine(line string) (area string, ts uint64, data *
 }
 
 type paymentAlarm struct {
-	prefix, typ           string
+	typ                   string
 	uid, level, amount    int
 	ref, item, area, host string
 }
 
 func (this paymentAlarm) String() string {
-	return fmt.Sprintf("%s^%s^%d^%d^%d^%s", this.prefix, this.typ, this.uid, this.level, this.amount, this.ref)
+	return fmt.Sprintf("%s^%s^%d^%d^%d^%s", "P", this.typ, this.uid, this.level, this.amount, this.ref)
 }

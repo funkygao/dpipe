@@ -13,7 +13,6 @@ type ErrorLogParser struct {
 func newErrorLogParser(chAlarm chan<- Alarm) *ErrorLogParser {
 	var parser *ErrorLogParser = new(ErrorLogParser)
 	parser.chAlarm = chAlarm
-	parser.prefix = "E"
 	return parser
 }
 
