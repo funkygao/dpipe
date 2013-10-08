@@ -15,7 +15,7 @@ func newErrorLogParser() *ErrorLogParser {
 	return parser
 }
 
-func (this ErrorLogParser) ParseLine(line string) (area string, ts uint64, data *json.Json) {
+func (this ErrorLogParser) ParseLine(line string, ch chan Alarm) (area string, ts uint64, data *json.Json) {
 	area, ts, data = this.DefaultParser.ParseLine(line)
 
 	return
