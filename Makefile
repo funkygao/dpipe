@@ -16,8 +16,8 @@ run:build
 	./alser -v -debug -test
 
 up:
-	@git push orgin master
-	@go get -u github.com/funkygao/alser/parser
+	git push origin master
+	go get -u github.com/funkygao/alser/parser
 
 doc:up
 	@go doc github.com/funkygao/alser/parser
