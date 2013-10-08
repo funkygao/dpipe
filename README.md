@@ -9,4 +9,5 @@ ALS guard
 
     go get github.com/bmizerany/assert
     go get github.com/bitly/go-simplejson
+    go get github.com/funkygao/gofmt
     go get -u github.com/funkygao/alser

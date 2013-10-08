@@ -4,6 +4,7 @@ import (
     "log"
     "os"
     "syscall"
+	"time"
 )
 
 var (
@@ -14,6 +15,8 @@ var (
         syscall.SIGTERM, syscall.SIGKILL, syscall.SIGINT,
         syscall.SIGTERM, syscall.SIGKILL, syscall.SIGINT,
     }
+
+	ticker *time.Ticker
 )
 
 const (
@@ -32,4 +35,5 @@ const (
 Flags:
 `
     lockfile = "var/alser.lock"
+	tick = 5 // 5 seconds
 )

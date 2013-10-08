@@ -22,7 +22,7 @@ func init() {
     options = parseFlags()
     options.validate()
 
-
+	go trapSignals()
 }
 
 func main() {

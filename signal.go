@@ -15,9 +15,9 @@ func trapSignals() {
         for _, s := range caredSignals {
             if s == sig {
                 logger.Printf("%s signal recved\n", strings.ToUpper(sig.String()))
+				logger.Println("terminated")
 
-                cleanup()
-                break
+                shutdown()
             }
         }
     }()

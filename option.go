@@ -14,6 +14,7 @@ type Option struct {
     logfile     string
     debug       bool
     test        bool
+	tick		int
 }
 
 func (this *Option) showVersionOnly() bool {
@@ -22,9 +23,8 @@ func (this *Option) showVersionOnly() bool {
 
 func (this *Option) validate() {
     if this.showVersionOnly() {
-        cleanup()
         fmt.Fprintf(os.Stderr, "%s %s %s %s\n", "alser", version, runtime.GOOS, runtime.GOARCH)
-        os.Exit(0)
+		shutdown()
     }
 }
 
@@ -37,6 +37,7 @@ func parseFlags() *Option {
         showversion = flag.Bool("version", false, "show version")
         debug       = flag.Bool("debug", false, "debug mode")
         test        = flag.Bool("test", false, "test mode")
+		t			= flag.Int("t", tick, "tick interval in seconds")
     )
     flag.Usage = func() {
         fmt.Fprint(os.Stderr, usage)
@@ -47,5 +48,5 @@ func parseFlags() *Option {
 
     flag.Parse()
 
-    return &Option{*verbose, *config, *showversion, *logfile, *debug, *test}
+    return &Option{*verbose, *config, *showversion, *logfile, *debug, *test, *t}
 }

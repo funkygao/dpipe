@@ -1,17 +1,31 @@
+/*
+            main
+
+    log1    log2    ...     logN
+
+*/
 package main
 
 import (
     "bufio"
     "github.com/funkygao/alser/parser"
+	"github.com/funkygao/gofmt"
     "io"
     "os"
     "path/filepath"
+	"runtime"
+	"time"
 )
 
 func guard(jsonConfig jsonConfig) {
     parser.SetLogger(logger)
     parser.SetVerbose(options.verbose)
     parser.SetDebug(options.debug)
+
+	if options.tick > 0 {
+		ticker = time.NewTicker(time.Second * time.Duration(options.tick))
+		go runTicker()
+	}
 
     for _, item := range jsonConfig {
         paths, err := filepath.Glob(item.Pattern)
@@ -47,5 +61,16 @@ func guard(jsonConfig jsonConfig) {
             }
         }
     }
+
+	time.Sleep(time.Second * 100)
+
+}
+
+func runTicker() {
+	for _ = range ticker.C {
+		ms := new(runtime.MemStats)
+		runtime.ReadMemStats(ms)
+		logger.Println("goroutine:", runtime.NumGoroutine(), "mem:", gofmt.ByteSize(ms.Alloc))
+	}
 
 }
