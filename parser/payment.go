@@ -4,6 +4,7 @@ import (
 	"fmt"
 	json "github.com/bitly/go-simplejson"
 	_ "github.com/mattn/go-sqlite3"
+	"time"
 )
 
 // Payment log parser
@@ -21,8 +22,7 @@ CREATE TABLE IF NOT EXISTS payment (
     level INT,
     amount INT,
     ref VARCHAR(50) NULL,
-    item VARCHAR(40),
-    PRIMARY KEY (uid)
+    item VARCHAR(40)
 );
 `
 
@@ -41,18 +41,16 @@ func newPaymentParser(chAlarm chan <- Alarm) *PaymentParser {
 
 func (this PaymentParser) collectAlarm() {
 	for {
-		rows, err := this.db.Query("SELECT * FROM payment")
-		checkError(err)
-
+		rows := this.query("select area,host,type, uid, ts from payment")
 		for rows.Next() {
 			var area, host, typ string
 			var uid, ts int
-			err := rows.Scan(&area, &host, &ts, &typ, &uid)
+			err := rows.Scan(&area, &host,  &typ, &uid, &ts)
 			checkError(err)
 			logger.Println("haha", area, host, typ, uid, ts)
 		}
 
-		time.Sleep(time.Second)
+		time.Sleep(time.Second * 5)
 	}
 
 	//delta := time.Since(this.start)
@@ -83,7 +81,7 @@ func (this PaymentParser) ParseLine(line string) (area string, ts uint64, data *
 	logInfo := extractLogInfo(data)
 
 	insert := "INSERT INTO payment(area, host, ts, type, uid, level, amount, ref, item) VALUES(?,?,?,?,?,?,?,?,?)"
-	this.insert(insert, area, logInfo.host, ts, typ, uid, level, amount, ref, item)
+	this.execSql(insert, area, logInfo.host, ts, typ, uid, level, amount, ref, item)
 
 	return
 }

@@ -24,10 +24,17 @@ func (this *DbParser) createDB(createTable string, dbFile string) {
 	checkError(e)
 }
 
-func (this DbParser) insert(insertSql string, args ...interface {}) {
-	stmt, err := this.db.Prepare(insertSql)
+func (this DbParser) execSql(sqlStmt string, args ...interface {}) {
+	stmt, err := this.db.Prepare(sqlStmt)
 	checkError(err)
 
 	_, e := stmt.Exec(args...)
 	checkError(e)
+}
+
+func (this DbParser) query(querySql string) *sql.Rows {
+	rows, err := this.db.Query(querySql)
+	checkError(err)
+	
+	return rows
 }

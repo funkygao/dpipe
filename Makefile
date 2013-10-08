@@ -13,7 +13,7 @@ test:conf_test.go parser/all_test.go
 
 run:build
 	@rm -f var/alser.lock
-	./alser -v -debug -test
+	./alser -v -debug -test -tail
 
 up:
 	git push origin master
