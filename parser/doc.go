@@ -10,5 +10,5 @@ has 2 major jobs:
 		one line each time
 	metric
 		can hold for a period of time
- */
+*/
 package parser

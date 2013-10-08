@@ -10,7 +10,7 @@ func TestDefaultParserParseLine(t *testing.T) {
     p := new(DefaultParser)
     area, ts, data := p.ParseLine(line)
     var (
-        exptectedTs  = uint64(1381118458069/1000)
+        exptectedTs  = uint64(1381118458069 / 1000)
         extectedArea = "us"
     )
 

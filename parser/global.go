@@ -18,15 +18,15 @@ const (
 
 // Pass through logger
 func SetLogger(l *log.Logger) {
-	logger = l
+    logger = l
 }
 
 // Enable/disable debug mode
 func SetDebug(d bool) {
-	debug = d
+    debug = d
 }
 
 // Enable verbose or not
 func SetVerbose(v bool) {
-	verbose = v
+    verbose = v
 }

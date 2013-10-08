@@ -6,4 +6,3 @@ func init() {
     allParsers["DefaultParser"] = DefaultParser{}
     allParsers["MemcacheFailParser"] = MemcacheFailParser{}
 }
-

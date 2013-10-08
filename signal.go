@@ -11,15 +11,14 @@ func trapSignals() {
     signal.Notify(ch, caredSignals...)
 
     go func() {
-        sig := <- ch
+        sig := <-ch
         for _, s := range caredSignals {
             if s == sig {
                 logger.Printf("%s signal recved\n", strings.ToUpper(sig.String()))
-				logger.Println("terminated")
+                logger.Println("terminated")
 
                 shutdown()
             }
         }
     }()
 }
-

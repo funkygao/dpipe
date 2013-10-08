@@ -1,7 +1,7 @@
 package main
 
 import (
-	"os"
+    "os"
     "syscall"
 )
 
@@ -10,6 +10,6 @@ func cleanup() {
 }
 
 func shutdown() {
-	cleanup()
-	os.Exit(0)
+    cleanup()
+    os.Exit(0)
 }
