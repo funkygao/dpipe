@@ -29,11 +29,8 @@ func (this *DbParser) createDB(createTable string, dbFile string) {
 	this.db = db
 	this.lock = new(sync.Mutex)
 
-	stmt, err := this.db.Prepare(createTable)
+	_, err = this.db.Exec(createTable)
 	checkError(err)
-
-	_, e := stmt.Exec()
-	checkError(e)
 }
 
 func (this DbParser) execSql(sqlStmt string, args ...interface{}) (afftectedRows int64) {
