@@ -36,23 +36,23 @@ func extractLogInfo(data *json.Json) logInfo {
 		checkError(err)
 	}
 
-    serial := infoBody.Get("serial")
-    if serial != nil {
-        info.serial, err := serial.Int()
-        checkError(err)
-    }
-	
-    host := infoBody.Get("host")
-    if host != nil {
-        info.host, err = host.String()
-        checkError(err)
-    }
-	
-    ip := infoBody.Get("ip")
-    if ip != nil {
-        info.ip, err = ip.String()
-        checkError(err)
-    }
-	
+	serial := infoBody.Get("serial")
+	if serial != nil {
+		info.serial, err = serial.Int()
+		checkError(err)
+	}
+
+	host := infoBody.Get("host")
+	if host != nil {
+		info.host, err = host.String()
+		checkError(err)
+	}
+
+	ip := infoBody.Get("ip")
+	if ip != nil {
+		info.ip, err = ip.String()
+		checkError(err)
+	}
+
 	return info
 }
