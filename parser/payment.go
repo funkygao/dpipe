@@ -51,7 +51,12 @@ func (this PaymentParser) collectAlarms() {
 			break
 		}
 
+		time.Sleep(time.Second * 10)
+
 		checkpoint := this.getCheckpoint("select max(ts) from payment")
+		if checkpoint == 0 {
+			continue
+		}
 
 		rows := this.query("select sum(amount) as am, type, area, currency from payment where ts<=? group by type, area, currency order by am desc", checkpoint)
 		globalLock.Lock()
@@ -68,8 +73,6 @@ func (this PaymentParser) collectAlarms() {
 		if affected := this.execSql("delete from payment where ts<=?", checkpoint); affected > 0 && verbose {
 			logger.Printf("payment %d rows deleted\n", affected)
 		}
-
-		time.Sleep(time.Second * 5)
 	}
 }
 
