@@ -82,13 +82,14 @@ func (this PaymentParser) ParseLine(line string) (area string, ts uint64, data *
 
 	dataBody := data.Get("data")
 	uid, err := dataBody.Get("uid").Int()
-	checkError(err)
+	if err != nil {
+		logger.Println("null uid", line)
+		return
+	}
 	level, err := dataBody.Get("level").Int()
-	checkError(err)
 	amount, err := dataBody.Get("amount").Int()
 	checkError(err)
 	ref, err := dataBody.Get("trackRef").String()
-	checkError(err)
 	item, err := dataBody.Get("item").String()
 	checkError(err)
 	currency, err := dataBody.Get("currency").String()
