@@ -57,9 +57,9 @@ func (this PaymentParser) collectAlarms() {
 		for rows.Next() {
 			var area, typ, currency string
 			var amount int64
-			err := rows.Scan(&am, &typ, &area, &currency)
+			err := rows.Scan(&amount, &typ, &area, &currency)
 			checkError(err)
-			logger.Printf("%5s%3s%12s%5s\n", typ, area, gofmt.Comma(am), currency)
+			logger.Printf("%5s%3s%12s%5s\n", typ, area, gofmt.Comma(amount), currency)
 		}
 
 		if affected := this.execSql("delete from payment where ts<=?", checkpoint); affected > 0 && verbose {
@@ -89,7 +89,7 @@ func (this PaymentParser) ParseLine(line string) (area string, ts uint64, data *
 	checkError(err)
 	item, err := dataBody.Get("item").String()
 	checkError(err)
-	currency, err := dataBody.Get("currency")
+	currency, err := dataBody.Get("currency").String()
 	checkError(err)
 
 	logInfo := extractLogInfo(data)

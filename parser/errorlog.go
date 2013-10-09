@@ -2,6 +2,7 @@ package parser
 
 import (
 	json "github.com/bitly/go-simplejson"
+	"github.com/funkygao/gofmt"
 )
 
 // Errlog parser
@@ -67,9 +68,9 @@ func (this ErrorLogParser) collectAlarms() {
 		for rows.Next() {
 			var area, cls, msg string
 			var amount int64
-			err := rows.Scan(&am, &area, &cls, &msg)
+			err := rows.Scan(&amount, &area, &cls, &msg)
 			checkError(err)
-			logger.Printf("%5d%5s%15s%s", amount, area, cls, msg)
+			logger.Printf("%7s%5s%15s%s", gofmt.Comma(amount), area, cls, msg)
 		}
 
 		if affected := this.execSql("delete from error where ts<=?", checkpoint); affected > 0 && verbose {
