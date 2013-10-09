@@ -51,8 +51,6 @@ func (this PaymentParser) collectAlarms() {
 			break
 		}
 
-	skip_too_few_errors:
-
 		time.Sleep(time.Second * 10)
 
 		checkpoint := this.getCheckpoint("select max(ts) from payment")
@@ -68,9 +66,7 @@ func (this PaymentParser) collectAlarms() {
 			var amount int64
 			err := rows.Scan(&amount, &typ, &area, &currency)
 			checkError(err)
-			if amount < 100 {
-				goto skip_too_few_errors
-			}
+
 			logger.Printf("%5s%3s%12s%5s\n", typ, area, gofmt.Comma(amount), currency)
 		}
 		globalLock.Unlock()

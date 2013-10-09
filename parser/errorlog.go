@@ -76,6 +76,8 @@ func (this ErrorLogParser) collectAlarms() {
 			break
 		}
 
+	skip_too_few_errors:
+
 		time.Sleep(time.Second * 12)
 
 		checkpoint := this.getCheckpoint("select max(ts) from error")
@@ -91,6 +93,10 @@ func (this ErrorLogParser) collectAlarms() {
 			var amount int64
 			err := rows.Scan(&amount, &cls, &msg)
 			checkError(err)
+			if amount < 100 {
+				goto skip_too_few_errors
+			}
+
 			logger.Printf("%5s%20s %s", gofmt.Comma(amount), cls, msg)
 		}
 		globalLock.Unlock()
