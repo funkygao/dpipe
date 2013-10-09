@@ -51,14 +51,11 @@ func (this PaymentParser) collectAlarms() {
 			break
 		}
 
-		time.Sleep(time.Second * 19)
-
 		checkpoint := this.getCheckpoint("select max(ts) from payment")
 		if checkpoint == 0 {
 			continue
 		}
 
-		this.mutexLock()
 		rows := this.query("select sum(amount) as am, type, area, currency from payment where ts<=? group by type, area, currency order by am desc", checkpoint)
 		globalLock.Lock()
 		this.logCheckpoint(checkpoint)
@@ -81,7 +78,8 @@ func (this PaymentParser) collectAlarms() {
 		if affected := this.execSql("delete from payment where ts<=?", checkpoint); affected > 0 && verbose {
 			logger.Printf("payment %d rows deleted\n", affected)
 		}
-		this.mutexUnlock()
+
+		time.Sleep(time.Second * 19)
 	}
 }
 
@@ -111,9 +109,8 @@ func (this PaymentParser) ParseLine(line string) (area string, ts uint64, data *
 	currency, err := dataBody.Get("currency").String()
 	checkError(err)
 
-	logInfo := extractLogInfo(data)
-
 	insert := "INSERT INTO payment(area, host, ts, type, uid, level, amount, ref, item, currency) VALUES(?,?,?,?,?,?,?,?,?,?)"
+	logInfo := extractLogInfo(data)
 	this.execSql(insert, area, logInfo.host, ts, typ, uid, level, amount, ref, item, currency)
 
 	return

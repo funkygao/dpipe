@@ -35,6 +35,9 @@ func (this *DbParser) createDB(createTable string, dbFile string) {
 }
 
 func (this DbParser) execSql(sqlStmt string, args ...interface{}) (afftectedRows int64) {
+	this.mutexLock()
+	defer this.mutexUnlock()
+
 	res, err := this.db.Exec(sqlStmt, args...)
 	checkError(err)
 
@@ -45,6 +48,9 @@ func (this DbParser) execSql(sqlStmt string, args ...interface{}) (afftectedRows
 }
 
 func (this DbParser) query(querySql string, args ...interface{}) *sql.Rows {
+	this.mutexLock()
+	defer this.mutexUnlock()
+
 	rows, err := this.db.Query(querySql, args...)
 	checkError(err)
 
@@ -52,6 +58,9 @@ func (this DbParser) query(querySql string, args ...interface{}) *sql.Rows {
 }
 
 func (this DbParser) getCheckpoint(querySql string, args ...interface{}) (ts int) {
+	this.mutexLock()
+	defer this.mutexUnlock()
+
 	if err := this.db.QueryRow(querySql, args...).Scan(&ts); err != nil {
 		ts = 0
 	}
