@@ -1,7 +1,8 @@
 build:
+	mkdir -p var
 	go build
 
-install:
+install:build
 	go install 
 
 clean:
