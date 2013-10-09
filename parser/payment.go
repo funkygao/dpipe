@@ -3,6 +3,7 @@ package parser
 import (
 	"fmt"
 	json "github.com/bitly/go-simplejson"
+	"github.com/funkygao/gofmt"
 	_ "github.com/mattn/go-sqlite3"
 	"time"
 )
@@ -51,13 +52,17 @@ func (this PaymentParser) collectAlarms() {
 
 		checkpoint := this.getCheckpoint("select max(ts) from payment")
 
-		rows := this.query("select area,host,type, uid, ts from payment")
+		rows := this.query("select sum(amount) as am, type, area, host from payment where ts<=? group by type, area, host order by am desc", checkpoint)
 		for rows.Next() {
 			var area, host, typ string
-			var uid, ts int
-			err := rows.Scan(&area, &host, &typ, &uid, &ts)
+			var am int64
+			err := rows.Scan(&am, &typ, &area, &host)
 			checkError(err)
-			logger.Println("haha", area, host, typ, uid, ts)
+			logger.Printf("%5s%3s%16s%8s\n", typ, area, host, gofmt.Comma(am))
+		}
+
+		if affected := this.execSql("delete from payment where ts<=?", checkpoint); affected > 0 {
+			logger.Printf("payment %d rows deleted\n", affected)
 		}
 
 		time.Sleep(time.Second * 5)
