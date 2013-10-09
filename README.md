@@ -11,11 +11,15 @@ ALS guard
     go get github.com/bitly/go-simplejson
     go get github.com/mattn/go-sqlite3
     go get github.com/funkygao/gofmt
+    go get github.com/funkygao/alsparser
     go get -u github.com/funkygao/alser
 
 ### TODO
 
     more readable alarm screen output
-	echo parser alarm only after threshold
-    parsers can be configured
+    parsers can be configured, each parser one conf
+    MongoException guard
+    dry run
+    cpu profiler
     each parser should have cleanup, such as close db
+    alarm according to history behavior
