@@ -60,5 +60,7 @@ func run_worker(logfile string, conf jsonItem, wg *sync.WaitGroup, chLines chan 
 		}
 	}
 
-	logger.Println(logfile, "finished")
+	if options.verbose {
+		logger.Println(logfile, "finished")
+	}
 }

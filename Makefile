@@ -25,3 +25,9 @@ doc:up
 
 fmt:
 	@gofmt -s -tabs=false -tabwidth=4 -w=true .
+
+his:build
+	./alser -c conf/alser.history.json
+
+tail:build
+	./alser -c conf/alser.json -tail

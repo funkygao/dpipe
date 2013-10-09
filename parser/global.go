@@ -1,33 +1,35 @@
 package parser
 
 import (
-    "log"
+	"log"
+	"sync"
 )
 
 var (
-    logger     *log.Logger
-    allParsers map[string]Parser
-    verbose    bool
-    debug      bool
+	logger     *log.Logger
+	allParsers map[string]Parser
+	verbose    bool
+	debug      bool
+	globalLock = new(sync.Mutex)
 )
 
 const (
-    LINE_SPLITTER  = ","
-    LINE_SPLIT_NUM = 3
-    SQLITE3_DRIVER = "sqlite3"
+	LINE_SPLITTER  = ","
+	LINE_SPLIT_NUM = 3
+	SQLITE3_DRIVER = "sqlite3"
 )
 
 // Pass through logger
 func SetLogger(l *log.Logger) {
-    logger = l
+	logger = l
 }
 
 // Enable/disable debug mode
 func SetDebug(d bool) {
-    debug = d
+	debug = d
 }
 
 // Enable verbose or not
 func SetVerbose(v bool) {
-    verbose = v
+	verbose = v
 }

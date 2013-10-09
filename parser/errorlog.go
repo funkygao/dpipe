@@ -66,6 +66,7 @@ func (this ErrorLogParser) collectAlarms() {
 		checkpoint := this.getCheckpoint("select max(ts) from error")
 
 		rows := this.query("select count(*) as am, area, cls, msg from error where ts<=? group by area, cls, msg order by am desc", checkpoint)
+		globalLock.Lock()
 		for rows.Next() {
 			var area, cls, msg string
 			var amount int64
@@ -73,6 +74,7 @@ func (this ErrorLogParser) collectAlarms() {
 			checkError(err)
 			logger.Printf("%7s%5s%15s%s", gofmt.Comma(amount), area, cls, msg)
 		}
+		globalLock.Unlock()
 
 		if affected := this.execSql("delete from error where ts<=?", checkpoint); affected > 0 && verbose {
 			logger.Printf("error %d rows deleted\n", affected)

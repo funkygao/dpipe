@@ -1,0 +1,23 @@
+[
+    {
+        "name": "memcache set fail",
+        "parsers": [
+            "MemcacheFailParser"
+        ],
+        "pattern": "/mnt/funplus/logs/fp_rstory/history/cache_set_fail*"
+    },
+    {
+        "name": "any error including exceptions",
+        "parsers": [
+            "ErrorLogParser"
+        ],
+        "pattern": "/mnt/funplus/logs/fp_rstory/history/error*"
+    },    
+    {
+        "name": "payments",
+        "parsers": [
+            "PaymentParser"
+        ],
+        "pattern": "/mnt/funplus/logs/fp_rstory/history/payment*"
+    }
+]
