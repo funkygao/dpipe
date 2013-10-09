@@ -46,7 +46,6 @@ func run_worker(logfile string, conf jsonItem, wg *sync.WaitGroup, chLines chan 
 					time.Sleep(time.Second * time.Duration(tailSleep))
 					continue
 				} else {
-					logger.Printf("%s error occured: %s\n", logfile, err)
 					break
 				}
 			} else {
