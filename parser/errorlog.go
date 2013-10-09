@@ -92,6 +92,10 @@ func (this ErrorLogParser) collectAlarms() {
 			err := rows.Scan(&amount, &cls, &msg)
 			checkError(err)
 
+			if amount < 2 {
+				break
+			}
+
 			logger.Printf("%5s%20s %s", gofmt.Comma(amount), cls, msg)
 		}
 		globalLock.Unlock()

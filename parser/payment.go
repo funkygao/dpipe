@@ -67,7 +67,12 @@ func (this PaymentParser) collectAlarms() {
 			err := rows.Scan(&amount, &typ, &area, &currency)
 			checkError(err)
 
-			logger.Printf("%5s%3s%12s%5s\n", typ, area, gofmt.Comma(amount/100), currency)
+			amount = amount / 100 // 以分为单位，而不是元
+			if amount == 0 {
+				break
+			}
+
+			logger.Printf("%5s%3s%12s%5s\n", typ, area, gofmt.Comma(amount), currency)
 		}
 		globalLock.Unlock()
 		rows.Close()

@@ -18,3 +18,4 @@ ALS guard
     more readable alarm screen output
 	echo parser alarm only after threshold
     parsers can be configured
+    each parser should have cleanup, such as close db
