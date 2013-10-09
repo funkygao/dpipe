@@ -59,12 +59,14 @@ func (this DbParser) query(querySql string, args ...interface{}) *sql.Rows {
 }
 
 func (this DbParser) getCheckpoint(querySql string, args ...interface{}) (ts int) {
+	this.mutexLock()
 	stmt, err := this.db.Prepare(querySql)
 	checkError(err)
 
 	if err := stmt.QueryRow(args...).Scan(&ts); err != nil {
 		ts = 0
 	}
+	this.mutexUnlock()
 
 	return
 }

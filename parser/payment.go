@@ -55,6 +55,7 @@ func (this PaymentParser) collectAlarms() {
 
 		rows := this.query("select sum(amount) as am, type, area, currency from payment where ts<=? group by type, area, currency order by am desc", checkpoint)
 		globalLock.Lock()
+		logger.Println(checkpoint)
 		for rows.Next() {
 			var area, typ, currency string
 			var amount int64
@@ -83,7 +84,10 @@ func (this PaymentParser) ParseLine(line string) (area string, ts uint64, data *
 	dataBody := data.Get("data")
 	uid, err := dataBody.Get("uid").Int()
 	if err != nil {
-		logger.Println("null uid", line)
+		if verbose {
+			logger.Println("null uid", line)
+		}
+
 		return
 	}
 	level, err := dataBody.Get("level").Int()

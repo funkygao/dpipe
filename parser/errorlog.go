@@ -78,14 +78,15 @@ func (this ErrorLogParser) collectAlarms() {
 
 		checkpoint := this.getCheckpoint("select max(ts) from error")
 
-		rows := this.query("select count(*) as am, area, cls, msg from error where ts<=? group by area, cls, msg order by am desc", checkpoint)
+		rows := this.query("select count(*) as am, cls, msg from error where ts<=? group by cls, msg order by am desc", checkpoint)
 		globalLock.Lock()
+		logger.Println(checkpoint)
 		for rows.Next() {
-			var area, cls, msg string
+			var cls, msg string
 			var amount int64
-			err := rows.Scan(&amount, &area, &cls, &msg)
+			err := rows.Scan(&amount, &cls, &msg)
 			checkError(err)
-			logger.Printf("%5s%3s%20s%s", gofmt.Comma(amount), area, cls, msg)
+			logger.Printf("%5s%20s %s", gofmt.Comma(amount), cls, msg)
 		}
 		globalLock.Unlock()
 

@@ -1,5 +1,6 @@
 build:
 	mkdir -p var
+	rm -f var/alser.lock
 	go build
 
 install:build
