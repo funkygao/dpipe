@@ -58,10 +58,10 @@ func (this PaymentParser) collectAlarms() {
 			var am int64
 			err := rows.Scan(&am, &typ, &area, &host)
 			checkError(err)
-			logger.Printf("%5s%3s%16s%8s\n", typ, area, host, gofmt.Comma(am))
+			logger.Printf("%5s%3s%16s%12s\n", typ, area, host, gofmt.Comma(am))
 		}
 
-		if affected := this.execSql("delete from payment where ts<=?", checkpoint); affected > 0 {
+		if affected := this.execSql("delete from payment where ts<=?", checkpoint); affected > 0 && verbose {
 			logger.Printf("payment %d rows deleted\n", affected)
 		}
 
