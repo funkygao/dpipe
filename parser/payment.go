@@ -23,7 +23,8 @@ CREATE TABLE IF NOT EXISTS payment (
     level INT,
     amount INT,
     ref VARCHAR(50) NULL,
-    item VARCHAR(40)
+    item VARCHAR(40),
+    currency VARCHAR(20)
 );
 `
 
@@ -52,13 +53,13 @@ func (this PaymentParser) collectAlarms() {
 
 		checkpoint := this.getCheckpoint("select max(ts) from payment")
 
-		rows := this.query("select sum(amount) as am, type, area, host from payment where ts<=? group by type, area, host order by am desc", checkpoint)
+		rows := this.query("select sum(amount) as am, type, area, currency from payment where ts<=? group by type, area, currency order by am desc", checkpoint)
 		for rows.Next() {
-			var area, host, typ string
-			var am int64
-			err := rows.Scan(&am, &typ, &area, &host)
+			var area, typ, currency string
+			var amount int64
+			err := rows.Scan(&am, &typ, &area, &currency)
 			checkError(err)
-			logger.Printf("%5s%3s%16s%12s\n", typ, area, host, gofmt.Comma(am))
+			logger.Printf("%5s%3s%12s%5s\n", typ, area, gofmt.Comma(am), currency)
 		}
 
 		if affected := this.execSql("delete from payment where ts<=?", checkpoint); affected > 0 && verbose {
@@ -88,11 +89,13 @@ func (this PaymentParser) ParseLine(line string) (area string, ts uint64, data *
 	checkError(err)
 	item, err := dataBody.Get("item").String()
 	checkError(err)
+	currency, err := dataBody.Get("currency")
+	checkError(err)
 
 	logInfo := extractLogInfo(data)
 
-	insert := "INSERT INTO payment(area, host, ts, type, uid, level, amount, ref, item) VALUES(?,?,?,?,?,?,?,?,?)"
-	this.execSql(insert, area, logInfo.host, ts, typ, uid, level, amount, ref, item)
+	insert := "INSERT INTO payment(area, host, ts, type, uid, level, amount, ref, item, currency) VALUES(?,?,?,?,?,?,?,?,?,?)"
+	this.execSql(insert, area, logInfo.host, ts, typ, uid, level, amount, ref, item, currency)
 
 	return
 }
