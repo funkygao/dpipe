@@ -35,10 +35,7 @@ func (this *DbParser) createDB(createTable string, dbFile string) {
 }
 
 func (this DbParser) execSql(sqlStmt string, args ...interface{}) (afftectedRows int64) {
-	stmt, err := this.db.Prepare(sqlStmt)
-	checkError(err)
-
-	res, err := stmt.Exec(args...)
+	res, err := this.db.Exec(sqlStmt, args...)
 	checkError(err)
 
 	afftectedRows, err = res.RowsAffected()
@@ -55,10 +52,7 @@ func (this DbParser) query(querySql string, args ...interface{}) *sql.Rows {
 }
 
 func (this DbParser) getCheckpoint(querySql string, args ...interface{}) (ts int) {
-	stmt, err := this.db.Prepare(querySql)
-	checkError(err)
-
-	if err := stmt.QueryRow(args...).Scan(&ts); err != nil {
+	if err := this.db.QueryRow(querySql, args...).Scan(&ts); err != nil {
 		ts = 0
 	}
 
