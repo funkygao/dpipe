@@ -16,7 +16,7 @@ type Option struct {
     test        bool
     tick        int
     tailmode    bool
-	dryrun	bool
+    dryrun      bool
 }
 
 func (this *Option) showVersionOnly() bool {
@@ -41,7 +41,7 @@ func parseFlags() *Option {
         test        = flag.Bool("test", false, "test mode")
         t           = flag.Int("t", tick, "tick interval in seconds")
         tailmode    = flag.Bool("tail", false, "tail mode")
-		dr 	= flag.Bool("dry-run", false, "dry run")
+        dr          = flag.Bool("dry-run", false, "dry run")
     )
     flag.Usage = func() {
         fmt.Fprint(os.Stderr, usage)

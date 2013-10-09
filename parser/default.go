@@ -1,35 +1,35 @@
 package parser
 
 import (
-	json "github.com/bitly/go-simplejson"
-	"strconv"
-	"strings"
-	"time"
+    json "github.com/bitly/go-simplejson"
+    "strconv"
+    "strings"
+    "time"
 )
 
 // Parent parser for all
 type DefaultParser struct {
-	chAlarm chan<- Alarm
-	stopped bool
+    chAlarm chan<- Alarm
+    stopped bool
 }
 
 func (this DefaultParser) ParseLine(line string) (area string, ts uint64, data *json.Json) {
-	fields := strings.SplitN(line, LINE_SPLITTER, LINE_SPLIT_NUM)
+    fields := strings.SplitN(line, LINE_SPLITTER, LINE_SPLIT_NUM)
 
-	area = fields[0]
-	var err error
-	ts, err = strconv.ParseUint(fields[1], 10, 64)
-	if err != nil {
-		panic(err)
-	}
-	ts /= 1000
+    area = fields[0]
+    var err error
+    ts, err = strconv.ParseUint(fields[1], 10, 64)
+    if err != nil {
+        panic(err)
+    }
+    ts /= 1000
 
-	data, err = json.NewJson([]byte(fields[2]))
-	if err != nil {
-		panic(err)
-	}
+    data, err = json.NewJson([]byte(fields[2]))
+    if err != nil {
+        panic(err)
+    }
 
-	return
+    return
 }
 
 func (this DefaultParser) GetStats(duration time.Duration) {
@@ -37,5 +37,5 @@ func (this DefaultParser) GetStats(duration time.Duration) {
 }
 
 func (this *DefaultParser) Stop() {
-	this.stopped = true
+    this.stopped = true
 }

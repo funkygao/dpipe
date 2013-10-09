@@ -13,7 +13,7 @@ var (
 
     caredSignals = []os.Signal{
         syscall.SIGTERM, syscall.SIGKILL, syscall.SIGINT,
-		syscall.SIGHUP, syscall.SIGSTOP, syscall.SIGQUIT,
+        syscall.SIGHUP, syscall.SIGSTOP, syscall.SIGQUIT,
     }
 
     ticker *time.Ticker
@@ -25,7 +25,7 @@ const (
 )
 
 const (
-	ALARM_OPTIONS 	= log.LstdFlags
+    ALARM_OPTIONS     = log.LstdFlags
     LOG_OPTIONS       = log.LstdFlags | log.Lshortfile
     LOG_OPTIONS_DEBUG = log.Ldate | log.Lshortfile | log.Ltime | log.Lmicroseconds
 )
@@ -36,7 +36,7 @@ const (
 Flags:
 `
     lockfile  = "var/alser.lock"
-	alarmlog  = "var/alarm.log"
+    alarmlog  = "var/alarm.log"
     tick      = 60 // 5 seconds
-    tailSleep = 1 // 1 seconds between tail reading
+    tailSleep = 1  // 1 seconds between tail reading
 )
