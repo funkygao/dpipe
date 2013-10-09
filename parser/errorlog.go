@@ -76,8 +76,10 @@ func (this ErrorLogParser) collectAlarms() {
 			break
 		}
 
+		this.mutexLock()
 		checkpoint := this.getCheckpoint("select max(ts) from error")
 		if checkpoint == 0 {
+			this.mutexUnlock()
 			continue
 		}
 
@@ -102,6 +104,7 @@ func (this ErrorLogParser) collectAlarms() {
 		if affected := this.execSql("delete from error where ts<=?", checkpoint); affected > 0 && verbose {
 			logger.Printf("error %d rows deleted\n", affected)
 		}
+		this.mutexUnlock()
 
 		time.Sleep(time.Second * 37)
 	}

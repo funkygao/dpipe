@@ -51,8 +51,10 @@ func (this PaymentParser) collectAlarms() {
 			break
 		}
 
+		this.mutexLock()
 		checkpoint := this.getCheckpoint("select max(ts) from payment")
 		if checkpoint == 0 {
+			this.mutexUnlock()
 			continue
 		}
 
@@ -78,6 +80,8 @@ func (this PaymentParser) collectAlarms() {
 		if affected := this.execSql("delete from payment where ts<=?", checkpoint); affected > 0 && verbose {
 			logger.Printf("payment %d rows deleted\n", affected)
 		}
+
+		this.mutexUnlock()
 
 		time.Sleep(time.Second * 19)
 	}
