@@ -83,6 +83,7 @@ func (this ErrorLogParser) collectAlarms() {
 			continue
 		}
 
+		this.mutexLock()
 		rows := this.query("select count(*) as am, cls, msg from error where ts<=? group by cls, msg order by am desc", checkpoint)
 		globalLock.Lock()
 		this.logCheckpoint(checkpoint)
@@ -104,6 +105,7 @@ func (this ErrorLogParser) collectAlarms() {
 		if affected := this.execSql("delete from error where ts<=?", checkpoint); affected > 0 && verbose {
 			logger.Printf("error %d rows deleted\n", affected)
 		}
+		this.mutexUnlock()
 	}
 
 }
