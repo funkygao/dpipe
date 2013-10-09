@@ -115,7 +115,9 @@ func (this PaymentParser) ParseLine(line string) (area string, ts uint64, data *
 
 	insert := "INSERT INTO payment(area, host, ts, type, uid, level, amount, ref, item, currency) VALUES(?,?,?,?,?,?,?,?,?,?)"
 	logInfo := extractLogInfo(data)
+	this.mutexLock()
 	this.execSql(insert, area, logInfo.host, ts, typ, uid, level, amount, ref, item, currency)
+	this.mutexUnlock()
 
 	return
 }

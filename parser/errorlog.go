@@ -59,7 +59,9 @@ func (this ErrorLogParser) ParseLine(line string) (area string, ts uint64, data 
 	logInfo := extractLogInfo(data)
 
 	insert := "INSERT INTO error(area, ts, cls, level, msg, flash, host) VALUES(?,?,?,?,?,?,?)"
+	this.mutexLock()
 	this.execSql(insert, area, ts, cls, level, msg, flash, logInfo.host)
+	this.mutexUnlock()
 
 	return
 }
