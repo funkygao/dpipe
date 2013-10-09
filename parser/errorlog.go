@@ -95,6 +95,7 @@ func (this ErrorLogParser) collectAlarms() {
 			logger.Printf("%5s%20s %s", gofmt.Comma(amount), cls, msg)
 		}
 		globalLock.Unlock()
+		rows.Close()
 
 		if affected := this.execSql("delete from error where ts<=?", checkpoint); affected > 0 && verbose {
 			logger.Printf("error %d rows deleted\n", affected)

@@ -2,6 +2,7 @@ package parser
 
 import (
 	"database/sql"
+	"fmt"
 	_ "github.com/mattn/go-sqlite3"
 	"sync"
 	"time"
@@ -23,7 +24,7 @@ func (this *DbParser) mutexUnlock() {
 
 // create table schema
 func (this *DbParser) createDB(createTable string, dbFile string) {
-	db, err := sql.Open(SQLITE3_DRIVER, dbFile)
+	db, err := sql.Open(SQLITE3_DRIVER, fmt.Sprintf("file:%s?cache=shared&mode=rwc", dbFile))
 	checkError(err)
 
 	this.db = db
@@ -34,9 +35,6 @@ func (this *DbParser) createDB(createTable string, dbFile string) {
 }
 
 func (this DbParser) execSql(sqlStmt string, args ...interface{}) (afftectedRows int64) {
-	this.mutexLock()
-	defer this.mutexUnlock()
-
 	stmt, err := this.db.Prepare(sqlStmt)
 	checkError(err)
 
@@ -57,14 +55,12 @@ func (this DbParser) query(querySql string, args ...interface{}) *sql.Rows {
 }
 
 func (this DbParser) getCheckpoint(querySql string, args ...interface{}) (ts int) {
-	this.mutexLock()
 	stmt, err := this.db.Prepare(querySql)
 	checkError(err)
 
 	if err := stmt.QueryRow(args...).Scan(&ts); err != nil {
 		ts = 0
 	}
-	this.mutexUnlock()
 
 	return
 }

@@ -70,6 +70,7 @@ func (this PaymentParser) collectAlarms() {
 			logger.Printf("%5s%3s%12s%5s\n", typ, area, gofmt.Comma(amount/100), currency)
 		}
 		globalLock.Unlock()
+		rows.Close()
 
 		if affected := this.execSql("delete from payment where ts<=?", checkpoint); affected > 0 && verbose {
 			logger.Printf("payment %d rows deleted\n", affected)
