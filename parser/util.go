@@ -6,7 +6,8 @@ import (
 
 func checkError(err error) {
 	if err != nil {
-		panic(err)
+		//panic(err)
+		logger.Println(err)
 	}
 }
 
