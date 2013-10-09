@@ -15,5 +15,6 @@ ALS guard
 
 ### TODO
 
-	timezone normalize
-	stop parser
+    more readable alarm screen output
+	echo parser alarm only after threshold
+    parsers can be configured
