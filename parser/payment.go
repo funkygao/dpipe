@@ -67,7 +67,7 @@ func (this PaymentParser) collectAlarms() {
 			err := rows.Scan(&amount, &typ, &area, &currency)
 			checkError(err)
 
-			logger.Printf("%5s%3s%12s%5s\n", typ, area, gofmt.Comma(amount), currency)
+			logger.Printf("%5s%3s%12s%5s\n", typ, area, gofmt.Comma(amount/100), currency)
 		}
 		globalLock.Unlock()
 
