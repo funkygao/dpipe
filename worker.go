@@ -9,6 +9,19 @@ import (
 	"time"
 )
 
+func readLine(r *bufio.Reader) ([]byte, error) {
+	line, isPrefix, err := r.ReadLine()
+	if !isPrefix {
+		return line, err
+	}
+	buf := append([]byte(nil), line...)
+	for isPrefix && err == nil {
+		line, isPrefix, err = r.ReadLine()
+		buf = append(buf, line...)
+	}
+	return buf, err
+}
+
 // Each single log file is a worker
 func run_worker(logfile string, conf jsonItem, wg *sync.WaitGroup, chLines chan int) {
 	defer wg.Done()
@@ -26,7 +39,7 @@ func run_worker(logfile string, conf jsonItem, wg *sync.WaitGroup, chLines chan 
 
 	reader := bufio.NewReader(file)
 	for {
-		line, _, err := reader.ReadLine()
+		line, err := readLine(reader)
 		if err != nil {
 			if err == io.EOF {
 				if options.tailmode {
