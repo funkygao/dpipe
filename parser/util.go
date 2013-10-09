@@ -22,36 +22,15 @@ type logInfo struct {
 func extractLogInfo(data *json.Json) logInfo {
 	var err error
 	info := logInfo{}
+
 	infoBody := data.Get("_log_info")
-
-	uid := infoBody.Get("uid")
-	if uid != nil {
-		info.uid, err = uid.Int64()
-		checkError(err)
-	}
-
-	scriptId := infoBody.Get("script_id")
-	if scriptId != nil {
-		info.scriptId, err = scriptId.Int64()
-		checkError(err)
-	}
-
-	serial := infoBody.Get("serial")
-	if serial != nil {
-		info.serial, err = serial.Int()
-		checkError(err)
-	}
-
-	host := infoBody.Get("host")
-	if host != nil {
-		info.host, err = host.String()
-		checkError(err)
-	}
-
-	ip := infoBody.Get("ip")
-	if ip != nil {
-		info.ip, err = ip.String()
-		checkError(err)
+	info.uid, err = infoBody.Get("uid").Int64()
+	info.scriptId, err = infoBody.Get("uid").Int64()
+	info.serial, err = infoBody.Get("serial").Int()
+	info.host, err = infoBody.Get("host").String()
+	info.ip, err = infoBody.Get("ip").String()
+	if err != nil {
+		// skip error because some column may be null
 	}
 
 	return info
