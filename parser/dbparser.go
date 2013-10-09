@@ -3,11 +3,21 @@ package parser
 import (
 	"database/sql"
 	_ "github.com/mattn/go-sqlite3"
+	"sync"
 )
 
 type DbParser struct {
 	DefaultParser
-	db *sql.DB
+	db   *sql.DB
+	lock *sync.Mutex
+}
+
+func (this *DbParser) mutexLock() {
+	this.lock.Lock()
+}
+
+func (this *DbParser) mutexUnlock() {
+	this.lock.Unlock()
 }
 
 // create table schema
@@ -16,6 +26,7 @@ func (this *DbParser) createDB(createTable string, dbFile string) {
 	checkError(err)
 
 	this.db = db
+	this.lock = new(sync.Mutex)
 
 	stmt, err := this.db.Prepare(createTable)
 	checkError(err)
@@ -25,6 +36,9 @@ func (this *DbParser) createDB(createTable string, dbFile string) {
 }
 
 func (this DbParser) execSql(sqlStmt string, args ...interface{}) (afftectedRows int64) {
+	this.mutexLock()
+	defer this.mutexUnlock()
+
 	stmt, err := this.db.Prepare(sqlStmt)
 	checkError(err)
 
