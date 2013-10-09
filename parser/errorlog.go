@@ -3,6 +3,7 @@ package parser
 import (
 	json "github.com/bitly/go-simplejson"
 	"github.com/funkygao/gofmt"
+	"regexp"
 	"time"
 )
 
@@ -10,6 +11,11 @@ import (
 type ErrorLogParser struct {
 	DbParser
 }
+
+var (
+	digitsRegexp = regexp.MustCompile(`\d+`)
+	tokenRegexp  = regexp.MustCompile(`pre: .*; current: .*`)
+)
 
 const ERRLOG_CREATE_TABLE = `
 CREATE TABLE IF NOT EXISTS error (
@@ -47,6 +53,7 @@ func (this ErrorLogParser) ParseLine(line string) (area string, ts uint64, data 
 	checkError(err)
 	msg, err := data.Get("message").String()
 	checkError(err)
+	msg = this.normalizeMsg(msg)
 	flash, err := data.Get("flash_version_client").String()
 
 	logInfo := extractLogInfo(data)
@@ -55,6 +62,12 @@ func (this ErrorLogParser) ParseLine(line string) (area string, ts uint64, data 
 	this.execSql(insert, area, ts, cls, level, msg, flash, logInfo.host)
 
 	return
+}
+
+func (this ErrorLogParser) normalizeMsg(msg string) string {
+	r := digitsRegexp.ReplaceAll([]byte(msg), []byte("?"))
+	r = tokenRegexp.ReplaceAll(r, []byte("pre cur"))
+	return string(r)
 }
 
 func (this ErrorLogParser) collectAlarms() {
@@ -72,7 +85,7 @@ func (this ErrorLogParser) collectAlarms() {
 			var amount int64
 			err := rows.Scan(&amount, &area, &cls, &msg)
 			checkError(err)
-			logger.Printf("%7s%5s%15s%s", gofmt.Comma(amount), area, cls, msg)
+			logger.Printf("%5s%3s%20s%s", gofmt.Comma(amount), area, cls, msg)
 		}
 		globalLock.Unlock()
 
