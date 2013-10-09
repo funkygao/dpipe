@@ -55,7 +55,7 @@ func (this PaymentParser) collectAlarms() {
 
 		rows := this.query("select sum(amount) as am, type, area, currency from payment where ts<=? group by type, area, currency order by am desc", checkpoint)
 		globalLock.Lock()
-		logger.Println(checkpoint)
+		logger.Println(time.Unix(int64(checkpoint), 0))
 		for rows.Next() {
 			var area, typ, currency string
 			var amount int64

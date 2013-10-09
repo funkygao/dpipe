@@ -80,7 +80,7 @@ func (this ErrorLogParser) collectAlarms() {
 
 		rows := this.query("select count(*) as am, cls, msg from error where ts<=? group by cls, msg order by am desc", checkpoint)
 		globalLock.Lock()
-		logger.Println(checkpoint)
+		logger.Println(time.Unix(int64(checkpoint), 0))
 		for rows.Next() {
 			var cls, msg string
 			var amount int64
