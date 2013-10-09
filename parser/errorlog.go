@@ -18,7 +18,6 @@ func newErrorLogParser(chAlarm chan<- Alarm) *ErrorLogParser {
 
 func (this ErrorLogParser) ParseLine(line string) (area string, ts uint64, data *json.Json) {
 	area, ts, data = this.DefaultParser.ParseLine(line)
-	logger.Println(data)
 
 	return
 }
