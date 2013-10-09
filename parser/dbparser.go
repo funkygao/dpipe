@@ -70,3 +70,12 @@ func (this DbParser) getCheckpoint(querySql string, args ...interface{}) (ts int
 
 	return
 }
+
+func (this DbParser) logCheckpoint(ts int) {
+	jst, err := time.LoadLocation("Asia/Shanghai")
+	if err != nil {
+		panic(err)
+	}
+	bjtime := t.In(jst)
+	logger.Println(bjtime)
+}

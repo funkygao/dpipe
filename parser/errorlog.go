@@ -76,9 +76,7 @@ func (this ErrorLogParser) collectAlarms() {
 			break
 		}
 
-	skip_too_few_errors:
-
-		time.Sleep(time.Second * 12)
+		time.Sleep(time.Second * 37)
 
 		checkpoint := this.getCheckpoint("select max(ts) from error")
 		if checkpoint == 0 {
@@ -87,15 +85,12 @@ func (this ErrorLogParser) collectAlarms() {
 
 		rows := this.query("select count(*) as am, cls, msg from error where ts<=? group by cls, msg order by am desc", checkpoint)
 		globalLock.Lock()
-		logger.Println(time.Unix(int64(checkpoint), 0))
+		this.logCheckpoint(checkpoint)
 		for rows.Next() {
 			var cls, msg string
 			var amount int64
 			err := rows.Scan(&amount, &cls, &msg)
 			checkError(err)
-			if amount < 100 {
-				goto skip_too_few_errors
-			}
 
 			logger.Printf("%5s%20s %s", gofmt.Comma(amount), cls, msg)
 		}

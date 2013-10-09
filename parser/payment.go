@@ -51,7 +51,7 @@ func (this PaymentParser) collectAlarms() {
 			break
 		}
 
-		time.Sleep(time.Second * 10)
+		time.Sleep(time.Second * 19)
 
 		checkpoint := this.getCheckpoint("select max(ts) from payment")
 		if checkpoint == 0 {
@@ -60,7 +60,7 @@ func (this PaymentParser) collectAlarms() {
 
 		rows := this.query("select sum(amount) as am, type, area, currency from payment where ts<=? group by type, area, currency order by am desc", checkpoint)
 		globalLock.Lock()
-		logger.Println(time.Unix(int64(checkpoint), 0))
+		this.logCheckpoint(checkpoint)
 		for rows.Next() {
 			var area, typ, currency string
 			var amount int64
