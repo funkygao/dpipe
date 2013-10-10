@@ -18,11 +18,7 @@ run:build
 	./alser -v -debug -test -tail
 
 up:
-	git push origin master
-	go get -u github.com/funkygao/alser/parser
-
-doc:up
-	@go doc github.com/funkygao/alser/parser
+	go get -u github.com/funkygao/alsparser
 
 fmt:
 	@gofmt -s -tabs=false -tabwidth=4 -w=true .

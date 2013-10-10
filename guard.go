@@ -24,7 +24,7 @@
 package main
 
 import (
-	"github.com/funkygao/alser/parser"
+	parser "github.com/funkygao/alsparser"
 	"github.com/funkygao/gofmt"
 	"path/filepath"
 	"runtime"
@@ -36,6 +36,7 @@ func guard(jsonConfig jsonConfig) {
 	parser.SetLogger(logger)
 	parser.SetVerbose(options.verbose)
 	parser.SetDebug(options.debug)
+	parser.SetDryRun(options.dryrun)
 
 	var lines int = 0
 	var workerN int = 0
