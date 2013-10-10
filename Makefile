@@ -19,6 +19,7 @@ run:build
 
 up:
 	go get -u github.com/funkygao/alsparser
+	go get -u github.com/funkygao/alser
 
 fmt:
 	@gofmt -s -tabs=false -tabwidth=4 -w=true .
