@@ -28,7 +28,7 @@ func (this *Option) validate() {
 	if this.showVersionOnly() {
 		fmt.Fprintf(os.Stderr, "%s %s %s %s\n", "alser",
 			version, runtime.GOOS, runtime.GOARCH)
-		shutdown()
+		os.Exit(0)
 	}
 }
 
@@ -49,8 +49,6 @@ func parseFlags() *Option {
 	flag.Usage = func() {
 		fmt.Fprint(os.Stderr, usage)
 		flag.PrintDefaults()
-
-		cleanup()
 	}
 
 	flag.Parse()
