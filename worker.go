@@ -23,6 +23,7 @@ func readLine(r *bufio.Reader) ([]byte, error) {
 }
 
 // Each single log file is a worker
+// Workers share some singleton parsers
 func run_worker(logfile string, conf jsonItem, wg *sync.WaitGroup, chLines chan int) {
 	defer wg.Done()
 
