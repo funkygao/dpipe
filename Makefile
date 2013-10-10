@@ -15,13 +15,16 @@ test:conf_test.go parser/all_test.go
 
 run:build
 	@rm -f var/alser.lock
-	./alser -v -debug -test -tail
+	./alser -v -debug -test -tail -pprof var/cpu.prof
 
 up:
 	go get -u github.com/funkygao/alsparser
 
 fmt:
 	@gofmt -s -tabs=false -tabwidth=4 -w=true .
+
+prof:build
+	@go tool pprof alser var/cpu.prof
 
 his:build
 	./alser -c conf/alser.history.json

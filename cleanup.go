@@ -1,15 +1,20 @@
 package main
 
 import (
-    "os"
-    "syscall"
+	"os"
+	"runtime/pprof"
+	"syscall"
 )
 
 func cleanup() {
-    syscall.Unlink(lockfile) // cleanup lock file
+	syscall.Unlink(lockfile) // cleanup lock file
+
+	if options.pprof != "" {
+		pprof.StopCPUProfile()
+	}
 }
 
 func shutdown() {
-    cleanup()
-    os.Exit(0)
+	cleanup()
+	os.Exit(0)
 }
