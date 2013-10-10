@@ -29,6 +29,7 @@ func init() {
 			panic(err)
 		}
 
+		logger.Printf("CPU profiler enabled, %s\n", options.pprof)
 		pprof.StartCPUProfile(f)
 	}
 
