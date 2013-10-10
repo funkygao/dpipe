@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/ActiveState/tail"
 	parser "github.com/funkygao/alsparser"
+	"github.com/funkygao/tail"
 	"sync"
 )
 
