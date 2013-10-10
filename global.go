@@ -20,7 +20,7 @@ var (
 )
 
 const (
-	version = "0.1.b"
+	version = "0.1.rc"
 	author  = "gaopeng"
 )
 
@@ -37,6 +37,6 @@ Flags:
 `
 	lockfile  = "var/alser.lock"
 	alarmlog  = "var/alarm.log"
-	tick      = 60 * 5 // 5 minutes
+	tick      = 60 * 1 // 1 minutes
 	tailSleep = 1      // 1 seconds between tail reading
 )
