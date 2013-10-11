@@ -14,8 +14,10 @@ func run_worker(logfile string, conf jsonItem, wg *sync.WaitGroup, chLines chan 
 	var tailConfig tail.Config
 	if options.tailmode {
 		tailConfig = tail.Config{
-			Follow: true,
-			ReOpen: true,
+			Follow: true, // Continue looking for new lines (tail -f)
+			Poll:   true, // Poll for file changes instead of using inotify
+			//ReOpen: true,
+			//Location: &tail.SeekInfo{Offset: int64(0), Whence: os.SEEK_CUR}
 		}
 	}
 
