@@ -19,5 +19,12 @@
             "PaymentParser"
         ],
         "pattern": "/mnt/funplus/logs/fp_rstory/history/payment*"
+    },
+    {
+        "name": "slowresponse",
+        "parsers": [
+            "SlowResponseParser"
+        ],
+        "pattern": "/mnt/funplus/logs/fp_rstory/history/slowresponse*"
     }
 ]
