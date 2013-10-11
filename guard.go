@@ -45,6 +45,7 @@ func guard(jsonConfig jsonConfig) {
 	// create all parsers at once
 	parser.NewParsers(jsonConfig.parsers(), chAlarm)
 
+	// loop through the whole config
 	for _, item := range jsonConfig {
 		paths, err := filepath.Glob(item.Pattern)
 		if err != nil {
@@ -54,6 +55,8 @@ func guard(jsonConfig jsonConfig) {
 		for _, logfile := range paths {
 			workerN++
 			wg.Add(1)
+
+			// each logfile is a dedicated goroutine worker
 			go run_worker(logfile, item, wg, chLines)
 		}
 	}
