@@ -19,6 +19,7 @@ run:build
 
 up:
 	go get -u github.com/funkygao/alsparser
+	go get -u github.com/funkygao/tail
 	go get -u github.com/funkygao/alser
 
 fmt:
