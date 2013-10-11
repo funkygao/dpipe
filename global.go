@@ -37,6 +37,6 @@ Flags:
 `
 	lockfile  = "var/alser.lock"
 	alarmlog  = "var/alarm.log"
-	tick      = 60 * 1 // 1 minutes
+	tick      = 60 * 2 // 2 minutes
 	tailSleep = 1      // 1 seconds between tail reading
 )
