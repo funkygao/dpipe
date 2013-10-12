@@ -17,11 +17,13 @@ var (
 	}
 
 	ticker *time.Ticker
+
+	BuildID = "unknown" // git version id, passed in from shell
 )
 
 const (
-	version = "0.1.rc"
-	author  = "gaopeng"
+	VERSION = "0.1.rc"
+	AUTHOR  = "gaopeng"
 )
 
 const (
