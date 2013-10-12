@@ -12,18 +12,13 @@ func init() {
 	options = parseFlags()
 	options.validate()
 
-	if _, err := os.Stat(lockfile); err == nil {
-		fmt.Fprintf(os.Stderr, "another instance is running, exit\n")
+	if instanceLocked() {
+		fmt.Fprintf(os.Stderr, "Another instance is running, exit...\n")
 		os.Exit(1)
 	}
+	lockInstance()
 
-	file, err := os.Create(lockfile)
-	if err != nil {
-		panic(err)
-	}
-	file.Close()
-
-	go trapSignals()
+	setupSignals()
 }
 
 func main() {

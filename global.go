@@ -2,8 +2,6 @@ package main
 
 import (
 	"log"
-	"os"
-	"syscall"
 	"time"
 )
 
@@ -11,18 +9,13 @@ var (
 	options *Option
 	logger  *log.Logger
 
-	caredSignals = []os.Signal{
-		syscall.SIGTERM, syscall.SIGKILL, syscall.SIGINT,
-		syscall.SIGHUP, syscall.SIGSTOP, syscall.SIGQUIT,
-	}
-
 	ticker *time.Ticker
 
 	BuildID = "unknown" // git version id, passed in from shell
 )
 
 const (
-	VERSION = "0.1.rc"
+	VERSION = "0.2.rc"
 	AUTHOR  = "gaopeng"
 )
 
