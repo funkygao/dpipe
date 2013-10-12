@@ -32,4 +32,6 @@ his:build
 	./alser -c conf/alser.history.json
 
 tail:build
-	./alser -c conf/alser.json -tail
+	while true; do \
+		./alser -c conf/alser.json -tail; \
+	done
