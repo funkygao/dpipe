@@ -26,5 +26,12 @@
             "SlowResponseParser"
         ],
         "pattern": "/mnt/funplus/logs/fp_rstory/slowresponse.*.log"
+    },
+    {
+        "name": "levelup",
+        "parsers": [
+            "LevelUpParser"
+        ],
+        "pattern": "/mnt/funplus/logs/fp_rstory/level_up.*.log"
     }
 ]
