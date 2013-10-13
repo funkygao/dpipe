@@ -31,6 +31,7 @@ import (
 )
 
 func guard(jsonConfig jsonConfig) {
+	startTime := time.Now()
 	parser.SetLogger(logger)
 	parser.SetVerbose(options.verbose)
 	parser.SetDebug(options.debug)
@@ -86,5 +87,5 @@ func guard(jsonConfig jsonConfig) {
 
 	parser.StopAll()
 
-	logger.Println("all lines scaned:", lines)
+	logger.Printf("%d lines scanned, %s used\n", lines, time.Since(startTime))
 }
