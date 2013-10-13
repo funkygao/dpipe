@@ -1,0 +1,16 @@
+{
+	// collectAlarm sleep interval
+	sleep: {
+		errorlog: 57
+		mongo: 17
+	}
+
+    error: {
+        msg_skip: [
+            "Energy Error, Client: ?, Server: ?, info:batch",
+            "Sorry, someone has logged in on your account from another computer.",
+            "batch token error! pre cur",
+            "payment error: OK"
+        ]
+    }
+}

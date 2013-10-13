@@ -1,0 +1,4 @@
+{
+    sleep: 95
+    amount_threshold: 12
+}

@@ -9,6 +9,7 @@ ALS guard
 
     go get github.com/bmizerany/assert
     go get github.com/bitly/go-simplejson
+    go get github.com/daviddengcn/go-ljson-conf
     go get github.com/mattn/go-sqlite3
     go get github.com/funkygao/tail
     go get github.com/funkygao/gofmt
