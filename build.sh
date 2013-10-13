@@ -17,4 +17,3 @@ go build -v -ldflags "-X main.BuildID $ID"
 mkdir -p var
 rm -f var/alser.lock
 ./alser -version
-echo 1>&2 "OK"
