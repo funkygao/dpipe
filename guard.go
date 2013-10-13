@@ -74,7 +74,7 @@ func guard(jsonConfig jsonConfig) {
 	// wait for all workers finish
 	go func() {
 		wg.Wait()
-		logger.Println("all", workerN, " workers finished")
+		logger.Println("all", workerN, "workers finished")
 
 		close(chLines)
 		close(chAlarm)
