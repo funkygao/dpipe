@@ -11,7 +11,7 @@ import (
 type signalHandler func(os.Signal)
 
 var signals = struct {
-	sync.Mutex // map in go is not thread safe
+	sync.Mutex // map in go is not thread/goroutine safe
 	handlers   map[os.Signal]signalHandler
 	c          chan os.Signal
 }{
@@ -30,10 +30,6 @@ func trapSignals() {
 	}
 }
 
-/*
-syscall.SIGTERM, syscall.SIGKILL, syscall.SIGINT,
-        syscall.SIGHUP, syscall.SIGSTOP, syscall.SIGQUIT,
-*/
 func registerSignalHandler(sig os.Signal, handler signalHandler) {
 	signals.Lock()
 	defer signals.Unlock()
@@ -44,10 +40,10 @@ func registerSignalHandler(sig os.Signal, handler signalHandler) {
 	}
 }
 
-func handlerIgnore(sig os.Signal) {}
+func handleIgnore(sig os.Signal) {}
 
-func handlerInterrupt(sig os.Signal) {
-	logger.Printf("%s signal recved\n", strings.ToUpper(sig.String()))
+func handleInterrupt(sig os.Signal) {
+	logger.Printf("got signal %s\n", strings.ToUpper(sig.String()))
 	logger.Println("terminated")
 	shutdown()
 }
@@ -55,6 +51,5 @@ func handlerInterrupt(sig os.Signal) {
 func setupSignals() {
 	go trapSignals()
 
-	registerSignalHandler(syscall.SIGINT, handlerInterrupt)
-
+	registerSignalHandler(syscall.SIGINT, handleInterrupt)
 }
