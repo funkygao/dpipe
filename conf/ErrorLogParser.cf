@@ -1,0 +1,7 @@
+{
+	// collectAlarm sleep interval
+	sleep: {
+		errorlog: 57
+		mongo: 17
+	}
+}
