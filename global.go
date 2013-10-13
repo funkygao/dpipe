@@ -2,8 +2,6 @@ package main
 
 import (
 	"log"
-	"os"
-	"syscall"
 	"time"
 )
 
@@ -11,17 +9,14 @@ var (
 	options *Option
 	logger  *log.Logger
 
-	caredSignals = []os.Signal{
-		syscall.SIGTERM, syscall.SIGKILL, syscall.SIGINT,
-		syscall.SIGHUP, syscall.SIGSTOP, syscall.SIGQUIT,
-	}
-
 	ticker *time.Ticker
+
+	BuildID = "unknown" // git version id, passed in from shell
 )
 
 const (
-	version = "0.1.b"
-	author  = "gaopeng"
+	VERSION = "0.2.rc"
+	AUTHOR  = "gaopeng"
 )
 
 const (
@@ -37,6 +32,6 @@ Flags:
 `
 	lockfile  = "var/alser.lock"
 	alarmlog  = "var/alarm.log"
-	tick      = 60 * 5 // 5 minutes
+	tick      = 60 * 2 // 2 minutes
 	tailSleep = 1      // 1 seconds between tail reading
 )

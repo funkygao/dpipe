@@ -1,49 +1,55 @@
 package main
 
 import (
-    "fmt"
-    "os"
-    "runtime"
-    "runtime/debug"
+	"fmt"
+	"os"
+	"runtime"
+	"runtime/debug"
+	"runtime/pprof"
 )
 
 func init() {
-    if _, err := os.Stat(lockfile); err == nil {
-        fmt.Fprintf(os.Stderr, "another instance is running, exit\n")
-        os.Exit(1)
-    }
+	options = parseFlags()
+	options.validate()
 
-    file, err := os.Create(lockfile)
-    if err != nil {
-        panic(err)
-    }
-    file.Close()
+	if instanceLocked() {
+		fmt.Fprintf(os.Stderr, "Another instance is running, exit...\n")
+		os.Exit(1)
+	}
+	lockInstance()
 
-    options = parseFlags()
-    options.validate()
-
-    go trapSignals()
+	setupSignals()
 }
 
 func main() {
-    defer func() {
-        cleanup()
+	defer func() {
+		cleanup()
 
-        if e := recover(); e != nil {
-            debug.PrintStack()
-            fmt.Fprintln(os.Stderr, e)
-        }
-    }()
+		if e := recover(); e != nil {
+			debug.PrintStack()
+			fmt.Fprintln(os.Stderr, e)
+		}
+	}()
 
-    logger = newLogger(options)
-    numCpu := runtime.NumCPU()/2 + 1
-    runtime.GOMAXPROCS(numCpu)
-    logger.Printf("starting with %d CPUs...\n", numCpu)
+	logger = newLogger(options)
+	numCpu := runtime.NumCPU()/2 + 1
+	runtime.GOMAXPROCS(numCpu)
+	logger.Printf("starting with %d CPUs...\n", numCpu)
 
-    jsonConfig := loadConfig(options.config)
-    logger.Printf("json config has %d items to guard\n", len(jsonConfig))
+	if options.pprof != "" {
+		f, err := os.Create(options.pprof)
+		if err != nil {
+			panic(err)
+		}
 
-    guard(jsonConfig)
+		logger.Printf("CPU profiler enabled, %s\n", options.pprof)
+		pprof.StartCPUProfile(f)
+	}
 
-    logger.Println("terminated")
+	jsonConfig := loadConfig(options.config)
+	logger.Printf("json config has %d items to guard\n", len(jsonConfig))
+
+	guard(jsonConfig)
+
+	logger.Println("terminated")
 }

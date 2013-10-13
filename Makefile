@@ -1,34 +1,21 @@
-build:
-	mkdir -p var
-	rm -f var/alser.lock
-	go build
-
-install:build
-	go install 
-
-clean:
-	go clean
-
-test:conf_test.go parser/all_test.go
+test:
 	@go test -v
-	@go test -v ./parser
 
-run:build
+run:
 	@rm -f var/alser.lock
-	./alser -v -debug -test -tail
-
-up:
-	git push origin master
-	go get -u github.com/funkygao/alser/parser
-
-doc:up
-	@go doc github.com/funkygao/alser/parser
+	./alser -v -debug -test -tail -pprof var/cpu.prof
 
 fmt:
 	@gofmt -s -tabs=false -tabwidth=4 -w=true .
 
-his:build
+prof:
+	@go tool pprof alser var/cpu.prof
+
+his:
 	./alser -c conf/alser.history.json
 
-tail:build
-	./alser -c conf/alser.json -tail
+tail:
+	while true; do \
+		./alser -c conf/alser.json -tail; \
+		sleep 5; \
+	done
