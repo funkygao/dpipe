@@ -19,6 +19,7 @@ type Option struct {
 	dryrun      bool
 	pprof       string
 	parser      string
+	lock        bool
 }
 
 func (this *Option) showVersionOnly() bool {
@@ -40,6 +41,7 @@ func parseFlags() *Option {
 		verbose     = flag.Bool("v", false, "verbose")
 		config      = flag.String("c", "conf/alser.json", "config json file")
 		logfile     = flag.String("l", "", "alser log file name")
+		lock        = flag.Bool("lock", true, "lock so that only 1 instance can run")
 		showversion = flag.Bool("version", false, "show version")
 		debug       = flag.Bool("debug", false, "debug mode")
 		test        = flag.Bool("test", false, "test mode")
@@ -47,7 +49,7 @@ func parseFlags() *Option {
 		tailmode    = flag.Bool("tail", false, "tail mode")
 		dr          = flag.Bool("dry-run", false, "dry run")
 		cpuprof     = flag.String("pprof", "", "cpu pprof file")
-		p           = flag.String("parser", "", "only run this parser class")
+		p           = flag.String("p", "", "only run this parser class")
 	)
 	flag.Usage = func() {
 		fmt.Fprint(os.Stderr, usage)
@@ -57,5 +59,5 @@ func parseFlags() *Option {
 	flag.Parse()
 
 	return &Option{*verbose, *config, *showversion, *logfile, *debug,
-		*test, *t, *tailmode, *dr, *cpuprof, *p}
+		*test, *t, *tailmode, *dr, *cpuprof, *p, *lock}
 }

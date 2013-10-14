@@ -43,6 +43,10 @@ func guard(jsonConfig jsonConfig) {
 	chLines := make(chan int)
 	chAlarm := make(chan parser.Alarm, 1000)
 
+	if options.parser != "" {
+		logger.Printf("only 1 parser: %s running\n", options.parser)
+	}
+
 	// create all parsers at once
 	parser.NewParsers(jsonConfig.parsers(), chAlarm)
 

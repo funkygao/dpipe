@@ -12,11 +12,13 @@ func init() {
 	options = parseFlags()
 	options.validate()
 
-	if instanceLocked() {
-		fmt.Fprintf(os.Stderr, "Another instance is running, exit...\n")
-		os.Exit(1)
+	if options.lock {
+		if instanceLocked() {
+			fmt.Fprintf(os.Stderr, "Another instance is running, exit...\n")
+			os.Exit(1)
+		}
+		lockInstance()
 	}
-	lockInstance()
 
 	setupSignals()
 }
