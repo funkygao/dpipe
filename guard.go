@@ -97,6 +97,12 @@ func guard(jsonConfig jsonConfig) {
 		lines += l
 	}
 
+	if options.parser != "" {
+		// FIXME
+		// wait parser's collectAlarm done
+		<-time.After(time.Minute * 3)
+	}
+
 	parser.StopAll()
 
 	logger.Printf("%d lines scanned, %s used\n", lines, time.Since(startTime))
