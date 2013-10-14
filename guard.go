@@ -75,6 +75,10 @@ func guard(jsonConfig jsonConfig) {
 		go runTicker(&lines)
 	}
 
+	if workerN == 0 && options.parser != "" {
+		logger.Println("valid parsers:", jsonConfig.parsers())
+	}
+
 	logger.Println(workerN, "workers started")
 
 	go runAlarmCollector(chAlarm)
