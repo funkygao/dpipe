@@ -18,6 +18,7 @@ type Option struct {
 	tailmode    bool
 	dryrun      bool
 	pprof       string
+	parser      string
 }
 
 func (this *Option) showVersionOnly() bool {
@@ -46,6 +47,7 @@ func parseFlags() *Option {
 		tailmode    = flag.Bool("tail", false, "tail mode")
 		dr          = flag.Bool("dry-run", false, "dry run")
 		cpuprof     = flag.String("pprof", "", "cpu pprof file")
+		p           = flag.String("parser", "", "only run this parser class")
 	)
 	flag.Usage = func() {
 		fmt.Fprint(os.Stderr, usage)
@@ -55,5 +57,5 @@ func parseFlags() *Option {
 	flag.Parse()
 
 	return &Option{*verbose, *config, *showversion, *logfile, *debug,
-		*test, *t, *tailmode, *dr, *cpuprof}
+		*test, *t, *tailmode, *dr, *cpuprof, *p}
 }

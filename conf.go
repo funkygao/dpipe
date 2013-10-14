@@ -13,6 +13,16 @@ type jsonItem struct {
 
 type jsonConfig []jsonItem
 
+func (this jsonItem) hasParser(parser string) bool {
+	for _, p := range this.Parsers {
+		if p == parser {
+			return true
+		}
+	}
+
+	return false
+}
+
 func (this jsonConfig) parsers() []string {
 	r := make([]string, 0)
 	for _, item := range this {

@@ -48,6 +48,10 @@ func guard(jsonConfig jsonConfig) {
 
 	// loop through the whole config
 	for _, item := range jsonConfig {
+		if options.parser != "" && !item.hasParser(options.parser) {
+			continue
+		}
+
 		paths, err := filepath.Glob(item.Pattern)
 		if err != nil {
 			panic(err)
