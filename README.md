@@ -18,8 +18,5 @@ ALS guard
 
 ### TODO
 
-    more readable alarm screen output
-    parsers can be configured, each parser one conf
-    MongoException guard
-    each parser should have cleanup, such as close db
     alarm according to history behavior
+    alser should wait for alsparser collectAlarm done before exit
