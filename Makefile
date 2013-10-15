@@ -12,6 +12,7 @@ prof:
 	@go tool pprof alser var/cpu.prof
 
 his:
+	@rm -f var/*
 	./alser -c conf/alser.history.json
 
 tail:
