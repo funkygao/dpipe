@@ -41,7 +41,7 @@ func guard(jsonConfig jsonConfig) {
 	var workerN int = 0
 	var wg = new(sync.WaitGroup)
 	chLines := make(chan int)
-	chAlarm := make(chan parser.Alarm, 1000)
+	chAlarm := make(chan parser.Alarm, 1000) // collect alarms from all parsers
 
 	if options.parser != "" {
 		logger.Printf("only 1 parser: %s running\n", options.parser)
