@@ -5,6 +5,10 @@
 		mongo: 17
 	}
 
+    mongo: {
+        beep_threshold: 2
+    }
+
     error: {
         msg_skip: [
             "Energy Error, Client: ?, Server: ?, info:batch",
