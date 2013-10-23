@@ -7,6 +7,13 @@
         "pattern": "/mnt/funplus/logs/fp_rstory/history/cache_set_fail*"
     },
     {
+        "name": "phperror",
+        "parsers": [
+            "PhpErrorLogParser"
+        ],
+        "pattern": "/mnt/funplus/logs/fp_rstory/history/phperror*"
+    },
+    {
         "name": "any error including exceptions",
         "parsers": [
             "ErrorLogParser"
