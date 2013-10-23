@@ -17,6 +17,7 @@ his:
 
 tail:
 	while true; do \
+		rm -f var/*; \
 		./alser -c conf/alser.json -tail; \
 		sleep 3; \
 	done
