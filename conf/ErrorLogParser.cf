@@ -10,6 +10,7 @@
     }
 
     error: {
+        beep_threshold: 200
         msg_skip: [
             "Energy Error, Client: ?, Server: ?, info:batch",
             "XP Error, Client: ?, Server: ?, info:batch",
