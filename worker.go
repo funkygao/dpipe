@@ -3,6 +3,7 @@ package main
 import (
 	parser "github.com/funkygao/alsparser"
 	"github.com/funkygao/tail"
+	"os"
 	"sync"
 )
 
@@ -17,7 +18,7 @@ func run_worker(logfile string, conf jsonItem, wg *sync.WaitGroup, chLines chan 
 			Follow: true, // Continue looking for new lines (tail -f)
 			Poll:   true, // Poll for file changes instead of using inotify
 			//ReOpen: true,
-			//Location: &tail.SeekInfo{Offset: int64(0), Whence: os.SEEK_CUR}
+			Location: &tail.SeekInfo{Offset: int64(0), Whence: os.SEEK_END},
 		}
 	}
 
