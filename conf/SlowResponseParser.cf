@@ -1,3 +1,4 @@
 {
     sleep: 23
+    beep_threshold: 20
 }
