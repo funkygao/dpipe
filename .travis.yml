@@ -11,7 +11,7 @@ install:
 script:
   - pushd $TRAVIS_BUILD_DIR
   - mkdir -p var
-  - go test
+  - make test
   - popd
 notifications:
   email: false
