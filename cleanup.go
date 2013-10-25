@@ -7,7 +7,9 @@ import (
 )
 
 func cleanup() {
-	syscall.Unlink(lockfile) // cleanup lock file
+	if options.lock {
+		syscall.Unlink(LOCKFILE) // cleanup lock file
+	}
 
 	if options.pprof != "" {
 		pprof.StopCPUProfile()

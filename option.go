@@ -31,14 +31,14 @@ func parseFlags() *Option {
 		showversion = flag.Bool("version", false, "show version")
 		debug       = flag.Bool("debug", false, "debug mode")
 		test        = flag.Bool("test", false, "test mode")
-		t           = flag.Int("t", tick, "tick interval in seconds")
+		t           = flag.Int("t", TICKER, "tick interval in seconds")
 		tailmode    = flag.Bool("tail", false, "tail mode")
 		dr          = flag.Bool("dry-run", false, "dry run")
 		cpuprof     = flag.String("pprof", "", "cpu pprof file")
 		p           = flag.String("p", "", "only run this parser class")
 	)
 	flag.Usage = func() {
-		fmt.Fprint(os.Stderr, usage)
+		fmt.Fprint(os.Stderr, USAGE)
 		flag.PrintDefaults()
 	}
 

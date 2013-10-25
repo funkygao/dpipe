@@ -5,12 +5,12 @@ import (
 )
 
 func instanceLocked() bool {
-	_, err := os.Stat(lockfile)
+	_, err := os.Stat(LOCKFILE)
 	return err == nil
 }
 
 func lockInstance() {
-	file, err := os.Create(lockfile)
+	file, err := os.Create(LOCKFILE)
 	if err != nil {
 		panic(err)
 	}

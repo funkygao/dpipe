@@ -16,8 +16,7 @@ func runTicker(lines *int) {
 }
 
 func runAlarmCollector(ch <-chan parser.Alarm) {
-	alarmLogger := newAlarmLogger()
 	for alarm := range ch {
-		alarmLogger.Println(alarm)
+		logger.Println(alarm)
 	}
 }
