@@ -1,5 +1,6 @@
 test:
 	@go test -v
+	cd parser; go test -v
 
 run:
 	@rm -f var/alser.lock
