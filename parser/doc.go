@@ -10,4 +10,4 @@ has 2 major jobs:
 		one line each time
     alarm
 */
-package alsparser
+package parser

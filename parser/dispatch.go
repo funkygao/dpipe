@@ -1,4 +1,4 @@
-package alsparser
+package parser
 
 // Dispatch a line of log entry to target parser by name
 func Dispatch(parserName, line string) {

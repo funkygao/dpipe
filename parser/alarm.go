@@ -1,4 +1,4 @@
-package alsparser
+package parser
 
 // TODO
 type Alarm interface {

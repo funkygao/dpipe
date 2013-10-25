@@ -1,4 +1,4 @@
-package alsparser
+package parser
 
 import (
     json "github.com/bitly/go-simplejson"

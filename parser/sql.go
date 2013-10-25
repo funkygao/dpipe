@@ -1,4 +1,4 @@
-package alsparser
+package parser
 
 const (
 	// error log

@@ -1,4 +1,4 @@
-package alsparser
+package parser
 
 import (
 	"log"
