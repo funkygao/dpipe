@@ -40,6 +40,7 @@ func main() {
 	}()
 
 	logger = newLogger(options)
+
 	numCpu := runtime.NumCPU()
 	maxProcs := numCpu/2 + 1
 	runtime.GOMAXPROCS(numCpu)
@@ -51,12 +52,12 @@ func main() {
 			panic(err)
 		}
 
-		logger.Printf("CPU profiler enabled, %s\n", options.pprof)
+		logger.Printf("CPU profiler %s enabled\n", options.pprof)
 		pprof.StartCPUProfile(f)
 	}
 
 	jsonConfig := loadConfig(options.config)
-	logger.Printf("json config has %d items to guard\n", len(jsonConfig))
+	logger.Printf("%s has %d items to guard\n", options.config, len(jsonConfig))
 
 	guard(jsonConfig)
 
