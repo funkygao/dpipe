@@ -22,3 +22,4 @@ ALS guard
     each error msg has alarm threshold
     auto restart when more files or few files appear
     backoff email alarm
+    fsmon
