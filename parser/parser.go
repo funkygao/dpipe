@@ -24,6 +24,25 @@ type Parser interface {
 	Stop()
 }
 
+// Pass through logger
+func SetLogger(l *log.Logger) {
+	logger = l
+}
+
+// Enable/disable debug mode
+func SetDebug(d bool) {
+	debug = d
+}
+
+// Enable verbose or not
+func SetVerbose(v bool) {
+	verbose = v
+}
+
+func SetDryRun(dr bool) {
+	dryRun = dr
+}
+
 // Create all parsers by name at once
 func NewParsers(parsers []string, chAlarm chan<- Alarm) {
 	for _, p := range parsers {

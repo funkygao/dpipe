@@ -21,6 +21,7 @@ func (this *AlsParser) init(name string, ch chan<- Alarm) {
 	this.name = name
 	this.chAlarm = ch
 	this.stopped = false
+
 	this.loadConf(CONF_DIR + this.name + ".cf")
 }
 

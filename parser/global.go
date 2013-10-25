@@ -7,17 +7,17 @@ import (
 )
 
 var (
-	allParsers  map[string]Parser // registered on init manually
-	parsersLock = new(sync.Mutex) // lock across all parsers, so that println will not be interlaced
-	logger      *log.Logger
+	allParsers  map[string]Parser = make(map[string]Parser) // registered on init manually
+	parsersLock                   = new(sync.Mutex)         // lock across all parsers, so that println will not be interlaced
 
-	tzAjust, _ = time.LoadLocation(TZ)
+	tzAjust, _ = time.LoadLocation(TZ) // same time info for all locales
 
-	verbose bool = false
-	debug   bool = false
-	dryRun  bool = false
+	logger  *log.Logger // shared with alser
+	verbose bool        = false
+	debug   bool        = false
+	dryRun  bool        = false
 
-	beeped int = 1
+	beeped int = 1 // how many beeps that has been triggered
 
 	CURRENCY_TABLE = map[string]float32{
 		"IDR": 0.00009,
@@ -47,8 +47,6 @@ var (
 )
 
 const (
-	version = "0.1.rc"
-
 	LINE_SPLITTER  = ","
 	LINE_SPLIT_NUM = 3
 
@@ -57,22 +55,3 @@ const (
 
 	CONF_DIR = "conf/"
 )
-
-// Pass through logger
-func SetLogger(l *log.Logger) {
-	logger = l
-}
-
-// Enable/disable debug mode
-func SetDebug(d bool) {
-	debug = d
-}
-
-// Enable verbose or not
-func SetVerbose(v bool) {
-	verbose = v
-}
-
-func SetDryRun(dr bool) {
-	dryRun = dr
-}
