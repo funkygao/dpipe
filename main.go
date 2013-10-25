@@ -61,5 +61,5 @@ func main() {
 
 	guard(jsonConfig)
 
-	logger.Println("terminated")
+	shutdown()
 }

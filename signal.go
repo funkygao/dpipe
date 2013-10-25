@@ -13,15 +13,15 @@ type signalHandler func(os.Signal)
 var signals = struct {
 	sync.Mutex // map in go is not thread/goroutine safe
 	handlers   map[os.Signal]signalHandler
-	c          chan os.Signal
+	C          chan os.Signal
 }{
 	handlers: make(map[os.Signal]signalHandler),
-	c:        make(chan os.Signal, 20),
+	C:        make(chan os.Signal, 20),
 }
 
 func trapSignals() {
-	for sig := range signals.c {
-		signals.Lock()
+	for sig := range signals.C {
+		signals.Lock() // map not goroutine safe in golang
 		handler := signals.handlers[sig]
 		signals.Unlock()
 		if handler != nil {
@@ -34,9 +34,9 @@ func registerSignalHandler(sig os.Signal, handler signalHandler) {
 	signals.Lock()
 	defer signals.Unlock()
 
-	if _, alreadyExists := signals.handlers[sig]; !alreadyExists {
+	if _, present := signals.handlers[sig]; !present {
 		signals.handlers[sig] = handler
-		signal.Notify(signals.c, sig)
+		signal.Notify(signals.C, sig)
 	}
 }
 
@@ -44,7 +44,7 @@ func handleIgnore(sig os.Signal) {}
 
 func handleInterrupt(sig os.Signal) {
 	logger.Printf("got signal %s\n", strings.ToUpper(sig.String()))
-	logger.Println("terminated")
+
 	shutdown()
 }
 
