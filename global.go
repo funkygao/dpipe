@@ -15,7 +15,7 @@ var (
 )
 
 const (
-	VERSION = "0.2.rc"
+	VERSION = "0.3.rc"
 	AUTHOR  = "gaopeng"
 )
 
