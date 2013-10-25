@@ -25,7 +25,6 @@ const (
 Flags:
 `
 
-	LOCKFILE  = "var/alser.lock"
-	TICKER    = 60 * 2 // 2 minutes
-	tailSleep = 1      // 1 seconds between tail reading
+	LOCKFILE = "var/alser.lock"
+	TICKER   = 60 * 2 // 2 minutes
 )
