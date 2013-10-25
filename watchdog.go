@@ -18,7 +18,8 @@ func runTicker(ticker *time.Ticker, lines *int) {
 }
 
 func runAlarmCollector(ch <-chan parser.Alarm) {
-	// we don't when to send alarm
+	// we don't know when to send alarm, we just send alarm one by one
+	// alarm can span several lines
 	// it's parsers' responsibility for flow control such as backoff
 	for alarm := range ch {
 		// TODO send email
