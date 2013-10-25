@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/funkygao/als/parser"
+	"github.com/funkygao/alser/parser"
 	"github.com/funkygao/gofmt"
 	"runtime"
 )
