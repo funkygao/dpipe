@@ -35,7 +35,7 @@ func parseFlags() *Option {
 		tailmode    = flag.Bool("tail", false, "tail mode")
 		dr          = flag.Bool("dry-run", false, "dry run")
 		cpuprof     = flag.String("pprof", "", "cpu pprof file")
-		p           = flag.String("p", "", "only run this parser class")
+		p           = flag.String("parser", "", "only run this parser class")
 	)
 	flag.Usage = func() {
 		fmt.Fprint(os.Stderr, USAGE)
