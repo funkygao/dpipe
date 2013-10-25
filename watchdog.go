@@ -18,7 +18,10 @@ func runTicker(ticker *time.Ticker, lines *int) {
 }
 
 func runAlarmCollector(ch <-chan parser.Alarm) {
+	// we don't when to send alarm
+	// it's parsers' responsibility for flow control such as backoff
 	for alarm := range ch {
+		// TODO send email
 		logger.Println(alarm)
 	}
 }

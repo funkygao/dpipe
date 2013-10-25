@@ -93,7 +93,7 @@ func guard(jsonConfig jsonConfig) {
 		close(chAlarm)
 	}()
 
-	// collect how many lines scanned
+	// after all workers finished, collect how many lines scanned
 	for l := range chLines {
 		lines += l
 	}

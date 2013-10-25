@@ -41,7 +41,7 @@ func main() {
 		}
 	}()
 
-	jsonConfig := loadConfig(options.config)
+	jsonConfig := loadJsonConfig(options.config)
 	if options.parser != "" && !jsonConfig.hasParser(options.parser) {
 		logger.Println("invalid parser:", options.parser)
 		logger.Println("valid parsers:", jsonConfig.parsers())

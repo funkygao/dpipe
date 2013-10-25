@@ -58,7 +58,7 @@ func (this jsonConfig) parsersCount() int {
 	return len(this.parsers())
 }
 
-func loadConfig(filename string) (config jsonConfig) {
+func loadJsonConfig(filename string) (config jsonConfig) {
 	file, e := os.Open(filename)
 	if e != nil {
 		panic(e)

@@ -8,7 +8,7 @@ import (
 func TestLoadConfig(t *testing.T) {
 	defer cleanup()
 
-	conf := loadConfig("fixtures/alser.test.json")
+	conf := loadJsonConfig("fixtures/alser.test.json")
 	assert.Equal(t, 6, len(conf))
 	assert.Equal(t, "payments", conf[5].Name)
 	assert.Equal(t, "/mnt/funplus/logs/fp_rstory/cache_set_fail.*.log", conf[0].Pattern)
@@ -17,6 +17,6 @@ func TestLoadConfig(t *testing.T) {
 func TestJsonConfigParsers(t *testing.T) {
 	defer cleanup()
 
-	conf := loadConfig("fixtures/alser.test.json")
+	conf := loadJsonConfig("fixtures/alser.test.json")
 	assert.Equal(t, 3, len(conf.parsers()))
 }
