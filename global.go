@@ -30,6 +30,7 @@ const (
 
 Flags:
 `
+
 	lockfile  = "var/alser.lock"
 	alarmlog  = "var/alarm.log"
 	tick      = 60 * 2 // 2 minutes

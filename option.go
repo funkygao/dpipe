@@ -22,19 +22,6 @@ type Option struct {
 	lock        bool
 }
 
-func (this *Option) showVersionOnly() bool {
-	return this.showversion
-}
-
-func (this *Option) validate() {
-	if this.showVersionOnly() {
-		fmt.Fprintf(os.Stderr, "ALSer %s (build: %s)\n", VERSION, BuildID)
-		fmt.Fprintf(os.Stderr, "Built with %s %s for %s/%s\n",
-			runtime.Compiler, runtime.Version(), runtime.GOOS, runtime.GOARCH)
-		os.Exit(0)
-	}
-}
-
 // parse argv to Option struct
 func parseFlags() *Option {
 	var (
