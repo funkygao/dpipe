@@ -3,12 +3,10 @@ go:
   - 1.1.2
 install:
   - go get github.com/bmizerany/assert
-  - go get github.com/funkygao/gofmt
-  - go get github.com/funkygao/alsparser
   - go get github.com/bitly/go-simplejson
   - go get github.com/mattn/go-sqlite3
-  - go get github.com/ActiveState/tail
-  - go get -u github.com/funkygao/alsparser
+  - go get github.com/funkygao/gofmt
+  - go get -u github.com/funkygao/tail
   - go get -u github.com/funkygao/alser
 script:
   - pushd $TRAVIS_BUILD_DIR
