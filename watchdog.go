@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-func runTicker(lines *int) {
+func runTicker(ticker *time.Ticker, lines *int) {
 	ms := new(runtime.MemStats)
 	for _ = range ticker.C {
 		runtime.ReadMemStats(ms)

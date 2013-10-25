@@ -1,10 +1,11 @@
 /*
           main
+           |
            |<-------------------------------
            |                                |
-           | goN(wait group)                |
-           V                                |
-     -----------------------                |
+           | goN(wait group)           -----------------
+           V                          | alarm collector |
+     -----------------------           -----------------
     |       |       |       |               |
    log1    log2    ...     logN             |
     |       |       |       |               | alarm
@@ -31,7 +32,9 @@ import (
 )
 
 func guard(jsonConfig jsonConfig) {
-	startTime := time.Now()
+	startTime = time.Now()
+
+	// pass config to parsers
 	parser.SetLogger(logger)
 	parser.SetVerbose(options.verbose)
 	parser.SetDebug(options.debug)
@@ -43,45 +46,43 @@ func guard(jsonConfig jsonConfig) {
 	chLines := make(chan int)
 	chAlarm := make(chan parser.Alarm, 1000) // collect alarms from all parsers
 
-	if options.parser != "" {
-		logger.Printf("only 1 parser: %s running\n", options.parser)
+	// ticker watchdog for reporting workers progress
+	if options.tick > 0 {
+		ticker := time.NewTicker(time.Second * time.Duration(options.tick))
+		go runTicker(ticker, &lines)
 	}
+
+	// unified alarm handling
+	go runAlarmCollector(chAlarm)
 
 	// create all parsers at once
 	parser.NewParsers(jsonConfig.parsers(), chAlarm)
 
-	// loop through the whole config
+	// invoke worker for each log file of each config item
 	for _, item := range jsonConfig {
 		if options.parser != "" && !item.hasParser(options.parser) {
+			// item parser skipped
 			continue
 		}
 
-		paths, err := filepath.Glob(item.Pattern)
+		logfiles, err := filepath.Glob(item.Pattern)
 		if err != nil {
 			panic(err)
 		}
 
-		for _, logfile := range paths {
+		for _, logfile := range logfiles {
 			workerN++
 			wg.Add(1)
 
 			// each logfile is a dedicated goroutine worker
-			go run_worker(logfile, item, wg, chLines)
+			go runWorker(logfile, item, wg, chLines)
 		}
 	}
 
-	if options.tick > 0 {
-		ticker = time.NewTicker(time.Second * time.Duration(options.tick))
-		go runTicker(&lines)
+	if options.parser != "" {
+		logger.Printf("only parser %s running\n", options.parser)
 	}
-
-	if workerN == 0 && options.parser != "" {
-		logger.Println("valid parsers:", jsonConfig.parsers())
-	}
-
 	logger.Println(workerN, "workers started")
-
-	go runAlarmCollector(chAlarm)
 
 	// wait for all workers finish
 	go func() {
@@ -105,5 +106,5 @@ func guard(jsonConfig jsonConfig) {
 
 	parser.StopAll()
 
-	logger.Printf("%d lines scanned, %s used\n", lines, time.Since(startTime))
+	logger.Printf("%d lines scanned, %s elapsed\n", lines, time.Since(startTime))
 }
