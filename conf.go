@@ -66,7 +66,7 @@ func loadConfig(filename string) (config jsonConfig) {
 			jsonItem{
 				Name:    "test",
 				Parsers: []string{"PaymentParser", "ErrorLogParser", "MemcacheFailParser"},
-				Pattern: "test/*.log"})
+				Pattern: "fixtures/*.log"})
 	}
 
 	return
