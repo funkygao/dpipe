@@ -40,9 +40,10 @@ func main() {
 	}()
 
 	logger = newLogger(options)
-	numCpu := runtime.NumCPU()/2 + 1
+	numCpu := runtime.NumCPU()
+	maxProcs := numCpu/2 + 1
 	runtime.GOMAXPROCS(numCpu)
-	logger.Printf("starting with %d CPUs...\n", numCpu)
+	logger.Printf("starting with %d/%d CPUs...\n", maxProcs, numCpu)
 
 	if options.pprof != "" {
 		f, err := os.Create(options.pprof)
