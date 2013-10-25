@@ -4,6 +4,7 @@ import (
 	"fmt"
 	json "github.com/bitly/go-simplejson"
 	"github.com/funkygao/gofmt"
+	"github.com/funkygao/gotime"
 	_ "github.com/mattn/go-sqlite3"
 	"time"
 )
@@ -90,7 +91,7 @@ func (this *PaymentParser) ParseLine(line string) (area string, ts uint64, data 
 
 	typ, err := data.Get("type").String()
 	if err != nil || typ != "OK" {
-		this.colorPrintln(FgRed, "Payment "+tsToString(int(ts))+" "+typ)
+		this.colorPrintln(FgRed, "Payment "+gotime.TsToString(int(ts))+" "+typ)
 		return
 	}
 

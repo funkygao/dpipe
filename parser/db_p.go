@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"github.com/funkygao/gotime"
 	_ "github.com/mattn/go-sqlite3"
 	"sync"
 )
@@ -111,6 +112,6 @@ func (this DbParser) getCheckpoint(table string, wheres ...string) (tsFrom, tsTo
 
 func (this DbParser) logCheckpoint(color string, tsFrom, tsTo int, title string) {
 	fmt.Println() // seperator
-	line := fmt.Sprintf("(%s  ~  %s) %s", tsToString(tsFrom), tsToString(tsTo), title)
+	line := fmt.Sprintf("(%s  ~  %s) %s", gotime.TsToString(tsFrom), gotime.TsToString(tsTo), title)
 	this.colorPrintln(color, line)
 }

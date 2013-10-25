@@ -5,6 +5,7 @@ import (
 	"fmt"
 	json "github.com/bitly/go-simplejson"
 	"github.com/funkygao/gofmt"
+	"github.com/funkygao/gotime"
 	"regexp"
 	"strings"
 	"time"
@@ -66,7 +67,7 @@ func (this ErrorLogParser) ParseLine(line string) (area string, ts uint64, data 
 
 	if cls == "MongoCursorTimeoutException" {
 		// directly output, instead of feeding db
-		this.colorPrintln(FgRed, "MongoCursorTimeoutException "+tsToString(int(ts))+" "+msg)
+		this.colorPrintln(FgRed, "MongoCursorTimeoutException "+gotime.TsToString(int(ts))+" "+msg)
 		return
 	}
 

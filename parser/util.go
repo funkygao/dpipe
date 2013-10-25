@@ -2,7 +2,6 @@ package parser
 
 import (
 	json "github.com/bitly/go-simplejson"
-	"time"
 )
 
 func checkError(err error) {
@@ -39,10 +38,4 @@ func extractLogInfo(data *json.Json) logInfo {
 	info.ip, _ = infoBody.Get("ip").String()
 
 	return info
-}
-
-// timestamp of UTC to beijing time
-func tsToString(ts int) string {
-	t := time.Unix(int64(ts), 0)
-	return t.In(tzAjust).Format("01-02 15:04:05")
 }
