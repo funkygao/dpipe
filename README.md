@@ -23,3 +23,4 @@ ALS guard
     auto restart when more files or few files appear
     backoff email alarm
     fsmon
+    main wait for all parsers collect alarm done
