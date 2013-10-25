@@ -6,9 +6,10 @@ import (
 )
 
 var (
-	options *Option
-	logger  *log.Logger
-	ticker  *time.Ticker
+	options   *Option
+	logger    *log.Logger
+	ticker    *time.Ticker
+	startTime time.Time
 
 	BuildID = "unknown" // git version id, passed in from shell
 )
