@@ -13,6 +13,7 @@ ALS guard
     go get github.com/mattn/go-sqlite3
     go get github.com/funkygao/tail
     go get github.com/funkygao/gofmt
+    go get github.com/funkygao/gotime
     go get -u github.com/funkygao/alser
 
 ### TODO
