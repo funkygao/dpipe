@@ -158,12 +158,12 @@ func (this ErrorLogParser) collectAllAlarms() {
 		return
 	}
 
-	errorSleep := this.conf.Int("sleep.errorlog", 57)
+	errorSleep := this.conf.Int("error.sleep", 57)
 	errorQuery := `select count(*) as am, cls, msg from error where ts<=? and cls != 'MongoException' group by cls, msg order by am desc`
 	go this.collectAlarms(time.Duration(errorSleep), "error", errorQuery, `cls != 'MongoException'`, "Error",
 		FgRed, this.errorOnRows)
 
-	mongoSleep := this.conf.Int("sleep.mongo", 17)
+	mongoSleep := this.conf.Int("mongo.sleep", 17)
 	mongoQuery := `select count(*) as am, msg from error where ts<=? and cls = 'MongoException' group by msg order by am desc`
 	go this.collectAlarms(time.Duration(mongoSleep), "error", mongoQuery, `cls = 'MongoException'`, "MongoException",
 		FgCyan, this.mongoOnRows)

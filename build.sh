@@ -3,7 +3,6 @@
 # update
 #===========
 if [[ $1 = "-u" ]]; then
-    go get -u github.com/funkygao/alsparser
     go get -u github.com/funkygao/tail
     go get -u github.com/funkygao/alser
 fi

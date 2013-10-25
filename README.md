@@ -13,10 +13,12 @@ ALS guard
     go get github.com/mattn/go-sqlite3
     go get github.com/funkygao/tail
     go get github.com/funkygao/gofmt
-    go get github.com/funkygao/alsparser
     go get -u github.com/funkygao/alser
 
 ### TODO
 
     alarm according to history behavior
     alser should wait for alsparser collectAlarm done before exit
+    each error msg has alarm threshold
+    auto restart when more files or few files appear
+    backoff email alarm

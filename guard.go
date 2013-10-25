@@ -24,7 +24,7 @@
 package main
 
 import (
-	parser "github.com/funkygao/alsparser"
+	"github.com/funkygao/als/parser"
 	"path/filepath"
 	"sync"
 	"time"

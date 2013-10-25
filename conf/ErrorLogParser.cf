@@ -1,15 +1,11 @@
 {
-	// collectAlarm sleep interval
-	sleep: {
-		errorlog: 57
-		mongo: 17
-	}
-
     mongo: {
         beep_threshold: 2
+        sleep: 17
     }
 
     error: {
+        sleep: 57
         beep_threshold: 200
         msg_skip: [
             "Energy Error, Client: ?, Server: ?, info:batch",
