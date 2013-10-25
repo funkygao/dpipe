@@ -26,6 +26,8 @@ func init() {
 		lockInstance()
 	}
 
+	logger = newLogger(options)
+
 	setupSignals()
 }
 
@@ -39,7 +41,12 @@ func main() {
 		}
 	}()
 
-	logger = newLogger(options)
+	jsonConfig := loadConfig(options.config)
+	if options.parser != "" && !jsonConfig.hasParser(options.parser) {
+		logger.Println("invalid parser:", options.parser)
+		logger.Println("valid parsers:", jsonConfig.parsers())
+		shutdown()
+	}
 
 	numCpu := runtime.NumCPU()
 	maxProcs := numCpu/2 + 1
@@ -56,8 +63,7 @@ func main() {
 		pprof.StartCPUProfile(f)
 	}
 
-	jsonConfig := loadConfig(options.config)
-	logger.Printf("%s has %d items to guard\n", options.config, len(jsonConfig))
+	logger.Printf("%s has %d kinds of logs to guard\n", options.config, len(jsonConfig))
 
 	guard(jsonConfig)
 
