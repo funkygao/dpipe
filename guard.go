@@ -41,24 +41,20 @@ func guard(jsonConfig jsonConfig) {
 	parser.SetDryRun(options.dryrun)
 
 	var lines int = 0
-	var workerN int = 0
-	var wg = new(sync.WaitGroup)
-	chLines := make(chan int)
-	chAlarm := make(chan parser.Alarm, 1000) // collect alarms from all parsers
-
-	// ticker watchdog for reporting workers progress
-	if options.tick > 0 {
+	if options.tick > 0 { // ticker watchdog for reporting workers progress
 		ticker := time.NewTicker(time.Second * time.Duration(options.tick))
 		go runTicker(ticker, &lines)
 	}
 
-	// unified alarm handling
-	go runAlarmCollector(chAlarm)
+	chAlarm := make(chan parser.Alarm, 1000) // collect alarms from all parsers
+	go runAlarmCollector(chAlarm)            // unified alarm handling
 
-	// create all parsers at once
+	// create all parsers at once FIXME what if options.parser
 	parser.NewParsers(jsonConfig.parsers(), chAlarm)
 
-	// invoke worker for each log file of each config item
+	var workerN int = 0
+	var wg = new(sync.WaitGroup)
+	chLines := make(chan int)
 	for _, item := range jsonConfig {
 		if options.parser != "" && !item.hasParser(options.parser) {
 			// item parser skipped
