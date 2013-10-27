@@ -97,6 +97,10 @@ func prepareWorkers(wg *sync.WaitGroup, wgCanWait chan<- bool, jsonConfig jsonCo
 				panic(err)
 			}
 
+			if options.debug {
+				logger.Printf("search pattern: %s, got: %+v\n", item.Pattern, logfiles)
+			}
+
 			for _, logfile := range logfiles {
 				if _, present := guardedFiles[logfile]; present {
 					// this logfile is already beting tailed
