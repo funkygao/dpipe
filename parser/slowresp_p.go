@@ -80,7 +80,7 @@ func (this *SlowResponseParser) collectAlarms() {
 				this.beep()
 			}
 
-			warning := fmt.Sprintf("%8s %40s%3s", gofmt.Comma(amount), uri, area)
+			warning := fmt.Sprintf("%8s %60s%3s", gofmt.Comma(amount), uri, area)
 			this.colorPrintln(color, warning)
 		}
 		parsersLock.Unlock()
