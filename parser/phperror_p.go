@@ -25,7 +25,6 @@ func (this *PhpErrorLogParser) ParseLine(line string) (area string, ts uint64, _
 
 	matches := phpErrorRegexp.FindAllStringSubmatch(data, 10000)[0]
 	host, level, src, msg := matches[6], matches[2], matches[4], matches[3]
-	logger.Println(host, level, src, msg)
 
 	this.insert(area, ts, host, level, src, msg)
 
