@@ -60,7 +60,7 @@ func (this *MongodbLogParser) collectAlarms() {
 
 	sleepInterval := time.Duration(this.conf.Int("sleep", 15))
 	beepThreshold := this.conf.Int("beep_threshold", 1)
-	color := FgCyan
+	color := FgCyan + Bright + BgRed
 
 	for {
 		time.Sleep(time.Second * sleepInterval)
