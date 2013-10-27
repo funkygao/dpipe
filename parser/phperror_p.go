@@ -38,7 +38,7 @@ func (this *PhpErrorLogParser) collectAlarms() {
 	}
 
 	color := FgYellow
-	sleepInterval := time.Duration(this.conf.Int("sleep", 35))
+	sleepInterval := time.Duration(this.conf.Int("sleep", 13))
 	for {
 		time.Sleep(time.Second * sleepInterval)
 
