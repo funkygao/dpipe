@@ -68,7 +68,7 @@ func (this *PaymentParser) collectAlarms() {
 
 			totalAmount += float32(amount) * CURRENCY_TABLE[currency]
 		}
-		this.colorPrintln(color, fmt.Sprintf("%25s%12.2f", "Total: ", totalAmount))
+		this.colorPrintln(color, fmt.Sprintf("%25s%12.2f", "Total", totalAmount))
 		parsersLock.Unlock()
 		rows.Close()
 
