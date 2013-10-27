@@ -5,7 +5,6 @@ import (
 	"fmt"
 	json "github.com/bitly/go-simplejson"
 	"github.com/funkygao/gofmt"
-	"github.com/funkygao/gotime"
 	"regexp"
 	"strings"
 	"time"

@@ -4,7 +4,6 @@ import (
 	"fmt"
 	json "github.com/bitly/go-simplejson"
 	"github.com/funkygao/gotime"
-	"time"
 )
 
 // Memcache set fail log parser
@@ -33,21 +32,9 @@ func (this MemcacheFailParser) ParseLine(line string) (area string, ts uint64, d
 
 	// alarm every occurence
 	logInfo := extractLogInfo(data)
-	this.alarm(memcacheAlarm{area, logInfo.host, time.Unix(int64(ts), 0)})
-
 	warning := fmt.Sprintf("memcache %3s%16s %s", area, logInfo.host, gotime.TsToString(int(ts)))
 	this.colorPrintln(FgYellow, warning)
 	this.beep()
 
 	return
-}
-
-type memcacheAlarm struct {
-	area string
-	host string
-	time time.Time
-}
-
-func (this memcacheAlarm) String() string {
-	return fmt.Sprintf("%s^%s^%s^%s", "M", this.area, this.host, this.time.Format("01-02-15:04:05"))
 }
