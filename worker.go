@@ -38,6 +38,10 @@ func runWorker(logfile string, conf jsonItem, wg *sync.WaitGroup, chLines chan<-
 		chLines <- 1
 
 		for _, p := range conf.Parsers {
+			if options.parser != "" && options.parser != p {
+				continue
+			}
+
 			parser.Dispatch(p, line.Text)
 		}
 	}
