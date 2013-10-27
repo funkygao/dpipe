@@ -19,9 +19,6 @@ ALS guard
 ### TODO
 
     alarm according to history behavior
-    alser should wait for alsparser collectAlarm done before exit
     each error msg has alarm threshold
-    auto restart when more files or few files appear
     backoff email alarm
-    fsmon
-    main wait for all parsers collect alarm done
+    IRC alarm
