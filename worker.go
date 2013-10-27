@@ -9,16 +9,17 @@ import (
 
 // Each single log file is a worker
 // Workers share some singleton parsers
-func runWorker(logfile string, conf jsonItem, wg *sync.WaitGroup, chLines chan int) {
+func runWorker(logfile string, conf jsonItem, wg *sync.WaitGroup, chLines chan<- int) {
 	defer wg.Done()
 
 	var tailConfig tail.Config
 	if options.tailmode {
 		tailConfig = tail.Config{
-			Follow: true, // Continue looking for new lines (tail -f)
-			Poll:   true, // Poll for file changes instead of using inotify
-			//ReOpen: true,
+			Follow:   true, // tail -f
+			Poll:     true, // Poll for file changes instead of using inotify
+			ReOpen:   true, // tail -F
 			Location: &tail.SeekInfo{Offset: int64(0), Whence: os.SEEK_END},
+			//MustExist: false,
 		}
 	}
 

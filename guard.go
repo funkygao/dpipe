@@ -52,38 +52,17 @@ func guard(jsonConfig jsonConfig) {
 	// create all parsers at once FIXME what if options.parser
 	parser.NewParsers(jsonConfig.parsers(), chAlarm)
 
-	var workerN int = 0
-	var wg = new(sync.WaitGroup)
+	var workersWg = new(sync.WaitGroup)
 	chLines := make(chan int)
-	for _, item := range jsonConfig {
-		if options.parser != "" && !item.hasParser(options.parser) {
-			// item parser skipped
-			continue
-		}
-
-		logfiles, err := filepath.Glob(item.Pattern)
-		if err != nil {
-			panic(err)
-		}
-
-		for _, logfile := range logfiles {
-			workerN++
-			wg.Add(1)
-
-			// each logfile is a dedicated goroutine worker
-			go runWorker(logfile, item, wg, chLines)
-		}
-	}
-
-	if options.parser != "" {
-		logger.Printf("only parser %s running\n", options.parser)
-	}
-	logger.Println(workerN, "workers started")
+	wgCanWait := make(chan bool) // in case of wg.Add/Wait race condition
+	go prepareWorkers(workersWg, wgCanWait, jsonConfig, chLines)
 
 	// wait for all workers finish
 	go func() {
-		wg.Wait()
-		logger.Println("all", workerN, "workers finished")
+		<-wgCanWait
+		workersWg.Wait()
+
+		logger.Println("all workers finished")
 
 		close(chLines)
 		close(chAlarm)
@@ -94,13 +73,58 @@ func guard(jsonConfig jsonConfig) {
 		lines += l
 	}
 
-	if options.parser != "" {
-		// FIXME
-		// wait parser's collectAlarm done
-		<-time.After(time.Minute * 3)
-	}
-
 	parser.StopAll()
 
 	logger.Printf("%d lines scanned, %s elapsed\n", lines, time.Since(startTime))
+}
+
+func prepareWorkers(wg *sync.WaitGroup, wgCanWait chan<- bool, jsonConfig jsonConfig, chLines chan<- int) {
+	guardedFiles := make(map[string]bool)
+	wgCanWaitSent := false
+
+	for {
+		for _, item := range jsonConfig {
+			if options.parser != "" && !item.hasParser(options.parser) {
+				// item parser skipped
+				continue
+			}
+
+			logfiles, err := filepath.Glob(item.Pattern)
+			if err != nil {
+				panic(err)
+			}
+
+			for _, logfile := range logfiles {
+				if _, present := guardedFiles[logfile]; present {
+					// this logfile is already beting tailed
+					continue
+				}
+
+				guardedFiles[logfile] = true
+				wg.Add(1)
+
+				// each logfile is a dedicated goroutine worker
+				go runWorker(logfile, item, wg, chLines)
+				if options.verbose {
+					logger.Printf("worker[%s] started\n", logfile)
+				}
+			}
+		}
+
+		if !wgCanWaitSent {
+			wgCanWait <- true
+			wgCanWaitSent = true
+		}
+
+		if !options.tailmode {
+			break
+		} else {
+			<-time.After(time.Second * 2)
+		}
+	}
+
+	if options.parser != "" {
+		logger.Printf("only parser %s running\n", options.parser)
+	}
+	logger.Println(len(guardedFiles), "workers started")
 }
