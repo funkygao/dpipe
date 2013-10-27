@@ -11,6 +11,8 @@ var (
 	startTime time.Time
 
 	BuildID = "unknown" // git version id, passed in from shell
+
+	guardedFiles map[string]bool
 )
 
 const (

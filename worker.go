@@ -10,7 +10,10 @@ import (
 // Each single log file is a worker
 // Workers share some singleton parsers
 func runWorker(logfile string, conf jsonItem, wg *sync.WaitGroup, chLines chan<- int) {
-	defer wg.Done()
+	defer func() {
+		wg.Done()
+		delete(guardedFiles, logfile)
+	}()
 
 	var tailConfig tail.Config
 	if options.tailmode {

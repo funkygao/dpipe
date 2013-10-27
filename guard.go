@@ -88,7 +88,7 @@ func guard(jsonConfig jsonConfig) {
 }
 
 func prepareWorkers(wg *sync.WaitGroup, wgCanWait chan<- bool, jsonConfig jsonConfig, chLines chan<- int) {
-	guardedFiles := make(map[string]bool)
+	guardedFiles = make(map[string]bool)
 	wgCanWaitSent := false
 
 	for {
