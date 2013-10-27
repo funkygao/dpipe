@@ -128,6 +128,5 @@ func (this *DbParser) getCheckpoint(table string, wheres ...string) (tsFrom, tsT
 
 func (this *DbParser) logCheckpoint(color string, tsFrom, tsTo int, title string) {
 	fmt.Println() // seperator
-	line := fmt.Sprintf("(%s  ~  %s) %s", gotime.TsToString(tsFrom), gotime.TsToString(tsTo), title)
-	this.colorPrintln(color, line)
+	this.colorPrintfLn(color, "(%s  ~  %s) %s", gotime.TsToString(tsFrom), gotime.TsToString(tsTo), title)
 }

@@ -1,7 +1,6 @@
 package parser
 
 import (
-	"fmt"
 	json "github.com/bitly/go-simplejson"
 	"github.com/funkygao/gofmt"
 	"strings"
@@ -95,8 +94,7 @@ func (this *ErrorLogParser) collectAlarms() {
 				this.beep()
 			}
 
-			warning := fmt.Sprintf("%8s%20s %s", gofmt.Comma(amount), cls, msg)
-			this.colorPrintln(color, warning)
+			this.colorPrintfLn(color, "%8s%20s %s", gofmt.Comma(amount), cls, msg)
 		}
 		parsersLock.Unlock()
 		rows.Close()

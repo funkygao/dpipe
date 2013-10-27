@@ -1,7 +1,6 @@
 package parser
 
 import (
-	"fmt"
 	json "github.com/bitly/go-simplejson"
 	"github.com/funkygao/gofmt"
 	"time"
@@ -85,8 +84,7 @@ func (this *MongodbLogParser) collectAlarms() {
 				this.beep()
 			}
 
-			warning := fmt.Sprintf("%5s %s", gofmt.Comma(amount), msg)
-			this.colorPrintln(color, warning)
+			this.colorPrintfLn(color, "%5s %s", gofmt.Comma(amount), msg)
 		}
 		parsersLock.Unlock()
 		rows.Close()

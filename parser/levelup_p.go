@@ -1,7 +1,6 @@
 package parser
 
 import (
-	"fmt"
 	json "github.com/bitly/go-simplejson"
 	"github.com/funkygao/gofmt"
 	"time"
@@ -71,8 +70,7 @@ func (this *LevelUpParser) collectAlarms() {
 				break
 			}
 
-			warning := fmt.Sprintf("%8s %3d ->%3d", gofmt.Comma(int64(amount)), fromlevel, fromlevel+1)
-			this.colorPrintln(color, warning)
+			this.colorPrintfLn(color, "%8s %3d ->%3d", gofmt.Comma(int64(amount)), fromlevel, fromlevel+1)
 		}
 		parsersLock.Unlock()
 		rows.Close()

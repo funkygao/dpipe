@@ -1,7 +1,6 @@
 package parser
 
 import (
-	"fmt"
 	json "github.com/bitly/go-simplejson"
 	"github.com/funkygao/gotime"
 )
@@ -32,8 +31,7 @@ func (this MemcacheFailParser) ParseLine(line string) (area string, ts uint64, d
 
 	// alarm every occurence
 	logInfo := extractLogInfo(data)
-	warning := fmt.Sprintf("memcache %3s%16s %s", area, logInfo.host, gotime.TsToString(int(ts)))
-	this.colorPrintln(FgYellow, warning)
+	this.colorPrintfLn(FgYellow, "memcache %3s%16s %s", area, logInfo.host, gotime.TsToString(int(ts)))
 	this.beep()
 
 	return

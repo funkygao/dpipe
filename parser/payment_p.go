@@ -1,7 +1,6 @@
 package parser
 
 import (
-	"fmt"
 	json "github.com/bitly/go-simplejson"
 	"github.com/funkygao/gofmt"
 	"github.com/funkygao/gotime"
@@ -62,13 +61,12 @@ func (this *PaymentParser) collectAlarms() {
 				break
 			}
 
-			warning := fmt.Sprintf("%5s%3s%12s%5s%12.2f", typ, area, gofmt.Comma(amount), currency,
+			this.colorPrintfLn(color, "%5s%3s%12s%5s%12.2f", typ, area, gofmt.Comma(amount), currency,
 				float32(amount)*CURRENCY_TABLE[currency])
-			this.colorPrintln(color, warning)
 
 			totalAmount += float32(amount) * CURRENCY_TABLE[currency]
 		}
-		this.colorPrintln(color, fmt.Sprintf("%25s%12.2f", "Total", totalAmount))
+		this.colorPrintfLn(color, "%25s%12.2f", "Total", totalAmount)
 		parsersLock.Unlock()
 		rows.Close()
 
@@ -90,7 +88,7 @@ func (this *PaymentParser) ParseLine(line string) (area string, ts uint64, data 
 
 	typ, err := data.Get("type").String()
 	if err != nil || typ != "OK" {
-		this.colorPrintln(FgRed, "Payment "+gotime.TsToString(int(ts))+" "+typ)
+		this.colorPrintfLn(FgRed+Blink, "Payment %s %s", gotime.TsToString(int(ts)), typ)
 		return
 	}
 

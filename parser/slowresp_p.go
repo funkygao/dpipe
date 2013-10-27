@@ -1,7 +1,6 @@
 package parser
 
 import (
-	"fmt"
 	json "github.com/bitly/go-simplejson"
 	"github.com/funkygao/gofmt"
 	"strings"
@@ -80,8 +79,7 @@ func (this *SlowResponseParser) collectAlarms() {
 				this.beep()
 			}
 
-			warning := fmt.Sprintf("%8s %60s%3s", gofmt.Comma(amount), uri, area)
-			this.colorPrintln(color, warning)
+			this.colorPrintfLn(color, "%8s %60s%3s", gofmt.Comma(amount), uri, area)
 		}
 		parsersLock.Unlock()
 		rows.Close()

@@ -1,7 +1,6 @@
 package parser
 
 import (
-	"fmt"
 	json "github.com/bitly/go-simplejson"
 	"regexp"
 	"time"
@@ -76,8 +75,7 @@ func (this *PhpErrorLogParser) collectAlarms() {
 			err := rows.Scan(&amount, &msg, &area, &host, &level)
 			checkError(err)
 
-			warning := fmt.Sprintf("%5d%3s%12s%16s %s", amount, area, level, host, msg)
-			this.colorPrintln(color, warning)
+			this.colorPrintfLn(color, "%5d%3s%12s%16s %s", amount, area, level, host, msg)
 		}
 		this.beep()
 		parsersLock.Unlock()
