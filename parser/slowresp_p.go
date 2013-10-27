@@ -38,9 +38,7 @@ func (this *SlowResponseParser) ParseLine(line string) (area string, ts uint64, 
 
 	// alarm every occurence
 	logInfo := extractLogInfo(data)
-	this.Lock()
 	this.insert(area, logInfo.host, uri, ts, t2-t1, t3-t2)
-	this.Unlock()
 
 	return
 }

@@ -75,6 +75,8 @@ func guard(jsonConfig jsonConfig) {
 
 	parser.StopAll()
 
+	parser.WaitAll()
+
 	logger.Printf("%d lines scanned, %s elapsed\n", lines, time.Since(startTime))
 }
 

@@ -31,16 +31,13 @@ func newPaymentParser(name string, chAlarm chan<- Alarm, dbFile, createTable, in
 // 某主机上来的支付金额超过了阀值
 func (this *PaymentParser) collectAlarms() {
 	if dryRun {
+		this.chWait <- true
 		return
 	}
 
 	color := FgGreen
 	sleepInterval := time.Duration(this.conf.Int("sleep", 69))
 	for {
-		if this.stopped {
-			break
-		}
-
 		time.Sleep(time.Second * sleepInterval)
 
 		this.Lock()
@@ -80,6 +77,11 @@ func (this *PaymentParser) collectAlarms() {
 		}
 
 		this.Unlock()
+
+		if this.stopped {
+			this.chWait <- true
+			break
+		}
 	}
 }
 
@@ -114,9 +116,7 @@ func (this *PaymentParser) ParseLine(line string) (area string, ts uint64, data 
 	checkError(err)
 
 	logInfo := extractLogInfo(data)
-	this.Lock()
 	this.insert(area, logInfo.host, ts, typ, uid, level, amount, ref, item, currency)
-	this.Unlock()
 
 	return
 }

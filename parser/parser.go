@@ -16,13 +16,14 @@ package parser
 
 import (
 	json "github.com/bitly/go-simplejson"
-    "log"
+	"log"
 )
 
 // Parser prototype
 type Parser interface {
 	ParseLine(line string) (area string, ts uint64, data *json.Json)
 	Stop()
+	Wait()
 }
 
 // Pass through logger
@@ -81,5 +82,11 @@ func NewParsers(parsers []string, chAlarm chan<- Alarm) {
 func StopAll() {
 	for _, parser := range allParsers {
 		parser.Stop()
+	}
+}
+
+func WaitAll() {
+	for _, parser := range allParsers {
+		parser.Wait()
 	}
 }

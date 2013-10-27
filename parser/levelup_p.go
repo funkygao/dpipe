@@ -33,15 +33,14 @@ func (this *LevelUpParser) ParseLine(line string) (area string, ts uint64, data 
 		return
 	}
 
-	this.Lock()
 	this.insert(area, ts, from)
-	this.Unlock()
 
 	return
 }
 
 func (this *LevelUpParser) collectAlarms() {
 	if dryRun {
+		this.chWait <- true
 		return
 	}
 
@@ -50,10 +49,6 @@ func (this *LevelUpParser) collectAlarms() {
 
 	color := FgMagenta
 	for {
-		if this.stopped {
-			break
-		}
-
 		time.Sleep(time.Second * sleepInterval)
 
 		this.Lock()
@@ -87,6 +82,11 @@ func (this *LevelUpParser) collectAlarms() {
 		}
 
 		this.Unlock()
+
+		if this.stopped {
+			this.chWait <- true
+			break
+		}
 
 	}
 }

@@ -44,25 +44,20 @@ func (this *PhpErrorLogParser) ParseLine(line string) (area string, ts uint64, _
 	matches := phpErrorRegexp.FindAllStringSubmatch(data, 10000)[0]
 	host, level, src, msg := matches[6], matches[2], matches[4], matches[3]
 
-	this.Lock()
 	this.insert(area, ts, host, level, src, msg)
-	this.Unlock()
 
 	return
 }
 
 func (this *PhpErrorLogParser) collectAlarms() {
 	if dryRun {
+		this.chWait <- true
 		return
 	}
 
 	color := FgYellow
 	sleepInterval := time.Duration(this.conf.Int("sleep", 35))
 	for {
-		if this.stopped {
-			break
-		}
-
 		time.Sleep(time.Second * sleepInterval)
 
 		this.Lock()
@@ -93,6 +88,12 @@ func (this *PhpErrorLogParser) collectAlarms() {
 		}
 
 		this.Unlock()
+
+		if this.stopped {
+			this.chWait <- true
+			break
+		}
+
 	}
 
 }

@@ -11,14 +11,6 @@ import (
 	"time"
 )
 
-/*
-278342 GameException
-    137 MongoException
-    134 SystemException
-    103 ErrorException
-      2 MongoCursorTimeoutException
-*/
-
 // Errlog parser
 type ErrorLogParser struct {
 	DbParser
@@ -63,25 +55,15 @@ func (this ErrorLogParser) ParseLine(line string) (area string, ts uint64, data 
 	msg, err := data.Get("message").String()
 	checkError(err)
 	msg = this.normalizeMsg(msg)
-	flash, err := data.Get("flash_version_client").String()
-
-	if cls == "MongoCursorTimeoutException" {
-		// directly output, instead of feeding db
-		this.colorPrintln(FgRed, "MongoCursorTimeoutException "+gotime.TsToString(int(ts))+" "+msg)
-		return
-	}
-
 	for _, skipped := range skipErrors {
 		if strings.Contains(msg, skipped) {
 			return
 		}
 	}
+	flash, err := data.Get("flash_version_client").String()
 
 	logInfo := extractLogInfo(data)
-
-	this.Lock()
 	this.insert(area, ts, cls, level, msg, flash, logInfo.host)
-	this.Unlock()
 
 	return
 }
@@ -92,13 +74,8 @@ func (this ErrorLogParser) normalizeMsg(msg string) string {
 	return string(r)
 }
 
-func (this *ErrorLogParser) collectAlarms(interval time.Duration, table, query, checkpointWhere, title, color string,
-	onRows func(*sql.Rows, string)) {
+func (this *ErrorLogParser) collectAlarms(interval time.Duration, table, query, checkpointWhere, title, color string, onRows func(*sql.Rows, string)) {
 	for {
-		if this.stopped {
-			break
-		}
-
 		time.Sleep(time.Second * interval)
 
 		this.Lock()
@@ -122,6 +99,11 @@ func (this *ErrorLogParser) collectAlarms(interval time.Duration, table, query, 
 			logger.Printf("error %d rows deleted\n", affected)
 		}
 		this.Unlock()
+
+		if this.stopped {
+			this.chWait <- true
+			break
+		}
 	}
 
 }
@@ -156,6 +138,7 @@ func (this *ErrorLogParser) errorOnRows(rows *sql.Rows, color string) {
 
 func (this ErrorLogParser) collectAllAlarms() {
 	if dryRun {
+		this.chWait <- true
 		return
 	}
 

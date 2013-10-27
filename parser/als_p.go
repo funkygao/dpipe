@@ -43,6 +43,9 @@ func (this *AlsParser) Stop() {
 	this.stopped = true
 }
 
+func (this *AlsParser) Wait() {
+}
+
 func (this *AlsParser) colorPrintln(color string, line string) {
 	fmt.Println(color + line + Reset)
 }

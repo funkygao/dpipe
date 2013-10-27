@@ -16,11 +16,14 @@ type DbParser struct {
 
 	db         *sql.DB
 	insertStmt *sql.Stmt
+
+	chWait chan bool
 }
 
 func (this *DbParser) init(name string, ch chan<- Alarm, dbFile, createTable, insertSql string) {
 	this.AlsParser.init(name, ch)
 	this.Mutex = new(sync.Mutex) // embedding constructor
+	this.chWait = make(chan bool)
 
 	this.createDB(createTable, dbFile)
 	this.prepareInsert(insertSql)
@@ -35,6 +38,11 @@ func (this *DbParser) Stop() {
 	if this.db != nil {
 		this.db.Close()
 	}
+}
+
+func (this *DbParser) Wait() {
+	this.AlsParser.Wait()
+	<-this.chWait
 }
 
 // create table schema
@@ -65,7 +73,9 @@ func (this *DbParser) prepareInsert(insert string) {
 }
 
 func (this *DbParser) insert(args ...interface{}) {
+	this.Lock()
 	_, err := this.insertStmt.Exec(args...)
+	this.Unlock()
 	checkError(err)
 }
 
