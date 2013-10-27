@@ -2,26 +2,9 @@ package parser
 
 import (
 	json "github.com/bitly/go-simplejson"
-	"regexp"
 	"time"
 )
 
-/*
-[09-26 03:33:00] E_WARNING: Illegal offset type in unset  - /mnt/releases/code/code_20130925_rc274/application/models/map.php [2607]
-[09-26 03:33:00] E_WARNING: Missing argument 1 for getStaticLastVersion(), called in /mnt/releases/code/code_20130925_rc274/application/models/log.php on line 142 and define
-d  - /mnt/releases/code/code_20130925_rc274/application/libraries/functions.php [154]
-[09-26 03:33:03] E_WARNING: Missing argument 1 for getStaticLastVersion(), called in /mnt/releases/code/code_20130925_rc274/application/models/log.php on line 142 and define
-d  - /mnt/releases/code/code_20130925_rc274/application/libraries/functions.php [154]
-[09-26 08:55:04] E_NOTICE: Memcache::get() [<a href='memcache.get'>memcache.get</a>]: Server 10.251.3.167 (tcp 11211) failed with: Connection timed out (110)  - /mnt/releases/code/code_20130925_rc274/system/cache/memcache.php [40]
-*/
-
-var (
-	// timestamp level: msg - file lineNo,ip
-	phpErrorRegexp = regexp.MustCompile(`\[(.+)\] (.+?): (.+) - (.+) \[(.+)\],(.+)`)
-)
-
-// Php error log parser
-// NOTICE/WARNING/ERROR
 type PhpErrorLogParser struct {
 	DbParser
 }
@@ -42,6 +25,7 @@ func (this *PhpErrorLogParser) ParseLine(line string) (area string, ts uint64, _
 
 	matches := phpErrorRegexp.FindAllStringSubmatch(data, 10000)[0]
 	host, level, src, msg := matches[6], matches[2], matches[4], matches[3]
+	logger.Println(host, level, src, msg)
 
 	this.insert(area, ts, host, level, src, msg)
 

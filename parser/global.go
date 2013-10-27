@@ -21,8 +21,9 @@ var (
 
 	beeped int = 1 // how many beeps that has been triggered
 
-	digitsRegexp = regexp.MustCompile(`\d+`)
-	tokenRegexp  = regexp.MustCompile(`pre: .*; current: .*`)
+	digitsRegexp   = regexp.MustCompile(`\d+`)
+	tokenRegexp    = regexp.MustCompile(`pre: .*; current: .*`)
+	phpErrorRegexp = regexp.MustCompile(`\[(.+)\] (.+?): (.+) - (.+) \[(.+)\],(.+)`)
 
 	CURRENCY_TABLE = map[string]float32{
 		"IDR": 0.00009,
