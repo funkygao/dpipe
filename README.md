@@ -22,3 +22,7 @@ ALS guard
     each error msg has alarm threshold
     backoff email alarm
     IRC alarm
+    when only 1 parser, wait never return
+    [15310]2013/10/27 07:43:13 all workers finished
+    [15310]2013/10/27 07:43:13 stopping all parsers...
+    [15310]2013/10/27 07:43:13 waiting all parsers...

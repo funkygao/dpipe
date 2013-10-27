@@ -50,13 +50,10 @@ func guard(jsonConfig jsonConfig) {
 	chAlarm := make(chan parser.Alarm, 1000) // collect alarms from all parsers
 	go runAlarmCollector(chAlarm)            // unified alarm handling
 
-	// create all parsers at once FIXME what if options.parser
-	parser.NewParsers(jsonConfig.parsers(), chAlarm)
-
 	var workersWg = new(sync.WaitGroup)
 	chLines := make(chan int)
 	wgCanWait := make(chan bool) // in case of wg.Add/Wait race condition
-	go prepareWorkers(workersWg, wgCanWait, jsonConfig, chLines)
+	go prepareWorkers(workersWg, wgCanWait, jsonConfig, chLines, chAlarm)
 
 	// wait for all workers finish
 	go func() {
@@ -87,7 +84,7 @@ func guard(jsonConfig jsonConfig) {
 	logger.Printf("%d lines scanned, %s elapsed\n", lines, time.Since(startTime))
 }
 
-func prepareWorkers(wg *sync.WaitGroup, wgCanWait chan<- bool, jsonConfig jsonConfig, chLines chan<- int) {
+func prepareWorkers(wg *sync.WaitGroup, wgCanWait chan<- bool, jsonConfig jsonConfig, chLines chan<- int, chAlarm chan<- parser.Alarm) {
 	guardedFiles = make(map[string]bool)
 	wgCanWaitSent := false
 
@@ -117,9 +114,9 @@ func prepareWorkers(wg *sync.WaitGroup, wgCanWait chan<- bool, jsonConfig jsonCo
 				wg.Add(1)
 
 				// each logfile is a dedicated goroutine worker
-				go runWorker(logfile, item, wg, chLines)
+				go runWorker(logfile, item, wg, chLines, chAlarm)
 				if options.verbose {
-					logger.Printf("worker[%s]/%d started\n", logfile, len(guardedFiles))
+					logger.Printf("worker[%s]-%d started\n", logfile, len(guardedFiles))
 				}
 			}
 		}
