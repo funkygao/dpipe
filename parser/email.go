@@ -12,11 +12,11 @@ host: smtp.exmail.qq.com:465 smtp.gmail.com:587
 to: a@bar.com;b@163.com;c@foo.com.cn;...
 mailtype: html or text
 */
-func sendMail(user, password, host, to, subject, body, mailtype string) error {
+func sendMail(user, password, host, to, subject, body string, html bool) error {
 	hp := strings.Split(host, ":")
 	auth := smtp.PlainAuth("", user, password, hp[0])
 	var contentType string
-	if mailtype == "html" {
+	if html {
 		contentType = "Content-Type: text/html; charset=UTF-8"
 	} else {
 		contentType = "Content-Type: text/plain; charset=UTF-8"
