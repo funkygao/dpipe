@@ -72,10 +72,7 @@ func (this *PaymentParser) collectAlarms() {
 		parsersLock.Unlock()
 		rows.Close()
 
-		if affected := this.execSql("delete from payment where ts<=?", tsTo); affected > 0 && verbose {
-			logger.Printf("payment %d rows deleted\n", affected)
-		}
-
+		this.delRecordsBefore("payment", tsTo)
 		this.Unlock()
 
 		if this.stopped {

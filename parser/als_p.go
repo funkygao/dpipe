@@ -25,7 +25,7 @@ func (this *AlsParser) init(name string, ch chan<- Alarm) {
 	this.loadConf(CONF_DIR + this.name + ".cf")
 }
 
-func (this AlsParser) ParseLine(line string) (area string, ts uint64, data *json.Json) {
+func (this *AlsParser) ParseLine(line string) (area string, ts uint64, data *json.Json) {
 	var (
 		rawData string
 		err     error

@@ -45,6 +45,10 @@ func SetDryRun(dr bool) {
 	dryRun = dr
 }
 
+func SetDaemon(d bool) {
+	daemonize = d
+}
+
 // Create all parsers by name at once
 func NewParsers(parsers []string, chAlarm chan<- Alarm) {
 	for _, p := range parsers {
@@ -55,6 +59,10 @@ func NewParsers(parsers []string, chAlarm chan<- Alarm) {
 		case "ErrorLogParser":
 			allParsers["ErrorLogParser"] = newErrorLogParser("ErrorLogParser", chAlarm,
 				"var/error.sqlite", ERRLOG_CREATE_TABLE, ERRLOG_INSERT)
+
+		case "MongodbLogParser":
+			allParsers["MongodbLogParser"] = newMongodbLogParser("MongodbLogParser", chAlarm,
+				"var/mongo.sqlite", MONGO_CREATE_TABLE, MONGO_INSERT)
 
 		case "PaymentParser":
 			allParsers["PaymentParser"] = newPaymentParser("PaymentParser", chAlarm,

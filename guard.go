@@ -39,6 +39,7 @@ func guard(jsonConfig jsonConfig) {
 	parser.SetVerbose(options.verbose)
 	parser.SetDebug(options.debug)
 	parser.SetDryRun(options.dryrun)
+	parser.SetDaemon(options.daemon)
 
 	var lines int = 0
 	if options.tick > 0 { // ticker watchdog for reporting workers progress

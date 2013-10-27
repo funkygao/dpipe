@@ -62,7 +62,7 @@ func (this *DbParser) createDB(createTable string, dbFile string) {
 	checkError(err)
 }
 
-func (this DbParser) createIndex(createIndex string) {
+func (this *DbParser) createIndex(createIndex string) {
 	this.execSql(createIndex)
 }
 
@@ -79,7 +79,7 @@ func (this *DbParser) insert(args ...interface{}) {
 	checkError(err)
 }
 
-func (this DbParser) execSql(sqlStmt string, args ...interface{}) (afftectedRows int64) {
+func (this *DbParser) execSql(sqlStmt string, args ...interface{}) (afftectedRows int64) {
 	res, err := this.db.Exec(sqlStmt, args...)
 	checkError(err)
 
@@ -89,11 +89,17 @@ func (this DbParser) execSql(sqlStmt string, args ...interface{}) (afftectedRows
 	return
 }
 
-func (this DbParser) query(querySql string, args ...interface{}) *sql.Rows {
+func (this *DbParser) query(querySql string, args ...interface{}) *sql.Rows {
 	rows, err := this.db.Query(querySql, args...)
 	checkError(err)
 
 	return rows
+}
+
+func (this *DbParser) delRecordsBefore(table string, ts int) (affectedRows int64) {
+	affectedRows = this.execSql("delete from "+table+"  where ts<=?", ts)
+
+	return
 }
 
 func (this *DbParser) checkpointSql(table string, wheres ...string) string {
@@ -108,7 +114,7 @@ func (this *DbParser) checkpointSql(table string, wheres ...string) string {
 	return query
 }
 
-func (this DbParser) getCheckpoint(table string, wheres ...string) (tsFrom, tsTo int, err error) {
+func (this *DbParser) getCheckpoint(table string, wheres ...string) (tsFrom, tsTo int, err error) {
 	querySql := this.checkpointSql(table, wheres...)
 
 	row := this.db.QueryRow(querySql)
@@ -120,7 +126,7 @@ func (this DbParser) getCheckpoint(table string, wheres ...string) (tsFrom, tsTo
 	return
 }
 
-func (this DbParser) logCheckpoint(color string, tsFrom, tsTo int, title string) {
+func (this *DbParser) logCheckpoint(color string, tsFrom, tsTo int, title string) {
 	fmt.Println() // seperator
 	line := fmt.Sprintf("(%s  ~  %s) %s", gotime.TsToString(tsFrom), gotime.TsToString(tsTo), title)
 	this.colorPrintln(color, line)

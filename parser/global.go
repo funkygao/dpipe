@@ -2,6 +2,7 @@ package parser
 
 import (
 	"log"
+	"regexp"
 	"sync"
 	"time"
 )
@@ -12,12 +13,16 @@ var (
 
 	tzAjust, _ = time.LoadLocation(TZ) // same time info for all locales
 
-	logger  *log.Logger // shared with alser
-	verbose bool        = false
-	debug   bool        = false
-	dryRun  bool        = false
+	logger    *log.Logger // shared with alser
+	verbose   bool        = false
+	debug     bool        = false
+	dryRun    bool        = false
+	daemonize bool        = false
 
 	beeped int = 1 // how many beeps that has been triggered
+
+	digitsRegexp = regexp.MustCompile(`\d+`)
+	tokenRegexp  = regexp.MustCompile(`pre: .*; current: .*`)
 
 	CURRENCY_TABLE = map[string]float32{
 		"IDR": 0.00009,
@@ -86,7 +91,7 @@ const (
 )
 
 const (
-	// error log
+	// error log minus mongo related error
 	ERRLOG_CREATE_TABLE = `
 CREATE TABLE IF NOT EXISTS error (
 	area CHAR(10),
@@ -98,10 +103,20 @@ CREATE TABLE IF NOT EXISTS error (
     flash INT
 );
 `
-	ERRLOG_CREATE_INDEX = `
-CREATE INDEX IF NOT EXISTS err_idx ON error(ts, cls);
-`
 	ERRLOG_INSERT = "INSERT INTO error(area, ts, cls, level, msg, flash, host) VALUES(?,?,?,?,?,?,?)"
+
+	// mongo  error log
+	MONGO_CREATE_TABLE = `
+CREATE TABLE IF NOT EXISTS mongo (
+	area CHAR(10),
+	host CHAR(20),
+	ts INT,
+    level CHAR(20),
+    msg VARCHAR(200) NULL,
+    flash INT
+);
+`
+	MONGO_INSERT = "INSERT INTO mongo(area, ts, level, msg, flash, host) VALUES(?,?,?,?,?,?)"
 
 	// payment log
 	PAYMENT_CREATE_TABLE = `
@@ -117,9 +132,6 @@ CREATE TABLE IF NOT EXISTS payment (
     item VARCHAR(40),
     currency VARCHAR(20)
 );
-`
-	PAYMENT_CREATE_INDEX = `
-CREATE INDEX IF NOT EXISTS pay_idx ON payment(ts, type, area);
 `
 	PAYMENT_INSERT = "INSERT INTO payment(area, host, ts, type, uid, level, amount, ref, item, currency) VALUES(?,?,?,?,?,?,?,?,?,?)"
 
@@ -146,6 +158,7 @@ CREATE TABLE IF NOT EXISTS levelup (
 `
 	LEVELUP_INSERT = `INSERT INTO levelup(area, ts, fromlevel) VALUES(?,?,?)`
 
+	// php errorlog
 	PHPERROR_CREATE_TABLE = `
 CREATE TABLE IF NOT EXISTS phperror (
 	area CHAR(10),	

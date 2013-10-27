@@ -86,9 +86,7 @@ func (this *SlowResponseParser) collectAlarms() {
 		parsersLock.Unlock()
 		rows.Close()
 
-		if affected := this.execSql("delete from slowresp where ts<=?", tsTo); affected > 0 && verbose {
-			logger.Printf("slowresp %d rows deleted\n", affected)
-		}
+		this.delRecordsBefore("slowresp", tsTo)
 		this.Unlock()
 
 		if this.stopped {

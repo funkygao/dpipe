@@ -83,10 +83,7 @@ func (this *PhpErrorLogParser) collectAlarms() {
 		parsersLock.Unlock()
 		rows.Close()
 
-		if affected := this.execSql("delete from phperror where ts<=?", tsTo); affected > 0 && verbose {
-			logger.Printf("phperror %d rows deleted\n", affected)
-		}
-
+		this.delRecordsBefore("phperror", tsTo)
 		this.Unlock()
 
 		if this.stopped {

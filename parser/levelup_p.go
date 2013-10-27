@@ -77,10 +77,7 @@ func (this *LevelUpParser) collectAlarms() {
 		parsersLock.Unlock()
 		rows.Close()
 
-		if affected := this.execSql("delete from levelup where ts<=?", tsTo); affected > 0 && verbose {
-			logger.Printf("levelup %d rows deleted\n", affected)
-		}
-
+		this.delRecordsBefore("levelup", tsTo)
 		this.Unlock()
 
 		if this.stopped {

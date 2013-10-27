@@ -16,7 +16,7 @@
     {
         "name": "any error including exceptions",
         "parsers": [
-            "ErrorLogParser"
+            "ErrorLogParser", "MongodbLogParser"
         ],
         "pattern": "/mnt/funplus/logs/fp_rstory/history/error*"
     },    
