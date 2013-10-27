@@ -50,6 +50,7 @@ func (this *SlowResponseParser) normalizeUri(uri string) string {
 
 func (this *SlowResponseParser) collectAlarms() {
 	if dryRun {
+		this.chWait <- true
 		return
 	}
 
@@ -57,10 +58,6 @@ func (this *SlowResponseParser) collectAlarms() {
 	sleepInterval := time.Duration(this.conf.Int("sleep", 23))
 	beepThreshold := this.conf.Int("beep_threshold", 20)
 	for {
-		if this.stopped {
-			break
-		}
-
 		time.Sleep(time.Second * sleepInterval)
 
 		this.Lock()
@@ -92,8 +89,11 @@ func (this *SlowResponseParser) collectAlarms() {
 		if affected := this.execSql("delete from slowresp where ts<=?", tsTo); affected > 0 && verbose {
 			logger.Printf("slowresp %d rows deleted\n", affected)
 		}
-
 		this.Unlock()
 
+		if this.stopped {
+			this.chWait <- true
+			break
+		}
 	}
 }

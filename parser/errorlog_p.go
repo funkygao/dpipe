@@ -100,7 +100,7 @@ func (this *ErrorLogParser) collectAlarms(interval time.Duration, table, query, 
 		this.Unlock()
 
 		if this.stopped {
-			this.chWait <- true
+			this.chWait <- true // FIXME only 1 collectAlarm will succeed
 			break
 		}
 	}
