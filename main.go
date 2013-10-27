@@ -26,6 +26,10 @@ func init() {
 		lockInstance()
 	}
 
+	if options.daemon {
+		daemonize(true, true)
+	}
+
 	logger = newLogger(options)
 
 	setupSignals()

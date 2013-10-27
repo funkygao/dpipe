@@ -19,6 +19,7 @@ type Option struct {
 	pprof       string
 	parser      string
 	lock        bool
+	daemon      bool
 }
 
 // parse argv to Option struct
@@ -30,6 +31,7 @@ func parseFlags() *Option {
 		lock        = flag.Bool("lock", true, "lock so that only 1 instance can run")
 		showversion = flag.Bool("version", false, "show version")
 		debug       = flag.Bool("debug", false, "debug mode")
+		daemon      = flag.Bool("daemon", false, "run as daemon")
 		test        = flag.Bool("test", false, "test mode")
 		t           = flag.Int("t", TICKER, "tick interval in seconds")
 		tailmode    = flag.Bool("tail", false, "tail mode")
@@ -45,5 +47,5 @@ func parseFlags() *Option {
 	flag.Parse()
 
 	return &Option{*verbose, *config, *showversion, *logfile, *debug,
-		*test, *t, *tailmode, *dr, *cpuprof, *p, *lock}
+		*test, *t, *tailmode, *dr, *cpuprof, *p, *lock, *daemon}
 }
