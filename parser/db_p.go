@@ -58,7 +58,7 @@ func (this *DbParser) createDB(createTable string, dbFile string) {
 	// performance tuning for sqlite3
 	_, err = this.db.Exec("PRAGMA synchronous = OFF")
 	checkError(err)
-	_, err = this.db.Exec("PRAGMA journal_mode = OFF")
+	_, err = this.db.Exec("PRAGMA journal_mode = MEMORY")
 	checkError(err)
 	_, err = this.db.Exec("PRAGMA read_uncommitted = true")
 	checkError(err)
