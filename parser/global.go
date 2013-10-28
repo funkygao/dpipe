@@ -9,7 +9,7 @@ import (
 
 var (
 	allParsers  map[string]Parser = make(map[string]Parser) // registered on init manually
-	parsersLock                   = new(sync.Mutex)         // lock across all parsers, so that println will not be interlaced
+	parsersLock                   = new(sync.Mutex)         // lock across all parsers, so that println will not be interlace
 
 	tzAjust, _ = time.LoadLocation(TZ) // same time info for all locales
 

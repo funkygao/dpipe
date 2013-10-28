@@ -58,6 +58,9 @@ func NewParsers(parsers []string, chAlarm chan<- Alarm) {
 
 // Create all parsers by name at once
 func NewParser(parser string, chAlarm chan<- Alarm) {
+	parsersLock.Lock()
+	defer parsersLock.Unlock()
+
 	if _, present := allParsers[parser]; present {
 		return
 	}
