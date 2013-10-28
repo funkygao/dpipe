@@ -6,28 +6,29 @@ ALS guard
 [![Build Status](https://travis-ci.org/funkygao/alser.png?branch=master)](https://travis-ci.org/funkygao/alser)
 
 ### Architecture
+    
 
-          main
-           |
-           |<-------------------------------
-           |                                |
-           | goN(wait group)           -----------------
-           V                          | alarm collector |
-     -----------------------           -----------------
-    |       |       |       |               |
-   log1    log2    ...     logN             |
-    |       |       |       |               | alarm
-     -----------------------                | chan
-           |                                |
-           | feed lines                     |
-           V                                |
-     -----------------------                ^
-    |       |       |       |               |
-  parser1 parser2  ...   parserM            |
-    |       |       |       |               |
-     -----------------------                |
-           |                                |
-            ------------------->------------
+             main
+              |
+              |<-------------------------------
+              |                                |
+              | goN(wait group)           -----------------
+              V                          | alarm collector |
+        -----------------------           -----------------
+       |       |       |       |               |
+      log1    log2    ...     logN             |
+       |       |       |       |               | alarm
+        -----------------------                | chan
+              |                                |
+              | feed lines                     |
+              V                                |
+        -----------------------                ^
+       |       |       |       |               |
+     parser1 parser2  ...   parserM            |
+       |       |       |       |               |
+        -----------------------                |
+              |                                |
+               ------------------->------------
 
 ### Dependencies
 
