@@ -84,7 +84,7 @@ func (this *SlowResponseParser) collectAlarms() {
 		parsersLock.Unlock()
 		rows.Close()
 
-		this.delRecordsBefore("slowresp", tsTo)
+		this.delRecordsBefore(tsTo)
 		this.Unlock()
 
 		if this.stopped {

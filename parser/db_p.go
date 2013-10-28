@@ -101,8 +101,8 @@ func (this *DbParser) query(querySql string, args ...interface{}) *sql.Rows {
 	return rows
 }
 
-func (this *DbParser) delRecordsBefore(table string, ts int) (affectedRows int64) {
-	affectedRows = this.execSql("delete from "+table+"  where ts<=?", ts)
+func (this *DbParser) delRecordsBefore(ts int) (affectedRows int64) {
+	affectedRows = this.execSql("delete from "+this.dbName+"  where ts<=?", ts)
 
 	return
 }

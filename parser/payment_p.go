@@ -70,7 +70,7 @@ func (this *PaymentParser) collectAlarms() {
 		parsersLock.Unlock()
 		rows.Close()
 
-		this.delRecordsBefore("payment", tsTo)
+		this.delRecordsBefore(tsTo)
 		this.Unlock()
 
 		if this.stopped {

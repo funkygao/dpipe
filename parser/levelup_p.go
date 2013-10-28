@@ -75,7 +75,7 @@ func (this *LevelUpParser) collectAlarms() {
 		parsersLock.Unlock()
 		rows.Close()
 
-		this.delRecordsBefore("levelup", tsTo)
+		this.delRecordsBefore(tsTo)
 		this.Unlock()
 
 		if this.stopped {

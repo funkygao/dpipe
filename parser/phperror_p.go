@@ -64,7 +64,7 @@ func (this *PhpErrorLogParser) collectAlarms() {
 		parsersLock.Unlock()
 		rows.Close()
 
-		this.delRecordsBefore("phperror", tsTo)
+		this.delRecordsBefore(tsTo)
 		this.Unlock()
 
 		if this.stopped {
