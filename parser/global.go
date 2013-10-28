@@ -65,6 +65,9 @@ const (
 	TZ             = "Asia/Shanghai"
 
 	CONF_DIR = "conf/"
+
+	CONF_EMAIL   = CONF_DIR + "email.cf"
+	CONF_PARSERS = CONF_DIR + "parsers.cf"
 )
 
 const (

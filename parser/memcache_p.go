@@ -11,9 +11,9 @@ type MemcacheFailParser struct {
 }
 
 // Constructor
-func newMemcacheFailParser(name string, chAlarm chan<- Alarm) *MemcacheFailParser {
+func newMemcacheFailParser(name, color string, chAlarm chan<- Alarm) *MemcacheFailParser {
 	var parser *MemcacheFailParser = new(MemcacheFailParser)
-	parser.init(name, chAlarm)
+	parser.init(name, color, chAlarm)
 	return parser
 }
 

@@ -13,16 +13,17 @@ import (
 type AlsParser struct {
 	Parser
 
-	name            string
-	stopped         bool
+	name  string
+	color string
+
 	conf            *conf.Conf
 	chUpstreamAlarm chan<- Alarm // notify caller
 }
 
-func (this *AlsParser) init(name string, chAlarm chan<- Alarm) {
+func (this *AlsParser) init(name, color string, chAlarm chan<- Alarm) {
 	this.name = name
+	this.color = color
 	this.chUpstreamAlarm = chAlarm
-	this.stopped = false
 
 	this.loadConf(CONF_DIR + this.name + ".cf")
 }
@@ -42,7 +43,6 @@ func (this *AlsParser) ParseLine(line string) (area string, ts uint64, data *jso
 }
 
 func (this *AlsParser) Stop() {
-	this.stopped = true
 }
 
 func (this *AlsParser) Wait() {

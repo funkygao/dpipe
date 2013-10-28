@@ -64,17 +64,20 @@ func SetDaemon(d bool) {
 
 func init() {
 	// logger not passed in yet
-	conf, err := conf.Load("conf/email.cf")
-	if err == nil {
+	if conf, err := conf.Load(CONF_EMAIL); err == nil {
 		emailSender = conf.String("sender", "")
 		emailHost = conf.String("smtp_host", "")
 		emailPasswd = conf.String("passwd", "")
+
+		parserAlarmEnabled = conf.Bool("enabled", true)
+		if parserAlarmEnabled {
+			go runSendAlarmsWatchdog()
+		}
 	}
 
-	parserAlarmEnabled = conf.Bool("enabled", true)
-	if parserAlarmEnabled {
-		go runSendAlarmsWatchdog()
-	}
+	parsersConf, err := conf.Load(CONF_PARSERS)
+	checkError(err)
+
 }
 
 // Create all parsers by name at once

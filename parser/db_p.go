@@ -21,15 +21,17 @@ type DbParser struct {
 
 	dbName string // dbName IS table name for each db has only 1 table
 
-	chWait chan bool
+	chWait  chan bool
+	stopped bool
 }
 
-func (this *DbParser) init(name string, ch chan<- Alarm, dbFile, dbName, createTable, insertSql string) {
-	this.AlsParser.init(name, ch) // super
+func (this *DbParser) init(name, color string, ch chan<- Alarm, dbFile, dbName, createTable, insertSql string) {
+	this.AlsParser.init(name, color, ch) // super
 
 	this.Mutex = new(sync.Mutex) // embedding constructor
 	this.chWait = make(chan bool)
 	this.dbName = dbName
+	this.stopped = false
 
 	this.createDB(createTable, dbFile)
 	this.prepareInsertStmt(insertSql)
@@ -37,6 +39,8 @@ func (this *DbParser) init(name string, ch chan<- Alarm, dbFile, dbName, createT
 
 func (this *DbParser) Stop() {
 	this.AlsParser.Stop() // super
+	this.stopped = true
+
 	if this.insertStmt != nil {
 		this.insertStmt.Close()
 	}
