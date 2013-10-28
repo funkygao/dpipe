@@ -48,13 +48,13 @@ func (this *AlsParser) Stop() {
 func (this *AlsParser) Wait() {
 }
 
-func (this *AlsParser) colorPrintfLn(color string, format string, args ...interface{}) {
+func (this *AlsParser) colorPrintfLn(format string, args ...interface{}) {
 	if daemonize {
 		return
 	}
 
 	msg := fmt.Sprintf(format, args...)
-	fmt.Println(color + msg + Reset)
+	fmt.Println(this.color + msg + Reset)
 }
 
 func (this *AlsParser) alarmUpstream(alarm Alarm) {

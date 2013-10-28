@@ -14,9 +14,9 @@ type PaymentParser struct {
 }
 
 // Constructor
-func newPaymentParser(name string, chAlarm chan<- Alarm, dbFile, dbName, createTable, insertSql string) (parser *PaymentParser) {
+func newPaymentParser(name, color string, chAlarm chan<- Alarm, dbFile, dbName, createTable, insertSql string) (parser *PaymentParser) {
 	parser = new(PaymentParser)
-	parser.init(name, chAlarm, dbFile, dbName, createTable, insertSql)
+	parser.init(name, color, chAlarm, dbFile, dbName, createTable, insertSql)
 
 	go parser.CollectAlarms()
 
@@ -29,8 +29,8 @@ func (this *PaymentParser) CollectAlarms() {
 		return
 	}
 
-	color := FgGreen
 	sleepInterval := time.Duration(this.conf.Int("sleep", 69))
+
 	for {
 		time.Sleep(time.Second * sleepInterval)
 
@@ -43,7 +43,7 @@ func (this *PaymentParser) CollectAlarms() {
 
 		rows := this.query("select sum(amount) as am, type, area, currency from payment where ts<=? group by type, area, currency order by am desc", tsTo)
 		parsersLock.Lock()
-		this.echoCheckpoint(color, tsFrom, tsTo, "Revenue")
+		this.echoCheckpoint(tsFrom, tsTo, "Revenue")
 		totalAmount := float32(0.0)
 		for rows.Next() {
 			var area, typ, currency string
@@ -56,12 +56,12 @@ func (this *PaymentParser) CollectAlarms() {
 				break
 			}
 
-			this.colorPrintfLn(color, "%5s%3s%12s%5s%12.2f", typ, area, gofmt.Comma(amount), currency,
+			this.colorPrintfLn("%5s%3s%12s%5s%12.2f", typ, area, gofmt.Comma(amount), currency,
 				float32(amount)*CURRENCY_TABLE[currency])
 
 			totalAmount += float32(amount) * CURRENCY_TABLE[currency]
 		}
-		this.colorPrintfLn(color, "%25s%12.2f", "Total", totalAmount)
+		this.colorPrintfLn("%25s%12.2f", "Total", totalAmount)
 		parsersLock.Unlock()
 		rows.Close()
 

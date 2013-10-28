@@ -10,9 +10,9 @@ type PhpErrorLogParser struct {
 }
 
 // Constructor
-func newPhpErrorLogParser(name string, chAlarm chan<- Alarm, dbFile, dbName, createTable, insertSql string) (parser *PhpErrorLogParser) {
+func newPhpErrorLogParser(name, color string, chAlarm chan<- Alarm, dbFile, dbName, createTable, insertSql string) (parser *PhpErrorLogParser) {
 	parser = new(PhpErrorLogParser)
-	parser.init(name, chAlarm, dbFile, dbName, createTable, insertSql)
+	parser.init(name, color, chAlarm, dbFile, dbName, createTable, insertSql)
 
 	go parser.CollectAlarms()
 
@@ -37,8 +37,8 @@ func (this *PhpErrorLogParser) CollectAlarms() {
 		return
 	}
 
-	color := FgYellow
 	sleepInterval := time.Duration(this.conf.Int("sleep", 13))
+
 	for {
 		time.Sleep(time.Second * sleepInterval)
 
@@ -51,14 +51,14 @@ func (this *PhpErrorLogParser) CollectAlarms() {
 
 		rows := this.query("select count(*) as am, msg, area, host, level from phperror where ts<=? group by msg, area, host order by am desc", tsTo)
 		parsersLock.Lock()
-		this.echoCheckpoint(color, tsFrom, tsTo, "PhpError")
+		this.echoCheckpoint(tsFrom, tsTo, "PhpError")
 		for rows.Next() {
 			var area, msg, host, level string
 			var amount int64
 			err := rows.Scan(&amount, &msg, &area, &host, &level)
 			checkError(err)
 
-			this.colorPrintfLn(color, "%5d%3s%12s%16s %s", amount, area, level, host, msg)
+			this.colorPrintfLn("%5d%3s%12s%16s %s", amount, area, level, host, msg)
 		}
 		this.beep()
 		parsersLock.Unlock()

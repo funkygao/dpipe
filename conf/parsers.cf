@@ -1,0 +1,14 @@
+{
+    parsers: [
+        {
+            name: "MemcacheSet",
+            type: "LineParser",
+            color: "FgYellow",
+        },
+        {
+            name: "MemcacheTimeout",
+            type: "LineParser",
+            color: "FgBlue",
+        },
+    ]
+}

@@ -75,7 +75,7 @@ func init() {
 		}
 	}
 
-	parsersConf, err := conf.Load(CONF_PARSERS)
+	_, err := conf.Load(CONF_PARSERS)
 	checkError(err)
 
 }
@@ -98,30 +98,30 @@ func NewParser(parser string, chAlarm chan<- Alarm) {
 
 	switch parser {
 	case "MemcacheFailParser":
-		allParsers["MemcacheFailParser"] = newMemcacheFailParser("MemcacheFailParser", chAlarm)
+		allParsers["MemcacheFailParser"] = newMemcacheFailParser("MemcacheFailParser", FgYellow, chAlarm)
 
 	case "ErrorLogParser":
-		allParsers["ErrorLogParser"] = newErrorLogParser("ErrorLogParser", chAlarm,
+		allParsers["ErrorLogParser"] = newErrorLogParser("ErrorLogParser", FgRed, chAlarm,
 			"var/error.sqlite", "error", ERRLOG_CREATE_TABLE, ERRLOG_INSERT)
 
 	case "MongodbLogParser":
-		allParsers["MongodbLogParser"] = newMongodbLogParser("MongodbLogParser", chAlarm,
+		allParsers["MongodbLogParser"] = newMongodbLogParser("MongodbLogParser", FgCyan+Bright+BgRed, chAlarm,
 			"var/mongo.sqlite", "mongo", MONGO_CREATE_TABLE, MONGO_INSERT)
 
 	case "PaymentParser":
-		allParsers["PaymentParser"] = newPaymentParser("PaymentParser", chAlarm,
+		allParsers["PaymentParser"] = newPaymentParser("PaymentParser", FgGreen, chAlarm,
 			"var/payment.sqlite", "payment", PAYMENT_CREATE_TABLE, PAYMENT_INSERT)
 
 	case "PhpErrorLogParser":
-		allParsers["PhpErrorLogParser"] = newPhpErrorLogParser("PhpErrorLogParser", chAlarm,
+		allParsers["PhpErrorLogParser"] = newPhpErrorLogParser("PhpErrorLogParser", FgYellow, chAlarm,
 			"var/phperror.sqlite", "phperror", PHPERROR_CREATE_TABLE, PHPERROR_INSERT)
 
 	case "SlowResponseParser":
-		allParsers["SlowResponseParser"] = newSlowResponseParser("SlowResponseParser", chAlarm,
+		allParsers["SlowResponseParser"] = newSlowResponseParser("SlowResponseParser", FgBlue, chAlarm,
 			"var/slowresp.sqlite", "slowresp", SLOWRESP_CREATE_TABLE, SLOWRESP_INSERT)
 
 	case "LevelUpParser":
-		allParsers["LevelUpParser"] = newLevelUpParser("LevelUpParser", chAlarm,
+		allParsers["LevelUpParser"] = newLevelUpParser("LevelUpParser", FgMagenta, chAlarm,
 			"var/levelup.sqlite", "levelup", LEVELUP_CREATE_TABLE, LEVELUP_INSERT)
 
 	default:

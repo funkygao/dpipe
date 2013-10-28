@@ -11,9 +11,9 @@ type LevelUpParser struct {
 }
 
 // Constructor
-func newLevelUpParser(name string, chAlarm chan<- Alarm, dbFile, dbName, createTable, insertSql string) (parser *LevelUpParser) {
+func newLevelUpParser(name, color string, chAlarm chan<- Alarm, dbFile, dbName, createTable, insertSql string) (parser *LevelUpParser) {
 	parser = new(LevelUpParser)
-	parser.init(name, chAlarm, dbFile, dbName, createTable, insertSql)
+	parser.init(name, color, chAlarm, dbFile, dbName, createTable, insertSql)
 
 	go parser.CollectAlarms()
 
@@ -46,7 +46,6 @@ func (this *LevelUpParser) CollectAlarms() {
 	sleepInterval := time.Duration(this.conf.Int("sleep", 95))
 	amountThreshold := this.conf.Int("amount_threshold", 10)
 
-	color := FgMagenta
 	for {
 		time.Sleep(time.Second * sleepInterval)
 
@@ -59,7 +58,7 @@ func (this *LevelUpParser) CollectAlarms() {
 
 		rows := this.query("select count(*) as am, fromlevel from levelup where ts<=? group by fromlevel order by am desc", tsTo)
 		parsersLock.Lock()
-		this.echoCheckpoint(color, tsFrom, tsTo, "LevelUp")
+		this.echoCheckpoint(tsFrom, tsTo, "LevelUp")
 		for rows.Next() {
 			var fromlevel int
 			var amount int
@@ -70,7 +69,7 @@ func (this *LevelUpParser) CollectAlarms() {
 				break
 			}
 
-			this.colorPrintfLn(color, "%8s %3d ->%3d", gofmt.Comma(int64(amount)), fromlevel, fromlevel+1)
+			this.colorPrintfLn("%8s %3d ->%3d", gofmt.Comma(int64(amount)), fromlevel, fromlevel+1)
 		}
 		parsersLock.Unlock()
 		rows.Close()

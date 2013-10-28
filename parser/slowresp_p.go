@@ -12,9 +12,9 @@ type SlowResponseParser struct {
 }
 
 // Constructor
-func newSlowResponseParser(name string, chAlarm chan<- Alarm, dbFile, dbName, createTable, insertSql string) (parser *SlowResponseParser) {
+func newSlowResponseParser(name, color string, chAlarm chan<- Alarm, dbFile, dbName, createTable, insertSql string) (parser *SlowResponseParser) {
 	parser = new(SlowResponseParser)
-	parser.init(name, chAlarm, dbFile, dbName, createTable, insertSql)
+	parser.init(name, color, chAlarm, dbFile, dbName, createTable, insertSql)
 
 	go parser.CollectAlarms()
 
@@ -53,9 +53,9 @@ func (this *SlowResponseParser) CollectAlarms() {
 		return
 	}
 
-	color := FgBlue
 	sleepInterval := time.Duration(this.conf.Int("sleep", 23))
 	beepThreshold := this.conf.Int("beep_threshold", 20)
+
 	for {
 		time.Sleep(time.Second * sleepInterval)
 
@@ -68,7 +68,7 @@ func (this *SlowResponseParser) CollectAlarms() {
 
 		rows := this.query("select count(*) as am, uri, area from slowresp where ts<=? group by uri, area order by am desc", tsTo)
 		parsersLock.Lock()
-		this.echoCheckpoint(color, tsFrom, tsTo, "SlowResponse")
+		this.echoCheckpoint(tsFrom, tsTo, "SlowResponse")
 		for rows.Next() {
 			var area, uri string
 			var amount int64
@@ -79,7 +79,7 @@ func (this *SlowResponseParser) CollectAlarms() {
 				this.beep()
 			}
 
-			this.colorPrintfLn(color, "%8s %60s%3s", gofmt.Comma(amount), uri, area)
+			this.colorPrintfLn("%8s %60s%3s", gofmt.Comma(amount), uri, area)
 		}
 		parsersLock.Unlock()
 		rows.Close()

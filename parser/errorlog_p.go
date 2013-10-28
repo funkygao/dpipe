@@ -14,9 +14,9 @@ type ErrorLogParser struct {
 }
 
 // Constructor
-func newErrorLogParser(name string, chAlarm chan<- Alarm, dbFile, dbName, createTable, insertSql string) (parser *ErrorLogParser) {
+func newErrorLogParser(name, color string, chAlarm chan<- Alarm, dbFile, dbName, createTable, insertSql string) (parser *ErrorLogParser) {
 	parser = new(ErrorLogParser)
-	parser.init(name, chAlarm, dbFile, dbName, createTable, insertSql)
+	parser.init(name, color, chAlarm, dbFile, dbName, createTable, insertSql)
 
 	parser.skippedErrors = parser.conf.StringList("msg_skip", []string{""})
 
@@ -69,7 +69,6 @@ func (this *ErrorLogParser) CollectAlarms() {
 
 	beepThreshold := this.conf.Int("beep_threshold", 500)
 	sleepInterval := time.Duration(this.conf.Int("sleep", 57))
-	color := FgRed
 
 	for {
 		time.Sleep(time.Second * sleepInterval)
@@ -83,7 +82,7 @@ func (this *ErrorLogParser) CollectAlarms() {
 
 		rows := this.query("select count(*) as am, cls, msg from error where ts<=? group by cls, msg order by am desc", tsTo)
 		parsersLock.Lock()
-		this.echoCheckpoint(color, tsFrom, tsTo, "Error")
+		this.echoCheckpoint(tsFrom, tsTo, "Error")
 		for rows.Next() {
 			var cls, msg string
 			var amount int64
@@ -95,7 +94,7 @@ func (this *ErrorLogParser) CollectAlarms() {
 				this.alarmParserPrintf("%8s%20s %s", gofmt.Comma(amount), cls, msg)
 			}
 
-			this.colorPrintfLn(color, "%8s%20s %s", gofmt.Comma(amount), cls, msg)
+			this.colorPrintfLn("%8s%20s %s", gofmt.Comma(amount), cls, msg)
 		}
 		parsersLock.Unlock()
 		rows.Close()

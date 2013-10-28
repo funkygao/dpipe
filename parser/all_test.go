@@ -2,6 +2,7 @@ package parser
 
 import (
 	"github.com/bmizerany/assert"
+	conf "github.com/daviddengcn/go-ljson-conf"
 	"testing"
 )
 
@@ -73,4 +74,15 @@ func TestDbParserCheckpointSql(t *testing.T) {
 	var expected = "SELECT min(ts), max(ts) FROM error WHERE 1=1 AND ts<5 AND cls!='MongoException'"
 	sql := p.checkpointSql("error", "ts<5", "cls!='MongoException'")
 	assert.Equal(t, expected, sql)
+}
+
+func TestParsersConfig(t *testing.T) {
+	cf, err := conf.Load("../conf/parsers.cf")
+	assert.Equal(t, err, nil)
+
+	assert.Equal(t, "MemcacheTimeout", cf.String("parsers[1].name", ""))
+	parsers := cf.List("parsers", nil)
+	t.Logf("%#v\n", parsers)
+	assert.Equal(t, 2, len(parsers))
+
 }
