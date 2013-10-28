@@ -13,7 +13,7 @@ func sendEmailAlarm(to, subject, body string) {
 	sendMail(emailSender, emailPasswd, emailHost, to, subject, body, false)
 }
 
-func sendAlarms() {
+func runSendAlarmsWatchdog() {
 	mailBody := ""
 
 	for {

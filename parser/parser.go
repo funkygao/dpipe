@@ -63,20 +63,15 @@ func SetDaemon(d bool) {
 }
 
 func init() {
+	// logger not passed in yet
 	conf, err := conf.Load("conf/email.cf")
 	if err == nil {
 		emailSender = conf.String("sender", "")
 		emailHost = conf.String("smtp_host", "")
 		emailPasswd = conf.String("passwd", "")
-		if verbose {
-			logger.Printf("sender: %s smtp: %s\n", emailSender, emailHost)
-		}
 	}
 
-	if verbose {
-		logger.Println("about to send alarms...")
-	}
-	go sendAlarms()
+	go runSendAlarmsWatchdog()
 }
 
 // Create all parsers by name at once
