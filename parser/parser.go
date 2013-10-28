@@ -115,3 +115,7 @@ func WaitAll() {
 func ParsersCount() int {
 	return len(allParsers)
 }
+
+func Parsers() map[string]Parser {
+	return allParsers
+}
