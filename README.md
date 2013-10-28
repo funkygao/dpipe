@@ -22,11 +22,11 @@ ALS guard
        |       |       |       |               |
       log1    log2    ...     logN             |
       worker  worker  ...     worker           |
-       |       |       |       |               | alarm
-        -----------------------                | chan
+       |       |       |       |               | send alarm
+        -----------------------                | 
               |                                |
-              | feed lines                     | TODO
-              V                                | merge alarms and backoff
+              | feed lines                     | TODO(backoff alarms)
+              V                                | 
         -----------------------                ^
       parser is shared among logs              |
         -----------------------                |
@@ -35,7 +35,9 @@ ALS guard
        |       |       |       |               |
         -----------------------                |
               |                                |
-               ------------------->------------
+          --------------------                 |
+         |                    |                |
+      handle alarm            ---->------------
 
 
 ### Parsers
@@ -50,9 +52,9 @@ ALS guard
                 |
             --------------------------------
            |                                |
-       ParseLine                    go collectAlarms
+           |                        go collectAlarms
            |                                |                every N seconds
-       parser line into columns      +--------------------------------------+
+       parse line into columns       +--------------------------------------+
            |                         | got checkpoint period                |
            |                         | group by(chkpoint period) order desc |
        insert into sqlite3(columns)  | delete from db(chkpoint period)      |
