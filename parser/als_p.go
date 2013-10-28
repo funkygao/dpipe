@@ -13,15 +13,15 @@ import (
 type AlsParser struct {
 	Parser
 
-	name    string
-	stopped bool
-	conf    *conf.Conf
-	chAlarm chan<- Alarm // notify caller
+	name            string
+	stopped         bool
+	conf            *conf.Conf
+	chUpstreamAlarm chan<- Alarm // notify caller
 }
 
-func (this *AlsParser) init(name string, ch chan<- Alarm) {
+func (this *AlsParser) init(name string, chAlarm chan<- Alarm) {
 	this.name = name
-	this.chAlarm = ch
+	this.chUpstreamAlarm = chAlarm
 	this.stopped = false
 
 	this.loadConf(CONF_DIR + this.name + ".cf")
@@ -57,8 +57,8 @@ func (this *AlsParser) colorPrintfLn(color string, format string, args ...interf
 	fmt.Println(color + msg + Reset)
 }
 
-func (this *AlsParser) alarm(a Alarm) {
-	this.chAlarm <- a
+func (this *AlsParser) alarmUpstream(alarm Alarm) {
+	this.chUpstreamAlarm <- alarm
 }
 
 func (this *AlsParser) hasConf() bool {
