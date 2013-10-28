@@ -18,7 +18,7 @@ func guard(jsonConfig jsonConfig) {
 	parser.SetDaemon(options.daemon)
 
 	var lines int = 0
-	if options.tick > 0 { // ticker watchdog for reporting workers progress
+	if options.tick > 0 { // ticker for reporting workers progress
 		ticker := time.NewTicker(time.Second * time.Duration(options.tick))
 		go runTicker(ticker, &lines)
 	}
@@ -28,15 +28,13 @@ func guard(jsonConfig jsonConfig) {
 
 	var workersWg = new(sync.WaitGroup)
 	chLines := make(chan int)
-	wgCanWait := make(chan bool) // in case of wg.Add/Wait race condition
-	go prepareWorkers(workersWg, wgCanWait, jsonConfig, chLines, chAlarm)
+	workersCanWait := make(chan bool) // in case of wg.Add/Wait race condition
+	go prepareWorkers(workersWg, workersCanWait, jsonConfig, chLines, chAlarm)
 
 	// wait for all workers finish
 	go func() {
-		<-wgCanWait
+		<-workersCanWait
 		workersWg.Wait()
-
-		logger.Println("all workers finished")
 
 		close(chLines)
 		close(chAlarm)
@@ -48,26 +46,27 @@ func guard(jsonConfig jsonConfig) {
 	}
 
 	if options.verbose {
-		logger.Println("stopping all parsers...")
+		logger.Println("all lines are fed to parsers, stopping all parsers...")
 	}
 	parser.StopAll()
 
 	if options.verbose {
-		logger.Println("waiting all parsers...")
+		logger.Println("awaiting all parsers...")
 	}
 	parser.WaitAll()
 
 	logger.Printf("%d lines scanned, %s elapsed\n", lines, time.Since(startTime))
 }
 
-func prepareWorkers(wg *sync.WaitGroup, wgCanWait chan<- bool, jsonConfig jsonConfig, chLines chan<- int, chAlarm chan<- parser.Alarm) {
-	guardedFiles = make(map[string]bool)
-	wgCanWaitSent := false
+func prepareWorkers(wg *sync.WaitGroup, workersCanWait chan<- bool, jsonConfig jsonConfig, chLines chan<- int, chAlarm chan<- parser.Alarm) {
+	allWorkers = make(map[string]bool)
+	workersCanWaitOnce := new(sync.Once)
 
+	// main loop to watch for newly emerging logfiles
 	for {
 		for _, item := range jsonConfig {
 			if options.parser != "" && !item.hasParser(options.parser) {
-				// item parser skipped
+				// only one parser applied
 				continue
 			}
 
@@ -77,30 +76,29 @@ func prepareWorkers(wg *sync.WaitGroup, wgCanWait chan<- bool, jsonConfig jsonCo
 			}
 
 			if options.debug {
-				logger.Printf("search pattern: %s, got: %+v\n", item.Pattern, logfiles)
+				logger.Printf("glob: %s, got: %+v\n", item.Pattern, logfiles)
 			}
 
 			for _, logfile := range logfiles {
-				if _, present := guardedFiles[logfile]; present {
-					// this logfile is already beting tailed
+				if _, present := allWorkers[logfile]; present {
+					// this logfile is already being tailed
 					continue
 				}
 
-				guardedFiles[logfile] = true
+				allWorkers[logfile] = true
 				wg.Add(1)
 
 				// each logfile is a dedicated goroutine worker
 				go runWorker(logfile, item, wg, chLines, chAlarm)
 				if options.verbose {
-					logger.Printf("worker[%s]-%d started\n", logfile, len(guardedFiles))
+					logger.Printf("worker[%s]-%d started\n", logfile, len(allWorkers))
 				}
 			}
 		}
 
-		if !wgCanWaitSent {
-			wgCanWait <- true
-			wgCanWaitSent = true
-		}
+		workersCanWaitOnce.Do(func() {
+			workersCanWait <- true
+		})
 
 		if !options.tailmode {
 			break
@@ -112,5 +110,5 @@ func prepareWorkers(wg *sync.WaitGroup, wgCanWait chan<- bool, jsonConfig jsonCo
 	if options.parser != "" {
 		logger.Printf("only parser %s running\n", options.parser)
 	}
-	logger.Println(len(guardedFiles), "workers started")
+	logger.Println(len(allWorkers), "workers started")
 }

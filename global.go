@@ -12,7 +12,7 @@ var (
 
 	BuildID = "unknown" // git version id, passed in from shell
 
-	guardedFiles map[string]bool
+	allWorkers map[string]bool // key is logfile name
 )
 
 const (
@@ -28,5 +28,5 @@ Flags:
 `
 
 	LOCKFILE = "var/alser.lock"
-	TICKER   = 60 * 2 // 2 minutes
+	TICKER   = 60 * 2 // default ticker, 2 minutes
 )

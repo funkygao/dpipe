@@ -8,11 +8,11 @@ import (
 )
 
 // Each single log file is a worker
-// Workers share some singleton parsers
+// Workers share singleton parsers
 func runWorker(logfile string, conf jsonItem, wg *sync.WaitGroup, chLines chan<- int, chAlarm chan<- parser.Alarm) {
 	defer func() {
 		wg.Done()
-		delete(guardedFiles, logfile)
+		delete(allWorkers, logfile) // FIXME not goroutine safe
 	}()
 
 	var tailConfig tail.Config
@@ -36,7 +36,6 @@ func runWorker(logfile string, conf jsonItem, wg *sync.WaitGroup, chLines chan<-
 	if err != nil {
 		panic(err)
 	}
-
 	defer t.Stop()
 
 	for line := range t.Lines {
@@ -45,6 +44,7 @@ func runWorker(logfile string, conf jsonItem, wg *sync.WaitGroup, chLines chan<-
 
 		for _, p := range conf.Parsers {
 			if options.parser != "" && options.parser != p {
+				// only 1 parser applied
 				continue
 			}
 

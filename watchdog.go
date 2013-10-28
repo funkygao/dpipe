@@ -14,7 +14,7 @@ func runTicker(ticker *time.Ticker, lines *int) {
 		logger.Printf("ver:%s, goroutine:%d, mem:%s, workers:%d parsers:%d lines:%d, elapsed:%s\n",
 			BuildID,
 			runtime.NumGoroutine(), gofmt.ByteSize(ms.Alloc),
-			len(guardedFiles), parser.ParsersCount(), *lines, time.Since(startTime))
+			len(allWorkers), parser.ParsersCount(), *lines, time.Since(startTime))
 	}
 }
 
