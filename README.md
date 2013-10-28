@@ -8,27 +8,64 @@ ALS guard
 ### Architecture
     
 
-             main
+          alser main()
+              |
+          loadJsonConfig
               |
               |<-------------------------------
               |                                |
-              | goN(wait group)           -----------------
+              | goN(wait group)                |
+              | each log a worker         -----------------
               V                          | alarm collector |
+              |                          |    watchdog     |
         -----------------------           -----------------
        |       |       |       |               |
       log1    log2    ...     logN             |
+      worker  worker  ...     worker           |
        |       |       |       |               | alarm
         -----------------------                | chan
               |                                |
-              | feed lines                     |
-              V                                |
+              | feed lines                     | TODO
+              V                                | merge alarms and backoff
         -----------------------                ^
+      parser is shared among logs              |
+        -----------------------                |
        |       |       |       |               |
      parser1 parser2  ...   parserM            |
        |       |       |       |               |
         -----------------------                |
               |                                |
                ------------------->------------
+
+
+### Parsers
+
+        log1  log2  ...  logN
+         |     |          |
+          ----------------
+                |
+                | log content line by line
+                |
+              parser
+                |
+            --------------------------------
+           |                                |
+       ParseLine                    go collectAlarms
+           |                                |                every N seconds
+       parser line into columns      +--------------------------------------+
+           |                         | got checkpoint period                |
+           |                         | group by(chkpoint period) order desc |
+       insert into sqlite3(columns)  | delete from db(chkpoint period)      |
+           |                         | send alarm(console/email/irc)        |
+           |                         +--------------------------------------+
+           |                                ^
+           V                                |
+            --------------------------------
+                          |
+                    +----------------+
+                    | sqlite DB file |
+                    +----------------+
+
 
 ### Dependencies
 
