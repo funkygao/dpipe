@@ -119,8 +119,8 @@ func (this *DbParser) checkpointSql(table string, wheres ...string) string {
 	return query
 }
 
-func (this *DbParser) getCheckpoint(table string, wheres ...string) (tsFrom, tsTo int, err error) {
-	querySql := this.checkpointSql(table, wheres...)
+func (this *DbParser) getCheckpoint(wheres ...string) (tsFrom, tsTo int, err error) {
+	querySql := this.checkpointSql(this.dbName, wheres...)
 
 	row := this.db.QueryRow(querySql)
 	err = row.Scan(&tsFrom, &tsTo)

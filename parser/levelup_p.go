@@ -51,7 +51,7 @@ func (this *LevelUpParser) collectAlarms() {
 		time.Sleep(time.Second * sleepInterval)
 
 		this.Lock()
-		tsFrom, tsTo, err := this.getCheckpoint("levelup")
+		tsFrom, tsTo, err := this.getCheckpoint()
 		if err != nil {
 			this.Unlock()
 			continue

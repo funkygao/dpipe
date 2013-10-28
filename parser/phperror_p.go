@@ -43,7 +43,7 @@ func (this *PhpErrorLogParser) collectAlarms() {
 		time.Sleep(time.Second * sleepInterval)
 
 		this.Lock()
-		tsFrom, tsTo, err := this.getCheckpoint("phperror")
+		tsFrom, tsTo, err := this.getCheckpoint()
 		if err != nil {
 			this.Unlock()
 			continue

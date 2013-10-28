@@ -65,7 +65,7 @@ func (this *MongodbLogParser) collectAlarms() {
 		time.Sleep(time.Second * sleepInterval)
 
 		this.Lock()
-		tsFrom, tsTo, err := this.getCheckpoint("mongo")
+		tsFrom, tsTo, err := this.getCheckpoint()
 		if err != nil {
 			this.Unlock()
 			continue
