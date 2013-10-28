@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/funkygao/alser/parser"
 	"os"
 	"os/signal"
 	"strings"
@@ -42,6 +43,11 @@ func registerSignalHandler(sig os.Signal, handler signalHandler) {
 
 func handleIgnore(sig os.Signal) {}
 
+func showWorkers(sig os.Signal) {
+	logger.Printf("workers: %+v\n", allWorkers)
+	logger.Printf("parsers: %+v\n", parser.Parsers())
+}
+
 func handleInterrupt(sig os.Signal) {
 	logger.Printf("got signal %s\n", strings.ToUpper(sig.String()))
 
@@ -52,4 +58,5 @@ func setupSignals() {
 	go trapSignals()
 
 	registerSignalHandler(syscall.SIGINT, handleInterrupt)
+	registerSignalHandler(syscall.SIGUSR2, showWorkers)
 }
