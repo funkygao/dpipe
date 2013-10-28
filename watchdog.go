@@ -11,7 +11,8 @@ func runTicker(ticker *time.Ticker, lines *int) {
 	ms := new(runtime.MemStats)
 	for _ = range ticker.C {
 		runtime.ReadMemStats(ms)
-		logger.Printf("goroutine: %d, mem: %s, workers: %d parsers: %d lines: %d, elapsed: %s\n",
+		logger.Printf("ver:%s, goroutine:%d, mem:%s, workers:%d parsers:%d lines:%d, elapsed:%s\n",
+			BuildID,
 			runtime.NumGoroutine(), gofmt.ByteSize(ms.Alloc),
 			len(guardedFiles), parser.ParsersCount(), *lines, time.Since(startTime))
 	}
