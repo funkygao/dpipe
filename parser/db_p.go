@@ -62,6 +62,7 @@ func (this *DbParser) createDB(createTable string, dbFile string) {
 	checkError(err)
 
 	// performance tuning for sqlite3
+	// http://www.sqlite.org/cvstrac/wiki?p=DatabaseIsLocked
 	_, err = this.db.Exec("PRAGMA synchronous = OFF")
 	checkError(err)
 	_, err = this.db.Exec("PRAGMA journal_mode = MEMORY")
