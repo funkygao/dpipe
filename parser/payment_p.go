@@ -83,7 +83,7 @@ func (this *PaymentParser) ParseLine(line string) (area string, ts uint64, data 
 
 	typ, err := data.Get("type").String()
 	if err != nil || typ != "OK" {
-		this.colorPrintfLn(FgRed+Blink, "Payment %s %s", gotime.TsToString(int(ts)), typ)
+		this.colorPrintfLn("Payment %s %s", gotime.TsToString(int(ts)), typ)
 		return
 	}
 

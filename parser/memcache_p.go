@@ -31,7 +31,7 @@ func (this MemcacheFailParser) ParseLine(line string) (area string, ts uint64, d
 
 	// alarm every occurence
 	logInfo := extractLogInfo(data)
-	this.colorPrintfLn(FgYellow, "memcache %3s%16s %s", area, logInfo.host, gotime.TsToString(int(ts)))
+	this.colorPrintfLn("memcache %3s%16s %s", area, logInfo.host, gotime.TsToString(int(ts)))
 	this.beep()
 
 	return
