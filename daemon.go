@@ -8,7 +8,7 @@ import (
 )
 
 // daemonize current proc
-func daemonize(nochdir, noclose bool) int {
+func daemonize(chdir, closefd012 bool) int {
 	var ret, ret2 uintptr
 	var err syscall.Errno
 
@@ -51,11 +51,11 @@ func daemonize(nochdir, noclose bool) int {
 		return -1
 	}
 
-	if !nochdir {
+	if chdir {
 		os.Chdir("/")
 	}
 
-	if !noclose {
+	if closefd012 {
 		f, e := os.OpenFile("/dev/null", os.O_RDWR, 0)
 		if e == nil {
 			fd := f.Fd()

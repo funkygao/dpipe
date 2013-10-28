@@ -27,7 +27,7 @@ func init() {
 	}
 
 	if options.daemon {
-		daemonize(true, true)
+		daemonize(false, true)
 	}
 
 	logger = newLogger(options)
