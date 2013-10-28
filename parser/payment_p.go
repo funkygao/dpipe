@@ -43,7 +43,7 @@ func (this *PaymentParser) CollectAlarms() {
 
 		rows := this.query("select sum(amount) as am, type, area, currency from payment where ts<=? group by type, area, currency order by am desc", tsTo)
 		parsersLock.Lock()
-		this.logCheckpoint(color, tsFrom, tsTo, "Revenue")
+		this.echoCheckpoint(color, tsFrom, tsTo, "Revenue")
 		totalAmount := float32(0.0)
 		for rows.Next() {
 			var area, typ, currency string

@@ -68,7 +68,7 @@ func (this *SlowResponseParser) CollectAlarms() {
 
 		rows := this.query("select count(*) as am, uri, area from slowresp where ts<=? group by uri, area order by am desc", tsTo)
 		parsersLock.Lock()
-		this.logCheckpoint(color, tsFrom, tsTo, "SlowResponse")
+		this.echoCheckpoint(color, tsFrom, tsTo, "SlowResponse")
 		for rows.Next() {
 			var area, uri string
 			var amount int64

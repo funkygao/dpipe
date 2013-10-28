@@ -73,7 +73,7 @@ func (this *MongodbLogParser) CollectAlarms() {
 
 		rows := this.query("select count(*) as am, msg from mongo where ts<=? group by msg order by am desc", tsTo)
 		parsersLock.Lock()
-		this.logCheckpoint(color, tsFrom, tsTo, "MongoException")
+		this.echoCheckpoint(color, tsFrom, tsTo, "MongoException")
 		for rows.Next() {
 			var msg string
 			var amount int64

@@ -51,7 +51,7 @@ func (this *PhpErrorLogParser) CollectAlarms() {
 
 		rows := this.query("select count(*) as am, msg, area, host, level from phperror where ts<=? group by msg, area, host order by am desc", tsTo)
 		parsersLock.Lock()
-		this.logCheckpoint(color, tsFrom, tsTo, "PhpError")
+		this.echoCheckpoint(color, tsFrom, tsTo, "PhpError")
 		for rows.Next() {
 			var area, msg, host, level string
 			var amount int64

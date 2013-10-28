@@ -59,7 +59,7 @@ func (this *LevelUpParser) CollectAlarms() {
 
 		rows := this.query("select count(*) as am, fromlevel from levelup where ts<=? group by fromlevel order by am desc", tsTo)
 		parsersLock.Lock()
-		this.logCheckpoint(color, tsFrom, tsTo, "LevelUp")
+		this.echoCheckpoint(color, tsFrom, tsTo, "LevelUp")
 		for rows.Next() {
 			var fromlevel int
 			var amount int

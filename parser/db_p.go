@@ -133,7 +133,7 @@ func (this *DbParser) getCheckpoint(wheres ...string) (tsFrom, tsTo int, err err
 	return
 }
 
-func (this *DbParser) logCheckpoint(color string, tsFrom, tsTo int, title string) {
+func (this *DbParser) echoCheckpoint(color string, tsFrom, tsTo int, title string) {
 	fmt.Println() // seperator
 	this.colorPrintfLn(color, "(%s  ~  %s) %s", gotime.TsToString(tsFrom), gotime.TsToString(tsTo), title)
 }

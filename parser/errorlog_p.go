@@ -83,7 +83,7 @@ func (this *ErrorLogParser) CollectAlarms() {
 
 		rows := this.query("select count(*) as am, cls, msg from error where ts<=? group by cls, msg order by am desc", tsTo)
 		parsersLock.Lock()
-		this.logCheckpoint(color, tsFrom, tsTo, "Error")
+		this.echoCheckpoint(color, tsFrom, tsTo, "Error")
 		for rows.Next() {
 			var cls, msg string
 			var amount int64
