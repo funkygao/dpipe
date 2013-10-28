@@ -91,7 +91,7 @@ func prepareWorkers(wg *sync.WaitGroup, workersCanWait chan<- bool, jsonConfig j
 				// each logfile is a dedicated goroutine worker
 				go runWorker(logfile, item, wg, chLines, chAlarm)
 				if options.verbose {
-					logger.Printf("worker[%s]-%d started\n", logfile, len(allWorkers))
+					logger.Printf("worker-%d[%s] started\n", logfile, len(allWorkers))
 				}
 			}
 		}
