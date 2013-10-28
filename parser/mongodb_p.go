@@ -16,7 +16,7 @@ func newMongodbLogParser(name string, chAlarm chan<- Alarm, dbFile, dbName, crea
 	parser = new(MongodbLogParser)
 	parser.init(name, chAlarm, dbFile, dbName, createTable, insertSql)
 
-	go parser.collectAlarms()
+	go parser.CollectAlarms()
 
 	return
 }
@@ -51,7 +51,7 @@ func (this *MongodbLogParser) normalizeMsg(msg string) string {
 	return string(r)
 }
 
-func (this *MongodbLogParser) collectAlarms() {
+func (this *MongodbLogParser) CollectAlarms() {
 	if dryRun {
 		this.chWait <- true
 		return

@@ -11,6 +11,8 @@ import (
 
 // Parent parser for all
 type AlsParser struct {
+	Parser
+
 	name    string
 	stopped bool
 	conf    *conf.Conf

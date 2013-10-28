@@ -18,17 +18,12 @@ func newPaymentParser(name string, chAlarm chan<- Alarm, dbFile, dbName, createT
 	parser = new(PaymentParser)
 	parser.init(name, chAlarm, dbFile, dbName, createTable, insertSql)
 
-	go parser.collectAlarms()
+	go parser.CollectAlarms()
 
 	return
 }
 
-// 在单位时间内:
-// 哪个用户支付的金额超过了阀值
-// 哪个地区的支付金额超过了阀值
-// 非type=OK的数量超过了阀值
-// 某主机上来的支付金额超过了阀值
-func (this *PaymentParser) collectAlarms() {
+func (this *PaymentParser) CollectAlarms() {
 	if dryRun {
 		this.chWait <- true
 		return

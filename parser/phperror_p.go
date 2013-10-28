@@ -14,7 +14,7 @@ func newPhpErrorLogParser(name string, chAlarm chan<- Alarm, dbFile, dbName, cre
 	parser = new(PhpErrorLogParser)
 	parser.init(name, chAlarm, dbFile, dbName, createTable, insertSql)
 
-	go parser.collectAlarms()
+	go parser.CollectAlarms()
 
 	return
 }
@@ -31,7 +31,7 @@ func (this *PhpErrorLogParser) ParseLine(line string) (area string, ts uint64, _
 	return
 }
 
-func (this *PhpErrorLogParser) collectAlarms() {
+func (this *PhpErrorLogParser) CollectAlarms() {
 	if dryRun {
 		this.chWait <- true
 		return

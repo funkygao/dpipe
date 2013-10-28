@@ -15,7 +15,7 @@ func newLevelUpParser(name string, chAlarm chan<- Alarm, dbFile, dbName, createT
 	parser = new(LevelUpParser)
 	parser.init(name, chAlarm, dbFile, dbName, createTable, insertSql)
 
-	go parser.collectAlarms()
+	go parser.CollectAlarms()
 
 	return
 }
@@ -37,7 +37,7 @@ func (this *LevelUpParser) ParseLine(line string) (area string, ts uint64, data 
 	return
 }
 
-func (this *LevelUpParser) collectAlarms() {
+func (this *LevelUpParser) CollectAlarms() {
 	if dryRun {
 		this.chWait <- true
 		return

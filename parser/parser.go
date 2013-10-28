@@ -19,11 +19,23 @@ import (
 	"log"
 )
 
+type Stopable interface {
+	Stop()
+}
+
+type Waitable interface {
+	Wait()
+}
+
 // Parser prototype
 type Parser interface {
 	ParseLine(line string) (area string, ts uint64, data *json.Json)
-	Stop()
-	Wait()
+	Stopable
+	Waitable
+}
+
+type AlarmCollector interface {
+	CollectAlarms()
 }
 
 // Pass through logger

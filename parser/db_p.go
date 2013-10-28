@@ -12,6 +12,8 @@ import (
 // Child of AlsParser with db(sqlite3) features
 type DbParser struct {
 	AlsParser
+	AlarmCollector
+
 	*sync.Mutex
 
 	db         *sql.DB
@@ -23,29 +25,30 @@ type DbParser struct {
 }
 
 func (this *DbParser) init(name string, ch chan<- Alarm, dbFile, dbName, createTable, insertSql string) {
-	this.AlsParser.init(name, ch)
+	this.AlsParser.init(name, ch) // super
+
 	this.Mutex = new(sync.Mutex) // embedding constructor
 	this.chWait = make(chan bool)
 	this.dbName = dbName
 
 	this.createDB(createTable, dbFile)
-	this.prepareInsert(insertSql)
+	this.prepareInsertStmt(insertSql)
 }
 
 func (this *DbParser) Stop() {
 	this.AlsParser.Stop() // super
-
 	if this.insertStmt != nil {
 		this.insertStmt.Close()
-	}
-	if this.db != nil {
-		this.db.Close()
 	}
 }
 
 func (this *DbParser) Wait() {
 	this.AlsParser.Wait()
 	<-this.chWait
+
+	if this.db != nil {
+		this.db.Close()
+	}
 }
 
 // create table schema
@@ -67,16 +70,13 @@ func (this *DbParser) createDB(createTable string, dbFile string) {
 	checkError(err)
 }
 
-func (this *DbParser) createIndex(createIndex string) {
-	this.execSql(createIndex)
-}
-
-func (this *DbParser) prepareInsert(insert string) {
+func (this *DbParser) prepareInsertStmt(insert string) {
 	var err error
 	this.insertStmt, err = this.db.Prepare(insert)
 	checkError(err)
 }
 
+// auto lock/unlock
 func (this *DbParser) insert(args ...interface{}) {
 	this.Lock()
 	_, err := this.insertStmt.Exec(args...)
@@ -84,6 +84,7 @@ func (this *DbParser) insert(args ...interface{}) {
 	checkError(err)
 }
 
+// caller is responsible for locking
 func (this *DbParser) execSql(sqlStmt string, args ...interface{}) (afftectedRows int64) {
 	res, err := this.db.Exec(sqlStmt, args...)
 	checkError(err)
@@ -101,6 +102,7 @@ func (this *DbParser) query(querySql string, args ...interface{}) *sql.Rows {
 	return rows
 }
 
+// caller is responsible for locking
 func (this *DbParser) delRecordsBefore(ts int) (affectedRows int64) {
 	affectedRows = this.execSql("delete from "+this.dbName+"  where ts<=?", ts)
 

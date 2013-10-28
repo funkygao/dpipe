@@ -16,7 +16,7 @@ func newSlowResponseParser(name string, chAlarm chan<- Alarm, dbFile, dbName, cr
 	parser = new(SlowResponseParser)
 	parser.init(name, chAlarm, dbFile, dbName, createTable, insertSql)
 
-	go parser.collectAlarms()
+	go parser.CollectAlarms()
 
 	return
 }
@@ -47,7 +47,7 @@ func (this *SlowResponseParser) normalizeUri(uri string) string {
 	return fields[0]
 }
 
-func (this *SlowResponseParser) collectAlarms() {
+func (this *SlowResponseParser) CollectAlarms() {
 	if dryRun {
 		this.chWait <- true
 		return

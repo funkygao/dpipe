@@ -20,7 +20,7 @@ func newErrorLogParser(name string, chAlarm chan<- Alarm, dbFile, dbName, create
 
 	parser.skippedErrors = parser.conf.StringList("msg_skip", []string{""})
 
-	go parser.collectAlarms()
+	go parser.CollectAlarms()
 
 	return
 }
@@ -61,7 +61,7 @@ func (this *ErrorLogParser) normalizeMsg(msg string) string {
 	return string(r)
 }
 
-func (this *ErrorLogParser) collectAlarms() {
+func (this *ErrorLogParser) CollectAlarms() {
 	if dryRun {
 		this.chWait <- true
 		return
