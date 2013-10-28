@@ -22,6 +22,7 @@ var (
 	beeped int = 1 // how many beeps that has been triggered
 
 	emailSender, emailHost, emailPasswd string
+	parserAlarmEnabled                  bool
 
 	chParserAlarm = make(chan string)
 

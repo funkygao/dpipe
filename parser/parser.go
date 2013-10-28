@@ -71,7 +71,10 @@ func init() {
 		emailPasswd = conf.String("passwd", "")
 	}
 
-	go runSendAlarmsWatchdog()
+	parserAlarmEnabled = conf.Bool("enabled", true)
+	if parserAlarmEnabled {
+		go runSendAlarmsWatchdog()
+	}
 }
 
 // Create all parsers by name at once

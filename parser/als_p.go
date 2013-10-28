@@ -62,6 +62,10 @@ func (this *AlsParser) alarmUpstream(alarm Alarm) {
 }
 
 func (this *AlsParser) alarmParserPrintf(format string, args ...interface{}) {
+	if !parserAlarmEnabled {
+		return
+	}
+
 	msg := fmt.Sprintf(format, args...)
 	chParserAlarm <- msg
 }
