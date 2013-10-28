@@ -1,12 +1,7 @@
 package parser
 
 import (
-	conf "github.com/daviddengcn/go-ljson-conf"
-)
-
-var (
-	alarmEnabled                        = false
-	emailSender, emailHost, emailPasswd string
+	"time"
 )
 
 // TODO
@@ -14,18 +9,30 @@ type Alarm interface {
 	String() string
 }
 
-func init() {
-	conf, err := conf.Load("conf/email.cf")
-	if err == nil {
-		emailSender = conf.String("sender", "")
-		emailHost = conf.String("smtp_host", "")
-		emailPasswd = conf.String("passwd", "")
-		if verbose {
-			logger.Printf("sender: %s smtp: %s\n", emailSender, emailHost)
-		}
-	}
+func sendEmailAlarm(to, subject, body string) {
+	sendMail(emailSender, emailPasswd, emailHost, to, subject, body, false)
 }
 
-func sendAlarm(to, subject, body string) {
-	sendMail(emailSender, emailPasswd, emailHost, to, subject, body, false)
+func sendAlarms() {
+	mailBody := ""
+
+	for {
+		select {
+		case line, ok := <-chParserAlarm:
+			if !ok {
+				// chParserAlarm closed, this should never happen
+				break
+			}
+
+			mailBody += line + "\n"
+
+		case <-time.After(time.Second * 60):
+			if mailBody != "" {
+				sendEmailAlarm("peng.gao@funplusgame.com", "game error", mailBody)
+				logger.Println("alarm mail sent")
+				mailBody = ""
+			}
+
+		}
+	}
 }

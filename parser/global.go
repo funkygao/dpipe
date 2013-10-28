@@ -21,6 +21,10 @@ var (
 
 	beeped int = 1 // how many beeps that has been triggered
 
+	emailSender, emailHost, emailPasswd string
+
+	chParserAlarm = make(chan string)
+
 	digitsRegexp   = regexp.MustCompile(`\d+`)
 	tokenRegexp    = regexp.MustCompile(`pre: .*; current: .*`)
 	phpErrorRegexp = regexp.MustCompile(`\[(.+)\] (.+?): (.+) - (.+) \[(.+)\],(.+)`)

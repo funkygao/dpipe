@@ -16,6 +16,7 @@ package parser
 
 import (
 	json "github.com/bitly/go-simplejson"
+	conf "github.com/daviddengcn/go-ljson-conf"
 	"log"
 )
 
@@ -59,6 +60,23 @@ func SetDryRun(dr bool) {
 
 func SetDaemon(d bool) {
 	daemonize = d
+}
+
+func init() {
+	conf, err := conf.Load("conf/email.cf")
+	if err == nil {
+		emailSender = conf.String("sender", "")
+		emailHost = conf.String("smtp_host", "")
+		emailPasswd = conf.String("passwd", "")
+		if verbose {
+			logger.Printf("sender: %s smtp: %s\n", emailSender, emailHost)
+		}
+	}
+
+	if verbose {
+		logger.Println("about to send alarms...")
+	}
+	go sendAlarms()
 }
 
 // Create all parsers by name at once
@@ -122,6 +140,8 @@ func WaitAll() {
 	for _, parser := range allParsers {
 		parser.Wait()
 	}
+
+	close(chParserAlarm)
 }
 
 func ParsersCount() int {

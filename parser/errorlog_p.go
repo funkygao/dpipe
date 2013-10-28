@@ -92,6 +92,7 @@ func (this *ErrorLogParser) CollectAlarms() {
 
 			if amount >= int64(beepThreshold) {
 				this.beep()
+				this.alarmParserPrintf("%8s%20s %s", gofmt.Comma(amount), cls, msg)
 			}
 
 			this.colorPrintfLn(color, "%8s%20s %s", gofmt.Comma(amount), cls, msg)

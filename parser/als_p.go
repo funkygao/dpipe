@@ -61,6 +61,11 @@ func (this *AlsParser) alarmUpstream(alarm Alarm) {
 	this.chUpstreamAlarm <- alarm
 }
 
+func (this *AlsParser) alarmParserPrintf(format string, args ...interface{}) {
+	msg := fmt.Sprintf(format, args...)
+	chParserAlarm <- msg
+}
+
 func (this *AlsParser) hasConf() bool {
 	return this.conf != nil
 }
