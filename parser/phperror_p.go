@@ -10,9 +10,9 @@ type PhpErrorLogParser struct {
 }
 
 // Constructor
-func newPhpErrorLogParser(name string, chAlarm chan<- Alarm, dbFile, createTable, insertSql string) (parser *PhpErrorLogParser) {
+func newPhpErrorLogParser(name string, chAlarm chan<- Alarm, dbFile, dbName, createTable, insertSql string) (parser *PhpErrorLogParser) {
 	parser = new(PhpErrorLogParser)
-	parser.init(name, chAlarm, dbFile, createTable, insertSql)
+	parser.init(name, chAlarm, dbFile, dbName, createTable, insertSql)
 
 	go parser.collectAlarms()
 

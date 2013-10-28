@@ -12,9 +12,9 @@ type SlowResponseParser struct {
 }
 
 // Constructor
-func newSlowResponseParser(name string, chAlarm chan<- Alarm, dbFile, createTable, insertSql string) (parser *SlowResponseParser) {
+func newSlowResponseParser(name string, chAlarm chan<- Alarm, dbFile, dbName, createTable, insertSql string) (parser *SlowResponseParser) {
 	parser = new(SlowResponseParser)
-	parser.init(name, chAlarm, dbFile, createTable, insertSql)
+	parser.init(name, chAlarm, dbFile, dbName, createTable, insertSql)
 
 	go parser.collectAlarms()
 

@@ -17,13 +17,16 @@ type DbParser struct {
 	db         *sql.DB
 	insertStmt *sql.Stmt
 
+	dbName string // dbName IS table name for each db has only 1 table
+
 	chWait chan bool
 }
 
-func (this *DbParser) init(name string, ch chan<- Alarm, dbFile, createTable, insertSql string) {
+func (this *DbParser) init(name string, ch chan<- Alarm, dbFile, dbName, createTable, insertSql string) {
 	this.AlsParser.init(name, ch)
 	this.Mutex = new(sync.Mutex) // embedding constructor
 	this.chWait = make(chan bool)
+	this.dbName = dbName
 
 	this.createDB(createTable, dbFile)
 	this.prepareInsert(insertSql)

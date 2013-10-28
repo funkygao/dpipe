@@ -12,9 +12,9 @@ type MongodbLogParser struct {
 }
 
 // Constructor
-func newMongodbLogParser(name string, chAlarm chan<- Alarm, dbFile, createTable, insertSql string) (parser *MongodbLogParser) {
+func newMongodbLogParser(name string, chAlarm chan<- Alarm, dbFile, dbName, createTable, insertSql string) (parser *MongodbLogParser) {
 	parser = new(MongodbLogParser)
-	parser.init(name, chAlarm, dbFile, createTable, insertSql)
+	parser.init(name, chAlarm, dbFile, dbName, createTable, insertSql)
 
 	go parser.collectAlarms()
 

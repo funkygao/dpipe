@@ -71,27 +71,27 @@ func NewParser(parser string, chAlarm chan<- Alarm) {
 
 	case "ErrorLogParser":
 		allParsers["ErrorLogParser"] = newErrorLogParser("ErrorLogParser", chAlarm,
-			"var/error.sqlite", ERRLOG_CREATE_TABLE, ERRLOG_INSERT)
+			"var/error.sqlite", "error", ERRLOG_CREATE_TABLE, ERRLOG_INSERT)
 
 	case "MongodbLogParser":
 		allParsers["MongodbLogParser"] = newMongodbLogParser("MongodbLogParser", chAlarm,
-			"var/mongo.sqlite", MONGO_CREATE_TABLE, MONGO_INSERT)
+			"var/mongo.sqlite", "mongo", MONGO_CREATE_TABLE, MONGO_INSERT)
 
 	case "PaymentParser":
 		allParsers["PaymentParser"] = newPaymentParser("PaymentParser", chAlarm,
-			"var/payment.sqlite", PAYMENT_CREATE_TABLE, PAYMENT_INSERT)
+			"var/payment.sqlite", "payment", PAYMENT_CREATE_TABLE, PAYMENT_INSERT)
 
 	case "PhpErrorLogParser":
 		allParsers["PhpErrorLogParser"] = newPhpErrorLogParser("PhpErrorLogParser", chAlarm,
-			"var/phperror.sqlite", PHPERROR_CREATE_TABLE, PHPERROR_INSERT)
+			"var/phperror.sqlite", "phperror", PHPERROR_CREATE_TABLE, PHPERROR_INSERT)
 
 	case "SlowResponseParser":
 		allParsers["SlowResponseParser"] = newSlowResponseParser("SlowResponseParser", chAlarm,
-			"var/slowresp.sqlite", SLOWRESP_CREATE_TABLE, SLOWRESP_INSERT)
+			"var/slowresp.sqlite", "slowresp", SLOWRESP_CREATE_TABLE, SLOWRESP_INSERT)
 
 	case "LevelUpParser":
 		allParsers["LevelUpParser"] = newLevelUpParser("LevelUpParser", chAlarm,
-			"var/levelup.sqlite", LEVELUP_CREATE_TABLE, LEVELUP_INSERT)
+			"var/levelup.sqlite", "levelup", LEVELUP_CREATE_TABLE, LEVELUP_INSERT)
 
 	default:
 		logger.Println("Invalid parser:", parser)

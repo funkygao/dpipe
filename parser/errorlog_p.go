@@ -14,9 +14,9 @@ type ErrorLogParser struct {
 }
 
 // Constructor
-func newErrorLogParser(name string, chAlarm chan<- Alarm, dbFile, createTable, insertSql string) (parser *ErrorLogParser) {
+func newErrorLogParser(name string, chAlarm chan<- Alarm, dbFile, dbName, createTable, insertSql string) (parser *ErrorLogParser) {
 	parser = new(ErrorLogParser)
-	parser.init(name, chAlarm, dbFile, createTable, insertSql)
+	parser.init(name, chAlarm, dbFile, dbName, createTable, insertSql)
 
 	parser.skippedErrors = parser.conf.StringList("msg_skip", []string{""})
 

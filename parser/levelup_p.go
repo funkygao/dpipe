@@ -11,9 +11,9 @@ type LevelUpParser struct {
 }
 
 // Constructor
-func newLevelUpParser(name string, chAlarm chan<- Alarm, dbFile, createTable, insertSql string) (parser *LevelUpParser) {
+func newLevelUpParser(name string, chAlarm chan<- Alarm, dbFile, dbName, createTable, insertSql string) (parser *LevelUpParser) {
 	parser = new(LevelUpParser)
-	parser.init(name, chAlarm, dbFile, createTable, insertSql)
+	parser.init(name, chAlarm, dbFile, dbName, createTable, insertSql)
 
 	go parser.collectAlarms()
 
