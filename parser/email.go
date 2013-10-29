@@ -10,6 +10,7 @@ import (
 
 func sendmailTo(to string, subject string, body string) {
 	if to == "" || subject == "" || body == "" {
+		logger.Println("empty mail params")
 		return
 	}
 
@@ -17,14 +18,12 @@ func sendmailTo(to string, subject string, body string) {
 		To, Subject, Body string
 	}
 
-	const mailLetter = `<<EOF
-From: ALS Guard <noreply@funplusgame.com>
+	const mailLetter = `From: ALS Guard <noreply@funplusgame.com>
 To: {{.To}}
 Subject: {{.Subject}}
 ———————————-
 {{.Body}}
 ———————————
-EOF
 `
 
 	data := letterVar{to, subject, strings.TrimRight(body, "\n")}
@@ -41,4 +40,5 @@ EOF
 	c2.Start()
 	c1.Run()
 	c2.Wait()
+	logger.Println(wr.String())
 }
