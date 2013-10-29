@@ -70,21 +70,21 @@ func (this *MongodbLogParser) CollectAlarms() {
 			continue
 		}
 
-		rows := this.query("select count(*) as am, msg from mongo where ts<=? group by msg order by am desc", tsTo)
+		rows := this.query("select count(*) as am, area, msg from mongo where ts<=? group by area, msg order by am desc", tsTo)
 		parsersLock.Lock()
 		this.echoCheckpoint(tsFrom, tsTo, "MongoException")
 		for rows.Next() {
-			var msg string
+			var msg, area string
 			var amount int64
-			err := rows.Scan(&amount, &msg)
+			err := rows.Scan(&amount, &area, &msg)
 			checkError(err)
 
 			if amount >= int64(beepThreshold) {
 				this.beep()
-				this.alarmParserPrintf("%5s %s", gofmt.Comma(amount), msg)
+				this.alarmParserPrintf("%3s%5s %s", area, gofmt.Comma(amount), msg)
 			}
 
-			this.colorPrintfLn("%5s %s", gofmt.Comma(amount), msg)
+			this.colorPrintfLn("%3s%5s %s", area, gofmt.Comma(amount), msg)
 		}
 		parsersLock.Unlock()
 		rows.Close()
