@@ -24,7 +24,7 @@ func runSendAlarmsWatchdog() {
 
 		case <-time.After(time.Second * 60):
 			if mailBody != "" {
-				sendmailTo("peng.gao@funplusgame.com", "game error", mailBody)
+				sendmailTo(emailRecipients, emailSubject, mailBody)
 				logger.Println("alarm mail sent")
 				mailBody = ""
 			}

@@ -65,6 +65,8 @@ func SetDaemon(d bool) {
 func init() {
 	// logger not passed in yet
 	if conf, err := conf.Load(CONF_EMAIL); err == nil {
+		emailRecipients = conf.String("recipients", "")
+		emailSubject = conf.String("subject", "")
 		parserAlarmEnabled = conf.Bool("enabled", true)
 		if parserAlarmEnabled {
 			go runSendAlarmsWatchdog()

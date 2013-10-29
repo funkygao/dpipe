@@ -1,7 +1,6 @@
 {
     // comment
 	enabled: true
-    sender: "noreply@funplusgame.com"
-    smtp_host: "smtp.exmail.qq.com:465"
-    passwd: "xxxx"
+    recipients: "peng.gao@funplusgame.com"
+    subject: "ALS Alarm"
 }

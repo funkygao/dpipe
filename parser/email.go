@@ -7,6 +7,10 @@ import (
 )
 
 func sendmailTo(to string, subject string, body string) {
+	if to == "" || subject == "" || body == "" {
+		return
+	}
+
 	type letterVar struct {
 		To, Subject, Body string
 	}
