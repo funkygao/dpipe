@@ -18,7 +18,7 @@ func sendmailTo(to string, subject string, body string) {
 	const mailLetter = `<<EOF
 From: ALS Guard <noreply@funplusgame.com>
 To: {{.To}}
-Subject: {{.Body}}
+Subject: {{.Subject}}
 ———————————-
 {{.Body}}
 ———————————
