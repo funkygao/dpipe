@@ -40,4 +40,6 @@ EOF
 	if err = cmd.Wait(); err != nil {
 		logger.Println(err)
 	}
+
+	logger.Println(wr.String())
 }
