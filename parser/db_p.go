@@ -140,5 +140,5 @@ func (this *DbParser) getCheckpoint(wheres ...string) (tsFrom, tsTo int, err err
 
 func (this *DbParser) echoCheckpoint(tsFrom, tsTo int, title string) {
 	fmt.Println() // seperator
-	this.colorPrintfLn(this.color, "(%s  ~  %s) %s", gotime.TsToString(tsFrom), gotime.TsToString(tsTo), title)
+	this.colorPrintfLn("(%s  ~  %s) %s", gotime.TsToString(tsFrom), gotime.TsToString(tsTo), title)
 }
