@@ -81,6 +81,7 @@ func (this *MongodbLogParser) CollectAlarms() {
 
 			if amount >= int64(beepThreshold) {
 				this.beep()
+				this.alarmParserPrintf("%5s %s", gofmt.Comma(amount), msg)
 			}
 
 			this.colorPrintfLn("%5s %s", gofmt.Comma(amount), msg)
