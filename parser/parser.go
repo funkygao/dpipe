@@ -98,30 +98,43 @@ func NewParser(parser string, chAlarm chan<- Alarm) {
 
 	switch parser {
 	case "MemcacheFailParser":
-		allParsers["MemcacheFailParser"] = newMemcacheFailParser("MemcacheFailParser", FgYellow, chAlarm)
+		allParsers["MemcacheFailParser"] = newMemcacheFailParser("MemcacheFailParser",
+			COLOR_MAP["FgYellow"], chAlarm)
 
 	case "ErrorLogParser":
-		allParsers["ErrorLogParser"] = newErrorLogParser("ErrorLogParser", FgRed, chAlarm,
+		allParsers["ErrorLogParser"] = newErrorLogParser("ErrorLogParser",
+			COLOR_MAP["FgRed"],
+			chAlarm,
 			"var/error.sqlite", "error", ERRLOG_CREATE_TABLE, ERRLOG_INSERT)
 
 	case "MongodbLogParser":
-		allParsers["MongodbLogParser"] = newMongodbLogParser("MongodbLogParser", FgCyan+Bright+BgRed, chAlarm,
+		allParsers["MongodbLogParser"] = newMongodbLogParser("MongodbLogParser",
+			COLOR_MAP["FgCyan"]+COLOR_MAP["Bright"]+COLOR_MAP["BgRed"],
+			chAlarm,
 			"var/mongo.sqlite", "mongo", MONGO_CREATE_TABLE, MONGO_INSERT)
 
 	case "PaymentParser":
-		allParsers["PaymentParser"] = newPaymentParser("PaymentParser", FgGreen, chAlarm,
+		allParsers["PaymentParser"] = newPaymentParser("PaymentParser",
+			COLOR_MAP["FgGreen"],
+			chAlarm,
 			"var/payment.sqlite", "payment", PAYMENT_CREATE_TABLE, PAYMENT_INSERT)
 
 	case "PhpErrorLogParser":
-		allParsers["PhpErrorLogParser"] = newPhpErrorLogParser("PhpErrorLogParser", FgYellow, chAlarm,
+		allParsers["PhpErrorLogParser"] = newPhpErrorLogParser("PhpErrorLogParser",
+			COLOR_MAP["FgYellow"],
+			chAlarm,
 			"var/phperror.sqlite", "phperror", PHPERROR_CREATE_TABLE, PHPERROR_INSERT)
 
 	case "SlowResponseParser":
-		allParsers["SlowResponseParser"] = newSlowResponseParser("SlowResponseParser", FgBlue, chAlarm,
+		allParsers["SlowResponseParser"] = newSlowResponseParser("SlowResponseParser",
+			COLOR_MAP["FgBlue"],
+			chAlarm,
 			"var/slowresp.sqlite", "slowresp", SLOWRESP_CREATE_TABLE, SLOWRESP_INSERT)
 
 	case "LevelUpParser":
-		allParsers["LevelUpParser"] = newLevelUpParser("LevelUpParser", FgMagenta, chAlarm,
+		allParsers["LevelUpParser"] = newLevelUpParser("LevelUpParser",
+			COLOR_MAP["FgMagenta"],
+			chAlarm,
 			"var/levelup.sqlite", "levelup", LEVELUP_CREATE_TABLE, LEVELUP_INSERT)
 
 	default:

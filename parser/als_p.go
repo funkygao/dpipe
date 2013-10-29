@@ -54,7 +54,7 @@ func (this *AlsParser) colorPrintfLn(format string, args ...interface{}) {
 	}
 
 	msg := fmt.Sprintf(format, args...)
-	fmt.Println(this.color + msg + Reset)
+	fmt.Println(this.color + msg + COLOR_MAP["Reset"])
 }
 
 func (this *AlsParser) alarmUpstream(alarm Alarm) {
