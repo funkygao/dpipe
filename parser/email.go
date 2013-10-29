@@ -2,7 +2,9 @@ package parser
 
 import (
 	"bytes"
+	"os"
 	"os/exec"
+	"strings"
 	"text/template"
 )
 
@@ -25,21 +27,18 @@ Subject: {{.Subject}}
 EOF
 `
 
-	data := letterVar{to, subject, body}
+	data := letterVar{to, subject, strings.TrimRight(body, "\n")}
 	t := template.Must(template.New("letter").Parse(mailLetter))
 	wr := new(bytes.Buffer)
 	if err := t.Execute(wr, data); err != nil {
 		logger.Println(err)
 	}
-	cmd := exec.Command("sendmail", "-t", wr.String())
-	var err error
-	if err = cmd.Run(); err != nil {
-		logger.Println(err)
-	}
 
-	if err = cmd.Wait(); err != nil {
-		logger.Println(err)
-	}
-
-	logger.Println(wr.String())
+	c1 := exec.Command("echo", wr.String())
+	c2 := exec.Command("sendmail", "-t")
+	c2.Stdin, _ = c1.StdoutPipe()
+	c2.Stdout = os.Stdout
+	c2.Start()
+	c1.Run()
+	c2.Wait()
 }
