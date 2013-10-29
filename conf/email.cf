@@ -1,4 +1,5 @@
 {
+    // comment
 	enabled: true
     sender: "noreply@funplusgame.com"
     smtp_host: "smtp.exmail.qq.com:465"

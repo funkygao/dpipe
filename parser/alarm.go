@@ -9,10 +9,6 @@ type Alarm interface {
 	String() string
 }
 
-func sendEmailAlarm(to, subject, body string) {
-	sendMail(emailSender, emailPasswd, emailHost, to, subject, body, false)
-}
-
 func runSendAlarmsWatchdog() {
 	mailBody := ""
 
@@ -28,7 +24,7 @@ func runSendAlarmsWatchdog() {
 
 		case <-time.After(time.Second * 60):
 			if mailBody != "" {
-				sendEmailAlarm("peng.gao@funplusgame.com", "game error", mailBody)
+				sendmailTo("peng.gao@funplusgame.com", "game error", mailBody)
 				logger.Println("alarm mail sent")
 				mailBody = ""
 			}

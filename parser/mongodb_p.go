@@ -12,9 +12,9 @@ type MongodbLogParser struct {
 }
 
 // Constructor
-func newMongodbLogParser(name string, chAlarm chan<- Alarm, dbFile, dbName, createTable, insertSql string) (parser *MongodbLogParser) {
+func newMongodbLogParser(name, color string, chAlarm chan<- Alarm, dbFile, dbName, createTable, insertSql string) (parser *MongodbLogParser) {
 	parser = new(MongodbLogParser)
-	parser.init(name, chAlarm, dbFile, dbName, createTable, insertSql)
+	parser.init(name, color, chAlarm, dbFile, dbName, createTable, insertSql)
 
 	go parser.CollectAlarms()
 
@@ -59,7 +59,6 @@ func (this *MongodbLogParser) CollectAlarms() {
 
 	sleepInterval := time.Duration(this.conf.Int("sleep", 15))
 	beepThreshold := this.conf.Int("beep_threshold", 1)
-	color := FgCyan + Bright + BgRed
 
 	for {
 		time.Sleep(time.Second * sleepInterval)
@@ -73,7 +72,7 @@ func (this *MongodbLogParser) CollectAlarms() {
 
 		rows := this.query("select count(*) as am, msg from mongo where ts<=? group by msg order by am desc", tsTo)
 		parsersLock.Lock()
-		this.echoCheckpoint(color, tsFrom, tsTo, "MongoException")
+		this.echoCheckpoint(tsFrom, tsTo, "MongoException")
 		for rows.Next() {
 			var msg string
 			var amount int64
@@ -84,7 +83,7 @@ func (this *MongodbLogParser) CollectAlarms() {
 				this.beep()
 			}
 
-			this.colorPrintfLn(color, "%5s %s", gofmt.Comma(amount), msg)
+			this.colorPrintfLn("%5s %s", gofmt.Comma(amount), msg)
 		}
 		parsersLock.Unlock()
 		rows.Close()

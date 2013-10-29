@@ -11,9 +11,9 @@ type MemcacheFailParser struct {
 }
 
 // Constructor
-func newMemcacheFailParser(name string, chAlarm chan<- Alarm) *MemcacheFailParser {
+func newMemcacheFailParser(name, color string, chAlarm chan<- Alarm) *MemcacheFailParser {
 	var parser *MemcacheFailParser = new(MemcacheFailParser)
-	parser.init(name, chAlarm)
+	parser.init(name, color, chAlarm)
 	return parser
 }
 
@@ -31,7 +31,7 @@ func (this MemcacheFailParser) ParseLine(line string) (area string, ts uint64, d
 
 	// alarm every occurence
 	logInfo := extractLogInfo(data)
-	this.colorPrintfLn(FgYellow, "memcache %3s%16s %s", area, logInfo.host, gotime.TsToString(int(ts)))
+	this.colorPrintfLn("memcache %3s%16s %s", area, logInfo.host, gotime.TsToString(int(ts)))
 	this.beep()
 
 	return

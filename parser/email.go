@@ -1,28 +1,39 @@
 package parser
 
 import (
-	"net/smtp"
-	"strings"
+	"bytes"
+	"os/exec"
+	"text/template"
 )
 
-/*
-user : peng.gao@funplusgame.com
-password: xxxxx login smtp server password
-host: smtp.exmail.qq.com:465 smtp.gmail.com:587
-to: a@bar.com;b@163.com;c@foo.com.cn;...
-mailtype: html or text
-*/
-func sendMail(user, password, host, to, subject, body string, html bool) error {
-	hp := strings.Split(host, ":")
-	auth := smtp.PlainAuth("", user, password, hp[0])
-	var contentType string
-	if html {
-		contentType = "Content-Type: text/html; charset=UTF-8"
-	} else {
-		contentType = "Content-Type: text/plain; charset=UTF-8"
+func sendmailTo(to string, subject string, body string) {
+	type letterVar struct {
+		To, Subject, Body string
 	}
 
-	msg := []byte("To: " + to + "\r\nFrom: " + user + "<" + user + ">\r\nSubject: " + subject + "\r\n" + contentType + "\r\n\r\n" + body)
-	sendTo := strings.Split(to, ";")
-	return smtp.SendMail(host, auth, user, sendTo, msg)
+	const mailLetter = `<<EOF
+From: ALS Guard <noreply@funplusgame.com>
+To: {{.To}}
+Subject: {{.Body}}
+———————————-
+{{.Body}}
+———————————
+EOF
+`
+
+	data := letterVar{to, subject, body}
+	t := template.Must(template.New("letter").Parse(mailLetter))
+	wr := new(bytes.Buffer)
+	if err := t.Execute(wr, data); err != nil {
+		logger.Println(err)
+	}
+	cmd := exec.Command("sendmail", "-t", wr.String())
+	var err error
+	if err = cmd.Run(); err != nil {
+		logger.Println(err)
+	}
+
+	if err = cmd.Wait(); err != nil {
+		logger.Println(err)
+	}
 }

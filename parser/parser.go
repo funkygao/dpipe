@@ -64,17 +64,16 @@ func SetDaemon(d bool) {
 
 func init() {
 	// logger not passed in yet
-	conf, err := conf.Load("conf/email.cf")
-	if err == nil {
-		emailSender = conf.String("sender", "")
-		emailHost = conf.String("smtp_host", "")
-		emailPasswd = conf.String("passwd", "")
+	if conf, err := conf.Load(CONF_EMAIL); err == nil {
+		parserAlarmEnabled = conf.Bool("enabled", true)
+		if parserAlarmEnabled {
+			go runSendAlarmsWatchdog()
+		}
 	}
 
-	parserAlarmEnabled = conf.Bool("enabled", true)
-	if parserAlarmEnabled {
-		go runSendAlarmsWatchdog()
-	}
+	_, err := conf.Load(CONF_PARSERS)
+	checkError(err)
+
 }
 
 // Create all parsers by name at once
@@ -95,30 +94,43 @@ func NewParser(parser string, chAlarm chan<- Alarm) {
 
 	switch parser {
 	case "MemcacheFailParser":
-		allParsers["MemcacheFailParser"] = newMemcacheFailParser("MemcacheFailParser", chAlarm)
+		allParsers["MemcacheFailParser"] = newMemcacheFailParser("MemcacheFailParser",
+			COLOR_MAP["FgYellow"], chAlarm)
 
 	case "ErrorLogParser":
-		allParsers["ErrorLogParser"] = newErrorLogParser("ErrorLogParser", chAlarm,
+		allParsers["ErrorLogParser"] = newErrorLogParser("ErrorLogParser",
+			COLOR_MAP["FgRed"],
+			chAlarm,
 			"var/error.sqlite", "error", ERRLOG_CREATE_TABLE, ERRLOG_INSERT)
 
 	case "MongodbLogParser":
-		allParsers["MongodbLogParser"] = newMongodbLogParser("MongodbLogParser", chAlarm,
+		allParsers["MongodbLogParser"] = newMongodbLogParser("MongodbLogParser",
+			COLOR_MAP["FgCyan"]+COLOR_MAP["Bright"]+COLOR_MAP["BgRed"],
+			chAlarm,
 			"var/mongo.sqlite", "mongo", MONGO_CREATE_TABLE, MONGO_INSERT)
 
 	case "PaymentParser":
-		allParsers["PaymentParser"] = newPaymentParser("PaymentParser", chAlarm,
+		allParsers["PaymentParser"] = newPaymentParser("PaymentParser",
+			COLOR_MAP["FgGreen"],
+			chAlarm,
 			"var/payment.sqlite", "payment", PAYMENT_CREATE_TABLE, PAYMENT_INSERT)
 
 	case "PhpErrorLogParser":
-		allParsers["PhpErrorLogParser"] = newPhpErrorLogParser("PhpErrorLogParser", chAlarm,
+		allParsers["PhpErrorLogParser"] = newPhpErrorLogParser("PhpErrorLogParser",
+			COLOR_MAP["FgYellow"],
+			chAlarm,
 			"var/phperror.sqlite", "phperror", PHPERROR_CREATE_TABLE, PHPERROR_INSERT)
 
 	case "SlowResponseParser":
-		allParsers["SlowResponseParser"] = newSlowResponseParser("SlowResponseParser", chAlarm,
+		allParsers["SlowResponseParser"] = newSlowResponseParser("SlowResponseParser",
+			COLOR_MAP["FgBlue"],
+			chAlarm,
 			"var/slowresp.sqlite", "slowresp", SLOWRESP_CREATE_TABLE, SLOWRESP_INSERT)
 
 	case "LevelUpParser":
-		allParsers["LevelUpParser"] = newLevelUpParser("LevelUpParser", chAlarm,
+		allParsers["LevelUpParser"] = newLevelUpParser("LevelUpParser",
+			COLOR_MAP["FgMagenta"],
+			chAlarm,
 			"var/levelup.sqlite", "levelup", LEVELUP_CREATE_TABLE, LEVELUP_INSERT)
 
 	default:
