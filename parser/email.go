@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"os"
 	"os/exec"
-	"strings"
 	"text/template"
 )
 
@@ -21,12 +20,12 @@ func sendmailTo(to string, subject string, body string) {
 	const mailLetter = `From: ALS Guard <noreply@funplusgame.com>
 To: {{.To}}
 Subject: {{.Subject}}
-———————————-
+——————————————————————
 {{.Body}}
-———————————
+——————————————————————
 `
 
-	data := letterVar{to, subject, strings.TrimRight(body, "\n")}
+	data := letterVar{to, subject, body}
 	t := template.Must(template.New("letter").Parse(mailLetter))
 	wr := new(bytes.Buffer)
 	if err := t.Execute(wr, data); err != nil {
@@ -40,5 +39,4 @@ Subject: {{.Subject}}
 	c2.Start()
 	c1.Run()
 	c2.Wait()
-	logger.Println(wr.String())
 }

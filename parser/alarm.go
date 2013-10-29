@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"strings"
 	"time"
 )
 
@@ -24,8 +25,10 @@ func runSendAlarmsWatchdog() {
 
 		case <-time.After(time.Second * 60):
 			if mailBody != "" {
+				mailBody = strings.TrimRight(mailBody, "\n")
 				sendmailTo(emailRecipients, emailSubject, mailBody)
-				logger.Println("alarm mail sent")
+				logger.Printf("alarm mail sent: %s\n", emailRecipients)
+
 				mailBody = ""
 			}
 
