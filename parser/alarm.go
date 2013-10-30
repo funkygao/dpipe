@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"fmt"
 	"strings"
 	"time"
 )
@@ -12,6 +13,7 @@ type Alarm interface {
 
 func runSendAlarmsWatchdog() {
 	mailBody := ""
+	bodyLines := 0
 
 	for {
 		select {
@@ -22,14 +24,16 @@ func runSendAlarmsWatchdog() {
 			}
 
 			mailBody += line + "\n"
+			bodyLines += 1
 
-		case <-time.After(time.Second * 60):
+		case <-time.After(time.Second * 120):
 			if mailBody != "" {
 				mailBody = strings.TrimRight(mailBody, "\n")
-				sendmailTo(emailRecipients, emailSubject, mailBody)
+				sendmailTo(emailRecipients, fmt.Sprintf("%s %d", emailSubject, bodyLines), mailBody)
 				logger.Printf("alarm mail sent: %s\n", emailRecipients)
 
 				mailBody = ""
+				bodyLines = 0
 			}
 
 		}
