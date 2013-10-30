@@ -69,24 +69,13 @@ ALS guard
                     +----------------+
 
 
-### Dependencies
-
-    go get github.com/bmizerany/assert
-    go get github.com/bitly/go-simplejson
-    go get github.com/daviddengcn/go-ljson-conf
-    go get github.com/mattn/go-sqlite3
-    go get github.com/funkygao/tail
-    go get github.com/funkygao/gofmt
-    go get github.com/funkygao/gotime
-    go get -u github.com/funkygao/alser
-
 ### TODO
 
     alarm according to history behavior
     each error msg has alarm threshold
-    backoff email alarm
+    backoff email alarm/priority queue
     IRC alarm
-    when only 1 parser, wait never return
-    [15310]2013/10/27 07:43:13 all workers finished
-    [15310]2013/10/27 07:43:13 stopping all parsers...
-    [15310]2013/10/27 07:43:13 waiting all parsers...
+    flashlog alarm, data source
+
+    each parser is controlled by configuration without any biz logic
+
