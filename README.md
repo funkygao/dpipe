@@ -73,7 +73,7 @@ ALS guard
 
     alarm according to history behavior
     each error msg has alarm threshold
-    backoff email alarm/priority queue
+    backoff email alarm/priority queue https://github.com/daviddengcn/go-villa
     IRC alarm
     flashlog alarm, data source
 
