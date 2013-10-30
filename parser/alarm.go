@@ -29,8 +29,8 @@ func runSendAlarmsWatchdog() {
 		case <-time.After(time.Second * 120):
 			if mailBody != "" {
 				mailBody = strings.TrimRight(mailBody, "\n")
-				sendmailTo(emailRecipients, fmt.Sprintf("%s %d", emailSubject, bodyLines), mailBody)
-				logger.Printf("alarm mail sent: %s\n", emailRecipients)
+				go sendmailTo(emailRecipients, fmt.Sprintf("%s %d", emailSubject, bodyLines), mailBody)
+				logger.Printf("alarm sent=> %s\n", emailRecipients)
 
 				mailBody = ""
 				bodyLines = 0
