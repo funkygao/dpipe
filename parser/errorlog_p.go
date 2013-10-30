@@ -80,21 +80,21 @@ func (this *ErrorLogParser) CollectAlarms() {
 			continue
 		}
 
-		rows := this.query("select count(*) as am, cls, msg from error where ts<=? group by cls, msg order by am desc", tsTo)
+		rows := this.query("select count(*) as am, area, cls, msg from error where ts<=? group by area, cls, msg order by am desc", tsTo)
 		parsersLock.Lock()
 		this.echoCheckpoint(tsFrom, tsTo, "Error")
 		for rows.Next() {
-			var cls, msg string
+			var cls, msg, area string
 			var amount int64
-			err := rows.Scan(&amount, &cls, &msg)
+			err := rows.Scan(&amount, &area, &cls, &msg)
 			checkError(err)
 
 			if amount >= int64(beepThreshold) {
 				this.beep()
-				this.alarmParserPrintf("%8s%20s %s", gofmt.Comma(amount), cls, msg)
+				this.alarmParserPrintf("%3s %8s%20s %s", area, gofmt.Comma(amount), cls, msg)
 			}
 
-			this.colorPrintfLn("%8s%20s %s", gofmt.Comma(amount), cls, msg)
+			this.colorPrintfLn("%3s %8s%20s %s", area, gofmt.Comma(amount), cls, msg)
 		}
 		parsersLock.Unlock()
 		rows.Close()

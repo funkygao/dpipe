@@ -58,9 +58,9 @@ func (this *PhpErrorLogParser) CollectAlarms() {
 			err := rows.Scan(&amount, &msg, &area, &host, &level)
 			checkError(err)
 
-			this.alarmParserPrintf("%5d%3s%12s%16s %s", amount, area, level, host, msg)
+			this.alarmParserPrintf("%3s %5d%12s%16s %s", area, amount, level, host, msg)
 
-			this.colorPrintfLn("%5d%3s%12s%16s %s", amount, area, level, host, msg)
+			this.colorPrintfLn("%3s %5d%12s%16s %s", area, amount, level, host, msg)
 		}
 		this.beep()
 		parsersLock.Unlock()

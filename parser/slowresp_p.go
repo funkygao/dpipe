@@ -77,10 +77,10 @@ func (this *SlowResponseParser) CollectAlarms() {
 
 			if int(amount) >= beepThreshold {
 				this.beep()
-				this.alarmParserPrintf("%8s %60s%3s", gofmt.Comma(amount), uri, area)
+				this.alarmParserPrintf("%3s %8s %60s", area, gofmt.Comma(amount), uri)
 			}
 
-			this.colorPrintfLn("%8s %60s%3s", gofmt.Comma(amount), uri, area)
+			this.colorPrintfLn("%3s %8s %60s", area, gofmt.Comma(amount), uri)
 		}
 		parsersLock.Unlock()
 		rows.Close()
