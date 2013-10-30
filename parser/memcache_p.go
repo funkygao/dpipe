@@ -2,7 +2,6 @@ package parser
 
 import (
 	json "github.com/bitly/go-simplejson"
-	"github.com/funkygao/gotime"
 )
 
 // Memcache set fail log parser
@@ -23,15 +22,20 @@ func (this MemcacheFailParser) ParseLine(line string) (area string, ts uint64, d
 		return
 	}
 
-	_, err := data.Get("key").String()
+	key, err := data.Get("key").String()
 	if err != nil {
 		// not a memcache log
 		return
 	}
 
+	timeout, err := data.Get("ts").Float64()
+	if err != nil {
+		timeout, _ = data.Get("timeout").Float64()
+	}
+
 	// alarm every occurence
 	logInfo := extractLogInfo(data)
-	this.colorPrintfLn("memcache %3s%16s %s", area, logInfo.host, gotime.TsToString(int(ts)))
+	this.colorPrintfLn("%3s%16s %5.2f %40s", area, logInfo.host, timeout, key)
 	this.beep()
 
 	return

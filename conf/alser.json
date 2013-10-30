@@ -7,6 +7,13 @@
         "pattern": "/mnt/funplus/logs/fp_rstory/cache_set_fail.*.log"
     },
     {
+        "name": "memcache get timeout",
+        "parsers": [
+            "MemcacheFailParser"
+        ],
+        "pattern": "/mnt/funplus/logs/fp_rstory/memcache_to.*.log"
+    },
+    {
         "name": "phperror",
         "parsers": [
             "PhpErrorLogParser"
