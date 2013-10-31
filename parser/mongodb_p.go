@@ -37,7 +37,7 @@ func (this *MongodbLogParser) ParseLine(line string) (area string, ts uint64, da
 	checkError(err)
 	msg, err := data.Get("message").String()
 	checkError(err)
-	msg = this.normalizeMsg(msg)
+	//msg = this.normalizeMsg(msg)
 	flash, err := data.Get("flash_version_client").String()
 
 	logInfo := extractLogInfo(data)
