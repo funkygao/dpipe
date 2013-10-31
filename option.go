@@ -26,18 +26,18 @@ type Option struct {
 func parseFlags() *Option {
 	var (
 		verbose     = flag.Bool("v", false, "verbose")
-		config      = flag.String("c", "conf/alser.json", "config json file")
+		config      = flag.String("c", "etc/alser.cf", "config json file")
 		logfile     = flag.String("l", "", "alser log file name")
 		lock        = flag.Bool("lock", true, "lock so that only 1 instance can run")
 		showversion = flag.Bool("version", false, "show version")
 		debug       = flag.Bool("debug", false, "debug mode")
 		daemon      = flag.Bool("daemon", false, "run as daemon")
 		test        = flag.Bool("test", false, "test mode")
-		t           = flag.Int("t", TICKER, "tick interval in seconds")
+		tick        = flag.Int("t", TICKER, "tick interval in seconds")
 		tailmode    = flag.Bool("tail", false, "tail mode")
-		dr          = flag.Bool("dry-run", false, "dry run")
-		cpuprof     = flag.String("pprof", "", "cpu pprof file")
-		p           = flag.String("parser", "", "only run this parser class")
+		dryrun      = flag.Bool("dryrun", false, "dry run")
+		cpuprof     = flag.String("cpuprof", "", "cpu profiling file")
+		parser      = flag.String("parser", "", "only run this parser")
 	)
 	flag.Usage = func() {
 		fmt.Fprint(os.Stderr, USAGE)
@@ -47,5 +47,5 @@ func parseFlags() *Option {
 	flag.Parse()
 
 	return &Option{*verbose, *config, *showversion, *logfile, *debug,
-		*test, *t, *tailmode, *dr, *cpuprof, *p, *lock, *daemon}
+		*test, *tick, *tailmode, *dryrun, *cpuprof, *parser, *lock, *daemon}
 }

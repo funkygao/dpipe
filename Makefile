@@ -7,7 +7,7 @@ build:
 
 run:build
 	@rm -f var/alser.lock
-	./alser -v -debug -test -tail -pprof var/cpu.prof -t 30
+	./alser -v -debug -test -tail -cpuprof var/cpu.prof -t 30
 
 fmt:
 	@gofmt -s -tabs=false -tabwidth=4 -w=true .
