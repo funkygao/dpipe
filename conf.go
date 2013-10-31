@@ -6,14 +6,15 @@ import (
 )
 
 type ConfGuard struct {
-	glob    string
-	parsers []string
+	tailLogGlob    string
+	historyLogGlob string
+	parsers        []string
 }
 
 type ConfParser struct {
 	id          string
 	class       string
-	color       string
+	colors      []string // fg, effects, bg
 	lineColumns []string
 }
 
@@ -41,7 +42,7 @@ func LoadConfig(fn string) (*Config, error) {
 		parser := ConfParser{}
 		parser.id = this.String(keyPrefix+"id", "")
 		parser.class = this.String(keyPrefix+"class", "")
-		parser.color = this.String(keyPrefix+"color", "")
+		parser.colors = this.StringList(keyPrefix+"colors", "")
 		parser.lineColumns = this.StringList(keyPrefix+"keys", nil)
 
 		this.parsers = append(this.parsers, parser)
@@ -52,7 +53,8 @@ func LoadConfig(fn string) (*Config, error) {
 	for i := 0; i < len(guards); i++ {
 		keyPrefix := fmt.Sprintf("guards[%d].", i)
 		guard := ConfGuard{}
-		guard.glob = this.String(keyPrefix+"glob", "")
+		guard.tailLogGlob = this.String(keyPrefix+"tail_glob", "")
+		guard.historyLogGlob = this.String(keyPrefix+"history_glob", "")
 		guard.parsers = this.StringList(keyPrefix+"parsers", nil)
 
 		this.guards = append(this.guards, guard)

@@ -1,28 +1,39 @@
 {
-    guards: [
+    //===============================
+    // main config file for ALS guard
+    //===============================
+
+    guards: // watch what logs and how
+    [
         {
-            glob: "/mnt/funplus/logs/fp_rstory/cache_set_fail.*.log"
-            parsers: [
+            tail_glob:      "/mnt/funplus/logs/fp_rstory/cache_set_fail.*.log"
+            history_glob:   "/mnt/funplus/logs/fp_rstory/history/cache_set_fail*"
+            parsers:        [
                 "MemcacheFailParser",
             ]
-        }
+        },
     ]
 
-    parsers: [
+    parsers: // all avaible parsers/plugins
+    [
         {
-            id: "MemcacheFailParser"
-            class: "Line"
-            color: "x"
-            keys: [
+            id:     "MemcacheFailParser"
+            class:  "Line"
+            colors: [
+                "FgYellow",
+            ]
+            keys:   [
                 "key", "timeout",
             ]
         },
 
     ]
 
-    mail: {
-        enabled: true
+    mail: // alarm mail settings
+    {
+        enabled:    true
         recipients: "peng.gao@funplusgame.com,zhengkai@gmail.com"
-        subject: "ALS Alarm"
+        subject:    "ALS Alarm"
     }
+
 }
