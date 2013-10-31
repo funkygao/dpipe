@@ -1,83 +1,74 @@
 package main
 
 import (
-	"encoding/json"
-	"os"
+	"fmt"
+	conf "github.com/daviddengcn/go-ljson-conf"
 )
 
-type jsonItem struct {
-	Name    string `json:"name"`    // must be exported, else json can't unmarshal
-	Pattern string `json:"pattern"` // may not be same order as json file
-	Parsers []string
+type ConfGuard struct {
+	glob    string
+	parsers []string
 }
 
-type jsonConfig []jsonItem
-
-func (this jsonItem) hasParser(parser string) bool {
-	for _, p := range this.Parsers {
-		if p == parser {
-			return true
-		}
-	}
-
-	return false
+type ConfParser struct {
+	id          string
+	class       string
+	color       string
+	lineColumns []string
 }
 
-func (this jsonConfig) hasParser(parser string) bool {
-	for _, p := range this.parsers() {
-		if p == parser {
-			return true
-		}
-	}
-
-	return false
+type Config struct {
+	*conf.Conf
+	guards  []ConfGuard
+	parsers []ConfParser
 }
 
-func (this jsonConfig) parsers() []string {
-	r := make([]string, 0)
-	for _, item := range this {
-		for _, p := range item.Parsers {
-			exists := false
-			for _, parser := range r {
-				if p == parser {
-					exists = true
-					break
-				}
-			}
-
-			if !exists {
-				r = append(r, p)
-			}
-		}
+func LoadConfig(fn string) (*Config, error) {
+	cf, err := conf.Load(fn)
+	if err != nil {
+		return nil, err
 	}
 
-	return r
+	this := new(Config)
+	this.Conf = cf
+	this.guards = make([]ConfGuard, 0)
+	this.parsers = make([]ConfParser, 0)
+
+	// parsers section
+	parsers := this.List("parsers", nil)
+	for i := 0; i < len(parsers); i++ {
+		keyPrefix := fmt.Sprintf("parsers[%d].", i)
+		parser := ConfParser{}
+		parser.id = this.String(keyPrefix+"id", "")
+		parser.class = this.String(keyPrefix+"class", "")
+		parser.color = this.String(keyPrefix+"color", "")
+		parser.lineColumns = this.StringList(keyPrefix+"keys", nil)
+
+		this.parsers = append(this.parsers, parser)
+	}
+
+	// guards section
+	guards := this.List("guards", nil)
+	for i := 0; i < len(guards); i++ {
+		keyPrefix := fmt.Sprintf("guards[%d].", i)
+		guard := ConfGuard{}
+		guard.glob = this.String(keyPrefix+"glob", "")
+		guard.parsers = this.StringList(keyPrefix+"parsers", nil)
+
+		this.guards = append(this.guards, guard)
+	}
+
+	return this, nil
 }
 
-func (this jsonConfig) parsersCount() int {
-	return len(this.parsers())
+func (this *Config) mailEnabled() bool {
+	return this.Bool("mail.enabled", false)
 }
 
-func loadJsonConfig(filename string) (config jsonConfig) {
-	file, e := os.Open(filename)
-	if e != nil {
-		panic(e)
-	}
-	defer file.Close()
+func (this *Config) mailRecipients() string {
+	return this.String("mail.recipients", "")
+}
 
-	decoder := json.NewDecoder(file)
-	if e := decoder.Decode(&config); e != nil {
-		panic(e)
-	}
-
-	// in test mode, add test log
-	if options.test {
-		config = append(config,
-			jsonItem{
-				Name:    "test",
-				Parsers: []string{"PaymentParser", "ErrorLogParser", "MemcacheFailParser"},
-				Pattern: "fixtures/*.log"})
-	}
-
-	return
+func (this *Config) mailSubjectPrefix() string {
+	return this.String("mail.subject", "")
 }

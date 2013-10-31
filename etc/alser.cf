@@ -1,0 +1,28 @@
+{
+    guards: [
+        {
+            glob: "/mnt/funplus/logs/fp_rstory/cache_set_fail.*.log"
+            parsers: [
+                "MemcacheFailParser",
+            ]
+        }
+    ]
+
+    parsers: [
+        {
+            id: "MemcacheFailParser"
+            class: "Line"
+            color: "x"
+            keys: [
+                "key", "timeout",
+            ]
+        },
+
+    ]
+
+    mail: {
+        enabled: true
+        recipients: "peng.gao@funplusgame.com,zhengkai@gmail.com"
+        subject: "ALS Alarm"
+    }
+}
