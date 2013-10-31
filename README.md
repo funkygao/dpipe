@@ -79,3 +79,5 @@ ALS guard
 
     each parser is controlled by configuration without any biz logic
 
+    slow response uri moved to _login_info
+
