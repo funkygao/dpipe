@@ -20,6 +20,7 @@ func sendmailTo(to string, subject string, body string) {
 	const mailLetter = `From: ALS Guard <noreply@funplusgame.com>
 To: {{.To}}
 Subject: {{.Subject}}
+Priority: urgent
 ——————————————————————
 {{.Body}}
 ——————————————————————
