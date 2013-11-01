@@ -18,6 +18,7 @@ type Option struct {
 	dryrun      bool
 	pprof       string
 	parser      string
+	locale      string
 	lock        bool
 	daemon      bool
 }
@@ -38,6 +39,7 @@ func parseFlags() *Option {
 		dryrun      = flag.Bool("dryrun", false, "dry run")
 		cpuprof     = flag.String("cpuprof", "", "cpu profiling file")
 		parser      = flag.String("parser", "", "only run this parser")
+		locale      = flag.String("locale", "", "only guard this locale")
 	)
 	flag.Usage = func() {
 		fmt.Fprint(os.Stderr, USAGE)
@@ -47,5 +49,5 @@ func parseFlags() *Option {
 	flag.Parse()
 
 	return &Option{*verbose, *config, *showversion, *logfile, *debug,
-		*test, *tick, *tailmode, *dryrun, *cpuprof, *parser, *lock, *daemon}
+		*test, *tick, *tailmode, *dryrun, *cpuprof, *parser, *locale, *lock, *daemon}
 }
