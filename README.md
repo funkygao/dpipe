@@ -81,3 +81,5 @@ ALS guard
 
     slow response uri moved to _login_info
 
+    php error will show file and lineNo
+
