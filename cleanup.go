@@ -11,7 +11,7 @@ func cleanup() {
 		syscall.Unlink(LOCKFILE) // cleanup lock file
 	}
 
-	if options.pprof != "" {
+	if options.cpuprof != "" {
 		pprof.StopCPUProfile()
 	}
 }

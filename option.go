@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"runtime"
 )
 
 type Option struct {
@@ -16,7 +17,7 @@ type Option struct {
 	tick        int
 	tailmode    bool
 	dryrun      bool
-	pprof       string
+	cpuprof     string
 	parser      string
 	locale      string
 	lock        bool
@@ -43,14 +44,30 @@ func parseFlags() *Option {
 		parser      = flag.String("parser", "", "only run this parser")
 		locale      = flag.String("locale", "", "only guard this locale")
 	)
-	flag.Usage = func() {
-		fmt.Fprint(os.Stderr, USAGE)
-		flag.PrintDefaults()
-	}
+	flag.Usage = showUsage
 
 	flag.Parse()
 
 	return &Option{*verbose, *config, *showversion, *logfile, *debug,
 		*test, *tick, *tailmode, *dryrun, *cpuprof, *parser, *locale, *lock, *daemon,
 		*showparsers}
+}
+
+func showUsage() {
+	fmt.Fprint(os.Stderr, USAGE)
+	flag.PrintDefaults()
+}
+
+func showVersion() {
+	fmt.Fprintf(os.Stderr, "ALSer %s (build: %s)\n", VERSION, BuildID)
+	fmt.Fprintf(os.Stderr, "Built with %s %s for %s/%s\n",
+		runtime.Compiler, runtime.Version(), runtime.GOOS, runtime.GOARCH)
+	os.Exit(0)
+}
+
+func setupMaxProcs() {
+	numCpu := runtime.NumCPU()
+	maxProcs := numCpu/2 + 1
+	runtime.GOMAXPROCS(numCpu)
+	logger.Printf("starting with %d/%d CPUs...\n", maxProcs, numCpu)
 }

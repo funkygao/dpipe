@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/funkygao/alser/config"
 	"os"
-	"runtime"
 	"runtime/debug"
 	"runtime/pprof"
 )
@@ -13,10 +12,7 @@ func init() {
 	options = parseFlags()
 
 	if options.showversion {
-		fmt.Fprintf(os.Stderr, "ALSer %s (build: %s)\n", VERSION, BuildID)
-		fmt.Fprintf(os.Stderr, "Built with %s %s for %s/%s\n",
-			runtime.Compiler, runtime.Version(), runtime.GOOS, runtime.GOARCH)
-		os.Exit(0)
+		showVersion()
 	}
 
 	if options.lock {
@@ -62,20 +58,17 @@ func main() {
 		shutdown()
 	}
 
-	numCpu := runtime.NumCPU()
-	maxProcs := numCpu/2 + 1
-	runtime.GOMAXPROCS(numCpu)
-	logger.Printf("starting with %d/%d CPUs...\n", maxProcs, numCpu)
-
-	if options.pprof != "" {
-		f, err := os.Create(options.pprof)
+	if options.cpuprof != "" {
+		f, err := os.Create(options.cpuprof)
 		if err != nil {
 			panic(err)
 		}
 
-		logger.Printf("CPU profiler %s enabled\n", options.pprof)
+		logger.Printf("CPU profiler %s enabled\n", options.cpuprof)
 		pprof.StartCPUProfile(f)
 	}
+
+	setupMaxProcs()
 
 	logger.Printf("%s has %d kinds of logs to guard\n", options.config, len(conf.Guards))
 
