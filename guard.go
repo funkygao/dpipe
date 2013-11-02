@@ -1,13 +1,14 @@
 package main
 
 import (
+	"github.com/funkygao/alser/config"
 	"github.com/funkygao/alser/parser"
 	"path/filepath"
 	"sync"
 	"time"
 )
 
-func guard(jsonConfig jsonConfig) {
+func guard(conf *config.Config) {
 	startTime = time.Now()
 
 	// pass config to parsers
@@ -26,10 +27,14 @@ func guard(jsonConfig jsonConfig) {
 	chAlarm := make(chan parser.Alarm, 1000) // collect alarms from all parsers
 	go runAlarmCollector(chAlarm)            // unified alarm handling
 
+	go notifyUnGuardedLogs(conf)
+
+	parser.InitParsers(options.parser, conf, chAlarm)
+
 	var workersWg = new(sync.WaitGroup)
-	chLines := make(chan int)
+	chLines := make(chan int)         // how many line have been scanned till now
 	workersCanWait := make(chan bool) // in case of wg.Add/Wait race condition
-	go prepareWorkers(workersWg, workersCanWait, jsonConfig, chLines, chAlarm)
+	go invokeWorkers(workersWg, workersCanWait, conf, chLines, chAlarm)
 
 	// wait for all workers finish
 	go func() {
@@ -58,41 +63,46 @@ func guard(jsonConfig jsonConfig) {
 	logger.Printf("%d lines scanned, %s elapsed\n", lines, time.Since(startTime))
 }
 
-func prepareWorkers(wg *sync.WaitGroup, workersCanWait chan<- bool, jsonConfig jsonConfig, chLines chan<- int, chAlarm chan<- parser.Alarm) {
+func invokeWorkers(wg *sync.WaitGroup, workersCanWait chan<- bool, conf *config.Config, chLines chan<- int, chAlarm chan<- parser.Alarm) {
 	allWorkers = make(map[string]bool)
 	workersCanWaitOnce := new(sync.Once)
 
 	// main loop to watch for newly emerging logfiles
 	for {
-		for _, item := range jsonConfig {
-			if options.parser != "" && !item.hasParser(options.parser) {
+		for _, g := range conf.Guards {
+			if options.parser != "" && !g.HasParser(options.parser) {
 				// only one parser applied
 				continue
 			}
 
-			logfiles, err := filepath.Glob(item.Pattern)
+			var pattern string
+			if options.tailmode {
+				pattern = g.TailLogGlob
+			} else {
+				pattern = g.HistoryLogGlob
+			}
+
+			logfiles, err := filepath.Glob(pattern)
 			if err != nil {
 				panic(err)
 			}
 
 			if options.debug {
-				logger.Printf("glob: %s, got: %+v\n", item.Pattern, logfiles)
+				logger.Printf("glob: %s, got: %+v\n", pattern, logfiles)
 			}
 
 			for _, logfile := range logfiles {
 				if _, present := allWorkers[logfile]; present {
-					// this logfile is already being tailed
+					// this logfile is already being guarded
 					continue
 				}
 
-				allWorkers[logfile] = true
 				wg.Add(1)
+				allWorkers[logfile] = true
 
 				// each logfile is a dedicated goroutine worker
-				go runWorker(logfile, item, wg, chLines, chAlarm)
-				if options.verbose {
-					logger.Printf("worker-%d[%s] started\n", len(allWorkers), logfile)
-				}
+				worker := newWorker(len(allWorkers), logfile, conf, options.tailmode, wg, chLines, chAlarm)
+				go worker.run()
 			}
 		}
 
@@ -110,5 +120,4 @@ func prepareWorkers(wg *sync.WaitGroup, workersCanWait chan<- bool, jsonConfig j
 	if options.parser != "" {
 		logger.Printf("only parser %s running\n", options.parser)
 	}
-	logger.Println(len(allWorkers), "workers started")
 }

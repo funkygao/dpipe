@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/funkygao/alser/config"
 	"os"
 	"runtime"
 	"runtime/debug"
@@ -30,8 +31,6 @@ func init() {
 		daemonize(false, true)
 	}
 
-	logger = newLogger(options)
-
 	setupSignals()
 }
 
@@ -45,10 +44,21 @@ func main() {
 		}
 	}()
 
-	jsonConfig := loadJsonConfig(options.config)
-	if options.parser != "" && !jsonConfig.hasParser(options.parser) {
-		logger.Println("invalid parser:", options.parser)
-		logger.Println("valid parsers:", jsonConfig.parsers())
+	logger = newLogger(options)
+
+	// load the big biz logic config file
+	conf, err := config.LoadConfig(options.config)
+	if err != nil {
+		panic(err)
+	}
+
+	if options.showparsers {
+		fmt.Fprintf(os.Stderr, "All parsers: %+v\n", conf.Parsers)
+		shutdown()
+	}
+
+	if options.parser != "" && !conf.ParserApplied(options.parser) {
+		fmt.Fprintf(os.Stderr, "Invalid parser: %s\n", options.parser)
 		shutdown()
 	}
 
