@@ -1,6 +1,0 @@
-{
-    // comment
-	enabled: true
-    recipients: "peng.gao@funplusgame.com,zhengkai@gmail.com"
-    subject: "ALS Alarm"
-}
