@@ -10,6 +10,7 @@ import (
 )
 
 func runTicker(ticker *time.Ticker, lines *int) {
+	startTime := time.Now()
 	ms := new(runtime.MemStats)
 	for _ = range ticker.C {
 		runtime.ReadMemStats(ms)

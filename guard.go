@@ -9,7 +9,7 @@ import (
 )
 
 func guard(conf *config.Config) {
-	startTime = time.Now()
+	startTime := time.Now()
 
 	// pass config to parsers
 	parser.SetLogger(logger)

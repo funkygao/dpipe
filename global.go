@@ -2,13 +2,11 @@ package main
 
 import (
 	"log"
-	"time"
 )
 
 var (
-	options   *Option
-	logger    *log.Logger
-	startTime time.Time
+	options *Option
+	logger  *log.Logger
 
 	BuildID = "unknown" // git version id, passed in from shell
 
