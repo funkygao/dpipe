@@ -30,7 +30,7 @@ func runAlarmCollector(ch <-chan parser.Alarm) {
 	}
 }
 
-func notifyUnGuardedLogs(conf *config.Conf) {
+func notifyUnGuardedLogs(conf *config.Config) {
 	// what logs are still out of our guard?
 
 }

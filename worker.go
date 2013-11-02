@@ -12,7 +12,7 @@ import (
 type worker struct {
 	id       int
 	logfile  string // a single file
-	conf     config.ConfigGuard
+	conf     config.ConfGuard
 	tailMode bool
 	tailConf tail.Config
 	wg       *sync.WaitGroup
@@ -20,7 +20,7 @@ type worker struct {
 	chAlarm  chan<- parser.Alarm
 }
 
-func newWorker(id int, logfile string, conf config.ConfigGuard, tailMode bool,
+func newWorker(id int, logfile string, conf config.ConfGuard, tailMode bool,
 	wg *sync.WaitGroup,
 	chLines chan<- int, chAlarm chan<- parser.Alarm) worker {
 	this := worker{id: id, logfile: logfile, conf: conf, tailMode: tailMode,

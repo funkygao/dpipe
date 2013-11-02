@@ -57,7 +57,7 @@ func main() {
 		shutdown()
 	}
 
-	if options.parser != "" && !conf.ParserApplied(options.parser) {
+	if options.parser != "" && !conf.IsParserApplied(options.parser) {
 		fmt.Fprintf(os.Stderr, "Invalid parser: %s\n", options.parser)
 		shutdown()
 	}
@@ -77,9 +77,9 @@ func main() {
 		pprof.StartCPUProfile(f)
 	}
 
-	logger.Printf("%s has %d kinds of logs to guard\n", options.config, len(jsonConfig))
+	logger.Printf("%s has %d kinds of logs to guard\n", options.config, len(conf.Guards))
 
-	guard(jsonConfig)
+	guard(conf)
 
 	shutdown()
 }

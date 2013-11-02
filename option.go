@@ -32,7 +32,7 @@ func parseFlags() *Option {
 		logfile     = flag.String("l", "", "alser log file name")
 		lock        = flag.Bool("lock", true, "lock so that only 1 instance can run")
 		showversion = flag.Bool("version", false, "show version")
-		showparsers = Flag.Bool("parsers", false, "show all parsers")
+		showparsers = flag.Bool("parsers", false, "show all parsers")
 		debug       = flag.Bool("debug", false, "debug mode")
 		daemon      = flag.Bool("daemon", false, "run as daemon")
 		test        = flag.Bool("test", false, "test mode")
