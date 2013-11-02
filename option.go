@@ -21,6 +21,7 @@ type Option struct {
 	locale      string
 	lock        bool
 	daemon      bool
+	showparsers bool
 }
 
 // parse argv to Option struct
@@ -31,6 +32,7 @@ func parseFlags() *Option {
 		logfile     = flag.String("l", "", "alser log file name")
 		lock        = flag.Bool("lock", true, "lock so that only 1 instance can run")
 		showversion = flag.Bool("version", false, "show version")
+		showparsers = Flag.Bool("parsers", false, "show all parsers")
 		debug       = flag.Bool("debug", false, "debug mode")
 		daemon      = flag.Bool("daemon", false, "run as daemon")
 		test        = flag.Bool("test", false, "test mode")
@@ -49,5 +51,6 @@ func parseFlags() *Option {
 	flag.Parse()
 
 	return &Option{*verbose, *config, *showversion, *logfile, *debug,
-		*test, *tick, *tailmode, *dryrun, *cpuprof, *parser, *locale, *lock, *daemon}
+		*test, *tick, *tailmode, *dryrun, *cpuprof, *parser, *locale, *lock, *daemon,
+		*showparsers}
 }
