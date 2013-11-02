@@ -121,6 +121,16 @@ func (this *Config) hasDupParsers() bool {
 	return false
 }
 
+func (this *Config) ParserById(id string) *ConfParser {
+	for _, p := range this.Parsers {
+		if p.Id == id {
+			return &p
+		}
+	}
+
+	return nil
+}
+
 func (this *ConfParser) MailEnabled() bool {
 	return len(this.MailRecipients) > 0
 }

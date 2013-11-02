@@ -40,4 +40,14 @@ func TestLoadConfig(t *testing.T) {
 	assert.Equal(t, "timeout", p.Keys[1].Key)
 	assert.Equal(t, false, p.Keys[1].Show)
 
+	// get parser by id
+	mp := c.ParserById("MemcacheFailParser")
+	assert.Equal(t, "Line", mp.Class)
+	assert.Equal(t, "ALS Guard ", mp.MailSubjectPrefix)
+
+	np := c.ParserById("NonExistsParser")
+	if np != nil {
+		t.Error("expected nil, got ", np)
+	}
+
 }
