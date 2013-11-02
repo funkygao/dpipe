@@ -1,16 +1,21 @@
+/*
+Use sendmail command instead of SMTP to send email.
+
+You have to install a MTA on localhost before using this pkg.
+*/
 package parser
 
 import (
 	"bytes"
+	"errors"
 	"os"
 	"os/exec"
 	"text/template"
 )
 
-func sendmailTo(to string, subject string, body string) {
+func sendmailTo(to string, subject string, body string) error {
 	if to == "" || subject == "" || body == "" {
-		logger.Println("empty mail params")
-		return
+		return errors.New("empty mail params")
 	}
 
 	type letterVar struct {
@@ -34,7 +39,7 @@ X-MSMail-Priority: High
 	t := template.Must(template.New("letter").Parse(mailLetter))
 	wr := new(bytes.Buffer)
 	if err := t.Execute(wr, data); err != nil {
-		logger.Println(err)
+		return err
 	}
 
 	c1 := exec.Command("echo", wr.String())
@@ -44,4 +49,5 @@ X-MSMail-Priority: High
 	c2.Start()
 	c1.Run()
 	c2.Wait()
+	return nil
 }

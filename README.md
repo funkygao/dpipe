@@ -10,7 +10,7 @@ ALS guard
 
           alser main()
               |
-          loadJsonConfig
+          LoadConfig
               |
               |<-------------------------------
               |                                |
@@ -80,4 +80,8 @@ ALS guard
     each parser is controlled by configuration without any biz logic
 
     slow response uri moved to _login_info
+
+    php error will show file and lineNo
+
+    notify webmaster what logs are still out of guard
 

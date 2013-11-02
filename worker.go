@@ -1,22 +1,34 @@
 package main
 
 import (
+	"github.com/funkygao/alser/config"
 	"github.com/funkygao/alser/parser"
 	"github.com/funkygao/tail"
 	"os"
 	"sync"
+	"fmt"
 )
 
-// Each single log file is a worker
-// Workers share singleton parsers
-func runWorker(logfile string, conf jsonItem, wg *sync.WaitGroup, chLines chan<- int, chAlarm chan<- parser.Alarm) {
-	defer func() {
-		wg.Done()
-		delete(allWorkers, logfile) // FIXME not goroutine safe
-	}()
+type worker struct {
+	id int
+	logfile  string // a single file
+	conf     config.ConfigGuard
+	tailMode bool
+	tailConf tail.Config
+	wg       *sync.WaitGroup
+	chLines  chan<- int
+	chAlarm  chan<- parser.Alarm
+}
+
+func newWorker(id int, logfile string, conf config.ConfigGuard, tailMode bool,
+	wg *sync.WaitGroup,
+	chLines chan<- int, chAlarm chan<- parser.Alarm) worker {
+	this := worker{id:id, logfile: logfile, conf: conf, tailMode: tailMode,
+		wg:      wg,
+		chLines: chLines, chAlarm: chAlarm}
 
 	var tailConfig tail.Config
-	if options.tailmode {
+	if this.tailMode {
 		tailConfig = tail.Config{
 			Follow:   true, // tail -f
 			Poll:     true, // Poll for file changes instead of using inotify
@@ -25,34 +37,40 @@ func runWorker(logfile string, conf jsonItem, wg *sync.WaitGroup, chLines chan<-
 			//MustExist: false,
 		}
 	}
+	this.tailConf = tailConfig
 
-	if options.parser != "" {
-		parser.NewParser(options.parser, chAlarm)
-	} else {
-		parser.NewParsers(conf.Parsers, chAlarm)
-	}
+	return this
+}
 
-	t, err := tail.TailFile(logfile, tailConfig)
+func (this *worker) String() string {
+	return fmt.Sprintf("worker-%d[%s]", this.id, this.logfile)
+}
+
+func (this *worker) run() {
+	defer func() {
+		this.wg.Done()
+		delete(allWorkers, this.logfile) // FIXME not goroutine safe
+	}()
+
+	t, err := tail.TailFile(this.logfile, this.tailConf)
 	if err != nil {
 		panic(err)
 	}
 	defer t.Stop()
 
-	for line := range t.Lines {
-		// a valid line scanned
-		chLines <- 1
-
-		for _, p := range conf.Parsers {
-			if options.parser != "" && options.parser != p {
-				// only 1 parser applied
-				continue
-			}
-
-			parser.Dispatch(p, line.Text)
-		}
+	if options.verbose {
+		logger.Printf("%s started\n", *this)
 	}
 
+	for line := range t.Lines {
+		// a valid line scanned
+		this.chLines <- 1
+
+		for _, p := range this.conf.Parsers {
+			parser.Dispatch(p, line.Text)
+		}
+
 	if options.verbose {
-		logger.Println(logfile, "finished")
+		logger.Printf("%s finished\n", *this)
 	}
 }

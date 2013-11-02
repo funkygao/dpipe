@@ -1,8 +1,10 @@
 package main
 
 import (
+	"github.com/funkygao/alser/config"
 	"github.com/funkygao/alser/parser"
 	"github.com/funkygao/gofmt"
+	"path/filepath"
 	"runtime"
 	"time"
 )
@@ -26,4 +28,9 @@ func runAlarmCollector(ch <-chan parser.Alarm) {
 		// TODO send email
 		logger.Println(alarm)
 	}
+}
+
+func notifyUnGuardedLogs(conf *config.Conf) {
+	// what logs are still out of our guard?
+
 }

@@ -1,0 +1,54 @@
+{
+
+    // comment must be start of line(excluding the leading spaces)
+
+    // watch what logs and how
+    guards: 
+    [
+        {
+            tail_glob:      "/mnt/funplus/logs/fp_rstory/memcache_to.*.log"
+            history_glob:   "/mnt/funplus/logs/fp_rstory/history/memcache_to*"
+            parsers:        [
+                "MemcacheFailParser",
+            ]
+        },
+        {
+            tail_glob:      "/mnt/funplus/logs/fp_rstory/cache_set_fail.*.log"
+            history_glob:   "/mnt/funplus/logs/fp_rstory/history/cache_set_fail*"
+            parsers:        [
+                "MemcacheFailParser",
+            ]
+        },
+    ]
+    
+    // all avaible parsers/plugins
+    parsers: 
+    [
+        {
+            id:     "MemcacheFailParser"
+            class:  "Line"
+            mail_recipents: [
+                "peng.gao@funplusgamenet.com",
+                "zhengkai@gmail.com"
+            ]
+            mail_subject_prefix: "ALS Guard "
+            colors: [
+                "FgYellow",
+            ]
+            keys:   [
+                {
+                    key: "key"
+                    required: true
+                    show: true
+                },
+                {
+                    key: "timeout"
+                    required: false
+                    show: false
+                }
+            ]
+        },
+
+    ]
+
+}
