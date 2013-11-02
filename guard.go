@@ -66,6 +66,7 @@ func guard(conf *config.Config) {
 func invokeWorkers(wg *sync.WaitGroup, workersCanWait chan<- bool, conf *config.Config, chLines chan<- int, chAlarm chan<- parser.Alarm) {
 	allWorkers = make(map[string]bool)
 	workersCanWaitOnce := new(sync.Once)
+	mutex := new(sync.Mutex)
 
 	// main loop to watch for newly emerging logfiles
 	for {
@@ -101,7 +102,7 @@ func invokeWorkers(wg *sync.WaitGroup, workersCanWait chan<- bool, conf *config.
 				allWorkers[logfile] = true
 
 				// each logfile is a dedicated goroutine worker
-				worker := newWorker(len(allWorkers), logfile, g, options.tailmode, wg, chLines, chAlarm)
+				worker := newWorker(len(allWorkers), logfile, g, options.tailmode, wg, mutex, chLines, chAlarm)
 				go worker.run()
 			}
 		}

@@ -15,16 +15,17 @@ type worker struct {
 	conf     config.ConfGuard
 	tailMode bool
 	tailConf tail.Config
-	wg       *sync.WaitGroup
-	chLines  chan<- int
-	chAlarm  chan<- parser.Alarm
+	*sync.Mutex
+	wg      *sync.WaitGroup
+	chLines chan<- int
+	chAlarm chan<- parser.Alarm
 }
 
 func newWorker(id int, logfile string, conf config.ConfGuard, tailMode bool,
-	wg *sync.WaitGroup,
+	wg *sync.WaitGroup, mutex *sync.Mutex,
 	chLines chan<- int, chAlarm chan<- parser.Alarm) worker {
 	this := worker{id: id, logfile: logfile, conf: conf, tailMode: tailMode,
-		wg:      wg,
+		wg: wg, Mutex: mutex,
 		chLines: chLines, chAlarm: chAlarm}
 
 	var tailConfig tail.Config
@@ -49,7 +50,10 @@ func (this *worker) String() string {
 func (this *worker) run() {
 	defer func() {
 		this.wg.Done()
-		delete(allWorkers, this.logfile) // FIXME not goroutine safe
+
+		this.Lock()
+		delete(allWorkers, this.logfile) // map is not goroutine safe
+		this.Unlock()
 	}()
 
 	t, err := tail.TailFile(this.logfile, this.tailConf)
