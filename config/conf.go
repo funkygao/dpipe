@@ -128,3 +128,13 @@ func (this *ConfParser) MailEnabled() bool {
 func (this *ConfParser) MailTos() string {
 	return strings.Join(this.MailRecipients, ",")
 }
+
+func (this *ConfGuard) HasParser(parser string) bool {
+	for _, p := range this.Parsers {
+		if p == parser {
+			return true
+		}
+	}
+
+	return false
+}

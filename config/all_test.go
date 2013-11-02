@@ -21,6 +21,8 @@ func TestLoadConfig(t *testing.T) {
 	// guards
 	assert.Equal(t, "/mnt/funplus/logs/fp_rstory/memcache_to.*.log", c.Guards[0].TailLogGlob)
 	assert.Equal(t, "/mnt/funplus/logs/fp_rstory/history/cache_set_fail*", c.Guards[1].HistoryLogGlob)
+	assert.Equal(t, false, c.Guards[0].HasParser("NonExistParser"))
+	assert.Equal(t, true, c.Guards[0].HasParser("MemcacheFailParser"))
 
 	// parsers
 	p := c.Parsers[0]
