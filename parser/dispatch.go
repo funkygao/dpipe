@@ -24,18 +24,9 @@ func InitParsers(pid string, conf *config.Config, chAlarm chan<- Alarm) {
 
 // Dispatch a line of log entry to target parser by name
 func Dispatch(parserName, line string) {
-	p, ok := getParser(parserName)
-	if !ok {
-		return
+	if p, present := allParsers[parserName]; present {
+		p.ParseLine(line)
 	}
-
-	p.ParseLine(line)
-}
-
-// Get a parser instance by name
-func getParser(parserName string) (p Parser, ok bool) {
-	p, ok = allParsers[parserName]
-	return
 }
 
 func checkError(err error) {
