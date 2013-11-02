@@ -1,16 +1,16 @@
 package main
 
 import (
+	"fmt"
 	"github.com/funkygao/alser/config"
 	"github.com/funkygao/alser/parser"
 	"github.com/funkygao/tail"
 	"os"
 	"sync"
-	"fmt"
 )
 
 type worker struct {
-	id int
+	id       int
 	logfile  string // a single file
 	conf     config.ConfigGuard
 	tailMode bool
@@ -23,7 +23,7 @@ type worker struct {
 func newWorker(id int, logfile string, conf config.ConfigGuard, tailMode bool,
 	wg *sync.WaitGroup,
 	chLines chan<- int, chAlarm chan<- parser.Alarm) worker {
-	this := worker{id:id, logfile: logfile, conf: conf, tailMode: tailMode,
+	this := worker{id: id, logfile: logfile, conf: conf, tailMode: tailMode,
 		wg:      wg,
 		chLines: chLines, chAlarm: chAlarm}
 
@@ -69,6 +69,7 @@ func (this *worker) run() {
 		for _, p := range this.conf.Parsers {
 			parser.Dispatch(p, line.Text)
 		}
+	}
 
 	if options.verbose {
 		logger.Printf("%s finished\n", *this)

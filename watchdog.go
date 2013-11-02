@@ -4,7 +4,7 @@ import (
 	"github.com/funkygao/alser/config"
 	"github.com/funkygao/alser/parser"
 	"github.com/funkygao/gofmt"
-	"path/filepath"
+	//"path/filepath"
 	"runtime"
 	"time"
 )
