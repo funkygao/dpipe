@@ -4,11 +4,11 @@ import (
 	"github.com/funkygao/alser/config"
 )
 
-// parser: only run this single parser
-func InitParsers(parser string, conf *config.Config, chAlarm chan<- parser.Alarm) {
+// pid: only run this single parser id
+func InitParsers(pid string, conf *config.Config, chAlarm chan<- Alarm) {
 	for _, g := range conf.Guards {
 		for _, parserId := range g.Parsers {
-			if parser != "" && parser != parserId {
+			if pid != "" && pid != parserId {
 				continue
 			}
 

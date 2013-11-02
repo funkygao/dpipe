@@ -2,6 +2,7 @@ package parser
 
 import (
 	"fmt"
+	mail "github.com/funkygao/alser/sendmail"
 	"strings"
 	"time"
 )
@@ -29,7 +30,7 @@ func runSendAlarmsWatchdog() {
 		case <-time.After(time.Second * 120):
 			if mailBody != "" {
 				mailBody = strings.TrimRight(mailBody, "\n")
-				go sendmailTo(emailRecipients, fmt.Sprintf("%s %d", emailSubject, bodyLines), mailBody)
+				go mail.sendmailTo(emailRecipients, fmt.Sprintf("%s %d", emailSubject, bodyLines), mailBody)
 				logger.Printf("alarm sent=> %s\n", emailRecipients)
 
 				mailBody = ""

@@ -65,7 +65,7 @@ func init() {
 
 }
 
-func createParser(conf *config.ConfParser, chAlarm chan<- parser.Alarm) {
+func createParser(conf *config.ConfParser, chAlarm chan<- Alarm) {
 
 }
 
