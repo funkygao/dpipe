@@ -66,6 +66,14 @@ func init() {
 }
 
 func createParser(conf *config.ConfParser, chAlarm chan<- Alarm) Parser {
+	switch conf.Class {
+	case "Line":
+		return NewParser("", chAlarm)
+	default:
+		panic("invalid parse class")
+	}
+
+	return NewParser("", chAlarm)
 
 }
 
