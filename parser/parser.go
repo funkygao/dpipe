@@ -1,22 +1,9 @@
-/*
-               AlsParser
-                   |
-       ------------------------------
-      |                              |
-     DbParser            --------------------
-      |                 |
-      |          MemcacheFailParser
-      |
-     -------------------------------
-    |              |                |
-   PaymentParser ErrorLogParser PhpErrorLogParser
-
-*/
 package parser
 
 import (
 	json "github.com/bitly/go-simplejson"
 	conf "github.com/daviddengcn/go-ljson-conf"
+	"github.com/funkygao/alser/config"
 	"log"
 )
 
@@ -75,6 +62,10 @@ func init() {
 
 	_, err := conf.Load(CONF_PARSERS)
 	checkError(err)
+
+}
+
+func createParser(conf *config.ConfParser, chAlarm chan<- parser.Alarm) {
 
 }
 
