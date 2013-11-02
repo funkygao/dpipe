@@ -1,10 +1,17 @@
 {
-    //===============================
-    // main config file for ALS guard
-    //===============================
 
-    guards: // watch what logs and how
+    // comment must be start of line(excluding the leading spaces)
+
+    // watch what logs and how
+    guards: 
     [
+        {
+            tail_glob:      "/mnt/funplus/logs/fp_rstory/memcache_to.*.log"
+            history_glob:   "/mnt/funplus/logs/fp_rstory/history/memcache_to*"
+            parsers:        [
+                "MemcacheFailParser",
+            ]
+        },
         {
             tail_glob:      "/mnt/funplus/logs/fp_rstory/cache_set_fail.*.log"
             history_glob:   "/mnt/funplus/logs/fp_rstory/history/cache_set_fail*"
@@ -13,27 +20,35 @@
             ]
         },
     ]
-
-    parsers: // all avaible parsers/plugins
+    
+    // all avaible parsers/plugins
+    parsers: 
     [
         {
             id:     "MemcacheFailParser"
             class:  "Line"
+            mail_recipents: [
+                "peng.gao@funplusgamenet.com",
+                "zhengkai@gmail.com"
+            ]
+            mail_subject_prefix: "ALS Guard "
             colors: [
                 "FgYellow",
             ]
             keys:   [
-                "key", "timeout",
+                {
+                    key: "key"
+                    required: true
+                    show: true
+                },
+                {
+                    key: "timeout"
+                    required: false
+                    show: false
+                }
             ]
         },
 
     ]
-
-    mail: // alarm mail settings
-    {
-        enabled:    true
-        recipients: "peng.gao@funplusgame.com,zhengkai@gmail.com"
-        subject:    "ALS Alarm"
-    }
 
 }
