@@ -4,27 +4,37 @@ Configurations shared between alser and parers.
 package config
 
 import (
+	"errors"
 	"fmt"
 	conf "github.com/daviddengcn/go-ljson-conf"
+	"strings"
 )
 
 type ConfGuard struct {
-	tailLogGlob    string
-	historyLogGlob string
-	parsers        []string
+	TailLogGlob    string
+	HistoryLogGlob string
+	Parsers        []string
+}
+
+type LineKey struct {
+	Key      string
+	Required bool
+	Show     bool
 }
 
 type ConfParser struct {
-	id          string
-	class       string
-	colors      []string // fg, effects, bg
-	lineColumns []string
+	Id                string
+	Class             string
+	Keys              []LineKey // by line
+	Colors            []string  // fg, effects, bg
+	MailRecipients    []string
+	MailSubjectPrefix string
 }
 
 type Config struct {
 	*conf.Conf
-	guards  []ConfGuard
-	parsers []ConfParser
+	Guards  []ConfGuard
+	Parsers []ConfParser
 }
 
 func LoadConfig(fn string) (*Config, error) {
@@ -35,20 +45,34 @@ func LoadConfig(fn string) (*Config, error) {
 
 	this := new(Config)
 	this.Conf = cf
-	this.guards = make([]ConfGuard, 0)
-	this.parsers = make([]ConfParser, 0)
+	this.Guards = make([]ConfGuard, 0)
+	this.Parsers = make([]ConfParser, 0)
 
 	// parsers section
 	parsers := this.List("parsers", nil)
 	for i := 0; i < len(parsers); i++ {
 		keyPrefix := fmt.Sprintf("parsers[%d].", i)
 		parser := ConfParser{}
-		parser.id = this.String(keyPrefix+"id", "")
-		parser.class = this.String(keyPrefix+"class", "")
-		parser.colors = this.StringList(keyPrefix+"colors", nil)
-		parser.lineColumns = this.StringList(keyPrefix+"keys", nil)
+		parser.Id = this.String(keyPrefix+"id", "")
+		parser.Class = this.String(keyPrefix+"class", "")
+		parser.MailRecipients = this.StringList(keyPrefix+"mail_recipents", nil)
+		parser.MailSubjectPrefix = this.String(keyPrefix+"mail_subject_prefix", "")
+		parser.Colors = this.StringList(keyPrefix+"colors", nil)
+		// keys
+		keys := this.List(keyPrefix+"keys", nil)
+		if keys == nil {
+			return nil, errors.New("keys can't be empty in parser")
+		}
+		for j := 0; j < len(keys); j++ {
+			prefix := fmt.Sprintf("%s[%d].", keyPrefix+"keys", j)
+			key := LineKey{}
+			key.Key = this.String(prefix+"key", "")
+			key.Required = this.Bool(prefix+"required", false)
+			key.Show = this.Bool(prefix+"show", false)
+			parser.Keys = append(parser.Keys, key)
+		}
 
-		this.parsers = append(this.parsers, parser)
+		this.Parsers = append(this.Parsers, parser)
 	}
 
 	// guards section
@@ -56,12 +80,39 @@ func LoadConfig(fn string) (*Config, error) {
 	for i := 0; i < len(guards); i++ {
 		keyPrefix := fmt.Sprintf("guards[%d].", i)
 		guard := ConfGuard{}
-		guard.tailLogGlob = this.String(keyPrefix+"tail_glob", "")
-		guard.historyLogGlob = this.String(keyPrefix+"history_glob", "")
-		guard.parsers = this.StringList(keyPrefix+"parsers", nil)
+		guard.TailLogGlob = this.String(keyPrefix+"tail_glob", "")
+		guard.HistoryLogGlob = this.String(keyPrefix+"history_glob", "")
+		guard.Parsers = this.StringList(keyPrefix+"parsers", nil)
 
-		this.guards = append(this.guards, guard)
+		this.Guards = append(this.Guards, guard)
+	}
+
+	// validation
+	if this.hasDupParsers() {
+		return nil, errors.New("has dup parsers")
 	}
 
 	return this, nil
+}
+
+// Dup parser id
+func (this *Config) hasDupParsers() bool {
+	parsers := make(map[string]bool)
+	for _, p := range this.Parsers {
+		if _, present := parsers[p.Id]; present {
+			return true
+		}
+
+		parsers[p.Id] = true
+	}
+
+	return false
+}
+
+func (this *ConfParser) MailEnabled() bool {
+	return len(this.MailRecipients) > 0
+}
+
+func (this *ConfParser) MailTos() string {
+	return strings.Join(this.MailRecipients, ",")
 }

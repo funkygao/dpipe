@@ -30,11 +30,25 @@
         {
             id:     "MemcacheFailParser"
             class:  "Line"
+            mail_recipents: [
+                "peng.gao@funplusgamenet.com",
+                "zhengkai@gmail.com"
+            ]
+            mail_subject_prefix: "ALS Guard "
             colors: [
                 "FgYellow",
             ]
             keys:   [
-                "key", "timeout",
+                {
+                    key: "key"
+                    required: true
+                    show: true
+                },
+                {
+                    key: "timeout"
+                    required: false
+                    show: false
+                }
             ]
         },
 
