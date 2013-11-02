@@ -95,6 +95,18 @@ func LoadConfig(fn string) (*Config, error) {
 	return this, nil
 }
 
+func (this *Config) IsParserApplied(parser string) bool {
+	for _, g := range this.Guards {
+		for _, p := range g.Parsers {
+			if p == parser {
+				return true
+			}
+		}
+	}
+
+	return false
+}
+
 // Dup parser id
 func (this *Config) hasDupParsers() bool {
 	parsers := make(map[string]bool)
