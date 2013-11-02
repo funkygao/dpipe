@@ -3,8 +3,9 @@ package main
 import (
 	"github.com/funkygao/alser/config"
 	"github.com/funkygao/alser/parser"
+	mail "github.com/funkygao/alser/sendmail"
 	"github.com/funkygao/gofmt"
-	//"path/filepath"
+	"path/filepath"
 	"runtime"
 	"time"
 )
@@ -32,6 +33,46 @@ func runAlarmCollector(ch <-chan parser.Alarm) {
 }
 
 func notifyUnGuardedLogs(conf *config.Config) {
-	// what logs are still out of our guard?
+	const prefixLen = 5
+
+	guardedLogs := make(map[string]bool)
+	for _, g := range conf.Guards {
+		var filePrefix string
+		if options.tailmode {
+			filePrefix = g.TailLogGlob
+		} else {
+			filePrefix = g.HistoryLogGlob
+		}
+
+		baseName := filepath.Base(filePrefix)
+		guardedLogs[baseName[:prefixLen]] = true
+	}
+
+	// FIXME we assume that all the guarded logs are in the same dir
+	var logfile string
+	if options.tailmode {
+		logfile = conf.Guards[0].TailLogGlob
+	} else {
+		logfile = conf.Guards[0].HistoryLogGlob
+	}
+
+	unGuardedLogs := make(map[string]bool)
+	baseDir := filepath.Dir(logfile)
+	allLogs, _ := filepath.Glob(baseDir + "/*")
+	for _, path := range allLogs {
+		baseName := filepath.Base(path)
+		if _, present := guardedLogs[baseName[:prefixLen]]; !present {
+			unGuardedLogs[path] = true
+		}
+	}
+
+	if len(unGuardedLogs) > 0 {
+		var mailBody = "Unguared logs:\n\n"
+		for logfile, _ := range unGuardedLogs {
+			mailBody += logfile + "\n"
+		}
+
+		mail.Sendmail(conf.String("unguarded.mail_to", ""), "Unguarded Logs", mailBody)
+	}
 
 }
