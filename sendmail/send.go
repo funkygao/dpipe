@@ -13,7 +13,7 @@ import (
 	"text/template"
 )
 
-func sendmailTo(to string, subject string, body string) error {
+func Sendmail(to string, subject string, body string) error {
 	if to == "" || subject == "" || body == "" {
 		return errors.New("empty mail params")
 	}
