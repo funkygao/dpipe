@@ -12,6 +12,10 @@ func InitParsers(pid string, conf *config.Config, chAlarm chan<- Alarm) {
 				continue
 			}
 
+			if _, present := allParsers[parserId]; present {
+				continue
+			}
+
 			confParser := conf.ParserById(parserId)
 			allParsers[parserId] = createParser(confParser, chAlarm)
 		}
@@ -32,4 +36,10 @@ func Dispatch(parserName, line string) {
 func getParser(parserName string) (p Parser, ok bool) {
 	p, ok = allParsers[parserName]
 	return
+}
+
+func checkError(err error) {
+	if err != nil {
+		panic(err)
+	}
 }
