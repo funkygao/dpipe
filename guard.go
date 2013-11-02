@@ -101,7 +101,7 @@ func invokeWorkers(wg *sync.WaitGroup, workersCanWait chan<- bool, conf *config.
 				allWorkers[logfile] = true
 
 				// each logfile is a dedicated goroutine worker
-				worker := newWorker(len(allWorkers), logfile, conf, options.tailmode, wg, chLines, chAlarm)
+				worker := newWorker(len(allWorkers), logfile, g, options.tailmode, wg, chLines, chAlarm)
 				go worker.run()
 			}
 		}
