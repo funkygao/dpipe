@@ -48,13 +48,13 @@ func SetDaemon(d bool) {
 }
 
 func createParser(conf *config.ConfParser, chUpstreamAlarm chan<- Alarm, chDownstreamAlarm chan<- string) Parser {
-	parsersLock.Lock()
-	defer parsersLock.Unlock()
+	mutex.Lock()
+	defer mutex.Unlock()
 
 	if conf.Class == "JsonLine" {
 		return newJsonLineParser(conf, chUpstreamAlarm, chDownstreamAlarm)
-	} else if conf.Class == "WatchdogJsonLine" {
-		return newWatchdogJsonLineParser(conf, chUpstreamAlarm, chDownstreamAlarm)
+	} else if conf.Class == "DbParser" {
+		return newDbParser(conf, chUpstreamAlarm, chDownstreamAlarm)
 	}
 
 	return newErrorLogParser("ErrorLogParser",

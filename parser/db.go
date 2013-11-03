@@ -25,6 +25,15 @@ type DbParser struct {
 	stopped bool
 }
 
+func newDbParser(conf *config.ConfParser, chUpstream chan<- Alarm, chDownstream chan<- string) (this *DbParser) {
+	this = new(DbParser)
+	this.init(conf, chUpstream, chDownstream)
+
+	go this.CollectAlarms()
+
+	return
+}
+
 func (this *DbParser) init(conf *config.ConfParser, chUpstream chan<- Alarm, chDownstream chan<- string) {
 	this.AlsParser.init(conf, chUpstream, chDownstream) // super
 
@@ -96,7 +105,7 @@ func (this *DbParser) CollectAlarms() {
 		}
 
 		rows := this.query(statsSql, tsTo)
-		parsersLock.Lock()
+		mutex.Lock()
 		this.echoCheckpoint(tsFrom, tsTo, this.conf.Title)
 		var summary int = 0
 		for rows.Next() {
@@ -130,7 +139,7 @@ func (this *DbParser) CollectAlarms() {
 		if this.conf.ShowSummary && summary > 0 {
 			this.colorPrintfLn("Total: %d", summary)
 		}
-		parsersLock.Unlock()
+		mutex.Unlock()
 		rows.Close()
 
 		this.delRecordsBefore(tsTo)

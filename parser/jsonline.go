@@ -10,7 +10,7 @@ type JsonLineParser struct {
 }
 
 func newJsonLineParser(conf *config.ConfParser, chUpstream chan<- Alarm, chDownstream chan<- string) (this *JsonLineParser) {
-	this = new(LineParser)
+	this = new(JsonLineParser)
 	this.init(conf, chUpstream, chDownstream)
 	return
 }
@@ -22,7 +22,7 @@ func (this *JsonLineParser) ParseLine(line string) (area string, ts uint64, msg 
 		return
 	}
 
-	args := this.extractValues(data)
+	args := this.extractKeyValues(data)
 	if len(args) == 0 {
 		return
 	}
