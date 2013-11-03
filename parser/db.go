@@ -52,6 +52,27 @@ func (this *DbParser) Wait() {
 	}
 }
 
+func (this *DbParser) ParseLine(line string) (area string, ts uint64, msg string) {
+	var data *json.Json
+	area, ts, data = this.AlsParser.parseJsonLine(line)
+	if dryRun {
+		return
+	}
+
+	args := this.extractValues()
+	if len(args) == 0 {
+		return
+	}
+
+	this.insert(args...)
+
+	return
+}
+
+// TODO
+// 各个字段显示顺心的问题，例如amount
+// normalize
+// payment的阶段汇总
 func (this *DbParser) CollectAlarms() {
 	if dryRun {
 		this.chWait <- true
