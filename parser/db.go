@@ -4,10 +4,12 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	json "github.com/bitly/go-simplejson"
 	"github.com/funkygao/alser/config"
 	"github.com/funkygao/gotime"
 	_ "github.com/mattn/go-sqlite3"
 	"sync"
+	"time"
 )
 
 // Child of AlsParser with db(sqlite3) features
@@ -24,7 +26,7 @@ type DbParser struct {
 }
 
 func (this *DbParser) init(conf *config.ConfParser, chUpstream chan<- Alarm, chDownstream chan<- string) {
-	this.AlsParser.init(name, color, ch) // super
+	this.AlsParser.init(conf, chUpstream, chDownstream) // super
 
 	this.Mutex = new(sync.Mutex) // embedding constructor
 	this.chWait = make(chan bool)
@@ -59,7 +61,7 @@ func (this *DbParser) ParseLine(line string) (area string, ts uint64, msg string
 		return
 	}
 
-	args, err := this.extractValues(data)
+	args, err := this.extractKeyValues(data)
 	if err != nil {
 		return
 	}

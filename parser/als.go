@@ -107,7 +107,7 @@ func (this *AlsParser) extractKeyValues(data *json.Json) (values []interface{}, 
 			return
 		}
 
-		if key.Ignores != nil && key.MustNotBe == val.(string) {
+		if key.Ignores != nil {
 			for _, ignore := range key.Ignores {
 				if strings.Contains(val.(string), ignore) {
 					err = errors.New("ignored:" + val.(string))
