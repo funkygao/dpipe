@@ -28,28 +28,43 @@
     parsers: 
     [
         {
+            id:     "SlowResponse"
+            class:  "DbParser"
+            title:  "Slow"
+            beep_threshold: 20
+            sleep: 3
+            create_table: ""
+            insert_stmt: ""
+            dbname: "slowresp"
+        },
+        {
             id:     "MemcacheFailParser"
-            class:  "Line"
+            class:  "JsonLineParser"
+            show_host: true
+            show_uri: true
+            colors: [
+                "FgYellow",
+            ]
+            printf: "%3s%16s %5.2f %40s"
+            keys:   [
+                {
+                    type: "string"
+                    name: "key"
+                    required: true
+                    show: true
+                },
+                {
+                    type: "float"
+                    name: "timeout"
+                    required: false
+                    show: false
+                }
+            ]
             mail_recipents: [
                 "peng.gao@funplusgamenet.com",
                 "zhengkai@gmail.com"
             ]
             mail_subject_prefix: "ALS Guard "
-            colors: [
-                "FgYellow",
-            ]
-            keys:   [
-                {
-                    key: "key"
-                    required: true
-                    show: true
-                },
-                {
-                    key: "timeout"
-                    required: false
-                    show: false
-                }
-            ]
         },
 
     ]
