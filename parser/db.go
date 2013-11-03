@@ -109,6 +109,10 @@ func (this *DbParser) CollectAlarms() {
 			checkError(err)
 
 			var amount = pointers[0].(int)
+			if amount == 0 {
+				break
+			}
+
 			if this.conf.ShowSummary {
 				summary += amount
 			}
@@ -121,7 +125,7 @@ func (this *DbParser) CollectAlarms() {
 			this.colorPrintfLn(this.conf.PrintFormat, pointers)
 		}
 
-		if this.conf.ShowSummary {
+		if this.conf.ShowSummary && summary > 0 {
 			this.colorPrintfLn("Total: %d", summary)
 		}
 		parsersLock.Unlock()
