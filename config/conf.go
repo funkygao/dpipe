@@ -17,23 +17,21 @@ type ConfGuard struct {
 }
 
 type LineKey struct {
-	Name     string
-	Type     string // float, string, int
-	Required bool
-	Show     bool
-	Groupby  bool
-	MustBe   string
+	Name      string
+	Type      string // float, string, int
+	MustBe    string
+	MustNotBe string
 }
 
 type ConfParser struct {
-	Id          string
-	Class       string
-	Keys        []LineKey // by line
-	Colors      []string  // fg, effects, bg
-	PrintFormat string    // printf
-	ShowSrcHost bool      // show log src host
-	ShowUri     bool
-	Title       string
+	Id     string
+	Class  string
+	Title  string
+	Keys   []LineKey // besides area,ts,host,uri
+	Colors []string  // fg, effects, bg
+
+	PrintFormat string // printf
+	ShowSummary bool
 
 	MailRecipients    []string
 	MailSubjectPrefix string
@@ -44,7 +42,7 @@ type ConfParser struct {
 	DbName      string //db name is table name
 	CreateTable string
 	InsertStmt  string
-	SumColumn   string
+	StatsStmt   string
 }
 
 type Config struct {
@@ -75,15 +73,14 @@ func LoadConfig(fn string) (*Config, error) {
 		parser.MailSubjectPrefix = this.String(keyPrefix+"mail_subject_prefix", "")
 		parser.PrintFormat = this.String(keyPrefix+"printf", "")
 		parser.Title = this.String(keyPrefix+"title", "")
-		parser.ShowUri = this.String(keyPrefix+"show_uri", false)
-		parser.ShowSrcHost = this.String(keyPrefix+"show_host", true)
 		parser.BeepThreshold = this.Int(keyPrefix+"beep_threshold", 0)
 		parser.Sleep = this.Int(keyPrefix+"sleep", 10)
 		parser.Colors = this.StringList(keyPrefix+"colors", nil)
 		parser.DbName = this.String(keyPrefix+"dbname", "")
 		parser.CreateTable = this.String(keyPrefix+"create_table", "")
 		parser.InsertStmt = this.String(keyPrefix+"insert_stmt", "")
-		parser.SumColumn = this.String(keyPrefix+"sum", "")
+		parser.StatsStmt = this.String(keyPrefix+"stats_stmt", "")
+		parser.ShowSummary = this.Bool(keyPrefix+"summary", false)
 
 		// keys
 		keys := this.List(keyPrefix+"keys", nil)
@@ -94,11 +91,9 @@ func LoadConfig(fn string) (*Config, error) {
 			prefix := fmt.Sprintf("%s[%d].", keyPrefix+"keys", j)
 			key := LineKey{}
 			key.Name = this.String(prefix+"name", "")
-			key.Required = this.Bool(prefix+"required", false)
-			key.Show = this.Bool(prefix+"show", false)
-			key.Groupby = this.Bool(prefix+"groupby", false)
-			key.Type = this.Bool(prefix+"type", "string")
-			key.MustBe = this.Bool(prefix+"must_be", "")
+			key.Type = this.String(prefix+"type", "string")
+			key.MustBe = this.String(prefix+"must_be", "")
+			key.MustNotBe = this.String(prefix+"must_not", "")
 			parser.Keys = append(parser.Keys, key)
 		}
 
@@ -169,31 +164,8 @@ func (this *ConfParser) MailTos() string {
 	return strings.Join(this.MailRecipients, ",")
 }
 
-func (this *ConfParser) LogInfoNeeded() bool {
-	return this.ShowSrcHost || this.ShowUri
-}
-
-func (this *ConfParser) groupByKeys() []string {
-	keys := make([]string, 0)
-
-	for _, k := range this.Keys {
-		if k.Groupby {
-			keys = append(keys, k.Name)
-		}
-	}
-
-	return keys
-}
-
 func (this *ConfParser) StatsSql() string {
-	groupBys := strings.Join(this.gr, ",")
-	if this.SumColumn != "" {
-		return fmt.Printf("SELECT SUM(%s) AS c, %s FROM %s WHERE ts<=? GROUP BY %s ORDER BY c DESC",
-			this.SumColumn,
-			groupBys, this.DbName, groupBys)
-	}
-	return fmt.Printf("SELECT COUNT(*) AS c, %s FROM %s WHERE ts<=? GROUP BY %s ORDER BY c DESC",
-		groupBys, this.DbName, groupBys)
+	return fmt.Sprintf(this.StatsStmt, this.DbName)
 }
 
 func (this *ConfGuard) HasParser(parser string) bool {
