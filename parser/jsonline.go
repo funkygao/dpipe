@@ -27,7 +27,7 @@ func (this *JsonLineParser) ParseLine(line string) (area string, ts uint64, msg 
 		return
 	}
 
-	this.colorPrintfLn(this.conf.PrintFormat, area, args...)
+	//this.colorPrintfLn(this.conf.PrintFormat, area, args...)
 	this.beep()
 
 	return

@@ -76,7 +76,7 @@ func (this *DbParser) ParseLine(line string) (area string, ts uint64, msg string
 	}
 
 	// insert_stmt must be like INSERT INTO (area, ts, ...)
-	this.insert(area, ts, args...)
+	//this.insert(area, ts, args...)
 
 	return
 }
