@@ -101,13 +101,19 @@ func (this *AlsParser) extractKeyValues(data *json.Json) (values []interface{}, 
 		if err != nil {
 			return
 		}
+
 		if key.MustBe != "" && key.MustBe != val.(string) {
 			err = errors.New("must be:" + key.MustBe + ", got:" + val.(string))
 			return
 		}
-		if key.MustNotBe != "" && key.MustNotBe == val.(string) {
-			err = errors.New("must not be:" + key.MustNotBe + ", got:" + val.(string))
-			return
+
+		if key.Ignores != nil && key.MustNotBe == val.(string) {
+			for _, ignore := range key.Ignores {
+				if strings.Contains(val.(string), ignore) {
+					err = errors.New("ignored:" + val.(string))
+					return
+				}
+			}
 		}
 
 		values = append(values, val)
