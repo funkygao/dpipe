@@ -22,6 +22,7 @@ type LineKey struct {
 	Required bool
 	Show     bool
 	Groupby  bool
+	MustBe   string
 }
 
 type ConfParser struct {
@@ -97,6 +98,7 @@ func LoadConfig(fn string) (*Config, error) {
 			key.Show = this.Bool(prefix+"show", false)
 			key.Groupby = this.Bool(prefix+"groupby", false)
 			key.Type = this.Bool(prefix+"type", "string")
+			key.MustBe = this.Bool(prefix+"must_be", "")
 			parser.Keys = append(parser.Keys, key)
 		}
 
