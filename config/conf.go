@@ -27,7 +27,7 @@ type ConfParser struct {
 	Id     string
 	Class  string
 	Title  string
-	Keys   []LineKey // besides area,ts,host,uri
+	Keys   []LineKey // besides area,ts
 	Colors []string  // fg, effects, bg
 
 	PrintFormat string // printf
