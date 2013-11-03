@@ -28,36 +28,62 @@
     parsers: 
     [
         {
+            id:     "Payment"
+            class:  "DbParser"
+            title:  "Revenue"
+            sleep:          3
+            create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, host CHAR(20), uri VARCHAR(50));"
+            insert_stmt:    "INSERT INTO %s(area, ts, host, uri, req_t, db_t) VALUES(?,?,?,?,?,?)"
+            group_stmt:     "SELECT SUM(amount) AS c, type, area, currency FROM %s where ts<=? GROUP BY type, area, currency ORDER BY c DESC"
+            summary:        true
+            dbname: "slowresp"
+            printf: "%8d [%3s] %60s"
+            keys: [
+                {
+                    name: "type"
+                    type: "string"
+                },
+            ]
+        },
+        {
             id:     "SlowResponse"
             class:  "DbParser"
             title:  "Slow"
-            beep_threshold: 20
-            sleep: 3
-            create_table: ""
-            insert_stmt: ""
+            mail_recipents: [
+                "peng.gao@funplusgamenet.com",
+                "zhengkai@gmail.com"
+            ]
+            mail_subject_prefix:    "ALS Guard Slow Response"
+            beep_threshold:         20
+            sleep:                  3
+            create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, uri VARCHAR(50));"
+            insert_stmt:    "INSERT INTO %s(area, ts, uri) VALUES(?,?,?)"
+            group_stmt:     "SELECT COUNT(*) AS c, area, uri FROM %s WHERE ts<=? GROUP BY area, uri ORDER BY c DESC"
+            summary:        true
             dbname: "slowresp"
+            printf: "%8d [%3s] %60s"
+            keys: [
+                {
+                    name: "_log_info.uri"
+                    type: "string"
+                },
+            ]
         },
         {
             id:     "MemcacheFailParser"
             class:  "JsonLineParser"
-            show_host: true
-            show_uri: true
             colors: [
                 "FgYellow",
             ]
             printf: "%3s%16s %5.2f %40s"
             keys:   [
                 {
-                    type: "string"
                     name: "key"
-                    required: true
-                    show: true
+                    type: "string"
                 },
                 {
-                    type: "float"
                     name: "timeout"
-                    required: false
-                    show: false
+                    type: "float"
                 }
             ]
             mail_recipents: [

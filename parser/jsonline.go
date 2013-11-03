@@ -2,7 +2,6 @@ package parser
 
 import (
 	json "github.com/bitly/go-simplejson"
-	conf "github.com/daviddengcn/go-ljson-conf"
 	"github.com/funkygao/alser/config"
 )
 
@@ -10,8 +9,7 @@ type JsonLineParser struct {
 	AlsParser
 }
 
-// Constructor
-func newJsonLineParser(conf conf.ConfParser, chUpstream chan<- Alarm, chDownstream chan<- string) (this *JsonLineParser) {
+func newJsonLineParser(conf *config.ConfParser, chUpstream chan<- Alarm, chDownstream chan<- string) (this *JsonLineParser) {
 	this = new(LineParser)
 	this.init(conf, chUpstream, chDownstream)
 	return
@@ -24,12 +22,12 @@ func (this *JsonLineParser) ParseLine(line string) (area string, ts uint64, msg 
 		return
 	}
 
-	args := this.extractValues()
+	args := this.extractValues(data)
 	if len(args) == 0 {
 		return
 	}
 
-	this.colorPrintfLn(this.conf.PrintFormat, args...)
+	this.colorPrintfLn(this.conf.PrintFormat, area, args...)
 	this.beep()
 
 	return

@@ -1,7 +1,6 @@
 package parser
 
 import (
-	json "github.com/bitly/go-simplejson"
 	"github.com/funkygao/alser/config"
 	"log"
 )

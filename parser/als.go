@@ -1,9 +1,10 @@
 package parser
 
 import (
+	"errors"
 	"fmt"
 	json "github.com/bitly/go-simplejson"
-	"github.conf/funkygao/alser/config"
+	"github.com/funkygao/alser/config"
 	"os"
 	"strconv"
 	"strings"
@@ -71,51 +72,45 @@ func (this *AlsParser) parseJsonLine(line string) (area string, ts uint64, data 
 	return
 }
 
-func (this *AlsParser) extractLogInfo(data *json.Json) logInfo {
-	info := logInfo{}
+func (this *AlsParser) extractKeyValue(data *json.Json, name, typ string) (val interface{}, err error) {
+	switch typ {
+	case "string":
+		val, err = data.Get(name).String()
+	case "int":
+		val, err = data.Get(name).Int()
+	case "float":
+		val, err = data.Get(name).Float64()
+	}
 
-	infoBody := data.Get("_log_info")
-	info.uid, _ = infoBody.Get("uid").Int64()
-	info.snsid, _ = infoBody.Get("snsid").String()
-	info.level, _ = infoBody.Get("level").Int()
-	info.payment_cash, _ = infoBody.Get("payment_cash").Int()
-	info.uri, _ = infoBody.Get("uri").String()
-	info.scriptId, _ = infoBody.Get("script_id").Int64()
-	info.serial, _ = infoBody.Get("serial").Int()
-	info.host, _ = infoBody.Get("host").String()
-	info.ip, _ = infoBody.Get("ip").String()
-
-	return info
+	return
 }
 
-func (this *AlsParser) extractValues() (values []interface{}) {
+func (this *AlsParser) extractKeyValues(data *json.Json) (values []interface{}, err error) {
 	values = make([]interface{}, 0)
-	var err error
 	for _, key := range this.conf.Keys {
 		var val interface{}
-		switch key.Type {
-		case "string":
-			val, err = data.Get(key.Key).String()
-		case "int":
-			val, err = data.Get(key.Key).Int()
-		case "float":
-			val, err = data.Get(key.Key).Float64()
+
+		keyParts := strings.SplitN(key.Name, ".", 2) // not 1 dot permitted
+		if len(keyParts) > 1 {
+			subData := data.Get(keyParts[0])
+			val, err = this.extractKeyValue(subData, keyParts[1], key.Type)
+		} else {
+			val, err = this.extractKeyValue(data, key.Name, key.Type)
 		}
+
 		if err != nil {
+			return
+		}
+		if key.MustBe != "" && key.MustBe != val.(string) {
+			err = errors.New("must be:" + key.MustBe + ", got:" + val.(string))
+			return
+		}
+		if key.MustNotBe != "" && key.MustNotBe == val.(string) {
+			err = errors.New("must not be:" + key.MustNotBe + ", got:" + val.(string))
 			return
 		}
 
 		values = append(values, val)
-	}
-
-	if this.conf.LogInfoNeeded() {
-		logInfo := this.extractLogInfo(data)
-		if this.conf.ShowUri {
-			values = append(values, logInfo.uri)
-		}
-		if this.conf.ShowSrcHost {
-			values = append(values, logInfo.host)
-		}
 	}
 
 	return

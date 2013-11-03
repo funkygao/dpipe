@@ -4,7 +4,6 @@ import (
 	"log"
 	"regexp"
 	"sync"
-	"time"
 )
 
 var (

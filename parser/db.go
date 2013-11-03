@@ -59,12 +59,13 @@ func (this *DbParser) ParseLine(line string) (area string, ts uint64, msg string
 		return
 	}
 
-	args := this.extractValues()
-	if len(args) == 0 {
+	args, err := this.extractValues(data)
+	if err != nil {
 		return
 	}
 
-	this.insert(args...)
+	// insert_stmt must be like INSERT INTO (area, ts, ...)
+	this.insert(area, ts, args...)
 
 	return
 }
@@ -73,6 +74,7 @@ func (this *DbParser) ParseLine(line string) (area string, ts uint64, msg string
 // 各个字段显示顺心的问题，例如amount
 // normalize
 // payment的阶段汇总
+// 有的字段需要运算，例如slowresp
 func (this *DbParser) CollectAlarms() {
 	if dryRun {
 		this.chWait <- true
@@ -91,26 +93,36 @@ func (this *DbParser) CollectAlarms() {
 			continue
 		}
 
-		rows := this.query(this.conf.StatsSql(), tsTo)
+		rows := this.query(statsSql, tsTo)
 		parsersLock.Lock()
 		this.echoCheckpoint(tsFrom, tsTo, this.conf.Title)
+		var summary int = 0
 		for rows.Next() {
-			cols, _ = rows.Columns()
-			pointers := make([]interface{}, len(cols)-1)
-			container := make([]sql.NullString, len(cols)-1)
-			for i, _ := range cols[1:] {
+			cols, _ := rows.Columns()
+			pointers := make([]interface{}, len(cols))
+			container := make([]sql.NullString, len(cols))
+			for i, _ := range cols {
 				pointers[i] = &container[i]
 			}
-			var amount int64
-			err := rows.Scan(&amount, pointers...)
+
+			err := rows.Scan(pointers...)
 			checkError(err)
 
-			if int(amount) >= this.conf.BeepThreshold {
+			var amount = pointers[0].(int)
+			if this.conf.ShowSummary {
+				summary += amount
+			}
+
+			if this.conf.BeepThreshold > 0 && amount >= this.conf.BeepThreshold {
 				this.beep()
 				this.alarmf(this.conf.PrintFormat, pointers...)
 			}
 
 			this.colorPrintfLn(this.conf.PrintFormat, pointers)
+		}
+
+		if this.conf.ShowSummary {
+			this.colorPrintfLn("Total: %d", summary)
 		}
 		parsersLock.Unlock()
 		rows.Close()
@@ -132,7 +144,7 @@ func (this *DbParser) createDB() {
 	this.db, err = sql.Open(SQLITE3_DRIVER, fmt.Sprintf("file:%s?cache=shared&mode=rwc", this.conf.DbName))
 	checkError(err)
 
-	_, err = this.db.Exec(this.conf.CreateTable)
+	_, err = this.db.Exec(fmt.Sprintf(this.conf.CreateTable, this.conf.DbName))
 	checkError(err)
 
 	// performance tuning for sqlite3
@@ -151,7 +163,7 @@ func (this *DbParser) prepareInsertStmt() {
 	}
 
 	var err error
-	this.insertStmt, err = this.db.Prepare(this.conf.InsertStmt)
+	this.insertStmt, err = this.db.Prepare(fmt.Sprintf(this.conf.InsertStmt, this.conf.DbName))
 	checkError(err)
 }
 
