@@ -17,10 +17,11 @@ type ConfGuard struct {
 }
 
 type LineKey struct {
-	Name      string
-	Type      string // float, string, int
-	MustBe    string
-	MustNotBe string
+	Name    string
+	Type    string // float, string, int
+	MustBe  string
+	Ignores []string
+	NotDb   bool // only validate line, will not insert into db
 }
 
 type ConfParser struct {
@@ -93,7 +94,8 @@ func LoadConfig(fn string) (*Config, error) {
 			key.Name = this.String(prefix+"name", "")
 			key.Type = this.String(prefix+"type", "string")
 			key.MustBe = this.String(prefix+"must_be", "")
-			key.MustNotBe = this.String(prefix+"must_not", "")
+			key.Ignores = this.StringList(prefix+"ignores", nil)
+			key.NotDb = this.Bool(prefix+"db_not", false)
 			parser.Keys = append(parser.Keys, key)
 		}
 
