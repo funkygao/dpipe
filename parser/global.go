@@ -8,21 +8,17 @@ import (
 )
 
 var (
-	allParsers  map[string]Parser = make(map[string]Parser) // registered on init manually
-	parsersLock                   = new(sync.Mutex)         // lock across all parsers, so that println will not be interlace
+	allParsers map[string]Parser = make(map[string]Parser) // registered on init manually
+	mutex                        = new(sync.Mutex)         // lock across all parsers
 
-	tzAjust, _ = time.LoadLocation(TZ) // same time info for all locales
+	// passed from main
+	logger    *log.Logger
+	verbose   bool = false
+	debug     bool = false
+	dryRun    bool = false
+	daemonize bool = false
 
-	logger    *log.Logger // shared with alser
-	verbose   bool        = false
-	debug     bool        = false
-	dryRun    bool        = false
-	daemonize bool        = false
-
-	beeped int = 1 // how many beeps that has been triggered
-
-	parserAlarmEnabled            bool
-	emailRecipients, emailSubject string
+	beeped int = 1 // how many beeps current proc has been triggered
 
 	chParserAlarm = make(chan string)
 
@@ -93,12 +89,6 @@ const (
 	MAX_BEEP_VISUAL_HINT = 70
 
 	SQLITE3_DRIVER = "sqlite3"
-	TZ             = "Asia/Shanghai"
-
-	CONF_DIR = "conf/"
-
-	CONF_EMAIL   = CONF_DIR + "mail.cf"
-	CONF_PARSERS = CONF_DIR + "parsers.cf"
 )
 
 const (

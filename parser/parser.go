@@ -2,7 +2,6 @@ package parser
 
 import (
 	json "github.com/bitly/go-simplejson"
-	conf "github.com/daviddengcn/go-ljson-conf"
 	"github.com/funkygao/alser/config"
 	"log"
 )
@@ -17,7 +16,7 @@ type Waitable interface {
 
 // Parser prototype
 type Parser interface {
-	ParseLine(line string) (area string, ts uint64, data *json.Json)
+	ParseLine(line string) (area string, ts uint64, msg string)
 	Stopable
 	Waitable
 }
@@ -49,35 +48,21 @@ func SetDaemon(d bool) {
 	daemonize = d
 }
 
-func init() {
-	// logger not passed in yet
-	if conf, err := conf.Load(CONF_EMAIL); err == nil {
-		emailRecipients = conf.String("recipients", "")
-		emailSubject = conf.String("subject", "")
-		parserAlarmEnabled = conf.Bool("enabled", true)
-		if parserAlarmEnabled {
-			go runSendAlarmsWatchdog()
-		}
+func createParser(conf *config.ConfParser, chUpstreamAlarm chan<- Alarm, chDownstreamAlarm chan<- string) Parser {
+	parsersLock.Lock()
+	defer parsersLock.Unlock()
+
+	if conf.Class == "JsonLine" {
+		return newJsonLineParser(conf, chUpstreamAlarm, chDownstreamAlarm)
+	} else if conf.Class == "WatchdogJsonLine" {
+		return newWatchdogJsonLineParser(conf, chUpstreamAlarm, chDownstreamAlarm)
 	}
 
-	_, err := conf.Load(CONF_PARSERS)
-	checkError(err)
-
-}
-
-func createParser(conf *config.ConfParser, chAlarm chan<- Alarm) Parser {
 	return newErrorLogParser("ErrorLogParser",
 		COLOR_MAP["FgRed"],
 		chAlarm,
 		"var/error.sqlite", "error", ERRLOG_CREATE_TABLE, ERRLOG_INSERT)
 
-}
-
-// Create all parsers by name at once
-func NewParsers(parsers []string, chAlarm chan<- Alarm) {
-	for _, p := range parsers {
-		NewParser(p, chAlarm)
-	}
 }
 
 // Create all parsers by name at once

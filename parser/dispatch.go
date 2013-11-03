@@ -5,7 +5,7 @@ import (
 )
 
 // pid: only run this single parser id
-func InitParsers(pid string, conf *config.Config, chAlarm chan<- Alarm) {
+func InitParsers(pid string, conf *config.Config, chUpstreamAlarm chan<- Alarm) {
 	for _, g := range conf.Guards {
 		for _, parserId := range g.Parsers {
 			if pid != "" && pid != parserId {
@@ -17,7 +17,7 @@ func InitParsers(pid string, conf *config.Config, chAlarm chan<- Alarm) {
 			}
 
 			confParser := conf.ParserById(parserId)
-			allParsers[parserId] = createParser(confParser, chAlarm)
+			allParsers[parserId] = createParser(confParser, chUpstreamAlarm, chParserAlarm)
 		}
 	}
 }
