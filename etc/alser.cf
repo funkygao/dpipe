@@ -27,31 +27,188 @@
     // all avaible parsers/plugins
     parsers: 
     [
+        // mongo error
         {
-            id:     "MemcacheFailParser"
-            class:  "Line"
+            id:     "Mongo"
+            class:  "DbParser"
+            title:  "Mongo"
+            colors: [
+                "FgCyan",
+                "Bright",
+                "BgRed",
+            ]
+            sleep:          17
+            beep_threshold: 1
+            create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, msg VARCHAR(200));"
+            insert_stmt:    "INSERT INTO %s(area, ts, msg) VALUES(?,?,?)"
+            group_stmt:     "SELECT COUNT(*) AS c, area, msg FROM %s where ts<=? GROUP BY msg, host ORDER BY c DESC"
+            dbname:         "error"
+            printf: "%8d %3s %20s %s"
+            keys: [
+                {
+                    name: "class"
+                    type: "string"
+                    must_be: "MongoException"
+                    db_not: true
+                },
+                {
+                    name: "message"
+                    type: "string"
+                },
+            ]
+        },
+
+        // error log
+        {
+            id:     "Error"
+            class:  "DbParser"
+            title:  "Error"
+            colors: [
+                "FgRed",
+            ]
+            sleep:          87
+            beep_threshold: 100
+            create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, cls VARCHAR(50), msg VARCHAR(200));"
+            insert_stmt:    "INSERT INTO %s(area, ts, cls, msg) VALUES(?,?,?,?)"
+            group_stmt:     "SELECT COUNT(*) AS c, area, cls, msg FROM %s where ts<=? GROUP BY area, cls, msg ORDER BY c DESC"
+            dbname:         "error"
+            printf: "%8d %3s %20s %s"
+            keys: [
+                {
+                    name: "class"
+                    type: "string"
+                    ignores: [
+                        "MongoException",
+                    ]
+                },
+                {
+                    name: "message"
+                    type: "string"
+                    ignores: [
+                        "Energy Error, Client: ?, Server: ?, info:batch",
+                        "snsid or uid error",
+                    ]
+                },
+            ]
+        },
+
+        // payment log
+        {
+            id:     "Payment"
+            class:  "DbParser"
+            title:  "Revenue"
+            colors: [
+                "FgGreen",
+            ]
+            sleep:          69
+            create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, amount INT, type VARCHAR(50), currency VARCHAR(20));"
+            insert_stmt:    "INSERT INTO %s(area, ts, type, currency, amount) VALUES(?,?,?,?,?)"
+            group_stmt:     "SELECT SUM(amount) AS c, type, area, currency FROM %s where ts<=? GROUP BY type, area, currency ORDER BY c DESC"
+            dbname:         "payment"
+            summary:        true
+            printf: "%8d %3s %10s"
+            keys: [
+                {
+                    name: "type"
+                    type: "string"
+                    must_be: "OK"
+                },
+                {
+                    name: "data.currency"
+                    type: "string"
+                },
+                {
+                    name: "data.amount"
+                    type: "int"
+                },
+            ]
+        },
+
+        // slow response
+        {
+            id:     "SlowResponse"
+            class:  "DbParser"
+            title:  "Slow"
+            colors: [
+                "FgBlue",
+            ]
             mail_recipents: [
                 "peng.gao@funplusgamenet.com",
                 "zhengkai@gmail.com"
             ]
-            mail_subject_prefix: "ALS Guard "
-            colors: [
-                "FgYellow",
-            ]
-            keys:   [
+            mail_subject_prefix:    "ALS Guard/Slow Response"
+            beep_threshold:         20
+            sleep:                  23
+            create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, uri VARCHAR(50));"
+            insert_stmt:    "INSERT INTO %s(area, ts, uri) VALUES(?,?,?)"
+            group_stmt:     "SELECT COUNT(*) AS c, area, uri FROM %s WHERE ts<=? GROUP BY area, uri ORDER BY c DESC"
+            dbname:         "slowresp"
+            printf: "%8d %3s %60s"
+            keys: [
                 {
-                    key: "key"
-                    required: true
-                    show: true
+                    name: "_log_info.uri"
+                    type: "string"
                 },
-                {
-                    key: "timeout"
-                    required: false
-                    show: false
-                }
             ]
         },
 
+        // memcache set fail
+        {
+            id:     "MemcacheFail"
+            class:  "JsonLineParser"
+            colors: [
+                "FgYellow",
+            ]
+            printf: "%3s%16s %5.2f %40s"
+            keys:   [
+                {
+                    name: "key"
+                    type: "string"
+                },
+                {
+                    name: "timeout"
+                    type: "float"
+                },
+                {
+                    name: "_log_info.host"
+                    type: "string"
+                }
+            ]
+            mail_recipents: [
+                "peng.gao@funplusgamenet.com",
+                "zhengkai@gmail.com"
+            ]
+            mail_subject_prefix: "ALS Guard/MemcacheFail"
+        },
+
+        // memcache timeout
+        {
+            id:     "MemcacheTimeout"
+            class:  "JsonLineParser"
+            colors: [
+                "FgYellow",
+            ]
+            printf: "%3s%16s %5.2f %40s"
+            keys:   [
+                {
+                    name: "key"
+                    type: "string"
+                },
+                {
+                    name: "to"
+                    type: "float"
+                },
+                {
+                    name: "_log_info.host"
+                    type: "string"
+                }
+            ]
+            mail_recipents: [
+                "peng.gao@funplusgamenet.com",
+                "zhengkai@gmail.com"
+            ]
+            mail_subject_prefix: "ALS Guard/MemcacheFail"
+        },
     ]
 
 }

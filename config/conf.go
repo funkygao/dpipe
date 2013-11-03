@@ -17,18 +17,33 @@ type ConfGuard struct {
 }
 
 type LineKey struct {
-	Key      string
-	Required bool
-	Show     bool
+	Name    string
+	Type    string // float, string, int
+	MustBe  string
+	Ignores []string
+	NotDb   bool // only validate line, will not insert into db
 }
 
 type ConfParser struct {
-	Id                string
-	Class             string
-	Keys              []LineKey // by line
-	Colors            []string  // fg, effects, bg
+	Id     string
+	Class  string
+	Title  string
+	Keys   []LineKey // besides area,ts
+	Colors []string  // fg, effects, bg
+
+	PrintFormat string // printf
+	ShowSummary bool
+
 	MailRecipients    []string
 	MailSubjectPrefix string
+
+	Sleep         int
+	BeepThreshold int
+
+	DbName      string //db name is table name
+	CreateTable string
+	InsertStmt  string
+	StatsStmt   string
 }
 
 type Config struct {
@@ -57,7 +72,17 @@ func LoadConfig(fn string) (*Config, error) {
 		parser.Class = this.String(keyPrefix+"class", "")
 		parser.MailRecipients = this.StringList(keyPrefix+"mail_recipents", nil)
 		parser.MailSubjectPrefix = this.String(keyPrefix+"mail_subject_prefix", "")
+		parser.PrintFormat = this.String(keyPrefix+"printf", "")
+		parser.Title = this.String(keyPrefix+"title", "")
+		parser.BeepThreshold = this.Int(keyPrefix+"beep_threshold", 0)
+		parser.Sleep = this.Int(keyPrefix+"sleep", 10)
 		parser.Colors = this.StringList(keyPrefix+"colors", nil)
+		parser.DbName = this.String(keyPrefix+"dbname", "")
+		parser.CreateTable = this.String(keyPrefix+"create_table", "")
+		parser.InsertStmt = this.String(keyPrefix+"insert_stmt", "")
+		parser.StatsStmt = this.String(keyPrefix+"stats_stmt", "")
+		parser.ShowSummary = this.Bool(keyPrefix+"summary", false)
+
 		// keys
 		keys := this.List(keyPrefix+"keys", nil)
 		if keys == nil {
@@ -66,9 +91,11 @@ func LoadConfig(fn string) (*Config, error) {
 		for j := 0; j < len(keys); j++ {
 			prefix := fmt.Sprintf("%s[%d].", keyPrefix+"keys", j)
 			key := LineKey{}
-			key.Key = this.String(prefix+"key", "")
-			key.Required = this.Bool(prefix+"required", false)
-			key.Show = this.Bool(prefix+"show", false)
+			key.Name = this.String(prefix+"name", "")
+			key.Type = this.String(prefix+"type", "string")
+			key.MustBe = this.String(prefix+"must_be", "")
+			key.Ignores = this.StringList(prefix+"ignores", nil)
+			key.NotDb = this.Bool(prefix+"db_not", false)
 			parser.Keys = append(parser.Keys, key)
 		}
 
@@ -137,6 +164,10 @@ func (this *ConfParser) MailEnabled() bool {
 
 func (this *ConfParser) MailTos() string {
 	return strings.Join(this.MailRecipients, ",")
+}
+
+func (this *ConfParser) StatsSql() string {
+	return fmt.Sprintf(this.StatsStmt, this.DbName)
 }
 
 func (this *ConfGuard) HasParser(parser string) bool {
