@@ -51,6 +51,8 @@ func createParser(conf *config.ConfParser, chUpstreamAlarm chan<- Alarm, chDowns
 	mutex.Lock()
 	defer mutex.Unlock()
 
+	logger.Printf("%#v\n", *conf)
+
 	if conf.Class == "JsonLine" {
 		return newJsonLineParser(conf, chUpstreamAlarm, chDownstreamAlarm)
 	} else if conf.Class == "DbParser" {
