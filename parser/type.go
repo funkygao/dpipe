@@ -47,19 +47,6 @@ func SetDaemon(d bool) {
 	daemonize = d
 }
 
-func createParser(conf *config.ConfParser, chUpstreamAlarm chan<- Alarm, chDownstreamAlarm chan<- string) Parser {
-	mutex.Lock()
-	defer mutex.Unlock()
-
-	if conf.Class == "JsonLine" {
-		return newJsonLineParser(conf, chUpstreamAlarm, chDownstreamAlarm)
-	} else if conf.Class == "DbParser" {
-		return newDbParser(conf, chUpstreamAlarm, chDownstreamAlarm)
-	}
-
-	return newDbParser(conf, chUpstreamAlarm, chDownstreamAlarm)
-}
-
 // Stop all parsers and they will do their cleanup automatically
 func StopAll() {
 	for _, parser := range allParsers {

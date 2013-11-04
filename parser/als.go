@@ -1,3 +1,16 @@
+/*
+
+            AlsParser
+                |
+         ---------------
+        |               |
+    JsonLineParser  DbParser
+                        |
+                    ----------------
+                   |                |
+              JsonDbParser    RawDbParser
+
+*/
 package parser
 
 import (

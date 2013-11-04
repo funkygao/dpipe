@@ -25,15 +25,6 @@ type DbParser struct {
 	stopped bool
 }
 
-func newDbParser(conf *config.ConfParser, chUpstream chan<- Alarm, chDownstream chan<- string) (this *DbParser) {
-	this = new(DbParser)
-	this.init(conf, chUpstream, chDownstream)
-
-	go this.CollectAlarms()
-
-	return
-}
-
 func (this *DbParser) init(conf *config.ConfParser, chUpstream chan<- Alarm, chDownstream chan<- string) {
 	this.AlsParser.init(conf, chUpstream, chDownstream) // super
 
@@ -63,30 +54,12 @@ func (this *DbParser) Wait() {
 	}
 }
 
-func (this *DbParser) ParseLine(line string) (area string, ts uint64, msg string) {
-	var data *json.Json
-	area, ts, data = this.AlsParser.parseJsonLine(line)
-	if dryRun {
-		return
-	}
-
-	args, err := this.extractKeyValues(data)
-	if err != nil {
-		return
-	}
-
-	// insert_stmt must be like INSERT INTO (area, ts, ...)
-	args = append([]interface{}{area, ts}, args...)
-	this.insert(args...)
-
-	return
-}
-
 // TODO
 // 各个字段显示顺心的问题，例如amount
 // normalize
 // payment的阶段汇总
 // 有的字段需要运算，例如slowresp
+// colorPrint的第一个字段必须是amount
 func (this *DbParser) CollectAlarms() {
 	if dryRun {
 		this.chWait <- true

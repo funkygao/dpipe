@@ -4,6 +4,19 @@ import (
 	"github.com/funkygao/alser/config"
 )
 
+func createParser(conf *config.ConfParser, chUpstreamAlarm chan<- Alarm, chDownstreamAlarm chan<- string) Parser {
+	mutex.Lock()
+	defer mutex.Unlock()
+
+	if conf.Class == "JsonLineParser" {
+		return newJsonLineParser(conf, chUpstreamAlarm, chDownstreamAlarm)
+	} else if conf.Class == "RawLineDbParser" {
+		return newRawLineDbParser(conf, chUpstreamAlarm, chDownstreamAlarm)
+	}
+
+	return newJsonDbParser(conf, chUpstreamAlarm, chDownstreamAlarm)
+}
+
 // pid: only run this single parser id
 func InitParsers(pid string, conf *config.Config, chUpstreamAlarm chan<- Alarm) {
 	for _, g := range conf.Guards {

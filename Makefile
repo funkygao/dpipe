@@ -1,5 +1,6 @@
 up:
 	go get -u github.com/funkygao/alser
+	go build
 
 test:
 	@go test -v
