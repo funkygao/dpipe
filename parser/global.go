@@ -11,6 +11,10 @@ var (
 
 	mutex = new(sync.Mutex) // lock across all parsers
 
+	digitsRegexp     = regexp.MustCompile(`\d+`)
+	batchTokenRegexp = regexp.MustCompile(`pre: .*; current: .*`)
+	phpErrorRegexp   = regexp.MustCompile(`\[(.+)\] (.+?): (.+) - (.+) \[(.+)\],(.+)`)
+
 	// passed from main
 	logger    *log.Logger
 	verbose   bool = false
@@ -21,10 +25,6 @@ var (
 	beeped int = 1 // how many beeps current proc has been triggered
 
 	chParserAlarm = make(chan string)
-
-	digitsRegexp   = regexp.MustCompile(`\d+`)
-	tokenRegexp    = regexp.MustCompile(`pre: .*; current: .*`)
-	phpErrorRegexp = regexp.MustCompile(`\[(.+)\] (.+?): (.+) - (.+) \[(.+)\],(.+)`)
 
 	CURRENCY_TABLE = map[string]float32{
 		"IDR": 0.00009,

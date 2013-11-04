@@ -129,6 +129,17 @@ func (this *AlsParser) extractDataValues(data *json.Json) (values []interface{},
 			}
 		}
 
+		if key.Regex != nil {
+			for key.Regex !=nil; _, regex := range key.Regex {
+				switch regex {
+				case "digit":
+					val = this.normalizeDigit(val)
+				case "token":
+					val = this.normalizeBatchToken(val)
+				}
+			}
+		}
+
 		values = append(values, val)
 	}
 
@@ -139,6 +150,16 @@ func (this *AlsParser) Stop() {
 }
 
 func (this *AlsParser) Wait() {
+}
+
+func (this *AlsParser) normalizeDigit(msg string) string {
+	r := digitsRegexp.ReplaceAll([]byte(msg), []byte("?"))
+	return string(r)
+}
+
+func (this *AlsParser) normalizeBatchToken(msg string) string {
+	r := batchTokenRegexp.ReplaceAll([]byte(msg), []byte("pre cur"))
+	return string(r)
 }
 
 func (this *AlsParser) colorPrintfLn(format string, args ...interface{}) {
