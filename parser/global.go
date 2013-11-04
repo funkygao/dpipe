@@ -7,8 +7,9 @@ import (
 )
 
 var (
-	allParsers map[string]Parser = make(map[string]Parser) // registered on init manually
-	mutex                        = new(sync.Mutex)         // lock across all parsers
+	allParsers map[string]Parser = make(map[string]Parser) // key is parserId
+
+	mutex = new(sync.Mutex) // lock across all parsers
 
 	// passed from main
 	logger    *log.Logger

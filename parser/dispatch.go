@@ -39,8 +39,8 @@ func InitParsers(pid string, conf *config.Config, chUpstreamAlarm chan<- Alarm) 
 }
 
 // Dispatch a line of log entry to target parser by name
-func Dispatch(parserName, line string) {
-	if p, present := allParsers[parserName]; present {
+func Dispatch(parserId, line string) {
+	if p, present := allParsers[parserId]; present {
 		p.ParseLine(line)
 	}
 }
