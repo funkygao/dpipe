@@ -26,7 +26,7 @@ func Sendmail(to string, subject string, body string) error {
 To: {{.To}}
 Subject: {{.Subject}}
 MIME-Version: 1.0
-Content-Type: text/html; charset="utf-8"
+Content-Type: text/text; charset="utf-8"
 Importance: High
 X-Priority: 1 (Highest)
 X-MSMail-Priority: High
