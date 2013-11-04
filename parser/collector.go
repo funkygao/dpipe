@@ -12,9 +12,10 @@ import (
 )
 
 // Child of AlsParser with db(sqlite3) features
-type DbParser struct {
+type CollectorParser struct {
 	AlsParser
 	AlarmCollector
+
 	*sync.Mutex
 
 	db         *sql.DB
@@ -24,7 +25,7 @@ type DbParser struct {
 	stopped bool
 }
 
-func (this *DbParser) init(conf *config.ConfParser, chUpstream chan<- Alarm, chDownstream chan<- string) {
+func (this *CollectorParser) init(conf *config.ConfParser, chUpstream chan<- Alarm, chDownstream chan<- string) {
 	this.AlsParser.init(conf, chUpstream, chDownstream) // super
 
 	this.Mutex = new(sync.Mutex) // embedding constructor
@@ -35,7 +36,7 @@ func (this *DbParser) init(conf *config.ConfParser, chUpstream chan<- Alarm, chD
 	this.prepareInsertStmt()
 }
 
-func (this *DbParser) Stop() {
+func (this *CollectorParser) Stop() {
 	this.AlsParser.Stop() // super
 	this.stopped = true
 
@@ -44,7 +45,7 @@ func (this *DbParser) Stop() {
 	}
 }
 
-func (this *DbParser) Wait() {
+func (this *CollectorParser) Wait() {
 	this.AlsParser.Wait()
 	<-this.chWait
 
@@ -59,7 +60,7 @@ func (this *DbParser) Wait() {
 // payment的阶段汇总
 // 有的字段需要运算，例如slowresp
 // colorPrint的第一个字段必须是amount
-func (this *DbParser) CollectAlarms() {
+func (this *CollectorParser) CollectAlarms() {
 	if dryRun {
 		this.chWait <- true
 		return
@@ -127,7 +128,7 @@ func (this *DbParser) CollectAlarms() {
 
 // create table schema
 // for high TPS, each parser has a dedicated sqlite3 db file
-func (this *DbParser) createDB() {
+func (this *CollectorParser) createDB() {
 	var err error
 	this.db, err = sql.Open(SQLITE3_DRIVER, fmt.Sprintf("file:%s?cache=shared&mode=rwc", this.conf.DbName))
 	checkError(err)
@@ -145,7 +146,7 @@ func (this *DbParser) createDB() {
 	checkError(err)
 }
 
-func (this *DbParser) prepareInsertStmt() {
+func (this *CollectorParser) prepareInsertStmt() {
 	if this.conf.InsertStmt == "" {
 		panic("insert_stmt not configured")
 	}
@@ -156,7 +157,7 @@ func (this *DbParser) prepareInsertStmt() {
 }
 
 // auto lock/unlock
-func (this *DbParser) insert(args ...interface{}) {
+func (this *CollectorParser) insert(args ...interface{}) {
 	this.Lock()
 	_, err := this.insertStmt.Exec(args...)
 	this.Unlock()
@@ -164,7 +165,7 @@ func (this *DbParser) insert(args ...interface{}) {
 }
 
 // caller is responsible for locking
-func (this *DbParser) execSql(sqlStmt string, args ...interface{}) (afftectedRows int64) {
+func (this *CollectorParser) execSql(sqlStmt string, args ...interface{}) (afftectedRows int64) {
 	res, err := this.db.Exec(sqlStmt, args...)
 	checkError(err)
 
@@ -174,7 +175,7 @@ func (this *DbParser) execSql(sqlStmt string, args ...interface{}) (afftectedRow
 	return
 }
 
-func (this *DbParser) query(querySql string, args ...interface{}) *sql.Rows {
+func (this *CollectorParser) query(querySql string, args ...interface{}) *sql.Rows {
 	rows, err := this.db.Query(querySql, args...)
 	checkError(err)
 
@@ -182,13 +183,13 @@ func (this *DbParser) query(querySql string, args ...interface{}) *sql.Rows {
 }
 
 // caller is responsible for locking
-func (this *DbParser) delRecordsBefore(ts int) (affectedRows int64) {
+func (this *CollectorParser) delRecordsBefore(ts int) (affectedRows int64) {
 	affectedRows = this.execSql("delete from "+this.conf.DbName+"  where ts<=?", ts)
 
 	return
 }
 
-func (this *DbParser) getCheckpoint(wheres ...string) (tsFrom, tsTo int, err error) {
+func (this *CollectorParser) getCheckpoint(wheres ...string) (tsFrom, tsTo int, err error) {
 	query := fmt.Sprintf("SELECT min(ts), max(ts) FROM %s", this.conf.DbName)
 	if len(wheres) > 0 {
 		query += " WHERE 1=1"
@@ -206,7 +207,7 @@ func (this *DbParser) getCheckpoint(wheres ...string) (tsFrom, tsTo int, err err
 	return
 }
 
-func (this *DbParser) echoCheckpoint(tsFrom, tsTo int, title string) {
+func (this *CollectorParser) echoCheckpoint(tsFrom, tsTo int, title string) {
 	fmt.Println() // seperator
 	this.colorPrintfLn("(%s  ~  %s) %s", gotime.TsToString(tsFrom), gotime.TsToString(tsTo), title)
 }

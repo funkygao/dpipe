@@ -6,12 +6,12 @@ import (
 )
 
 // Child of AlsParser with db(sqlite3) features
-type JsonDbParser struct {
-	DbParser
+type JsonCollectorParser struct {
+	CollectorParser
 }
 
-func newJsonDbParser(conf *config.ConfParser, chUpstream chan<- Alarm, chDownstream chan<- string) (this *JsonDbParser) {
-	this = new(JsonDbParser)
+func newJsonCollectorParser(conf *config.ConfParser, chUpstream chan<- Alarm, chDownstream chan<- string) (this *JsonCollectorParser) {
+	this = new(JsonCollectorParser)
 	this.init(conf, chUpstream, chDownstream)
 
 	go this.CollectAlarms()
@@ -19,11 +19,7 @@ func newJsonDbParser(conf *config.ConfParser, chUpstream chan<- Alarm, chDownstr
 	return
 }
 
-func (this *JsonDbParser) init(conf *config.ConfParser, chUpstream chan<- Alarm, chDownstream chan<- string) {
-	this.DbParser.init(conf, chUpstream, chDownstream) // super
-}
-
-func (this *JsonDbParser) ParseLine(line string) (area string, ts uint64, msg string) {
+func (this *JsonCollectorParser) ParseLine(line string) (area string, ts uint64, msg string) {
 	var data *json.Json
 	area, ts, data = this.AlsParser.parseJsonLine(line)
 	if dryRun {

@@ -10,11 +10,11 @@ func createParser(conf *config.ConfParser, chUpstreamAlarm chan<- Alarm, chDowns
 
 	if conf.Class == "JsonLineParser" {
 		return newJsonLineParser(conf, chUpstreamAlarm, chDownstreamAlarm)
-	} else if conf.Class == "RawLineDbParser" {
-		return newRawLineDbParser(conf, chUpstreamAlarm, chDownstreamAlarm)
+	} else if conf.Class == "RawLineCollectorParser" {
+		return newRawLineCollectorParser(conf, chUpstreamAlarm, chDownstreamAlarm)
 	}
 
-	return newJsonDbParser(conf, chUpstreamAlarm, chDownstreamAlarm)
+	return newJsonCollectorParser(conf, chUpstreamAlarm, chDownstreamAlarm)
 }
 
 // pid: only run this single parser id

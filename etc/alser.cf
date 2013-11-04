@@ -30,7 +30,7 @@
         // mongo error
         {
             id:     "Mongo"
-            class:  "DbParser"
+            class:  "JsonCollectorParser"
             title:  "Mongo"
             colors: [
                 "FgCyan",
@@ -61,7 +61,7 @@
         // error log
         {
             id:     "Error"
-            class:  "DbParser"
+            class:  "JsonCollectorParser"
             title:  "Error"
             colors: [
                 "FgRed",
@@ -95,7 +95,7 @@
         // payment log
         {
             id:     "Payment"
-            class:  "DbParser"
+            class:  "JsonCollectorParser"
             title:  "Revenue"
             colors: [
                 "FgGreen",
@@ -127,7 +127,7 @@
         // slow response
         {
             id:     "SlowResponse"
-            class:  "DbParser"
+            class:  "JsonCollectorParser"
             title:  "Slow"
             colors: [
                 "FgBlue",

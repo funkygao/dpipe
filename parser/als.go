@@ -4,11 +4,11 @@
                |
         ---------------
        |               |
-   JsonLineParser  DbParser
+   JsonLineParser  CollectorParser
                        |
                    ----------------
                   |                |
-             JsonDbParser    RawLineDbParser
+         JsonCollectorParser    RawLineCollectorParser
 
 */
 package parser
