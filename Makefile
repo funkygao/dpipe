@@ -1,3 +1,6 @@
+up:
+	go get -u github.com/funkygao/alser
+
 test:
 	@go test -v
 	cd parser; go test -v

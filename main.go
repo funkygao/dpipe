@@ -44,9 +44,10 @@ func main() {
 
 	// load the big biz logic config file
 	conf, err := config.LoadConfig(options.config)
-	if err != nil {
+	if err != nil || conf == nil {
 		panic(err)
 	}
+	logger.Printf("%#v\n", *conf)
 
 	if options.showparsers {
 		fmt.Fprintf(os.Stderr, "All parsers: %+v\n", conf.Parsers)
