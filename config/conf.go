@@ -22,6 +22,7 @@ type LineKey struct {
 	MustBe  string
 	Ignores []string
 	NotDb   bool // only validate line, will not insert into db
+	Regex   []string
 }
 
 type ConfParser struct {
@@ -95,6 +96,7 @@ func LoadConfig(fn string) (*Config, error) {
 			key.Type = this.String(prefix+"type", "string")
 			key.MustBe = this.String(prefix+"must_be", "")
 			key.Ignores = this.StringList(prefix+"ignores", nil)
+			key.Regex = this.StringList(prefix+"regex", nil)
 			key.NotDb = this.Bool(prefix+"db_not", false)
 			parser.Keys = append(parser.Keys, key)
 		}
