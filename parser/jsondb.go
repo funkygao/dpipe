@@ -1,15 +1,8 @@
 package parser
 
 import (
-	"database/sql"
-	"errors"
-	"fmt"
 	json "github.com/bitly/go-simplejson"
 	"github.com/funkygao/alser/config"
-	"github.com/funkygao/gotime"
-	_ "github.com/mattn/go-sqlite3"
-	"sync"
-	"time"
 )
 
 // Child of AlsParser with db(sqlite3) features

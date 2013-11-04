@@ -1,7 +1,6 @@
 package parser
 
 import (
-	json "github.com/bitly/go-simplejson"
 	"github.com/funkygao/alser/config"
 )
 
@@ -18,7 +17,7 @@ func newRawLineDbParser(conf *config.ConfParser, chUpstream chan<- Alarm, chDown
 func (this *RawLineDbParser) ParseLine(line string) (area string, ts uint64, msg string) {
 	area, ts, msg = this.AlsParser.ParseLine(line)
 
-	this.colorPrintfLn(this.conf.PrintFormat, args...)
+	this.colorPrintfLn(this.conf.PrintFormat, msg)
 	this.beep()
 
 	return

@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	json "github.com/bitly/go-simplejson"
 	"github.com/funkygao/alser/config"
 	"github.com/funkygao/gotime"
 	_ "github.com/mattn/go-sqlite3"
