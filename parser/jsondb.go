@@ -30,7 +30,7 @@ func (this *JsonDbParser) ParseLine(line string) (area string, ts uint64, msg st
 		return
 	}
 
-	args, err := this.extractKeyValues(data)
+	args, err := this.extractDataValues(data)
 	if err != nil {
 		return
 	}

@@ -1,14 +1,14 @@
 /*
 
-            AlsParser
-                |
-         ---------------
-        |               |
-    JsonLineParser  DbParser
-                        |
-                    ----------------
-                   |                |
-              JsonDbParser    RawLineDbParser
+           AlsParser
+               |
+        ---------------
+       |               |
+   JsonLineParser  DbParser
+                       |
+                   ----------------
+                  |                |
+             JsonDbParser    RawLineDbParser
 
 */
 package parser
@@ -85,7 +85,7 @@ func (this *AlsParser) parseJsonLine(line string) (area string, ts uint64, data 
 	return
 }
 
-func (this *AlsParser) extractKeyValue(data *json.Json, name, typ string) (val interface{}, err error) {
+func (this *AlsParser) extractDataValue(data *json.Json, name, typ string) (val interface{}, err error) {
 	switch typ {
 	case "string":
 		val, err = data.Get(name).String()
@@ -98,7 +98,7 @@ func (this *AlsParser) extractKeyValue(data *json.Json, name, typ string) (val i
 	return
 }
 
-func (this *AlsParser) extractKeyValues(data *json.Json) (values []interface{}, err error) {
+func (this *AlsParser) extractDataValues(data *json.Json) (values []interface{}, err error) {
 	values = make([]interface{}, 0)
 	for _, key := range this.conf.Keys {
 		var val interface{}
@@ -106,9 +106,9 @@ func (this *AlsParser) extractKeyValues(data *json.Json) (values []interface{}, 
 		keyParts := strings.SplitN(key.Name, ".", 2) // only 1 dot permitted
 		if len(keyParts) > 1 {
 			subData := data.Get(keyParts[0])
-			val, err = this.extractKeyValue(subData, keyParts[1], key.Type)
+			val, err = this.extractDataValue(subData, keyParts[1], key.Type)
 		} else {
-			val, err = this.extractKeyValue(data, key.Name, key.Type)
+			val, err = this.extractDataValue(data, key.Name, key.Type)
 		}
 
 		if err != nil {

@@ -22,7 +22,7 @@ func (this *JsonLineParser) ParseLine(line string) (area string, ts uint64, msg 
 		return
 	}
 
-	args, err := this.extractKeyValues(data)
+	args, err := this.extractDataValues(data)
 	if err != nil {
 		return
 	}
