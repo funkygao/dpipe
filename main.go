@@ -47,7 +47,6 @@ func main() {
 	if err != nil || conf == nil {
 		panic(err)
 	}
-	logger.Printf("%#v\n", *conf)
 
 	if options.showparsers {
 		fmt.Fprintf(os.Stderr, "All parsers: %+v\n", conf.Parsers)
