@@ -80,6 +80,10 @@
                     ignores: [
                         "MongoException",
                     ]
+                    regex:  [
+                        "digit",
+                        "token",
+                    ]
                 },
                 {
                     name: "message"

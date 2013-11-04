@@ -130,12 +130,12 @@ func (this *AlsParser) extractDataValues(data *json.Json) (values []interface{},
 		}
 
 		if key.Regex != nil {
-			for key.Regex !=nil; _, regex := range key.Regex {
+			for _, regex := range key.Regex {
 				switch regex {
 				case "digit":
-					val = this.normalizeDigit(val)
+					val = this.normalizeDigit(val.(string))
 				case "token":
-					val = this.normalizeBatchToken(val)
+					val = this.normalizeBatchToken(val.(string))
 				}
 			}
 		}
