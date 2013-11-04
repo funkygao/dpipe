@@ -10,8 +10,8 @@ func createParser(conf *config.ConfParser, chUpstreamAlarm chan<- Alarm, chDowns
 
 	if conf.Class == "JsonLineParser" {
 		return newJsonLineParser(conf, chUpstreamAlarm, chDownstreamAlarm)
-	} else if conf.Class == "RawLineCollectorParser" {
-		return newRawLineCollectorParser(conf, chUpstreamAlarm, chDownstreamAlarm)
+	} else if conf.Class == "PhperrorCollectorParser" {
+		return newPhperrorCollectorParser(conf, chUpstreamAlarm, chDownstreamAlarm)
 	}
 
 	return newJsonCollectorParser(conf, chUpstreamAlarm, chDownstreamAlarm)

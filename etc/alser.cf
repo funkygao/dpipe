@@ -9,6 +9,13 @@
     guards: 
     [
         {
+            tail_glob:      "/mnt/funplus/logs/fp_rstory/phperror*"
+            history_glob:   "/mnt/funplus/logs/fp_rstory/history/phperror*"
+            parsers:        [
+                "PhpError",
+            ]
+        },
+        {
             tail_glob:      "/mnt/funplus/logs/fp_rstory/memcache_to.*.log"
             history_glob:   "/mnt/funplus/logs/fp_rstory/history/memcache_to*"
             parsers:        [
@@ -27,6 +34,24 @@
     // all avaible parsers/plugins
     parsers: 
     [
+        // phperror
+        {
+            id:     "PhpError"
+            class:  "PhperrorCollectorParser"
+            title:  "PhpError"
+            colors: [
+                "FgYellow",
+                "Bright",
+            ]
+            sleep:          33
+            beep_threshold: 1
+            create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, msg VARCHAR(200), host CHAR(25), level CHAR(15), src VARCHAR(80));"
+            insert_stmt:    "INSERT INTO %s(area, ts, msg, level, host, src) VALUES(?,?,?,?,?,?)"
+            group_stmt:     "SELECT COUNT(*) AS c, area, level, msg, src FROM %s where ts<=? GROUP BY area, level, msg, src ORDER BY c DESC"
+            dbname:         "phperr"
+            printf: "%8d %3s %12s %18s %s"
+        },
+
         // mongo error
         {
             id:     "Mongo"
