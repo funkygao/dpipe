@@ -56,7 +56,7 @@ func guard(conf *config.Config) {
 	parser.StopAll()
 
 	if options.verbose {
-		logger.Println("awaiting all parsers...")
+		logger.Println("awaiting all parsers collecting alarms...")
 	}
 	parser.WaitAll()
 

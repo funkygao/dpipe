@@ -11,6 +11,9 @@ type RawLineDbParser struct {
 func newRawLineDbParser(conf *config.ConfParser, chUpstream chan<- Alarm, chDownstream chan<- string) (this *RawLineDbParser) {
 	this = new(RawLineDbParser)
 	this.init(conf, chUpstream, chDownstream)
+
+	go this.CollectAlarms()
+
 	return
 }
 
