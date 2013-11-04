@@ -17,6 +17,9 @@ func InitParsers(pid string, conf *config.Config, chUpstreamAlarm chan<- Alarm) 
 			}
 
 			confParser := conf.ParserById(parserId)
+			if confParser == nil {
+				panic("invalid parser id: " + parserId)
+			}
 			allParsers[parserId] = createParser(confParser, chUpstreamAlarm, chParserAlarm)
 		}
 	}

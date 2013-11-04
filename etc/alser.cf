@@ -12,14 +12,14 @@
             tail_glob:      "/mnt/funplus/logs/fp_rstory/memcache_to.*.log"
             history_glob:   "/mnt/funplus/logs/fp_rstory/history/memcache_to*"
             parsers:        [
-                "MemcacheFailParser",
+                "MemcacheTimeout",
             ]
         },
         {
             tail_glob:      "/mnt/funplus/logs/fp_rstory/cache_set_fail.*.log"
             history_glob:   "/mnt/funplus/logs/fp_rstory/history/cache_set_fail*"
             parsers:        [
-                "MemcacheFailParser",
+                "MemcacheFail",
             ]
         },
     ]
