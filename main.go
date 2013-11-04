@@ -6,6 +6,7 @@ import (
 	"os"
 	"runtime/debug"
 	"runtime/pprof"
+	"strings"
 )
 
 func init() {
@@ -14,6 +15,8 @@ func init() {
 	if options.showversion {
 		showVersion()
 	}
+
+	logger = newLogger(options) // create logger as soon as possible
 
 	if options.lock {
 		if instanceLocked() {
@@ -40,8 +43,6 @@ func main() {
 		}
 	}()
 
-	logger = newLogger(options)
-
 	// load the big biz logic config file
 	conf, err := config.LoadConfig(options.config)
 	if err != nil || conf == nil {
@@ -49,7 +50,7 @@ func main() {
 	}
 
 	if options.showparsers {
-		fmt.Fprintf(os.Stderr, "All parsers: %+v\n", conf.Parsers)
+		fmt.Fprintf(os.Stderr, "All parsers\n%s\n%+v\n", strings.Repeat("=", 20), conf.Parsers)
 		shutdown()
 	}
 
