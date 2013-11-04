@@ -20,7 +20,7 @@ const (
 	LOG_OPTIONS       = log.Ldate | log.Ltime
 	LOG_OPTIONS_DEBUG = log.Ldate | log.Lshortfile | log.Ltime | log.Lmicroseconds
 
-	USAGE = `alser - FunPlus ALS log guard
+	USAGE = `alser - FunPlus ALS(application logging system) Guard
 
 Flags:
 `
