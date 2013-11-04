@@ -8,7 +8,7 @@
                         |
                     ----------------
                    |                |
-              JsonDbParser    RawDbParser
+              JsonDbParser    RawLineDbParser
 
 */
 package parser
@@ -103,7 +103,7 @@ func (this *AlsParser) extractKeyValues(data *json.Json) (values []interface{}, 
 	for _, key := range this.conf.Keys {
 		var val interface{}
 
-		keyParts := strings.SplitN(key.Name, ".", 2) // not 1 dot permitted
+		keyParts := strings.SplitN(key.Name, ".", 2) // only 1 dot permitted
 		if len(keyParts) > 1 {
 			subData := data.Get(keyParts[0])
 			val, err = this.extractKeyValue(subData, keyParts[1], key.Type)
