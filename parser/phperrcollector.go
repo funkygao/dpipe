@@ -5,8 +5,6 @@ import (
 	"path/filepath"
 )
 
-// Guard web agent logs
-// php_error and /var/log/messages currently
 type PhperrorCollectorParser struct {
 	CollectorParser
 }
@@ -25,7 +23,7 @@ func (this *PhperrorCollectorParser) ParseLine(line string) (area string, ts uin
 
 	phpErrorMatches := phpErrorRegexp.FindAllStringSubmatch(msg, 10000)
 	if len(phpErrorMatches) == 0 {
-		// not a php_error msg
+		// not a php_error msg, give out warning now
 		this.colorPrintfLn("%3s %s", area, msg)
 		return
 	}
