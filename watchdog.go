@@ -67,12 +67,15 @@ func notifyUnGuardedLogs(conf *config.Config) {
 	}
 
 	if len(unGuardedLogs) > 0 {
-		var mailBody = "Unguared logs:\n\n"
+		var mailBody = ""
 		for logfile, _ := range unGuardedLogs {
 			mailBody += logfile + "\n"
 		}
 
-		mail.Sendmail(conf.String("unguarded.mail_to", ""), "Unguarded Logs", mailBody)
+		mailTo := conf.String("unguarded.mail_to", "")
+		if err := mail.Sendmail(conf.String("unguarded.mail_to", ""), "Unguarded Logs", mailBody); err == nil {
+			logger.Printf("unguarded logs alarm sent => %s\n", mailTo)
+		}
 	}
 
 }
