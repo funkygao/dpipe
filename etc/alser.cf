@@ -52,7 +52,7 @@
         },
     ]
     
-    // all avaible parsers/plugins
+    // all avaible parsers(plugins)
     parsers: 
     [
         // phperror

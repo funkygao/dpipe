@@ -86,19 +86,18 @@ func LoadConfig(fn string) (*Config, error) {
 
 		// keys
 		keys := this.List(keyPrefix+"keys", nil)
-		if keys == nil {
-			return nil, errors.New("keys can't be empty in parser")
-		}
-		for j := 0; j < len(keys); j++ {
-			prefix := fmt.Sprintf("%s[%d].", keyPrefix+"keys", j)
-			key := LineKey{}
-			key.Name = this.String(prefix+"name", "")
-			key.Type = this.String(prefix+"type", "string")
-			key.MustBe = this.String(prefix+"must_be", "")
-			key.Ignores = this.StringList(prefix+"ignores", nil)
-			key.Regex = this.StringList(prefix+"regex", nil)
-			key.NotDb = this.Bool(prefix+"db_not", false)
-			parser.Keys = append(parser.Keys, key)
+		if keys != nil {
+			for j := 0; j < len(keys); j++ {
+				prefix := fmt.Sprintf("%s[%d].", keyPrefix+"keys", j)
+				key := LineKey{}
+				key.Name = this.String(prefix+"name", "")
+				key.Type = this.String(prefix+"type", "string")
+				key.MustBe = this.String(prefix+"must_be", "")
+				key.Ignores = this.StringList(prefix+"ignores", nil)
+				key.Regex = this.StringList(prefix+"regex", nil)
+				key.NotDb = this.Bool(prefix+"db_not", false)
+				parser.Keys = append(parser.Keys, key)
+			}
 		}
 
 		this.Parsers = append(this.Parsers, parser)
