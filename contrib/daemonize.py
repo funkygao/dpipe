@@ -32,5 +32,6 @@ while True:
 	print >> logfp, "[%s] Try running" % time.ctime(), " ".join(prog_argv)
 	sp = subprocess.Popen(prog_argv, cwd=prog_dir, close_fds=True, stdout=logfp, stderr=subprocess.STDOUT)
 	sp.wait()
+	print >> logfp, "[%s] Terminated" % time.ctime(), " ".join(prog_argv)
 	time.sleep(3)
 
