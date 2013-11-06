@@ -64,7 +64,7 @@
                 "FgYellow",
                 "Bright",
             ]
-            sleep:          33
+            sleep:          13
             beep_threshold: 1
             create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, msg VARCHAR(200), host CHAR(25), level CHAR(15), src VARCHAR(80));"
             insert_stmt:    "INSERT INTO %s(area, ts, msg, level, host, src) VALUES(?,?,?,?,?,?)"
@@ -83,7 +83,7 @@
                 "Bright",
                 "BgRed",
             ]
-            sleep:          17
+            sleep:          15
             beep_threshold: 1
             create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, msg VARCHAR(200));"
             insert_stmt:    "INSERT INTO %s(area, ts, msg) VALUES(?,?,?)"
@@ -113,7 +113,7 @@
                 "FgRed",
             ]
             sleep:          87
-            beep_threshold: 100
+            beep_threshold: 60
             create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, cls VARCHAR(50), msg VARCHAR(200));"
             insert_stmt:    "INSERT INTO %s(area, ts, cls, msg) VALUES(?,?,?,?)"
             group_stmt:     "SELECT COUNT(*) AS c, area, cls, msg FROM %s where ts<=? GROUP BY area, cls, msg ORDER BY c DESC"
@@ -137,6 +137,10 @@
                     ignores: [
                         "Energy Error, Client: ?, Server: ?, info:batch",
                         "snsid or uid error",
+                        "XP Error, Client: ?, Server: ?, info:batch",
+                        "Sorry, someone has logged in on your account from another computer.",
+                        "batch token error! pre cur",
+                        "payment error: OK",
                     ]
                 },
             ]
@@ -150,7 +154,7 @@
             colors: [
                 "FgGreen",
             ]
-            sleep:          69
+            sleep:          99
             create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, amount INT, type VARCHAR(50), currency VARCHAR(20));"
             insert_stmt:    "INSERT INTO %s(area, ts, type, currency, amount) VALUES(?,?,?,?,?)"
             group_stmt:     "SELECT SUM(amount) AS c, type, area, currency FROM %s where ts<=? GROUP BY type, area, currency ORDER BY c DESC"
