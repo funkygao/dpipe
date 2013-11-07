@@ -1,6 +1,11 @@
 {
-
+    //===================================================
+    // ALS Guard main config
+    //===================================================
     // comment must be start of line(excluding the leading spaces)
+
+    // 
+    //===================================================
     unguarded: {
         mail_to: "peng.gao@funplusgame.com"
     }
@@ -8,6 +13,14 @@
     // watch what logs and how
     guards: 
     [
+        {
+            tail_glob:      "/mnt/funplus/logs/fp_rstory/kernal*"
+            history_glob:   "/mnt/funplus/logs/fp_rstory/history/kernal*"
+            parsers:        [
+                // TODO
+                "PhpError",
+            ]
+        },
         {
             tail_glob:      "/mnt/funplus/logs/fp_rstory/phperror*"
             history_glob:   "/mnt/funplus/logs/fp_rstory/history/phperror*"
