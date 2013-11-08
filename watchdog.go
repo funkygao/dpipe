@@ -85,9 +85,7 @@ func notifyUnGuardedLogs(conf *config.Config) {
 		}
 		sort.Strings(files)
 
-		total := len(files)
-		subject := fmt.Sprintf("ALS Logs Unguarded %d", len(files))
-
+		var subject = fmt.Sprintf("ALS Logs Unguarded %d", len(files))
 		var mailBody = ""
 		for _, logfile := range files {
 			mailBody += logfile + "\n"
