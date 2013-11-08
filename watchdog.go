@@ -5,8 +5,10 @@ import (
 	"github.com/funkygao/alser/parser"
 	mail "github.com/funkygao/alser/sendmail"
 	"github.com/funkygao/gofmt"
+	"os"
 	"path/filepath"
 	"runtime"
+	"sort"
 	"time"
 )
 
@@ -64,6 +66,11 @@ func notifyUnGuardedLogs(conf *config.Config) {
 	baseDir := filepath.Dir(logfile)
 	allLogs, _ := filepath.Glob(baseDir + "/*")
 	for _, path := range allLogs {
+		if stat, _ := os.Stat(path); stat.IsDir() {
+			// skip sub directories
+			continue
+		}
+
 		baseName := filepath.Base(path)
 		if _, present := guardedLogs[baseName[:prefixLen]]; !present {
 			unGuardedLogs[path] = true
@@ -71,13 +78,19 @@ func notifyUnGuardedLogs(conf *config.Config) {
 	}
 
 	if len(unGuardedLogs) > 0 {
-		var mailBody = ""
+		files := make([]string, 0)
 		for logfile, _ := range unGuardedLogs {
+			files = append(files, logfile)
+		}
+		sort.Strings(files)
+
+		var mailBody = ""
+		for _, logfile := range files {
 			mailBody += logfile + "\n"
 		}
 
 		mailTo := conf.String("unguarded.mail_to", "")
-		if err := mail.Sendmail(conf.String("unguarded.mail_to", ""), "Unguarded Logs", mailBody); err == nil {
+		if err := mail.Sendmail(conf.String("unguarded.mail_to", ""), "ALS Logs Unguarded", mailBody); err == nil {
 			logger.Printf("unguarded logs alarm sent => %s\n", mailTo)
 		}
 	}
