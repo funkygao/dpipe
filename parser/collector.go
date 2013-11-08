@@ -167,6 +167,10 @@ func (this *CollectorParser) insert(args ...interface{}) {
 
 // caller is responsible for locking
 func (this *CollectorParser) execSql(sqlStmt string, args ...interface{}) (afftectedRows int64) {
+	if debug {
+		logger.Println(sqlStmt)
+	}
+
 	res, err := this.db.Exec(sqlStmt, args...)
 	checkError(err)
 
@@ -177,6 +181,10 @@ func (this *CollectorParser) execSql(sqlStmt string, args ...interface{}) (affte
 }
 
 func (this *CollectorParser) query(querySql string, args ...interface{}) *sql.Rows {
+	if debug {
+		logger.Println(querySql)
+	}
+
 	rows, err := this.db.Query(querySql, args...)
 	checkError(err)
 
