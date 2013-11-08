@@ -2,23 +2,26 @@
     //===================================================
     // ALS Guard main config
     //===================================================
+
     // comment must be start of line(excluding the leading spaces)
 
-    // 
+    //===================================================
+    // 1. unguarded logs alarm, send once on startup
     //===================================================
     unguarded: {
         mail_to: "peng.gao@funplusgame.com"
     }
 
-    // watch what logs and how
+    //===================================================
+    // 2. watch out for what logs and how
+    //===================================================
     guards: 
     [
         {
             tail_glob:      "/mnt/funplus/logs/fp_rstory/kernal*"
             history_glob:   "/mnt/funplus/logs/fp_rstory/history/kernal*"
             parsers:        [
-                // TODO
-                "PhpError",
+                "HostLine",
             ]
         },
         {
@@ -65,10 +68,13 @@
         },
     ]
     
-    // all avaible parsers(plugins)
+    //===================================================
+    // 3. all avaible parsers(plugins)
+    //===================================================
     parsers: 
     [
         // phperror
+        //===================================================
         {
             id:     "PhpError"
             class:  "PhperrorCollectorParser"
@@ -80,6 +86,9 @@
             sleep:          13
             beep_threshold: 1
             create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, msg VARCHAR(200), host CHAR(25), level CHAR(15), src VARCHAR(80));"
+            //===================================================
+            // insert_stmt must be like INSERT INTO (area, ts, ...)
+            //===================================================
             insert_stmt:    "INSERT INTO %s(area, ts, msg, level, host, src) VALUES(?,?,?,?,?,?)"
             stats_stmt:     "SELECT COUNT(*) AS c, area, level, msg, src FROM %s where ts<=? GROUP BY area, level, msg, src ORDER BY c DESC"
             dbname:         "phperr"
@@ -87,6 +96,7 @@
         },
 
         // mongo error
+        //===================================================
         {
             id:     "Mongo"
             class:  "JsonCollectorParser"
@@ -106,18 +116,17 @@
             keys: [
                 {
                     name: "class"
-                    type: "string"
-                    must_be: "MongoException"
-                    db_not: true
+                    contains: "MongoException"
+                    db_col: false
                 },
                 {
                     name: "message"
-                    type: "string"
                 },
             ]
         },
 
         // error log
+        //===================================================
         {
             id:     "Error"
             class:  "JsonCollectorParser"
@@ -135,7 +144,6 @@
             keys: [
                 {
                     name: "class"
-                    type: "string"
                     ignores: [
                         "MongoException",
                     ]
@@ -146,7 +154,6 @@
                 },
                 {
                     name: "message"
-                    type: "string"
                     ignores: [
                         "Energy Error, Client: ?, Server: ?, info:batch",
                         "snsid or uid error",
@@ -160,6 +167,7 @@
         },
 
         // payment log
+        //===================================================
         {
             id:     "Payment"
             class:  "JsonCollectorParser"
@@ -177,12 +185,10 @@
             keys: [
                 {
                     name: "type"
-                    type: "string"
-                    must_be: "OK"
+                    contains: "OK"
                 },
                 {
                     name: "data.currency"
-                    type: "string"
                 },
                 {
                     name: "data.amount"
@@ -192,6 +198,7 @@
         },
 
         // slow response
+        //===================================================
         {
             id:     "SlowResponse"
             class:  "JsonCollectorParser"
@@ -203,7 +210,7 @@
                 "peng.gao@funplusgamenet.com",
                 "zhengkai@gmail.com"
             ]
-            mail_subject_prefix:    "ALS Guard/Slow Response"
+            mail_subject_prefix:    "ALS Guard/Slow Response>10s"
             beep_threshold:         20
             sleep:                  23
             create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, uri VARCHAR(50));"
@@ -214,12 +221,12 @@
             keys: [
                 {
                     name: "_log_info.uri"
-                    type: "string"
                 },
             ]
         },
 
         // memcache set fail
+        //===================================================
         {
             id:     "MemcacheFail"
             class:  "JsonLineParser"
@@ -230,7 +237,6 @@
             keys:   [
                 {
                     name: "key"
-                    type: "string"
                 },
                 {
                     name: "timeout"
@@ -238,7 +244,6 @@
                 },
                 {
                     name: "_log_info.host"
-                    type: "string"
                 }
             ]
             mail_recipents: [
@@ -249,6 +254,7 @@
         },
 
         // memcache timeout
+        //===================================================
         {
             id:     "MemcacheTimeout"
             class:  "JsonLineParser"
@@ -259,15 +265,12 @@
             keys:   [
                 {
                     name: "key"
-                    type: "string"
                 },
                 {
                     name: "to"
-                    type: "float"
                 },
                 {
                     name: "_log_info.host"
-                    type: "string"
                 }
             ]
             mail_recipents: [
@@ -276,6 +279,17 @@
             ]
             mail_subject_prefix: "ALS Guard/MemcacheFail"
         },
+
+        // host ended raw text log
+        //===================================================
+        {
+            id:     "HostLine"
+            class:  "HostLineParser"
+            colors: [
+                "FgYellow",
+            ]
+        },
+
     ]
 
 }
