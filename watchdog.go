@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/funkygao/alser/config"
 	"github.com/funkygao/alser/parser"
 	mail "github.com/funkygao/alser/sendmail"
@@ -84,13 +85,16 @@ func notifyUnGuardedLogs(conf *config.Config) {
 		}
 		sort.Strings(files)
 
+		total := len(files)
+		subject := fmt.Sprintf("ALS Logs Unguarded %d", len(files))
+
 		var mailBody = ""
 		for _, logfile := range files {
 			mailBody += logfile + "\n"
 		}
 
 		mailTo := conf.String("unguarded.mail_to", "")
-		if err := mail.Sendmail(conf.String("unguarded.mail_to", ""), "ALS Logs Unguarded", mailBody); err == nil {
+		if err := mail.Sendmail(conf.String("unguarded.mail_to", ""), subject, mailBody); err == nil {
 			logger.Printf("unguarded logs alarm sent => %s\n", mailTo)
 		}
 	}
