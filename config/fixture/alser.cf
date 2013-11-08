@@ -47,7 +47,7 @@
                 {
                     name: "timeout"
                     type: "int"
-                    must_be: "blah"
+                    contains: "blah"
                 }
             ]
         },
