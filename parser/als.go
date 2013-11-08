@@ -58,6 +58,8 @@ func (this *AlsParser) init(conf *config.ConfParser, chUpstream chan<- Alarm, ch
 	}
 }
 
+// Each ALS log line is area,timestamp,msg
+// Most msg are json struct while some are raw text
 func (this *AlsParser) ParseLine(line string) (area string, ts uint64, msg string) {
 	fields := strings.SplitN(line, LINE_SPLITTER, LINE_SPLIT_NUM)
 
@@ -73,12 +75,8 @@ func (this *AlsParser) ParseLine(line string) (area string, ts uint64, msg strin
 	return
 }
 
-func (this *AlsParser) parseJsonLine(line string) (area string, ts uint64, data *json.Json) {
-	var (
-		msg string
-		err error
-	)
-	area, ts, msg = this.ParseLine(line)
+func (this *AlsParser) msgToJson(msg string) (data *json.Json) {
+	var err error
 	data, err = json.NewJson([]byte(msg))
 	checkError(err)
 

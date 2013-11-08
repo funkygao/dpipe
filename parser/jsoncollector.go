@@ -20,8 +20,8 @@ func newJsonCollectorParser(conf *config.ConfParser, chUpstream chan<- Alarm, ch
 }
 
 func (this *JsonCollectorParser) ParseLine(line string) (area string, ts uint64, msg string) {
-	var data *json.Json
-	area, ts, data = this.AlsParser.parseJsonLine(line)
+	area, ts, msg = this.AlsParser.ParseLine(line)
+	var data *json.Json = this.msgToJson(msg)
 	if dryRun {
 		return
 	}
