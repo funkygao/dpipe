@@ -39,8 +39,8 @@ type AlsParser struct {
 	Parser
 
 	conf              *config.ConfParser
-	chUpstreamAlarm   chan<- Alarm // TODO not used yet
-	chDownstreamAlarm chan<- string
+	chUpstreamAlarm   chan<- Alarm  // TODO not used yet
+	chDownstreamAlarm chan<- string // consumed by parser itself
 
 	color string
 }
@@ -106,7 +106,7 @@ func (this *AlsParser) jsonValue(data *json.Json, key, typ string) (val interfac
 }
 
 // Extract values of json according config keys
-func (this *AlsParser) extractRowValues(data *json.Json) (values []interface{}) {
+func (this *AlsParser) valuesOfKeys(data *json.Json) (values []interface{}) {
 	var err error
 	var val interface{}
 	values = make([]interface{}, 0)

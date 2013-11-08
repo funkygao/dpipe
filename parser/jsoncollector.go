@@ -21,12 +21,12 @@ func newJsonCollectorParser(conf *config.ConfParser, chUpstream chan<- Alarm, ch
 
 func (this *JsonCollectorParser) ParseLine(line string) (area string, ts uint64, msg string) {
 	area, ts, msg = this.AlsParser.ParseLine(line)
-	var data *json.Json = this.msgToJson(msg)
+	var jsonData *json.Json = this.msgToJson(msg)
 	if dryRun {
 		return
 	}
 
-	args := this.extractRowValues(data)
+	args := this.valuesOfKeys(jsonData)
 	if len(args) != this.keysCount() {
 		return
 	}
