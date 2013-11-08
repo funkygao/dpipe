@@ -147,13 +147,10 @@ func (this *AlsParser) valuesOfKeys(data *json.Json) (values []interface{}) {
 		}
 
 		if key.Regex != nil {
-			logger.Println(key.Regex)
 			for _, regex := range key.Regex {
 				switch regex {
 				case "digit":
-					logger.Println(val)
 					val = this.normalizeDigit(val.(string))
-					logger.Println(val)
 				case "token":
 					val = this.normalizeBatchToken(val.(string))
 				}
