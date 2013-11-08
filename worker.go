@@ -43,7 +43,7 @@ func newWorker(id int, logfile string, conf config.ConfGuard, tailMode bool,
 	return this
 }
 
-func (this *worker) String() string {
+func (this worker) String() string {
 	return fmt.Sprintf("worker-%d[%s]", this.id, this.logfile)
 }
 
