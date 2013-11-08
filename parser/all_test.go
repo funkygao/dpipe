@@ -56,7 +56,8 @@ func TestPhperrorRegexp(t *testing.T) {
 func TestExtractLogInfo(t *testing.T) {
 	line := `us,1381118458069,{"cheater":10301051,"type":"helpFriendsRewardAction","world_id":"100001823535095","user":"100001823535095","_log_info":{"uid":10301051,"script_id":3183040714,"serial":3,"host":"10.255.8.189","ip":"79.215.100.157"}}`
 	p := new(AlsParser)
-	_, _, data := p.ParseLine(line)
+	_, _, msg := p.ParseLine(line)
+    data := p.msgToJson(msg)
 	info := extractLogInfo(data)
 	assert.Equal(t, info.host, "10.255.8.189")
 	assert.Equal(t, info.ip, "79.215.100.157")

@@ -33,7 +33,7 @@ func (this *PhperrorCollectorParser) ParseLine(line string) (area string, ts uin
 		return
 	}
 
-	host, level, file, line, msg := matches[6], matches[2], matches[4], matches[5], matches[3]
+	level, msg, file, line, host := matches[2], matches[3], matches[4], matches[5], matches[6]
 	src := filepath.Base(file) + ":" + line
 
 	this.insert(area, ts, msg, level, host, src)
