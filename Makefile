@@ -5,6 +5,7 @@ up:
 test:
 	@go test -v
 	cd parser; go test -v
+	cd config; go test -v
 
 build:
 	go build
