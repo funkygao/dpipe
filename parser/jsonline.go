@@ -22,8 +22,8 @@ func (this *JsonLineParser) ParseLine(line string) (area string, ts uint64, msg 
 		return
 	}
 
-	args, err := this.extractRowValues(data)
-	if err != nil {
+	args := this.extractRowValues(data)
+	if len(args) != this.keysCount() {
 		return
 	}
 

@@ -14,7 +14,6 @@
 package parser
 
 import (
-	"errors"
 	"fmt"
 	json "github.com/bitly/go-simplejson"
 	"github.com/funkygao/alser/config"
@@ -75,6 +74,16 @@ func (this *AlsParser) ParseLine(line string) (area string, ts uint64, msg strin
 	return
 }
 
+func (this *AlsParser) Stop() {
+}
+
+func (this *AlsParser) Wait() {
+}
+
+func (this *AlsParser) keysCount() int {
+	return len(this.conf.Keys)
+}
+
 func (this *AlsParser) msgToJson(msg string) (data *json.Json) {
 	var err error
 	data, err = json.NewJson([]byte(msg))
@@ -83,30 +92,32 @@ func (this *AlsParser) msgToJson(msg string) (data *json.Json) {
 	return
 }
 
-func (this *AlsParser) extractDataValue(data *json.Json, name, typ string) (val interface{}, err error) {
+func (this *AlsParser) jsonValue(data *json.Json, key, typ string) (val interface{}, err error) {
 	switch typ {
 	case "string":
-		val, err = data.Get(name).String()
+		val, err = data.Get(key).String()
 	case "int":
-		val, err = data.Get(name).Int()
+		val, err = data.Get(key).Int()
 	case "float":
-		val, err = data.Get(name).Float64()
+		val, err = data.Get(key).Float64()
 	}
 
 	return
 }
 
-func (this *AlsParser) extractRowValues(data *json.Json) (values []interface{}, err error) {
+// Extract values of json according config keys
+func (this *AlsParser) extractRowValues(data *json.Json) (values []interface{}) {
+	var err error
+	var val interface{}
 	values = make([]interface{}, 0)
-	for _, key := range this.conf.Keys {
-		var val interface{}
 
+	for _, key := range this.conf.Keys {
 		keyParts := strings.SplitN(key.Name, ".", 2) // only 1 dot permitted
 		if len(keyParts) > 1 {
 			subData := data.Get(keyParts[0])
-			val, err = this.extractDataValue(subData, keyParts[1], key.Type)
+			val, err = this.jsonValue(subData, keyParts[1], key.Type)
 		} else {
-			val, err = this.extractDataValue(data, key.Name, key.Type)
+			val, err = this.jsonValue(data, key.Name, key.Type)
 		}
 
 		if err != nil {
@@ -114,14 +125,12 @@ func (this *AlsParser) extractRowValues(data *json.Json) (values []interface{}, 
 		}
 
 		if key.MustBe != "" && key.MustBe != val.(string) {
-			err = errors.New("must be:" + key.MustBe + ", got:" + val.(string))
 			return
 		}
 
 		if key.Ignores != nil {
 			for _, ignore := range key.Ignores {
 				if strings.Contains(val.(string), ignore) {
-					err = errors.New("ignored:" + val.(string))
 					return
 				}
 			}
@@ -146,12 +155,6 @@ func (this *AlsParser) extractRowValues(data *json.Json) (values []interface{}, 
 	}
 
 	return
-}
-
-func (this *AlsParser) Stop() {
-}
-
-func (this *AlsParser) Wait() {
 }
 
 func (this *AlsParser) normalizeDigit(msg string) string {
