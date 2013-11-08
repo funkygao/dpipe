@@ -79,21 +79,22 @@ func (this *CollectorParser) CollectAlarms() {
 		}
 
 		rows := this.query(statsSql, tsTo)
+		cols, _ := rows.Columns()
+		count := len(cols)
+		values := make([]interface{}, count)
+		valuePtrs := make([]interface{}, count)
 		mutex.Lock()
 		this.echoCheckpoint(tsFrom, tsTo, this.conf.Title)
 		var summary int = 0
 		for rows.Next() {
-			cols, _ := rows.Columns()
-			pointers := make([]interface{}, len(cols))
-			container := make([]sql.NullString, len(cols))
 			for i, _ := range cols {
-				pointers[i] = &container[i]
+				valuePtrs[i] = &values[i]
 			}
 
-			err := rows.Scan(pointers...)
+			err := rows.Scan(valuePtrs...)
 			checkError(err)
 
-			var amount = pointers[0].(int)
+			var amount = valuePtrs[0].(int)
 			if amount == 0 {
 				break
 			}
@@ -104,10 +105,10 @@ func (this *CollectorParser) CollectAlarms() {
 
 			if this.conf.BeepThreshold > 0 && amount >= this.conf.BeepThreshold {
 				this.beep()
-				this.alarmf(this.conf.PrintFormat, pointers...)
+				this.alarmf(this.conf.PrintFormat, valuePtrs...)
 			}
 
-			this.colorPrintfLn(this.conf.PrintFormat, pointers)
+			this.colorPrintfLn(this.conf.PrintFormat, valuePtrs...)
 		}
 
 		if this.conf.ShowSummary && summary > 0 {
