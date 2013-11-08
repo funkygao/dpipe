@@ -117,7 +117,7 @@
                 {
                     name: "class"
                     contains: "MongoException"
-                    db_col: false
+                    visible: false
                 },
                 {
                     name: "message"
