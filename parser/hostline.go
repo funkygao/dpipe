@@ -19,6 +19,9 @@ func newHostLineParser(conf *config.ConfParser, chUpstream chan<- Alarm, chDowns
 
 func (this *HostLineParser) ParseLine(line string) (area string, ts uint64, msg string) {
 	area, ts, msg = this.AlsParser.ParseLine(line)
+	if msg == "" {
+		return
+	}
 
 	parts := strings.Split(msg, ",")
 	n := len(parts)
@@ -28,7 +31,9 @@ func (this *HostLineParser) ParseLine(line string) (area string, ts uint64, msg 
 	}
 
 	this.colorPrintfLn("%3s %15s %s", area, host, data)
-	this.beep()
+	if this.conf.BeepThreshold > 0 {
+		this.beep()
+	}
 
 	return
 }

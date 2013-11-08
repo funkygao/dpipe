@@ -61,7 +61,7 @@ func (this *CollectorParser) Wait() {
 // 有的字段需要运算，例如slowresp
 // colorPrint的第一个字段必须是amount
 func (this *CollectorParser) CollectAlarms() {
-	if dryRun {
+	if dryRun || !this.conf.Enabled {
 		this.chWait <- true
 		return
 	}

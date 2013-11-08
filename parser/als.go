@@ -60,8 +60,11 @@ func (this *AlsParser) init(conf *config.ConfParser, chUpstream chan<- Alarm, ch
 // Each ALS log line is area,timestamp,msg
 // Most msg are json struct while some are raw text
 func (this *AlsParser) ParseLine(line string) (area string, ts uint64, msg string) {
-	fields := strings.SplitN(line, LINE_SPLITTER, LINE_SPLIT_NUM)
+	if !this.conf.Enabled {
+		return
+	}
 
+	fields := strings.SplitN(line, LINE_SPLITTER, LINE_SPLIT_NUM)
 	area = fields[0]
 	var err error
 	ts, err = strconv.ParseUint(fields[1], 10, 64)

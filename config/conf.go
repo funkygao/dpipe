@@ -26,11 +26,12 @@ type LineKey struct {
 }
 
 type ConfParser struct {
-	Id     string
-	Class  string
-	Title  string
-	Keys   []LineKey // besides area,ts
-	Colors []string  // fg, effects, bg
+	Id      string
+	Class   string
+	Title   string
+	Enabled bool
+	Keys    []LineKey // besides area,ts
+	Colors  []string  // fg, effects, bg
 
 	PrintFormat string // printf
 	ShowSummary bool
@@ -83,6 +84,7 @@ func LoadConfig(fn string) (*Config, error) {
 		parser.InsertStmt = this.String(keyPrefix+"insert_stmt", "")
 		parser.StatsStmt = this.String(keyPrefix+"stats_stmt", "")
 		parser.ShowSummary = this.Bool(keyPrefix+"summary", false)
+		parser.Enabled = this.Bool(keyPrefix+"enabled", true)
 
 		// keys
 		keys := this.List(keyPrefix+"keys", nil)

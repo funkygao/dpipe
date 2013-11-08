@@ -18,6 +18,10 @@ func newJsonLineParser(conf *config.ConfParser, chUpstream chan<- Alarm, chDowns
 
 func (this *JsonLineParser) ParseLine(line string) (area string, ts uint64, msg string) {
 	area, ts, msg = this.AlsParser.ParseLine(line)
+	if msg == "" {
+		return
+	}
+
 	var jsonData *json.Json = this.msgToJson(msg)
 	if dryRun {
 		return
