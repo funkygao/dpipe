@@ -233,7 +233,7 @@
             colors: [
                 "FgYellow", "Underscore",
             ]
-            printf: "%3s %16s %5.2f %15s"
+            printf: "%3s %22s %6.4f %15s"
             keys:   [
                 {
                     name: "key"
@@ -261,7 +261,7 @@
             colors: [
                 "FgYellow",
             ]
-            printf: "%3s %16s %5.2f %15s"
+            printf: "%3s %22s %6.4f %15s"
             keys:   [
                 {
                     name: "key"
