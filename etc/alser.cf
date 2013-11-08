@@ -233,7 +233,7 @@
             colors: [
                 "FgYellow",
             ]
-            printf: "%3s%16s %5.2f %40s"
+            printf: "%3s %16s %5.2f %40s"
             keys:   [
                 {
                     name: "key"
@@ -261,7 +261,7 @@
             colors: [
                 "FgYellow",
             ]
-            printf: "%3s%16s %5.2f %40s"
+            printf: "%3s %16s %5.2f %40s"
             keys:   [
                 {
                     name: "key"
@@ -287,7 +287,7 @@
             class:  "HostLineParser"
             enabled: true
             colors: [
-                "FgBlack",
+                "FgWhite",
             ]
         },
 
