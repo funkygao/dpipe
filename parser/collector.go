@@ -85,7 +85,7 @@ func (this *CollectorParser) CollectAlarms() {
 		valuePtrs := make([]interface{}, count)
 		mutex.Lock()
 		this.echoCheckpoint(tsFrom, tsTo, this.conf.Title)
-		var summary int = 0
+		var summary int64 = 0
 		for rows.Next() {
 			for i, _ := range cols {
 				valuePtrs[i] = &values[i]
@@ -103,7 +103,7 @@ func (this *CollectorParser) CollectAlarms() {
 				summary += amount
 			}
 
-			if this.conf.BeepThreshold > 0 && amount >= this.conf.BeepThreshold {
+			if this.conf.BeepThreshold > 0 && int(amount) >= this.conf.BeepThreshold {
 				this.beep()
 				this.alarmf(this.conf.PrintFormat, values...)
 			}
