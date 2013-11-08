@@ -100,8 +100,8 @@
             beep_threshold: 1
             create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, msg VARCHAR(200));"
             insert_stmt:    "INSERT INTO %s(area, ts, msg) VALUES(?,?,?)"
-            stats_stmt:     "SELECT COUNT(*) AS c, area, msg FROM %s where ts<=? GROUP BY msg, host ORDER BY c DESC"
-            dbname:         "error"
+            stats_stmt:     "SELECT COUNT(*) AS c, area, msg FROM %s where ts<=? GROUP BY area, msg ORDER BY c DESC"
+            dbname:         "mongo"
             printf: "%8d %3s %20s %s"
             keys: [
                 {
