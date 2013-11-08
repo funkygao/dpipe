@@ -47,7 +47,7 @@
                 {
                     name: "timeout"
                     type: "int"
-                    contains: "blah"
+                    contain: "blah"
                 }
             ]
         },

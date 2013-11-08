@@ -17,12 +17,12 @@ type ConfGuard struct {
 }
 
 type LineKey struct {
-	Name     string
-	Type     string // float, string(default), int
-	Contains string
-	Ignores  []string
-	DbCol    bool // will be column of db? true by default
-	Regex    []string
+	Name    string
+	Type    string // float, string(default), int
+	Contain string
+	Ignores []string
+	Visible bool
+	Regex   []string
 }
 
 type ConfParser struct {
@@ -92,10 +92,10 @@ func LoadConfig(fn string) (*Config, error) {
 				key := LineKey{}
 				key.Name = this.String(prefix+"name", "")
 				key.Type = this.String(prefix+"type", "string")
-				key.Contains = this.String(prefix+"contains", "")
+				key.Contain = this.String(prefix+"contain", "")
 				key.Ignores = this.StringList(prefix+"ignores", nil)
 				key.Regex = this.StringList(prefix+"regex", nil)
-				key.DbCol = this.Bool(prefix+"db_col", true)
+				key.Visible = this.Bool(prefix+"visible", true)
 				parser.Keys = append(parser.Keys, key)
 			}
 		}
