@@ -2,9 +2,9 @@
 
            AlsParser
                |
-        ---------------
-       |               |
-   JsonLineParser  CollectorParser
+        ------------------------------------
+       |               |                    |
+   JsonLineParser  CollectorParser   HostLineParser
                        |
                    ----------------
                   |                |
@@ -119,13 +119,16 @@ func (this *AlsParser) valuesOfKeys(data *json.Json) (values []interface{}) {
 		} else {
 			val, err = this.jsonValue(data, key.Name, key.Type)
 		}
-
 		if err != nil {
 			return
 		}
 
-		if key.MustBe != "" && key.MustBe != val.(string) {
+		if key.Contains != "" && !strings.Contains(val.(string), key.Contains) {
 			return
+		}
+
+		if !key.Visible {
+			continue
 		}
 
 		if key.Ignores != nil {
@@ -134,10 +137,6 @@ func (this *AlsParser) valuesOfKeys(data *json.Json) (values []interface{}) {
 					return
 				}
 			}
-		}
-
-		if key.NotDb {
-			continue
 		}
 
 		if key.Regex != nil {

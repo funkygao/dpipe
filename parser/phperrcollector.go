@@ -5,6 +5,7 @@ import (
 	"path/filepath"
 )
 
+// Dedicated for complex php errlog
 type PhperrorCollectorParser struct {
 	CollectorParser
 }

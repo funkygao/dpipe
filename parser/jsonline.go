@@ -5,6 +5,7 @@ import (
 	"github.com/funkygao/alser/config"
 )
 
+// area,ts,{}
 type JsonLineParser struct {
 	AlsParser
 }
