@@ -40,6 +40,7 @@ func TestLoadConfig(t *testing.T) {
 	assert.Equal(t, "timeout", p.Keys[1].Name)
 	assert.Equal(t, "int", p.Keys[1].Type)
 	assert.Equal(t, "blah", p.Keys[1].MustBe)
+	assert.Equal(t, []string{"digit", "token"}, p.Keys[0].Regex)
 
 	// get parser by id
 	mp := c.ParserById("MemcacheFailParser")

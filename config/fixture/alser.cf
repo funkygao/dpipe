@@ -39,6 +39,10 @@
                 {
                     name: "key"
                     type: "string"
+                    regex:  [
+                        "digit",
+                        "token",
+                    ]
                 },
                 {
                     name: "timeout"
