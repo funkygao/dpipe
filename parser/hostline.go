@@ -23,6 +23,9 @@ func (this *HostLineParser) ParseLine(line string) (area string, ts uint64, msg 
 	parts := strings.Split(msg, ",")
 	n := len(parts)
 	host, data := parts[n-1], strings.Join(parts[:n-1], ",")
+	if strings.TrimSpace(data) == "" {
+		return
+	}
 
 	this.colorPrintfLn("%3s %15s %s", area, host, data)
 	this.beep()
