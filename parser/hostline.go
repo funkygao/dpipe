@@ -2,7 +2,6 @@ package parser
 
 import (
 	"github.com/funkygao/alser/config"
-	"path/filepath"
 	"strings"
 )
 

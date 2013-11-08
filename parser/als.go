@@ -123,7 +123,7 @@ func (this *AlsParser) valuesOfKeys(data *json.Json) (values []interface{}) {
 			return
 		}
 
-		if key.Contains != "" && !strings.Contains(val.(string), key.Contains) {
+		if key.Contain != "" && !strings.Contains(val.(string), key.Contain) {
 			return
 		}
 
