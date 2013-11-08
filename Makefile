@@ -26,6 +26,6 @@ his:build
 tail:build
 	while true; do \
 		rm -f var/*; \
-		./alser -c conf/alser.json -tail -v; \
+		./alser -c etc/alser.cf -tail -v; \
 		sleep 3; \
 	done
