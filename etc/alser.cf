@@ -231,9 +231,9 @@
             id:     "MemcacheFail"
             class:  "JsonLineParser"
             colors: [
-                "FgYellow",
+                "FgYellow", "Underscore",
             ]
-            printf: "%3s %16s %5.2f %40s"
+            printf: "%3s %16s %5.2f %15s"
             keys:   [
                 {
                     name: "key"
@@ -261,7 +261,7 @@
             colors: [
                 "FgYellow",
             ]
-            printf: "%3s %16s %5.2f %40s"
+            printf: "%3s %16s %5.2f %15s"
             keys:   [
                 {
                     name: "key"
