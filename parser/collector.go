@@ -94,7 +94,7 @@ func (this *CollectorParser) CollectAlarms() {
 			err := rows.Scan(valuePtrs...)
 			checkError(this.id(), err)
 
-			var amount = values[0].(int)
+			var amount = values[0].(int64)
 			if amount == 0 {
 				break
 			}
