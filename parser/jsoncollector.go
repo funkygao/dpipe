@@ -26,7 +26,7 @@ func (this *JsonCollectorParser) ParseLine(line string) (area string, ts uint64,
 		return
 	}
 
-	args, err := this.extractDataValues(data)
+	args, err := this.extractRowValues(data)
 	if err != nil {
 		return
 	}

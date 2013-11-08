@@ -8,7 +8,7 @@
                        |
                    ----------------
                   |                |
-         JsonCollectorParser   PhperrorCollectorParser 
+         JsonCollectorParser   PhperrorCollectorParser
 
 */
 package parser
@@ -98,7 +98,7 @@ func (this *AlsParser) extractDataValue(data *json.Json, name, typ string) (val 
 	return
 }
 
-func (this *AlsParser) extractDataValues(data *json.Json) (values []interface{}, err error) {
+func (this *AlsParser) extractRowValues(data *json.Json) (values []interface{}, err error) {
 	values = make([]interface{}, 0)
 	for _, key := range this.conf.Keys {
 		var val interface{}
@@ -127,6 +127,10 @@ func (this *AlsParser) extractDataValues(data *json.Json) (values []interface{},
 					return
 				}
 			}
+		}
+
+		if key.NotDb {
+			continue
 		}
 
 		if key.Regex != nil {
