@@ -94,7 +94,7 @@ func (this *CollectorParser) CollectAlarms() {
 			err := rows.Scan(valuePtrs...)
 			checkError(err)
 
-			var amount = valuePtrs[0].(int)
+			var amount = values[0].(int)
 			if amount == 0 {
 				break
 			}
@@ -105,10 +105,10 @@ func (this *CollectorParser) CollectAlarms() {
 
 			if this.conf.BeepThreshold > 0 && amount >= this.conf.BeepThreshold {
 				this.beep()
-				this.alarmf(this.conf.PrintFormat, valuePtrs...)
+				this.alarmf(this.conf.PrintFormat, values...)
 			}
 
-			this.colorPrintfLn(this.conf.PrintFormat, valuePtrs...)
+			this.colorPrintfLn(this.conf.PrintFormat, values...)
 		}
 
 		if this.conf.ShowSummary && summary > 0 {
