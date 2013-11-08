@@ -84,11 +84,13 @@ var (
 )
 
 const (
+	DATA_BASEDIR          = "var/"
+	SQLITE3_DBFILE_SUFFIX = ".sqlite"
+	SQLITE3_DRIVER        = "sqlite3"
+
 	LINE_SPLITTER        = ","
 	LINE_SPLIT_NUM       = 3
 	MAX_BEEP_VISUAL_HINT = 70
-
-	SQLITE3_DRIVER = "sqlite3"
 )
 
 const (

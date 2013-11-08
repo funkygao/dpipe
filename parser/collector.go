@@ -130,7 +130,8 @@ func (this *CollectorParser) CollectAlarms() {
 // for high TPS, each parser has a dedicated sqlite3 db file
 func (this *CollectorParser) createDB() {
 	var err error
-	this.db, err = sql.Open(SQLITE3_DRIVER, fmt.Sprintf("file:%s?cache=shared&mode=rwc", this.conf.DbName))
+	this.db, err = sql.Open(SQLITE3_DRIVER, fmt.Sprintf("file:%s?cache=shared&mode=rwc",
+		DATA_BASEDIR+this.conf.DbName+SQLITE3_DBFILE_SUFFIX))
 	checkError(err)
 
 	_, err = this.db.Exec(fmt.Sprintf(this.conf.CreateTable, this.conf.DbName))
