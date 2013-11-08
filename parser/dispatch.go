@@ -47,8 +47,8 @@ func Dispatch(parserId, line string) {
 	}
 }
 
-func checkError(err error) {
+func checkError(parser string, err error) {
 	if err != nil {
-		panic(err)
+		panic(parser + ": " + err.Error())
 	}
 }

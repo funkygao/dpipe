@@ -92,7 +92,7 @@ func (this *CollectorParser) CollectAlarms() {
 			}
 
 			err := rows.Scan(valuePtrs...)
-			checkError(err)
+			checkError(this.id(), err)
 
 			var amount = values[0].(int)
 			if amount == 0 {
@@ -133,19 +133,19 @@ func (this *CollectorParser) createDB() {
 	var err error
 	this.db, err = sql.Open(SQLITE3_DRIVER, fmt.Sprintf("file:%s?cache=shared&mode=rwc",
 		DATA_BASEDIR+this.conf.DbName+SQLITE3_DBFILE_SUFFIX))
-	checkError(err)
+	checkError(this.id(), err)
 
 	_, err = this.db.Exec(fmt.Sprintf(this.conf.CreateTable, this.conf.DbName))
-	checkError(err)
+	checkError(this.id(), err)
 
 	// performance tuning for sqlite3
 	// http://www.sqlite.org/cvstrac/wiki?p=DatabaseIsLocked
 	_, err = this.db.Exec("PRAGMA synchronous = OFF")
-	checkError(err)
+	checkError(this.id(), err)
 	_, err = this.db.Exec("PRAGMA journal_mode = MEMORY")
-	checkError(err)
+	checkError(this.id(), err)
 	_, err = this.db.Exec("PRAGMA read_uncommitted = true")
-	checkError(err)
+	checkError(this.id(), err)
 }
 
 func (this *CollectorParser) prepareInsertStmt() {
@@ -155,7 +155,7 @@ func (this *CollectorParser) prepareInsertStmt() {
 
 	var err error
 	this.insertStmt, err = this.db.Prepare(fmt.Sprintf(this.conf.InsertStmt, this.conf.DbName))
-	checkError(err)
+	checkError(this.id(), err)
 }
 
 // auto lock/unlock
@@ -163,7 +163,7 @@ func (this *CollectorParser) insert(args ...interface{}) {
 	this.Lock()
 	_, err := this.insertStmt.Exec(args...)
 	this.Unlock()
-	checkError(err)
+	checkError(this.id(), err)
 }
 
 // caller is responsible for locking
@@ -173,10 +173,10 @@ func (this *CollectorParser) execSql(sqlStmt string, args ...interface{}) (affte
 	}
 
 	res, err := this.db.Exec(sqlStmt, args...)
-	checkError(err)
+	checkError(this.id(), err)
 
 	afftectedRows, err = res.RowsAffected()
-	checkError(err)
+	checkError(this.id(), err)
 
 	return
 }
@@ -187,7 +187,7 @@ func (this *CollectorParser) query(querySql string, args ...interface{}) *sql.Ro
 	}
 
 	rows, err := this.db.Query(querySql, args...)
-	checkError(err)
+	checkError(this.id(), err)
 
 	return rows
 }

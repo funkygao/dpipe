@@ -80,6 +80,10 @@ func (this *AlsParser) Stop() {
 func (this *AlsParser) Wait() {
 }
 
+func (this *AlsParser) id() string {
+	return this.conf.Id
+}
+
 func (this *AlsParser) keysCount() int {
 	return len(this.conf.Keys)
 }
@@ -87,7 +91,7 @@ func (this *AlsParser) keysCount() int {
 func (this *AlsParser) msgToJson(msg string) (data *json.Json) {
 	var err error
 	data, err = json.NewJson([]byte(msg))
-	checkError(err)
+	checkError(this.id(), err)
 
 	return
 }
