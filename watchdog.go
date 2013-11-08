@@ -48,6 +48,10 @@ func notifyUnGuardedLogs(conf *config.Config) {
 		guardedLogs[baseName[:prefixLen]] = true
 	}
 
+	if options.debug {
+		logger.Printf("%#v\n", *conf)
+	}
+
 	// FIXME we assume that all the guarded logs are in the same dir
 	var logfile string
 	if options.tailmode {
