@@ -35,10 +35,11 @@ func TestLoadConfig(t *testing.T) {
 	assert.Equal(t, "peng.gao@funplusgamenet.com,zhengkai@gmail.com", p.MailTos())
 	// parser keys
 	assert.Equal(t, 2, len(p.Keys))
-	assert.Equal(t, "key", p.Keys[0].Key)
-	assert.Equal(t, true, p.Keys[0].Required)
-	assert.Equal(t, "timeout", p.Keys[1].Key)
-	assert.Equal(t, false, p.Keys[1].Show)
+	assert.Equal(t, "key", p.Keys[0].Name)
+	assert.Equal(t, "string", p.Keys[0].Type)
+	assert.Equal(t, "timeout", p.Keys[1].Name)
+	assert.Equal(t, "int", p.Keys[1].Type)
+	assert.Equal(t, "blah", p.Keys[1].MustBe)
 
 	// get parser by id
 	mp := c.ParserById("MemcacheFailParser")

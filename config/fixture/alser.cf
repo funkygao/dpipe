@@ -37,14 +37,13 @@
             ]
             keys:   [
                 {
-                    key: "key"
-                    required: true
-                    show: true
+                    name: "key"
+                    type: "string"
                 },
                 {
-                    key: "timeout"
-                    required: false
-                    show: false
+                    name: "timeout"
+                    type: "int"
+                    must_be: "blah"
                 }
             ]
         },
