@@ -217,7 +217,7 @@
             insert_stmt:    "INSERT INTO %s(area, ts, uri) VALUES(?,?,?)"
             stats_stmt:     "SELECT COUNT(*) AS c, area, uri FROM %s WHERE ts<=? GROUP BY area, uri ORDER BY c DESC"
             dbname:         "slowresp"
-            printf: "%5d %3s %60s"
+            printf: "%5d %3s %s"
             keys: [
                 {
                     name: "_log_info.uri"
