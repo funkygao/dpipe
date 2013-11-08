@@ -92,7 +92,7 @@
             insert_stmt:    "INSERT INTO %s(area, ts, msg, level, host, src) VALUES(?,?,?,?,?,?)"
             stats_stmt:     "SELECT COUNT(*) AS c, area, level, msg, src FROM %s where ts<=? GROUP BY area, level, msg, src ORDER BY c DESC"
             dbname:         "phperr"
-            printf: "%8d %3s %12s %18s %s"
+            printf: "%5d %3s %12s %18s %s"
         },
 
         // mongo error
@@ -112,7 +112,7 @@
             insert_stmt:    "INSERT INTO %s(area, ts, msg) VALUES(?,?,?)"
             stats_stmt:     "SELECT COUNT(*) AS c, area, msg FROM %s where ts<=? GROUP BY area, msg ORDER BY c DESC"
             dbname:         "mongo"
-            printf: "%8d %3s %20s %s"
+            printf: "%5d %3s %20s %s"
             keys: [
                 {
                     name: "class"
@@ -140,7 +140,7 @@
             insert_stmt:    "INSERT INTO %s(area, ts, cls, msg) VALUES(?,?,?,?)"
             stats_stmt:     "SELECT COUNT(*) AS c, area, cls, msg FROM %s where ts<=? GROUP BY area, cls, msg ORDER BY c DESC"
             dbname:         "error"
-            printf: "%8d %3s %20s %s"
+            printf: "%5d %3s %20s %s"
             keys: [
                 {
                     name: "class"
@@ -178,10 +178,10 @@
             sleep:          99
             create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, amount INT, type VARCHAR(50), currency VARCHAR(20));"
             insert_stmt:    "INSERT INTO %s(area, ts, type, currency, amount) VALUES(?,?,?,?,?)"
-            stats_stmt:     "SELECT SUM(amount) AS c, type, area, currency FROM %s where ts<=? GROUP BY type, area, currency ORDER BY c DESC"
+            stats_stmt:     "SELECT SUM(amount) AS c, area, type, currency FROM %s where ts<=? GROUP BY type, area, currency ORDER BY c DESC"
             dbname:         "payment"
             summary:        true
-            printf: "%8d %3s %10s"
+            printf: "%5d %3s %10s %s"
             keys: [
                 {
                     name: "type"
@@ -217,7 +217,7 @@
             insert_stmt:    "INSERT INTO %s(area, ts, uri) VALUES(?,?,?)"
             stats_stmt:     "SELECT COUNT(*) AS c, area, uri FROM %s WHERE ts<=? GROUP BY area, uri ORDER BY c DESC"
             dbname:         "slowresp"
-            printf: "%8d %3s %60s"
+            printf: "%5d %3s %60s"
             keys: [
                 {
                     name: "_log_info.uri"
