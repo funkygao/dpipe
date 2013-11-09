@@ -18,6 +18,13 @@
     guards: 
     [
         {
+            tail_glob:      "/mnt/funplus/logs/fp_rstory/bigdata_rcfail*"
+            history_glob:   "/mnt/funplus/logs/fp_rstory/history/bigdata_rcfail*"
+            parsers:        [
+                "RcFail",
+            ]
+        },
+        {
             tail_glob:      "/mnt/funplus/logs/fp_rstory/kernal*"
             history_glob:   "/mnt/funplus/logs/fp_rstory/history/kernal*"
             parsers:        [
@@ -162,6 +169,29 @@
                         "batch token error! pre cur",
                         "payment error: OK",
                     ]
+                },
+            ]
+        },
+
+        // rc fail
+        //===================================================
+        {
+            id:     "RcFail"
+            class:  "JsonCollectorParser"
+            title:  "RcFail"
+            colors: [
+                "FgRed", "Underscore",
+            ]
+            sleep:          109
+            beep_threshold: 10
+            create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, cls VARCHAR(50));"
+            insert_stmt:    "INSERT INTO %s(area, ts, cls) VALUES(?,?,?)"
+            stats_stmt:     "SELECT COUNT(*) AS c, area, cls FROM %s where ts<=? GROUP BY area, cls ORDER BY c DESC"
+            dbname:         "rcfail"
+            printf: "%5d %3s %s"
+            keys: [
+                {
+                    name: "2"
                 },
             ]
         },
