@@ -259,6 +259,9 @@
             keys:   [
                 {
                     name: "key"
+                    regex:  [
+                        "digit",
+                    ]
                 },
                 {
                     name: "timeout"
@@ -287,6 +290,9 @@
             keys:   [
                 {
                     name: "key"
+                    regex:  [
+                        "digit",
+                    ]
                 },
                 {
                     name: "to"
