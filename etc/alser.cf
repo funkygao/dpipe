@@ -18,6 +18,13 @@
     guards: 
     [
         {
+            tail_glob:      "/mnt/funplus/logs/fp_rstory/quest*"
+            history_glob:   "/mnt/funplus/logs/fp_rstory/history/quest*"
+            parsers:        [
+                "Mission",
+            ]
+        },
+        {
             tail_glob:      "/mnt/funplus/logs/fp_rstory/dau*"
             history_glob:   "/mnt/funplus/logs/fp_rstory/history/dau*"
             parsers:        [
@@ -180,6 +187,28 @@
             ]
         },
 
+        // Mission
+        //===================================================
+        {
+            id:     "Mission"
+            class:  "JsonCollectorParser"
+            title:  "MissionComplete"
+            colors: [
+                "FgRed", "BgWhite",
+            ]
+            sleep:          309
+            create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, mission VARCHAR(50));"
+            insert_stmt:    "INSERT INTO %s(area, ts, mission) VALUES(?,?,?)"
+            stats_stmt:     "SELECT COUNT(*) AS c, area, mission FROM %s where ts<=? GROUP BY area, mission ORDER BY c DESC"
+            dbname:         "mission"
+            printf: "%5d %3s %s"
+            keys: [
+                {
+                    name: "complete"
+                },
+            ]
+        },
+
         // rc fail
         //===================================================
         {
@@ -212,7 +241,8 @@
             colors: [
                 "FgGreen", "Dim",
             ]
-            sleep:          129
+            sleep:          180
+            beep_threshold: 450
             create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, uid INT);"
             insert_stmt:    "INSERT INTO %s(area, ts, uid) VALUES(?,?,?)"
             stats_stmt:     "SELECT COUNT(DISTINCT(uid)) AS c, area FROM %s where ts<=? GROUP BY area ORDER BY c DESC"
