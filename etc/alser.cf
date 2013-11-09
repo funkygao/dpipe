@@ -228,16 +228,17 @@
                 "FgGreen",
             ]
             sleep:          99
-            create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, amount INT, type VARCHAR(50), currency VARCHAR(20));"
-            insert_stmt:    "INSERT INTO %s(area, ts, type, currency, amount) VALUES(?,?,?,?,?)"
-            stats_stmt:     "SELECT SUM(amount) AS c, area, type, currency FROM %s where ts<=? GROUP BY type, area, currency ORDER BY c DESC"
+            create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, amount INT, currency VARCHAR(20));"
+            insert_stmt:    "INSERT INTO %s(area, ts, currency, amount) VALUES(?,?,?,?)"
+            stats_stmt:     "SELECT SUM(amount) AS c, area, currency FROM %s where ts<=? GROUP BY area, currency ORDER BY c DESC"
             dbname:         "revenue"
             summary:        true
-            printf: "%5d %3s %10s %s"
+            printf: "%5d %3s %s"
             keys: [
                 {
                     name: "type"
                     contains: "OK"
+                    visible: false
                 },
                 {
                     name: "data.currency"
