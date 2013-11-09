@@ -17,7 +17,6 @@ import (
 	"fmt"
 	json "github.com/bitly/go-simplejson"
 	"github.com/funkygao/alser/config"
-	"os"
 	"strconv"
 	"strings"
 )
@@ -205,9 +204,4 @@ func (this *AlsParser) beep() {
 	}
 
 	fmt.Print("\a")
-	if beeped > MAX_BEEP_VISUAL_HINT {
-		beeped = MAX_BEEP_VISUAL_HINT
-	}
-	fmt.Fprintln(os.Stderr, strings.Repeat("☹ ", beeped))
-	beeped += 1
 }

@@ -22,8 +22,6 @@ var (
 	dryRun    bool = false
 	daemonize bool = false
 
-	beeped int = 1 // how many beeps current proc has been triggered
-
 	chParserAlarm = make(chan string)
 
 	CURRENCY_TABLE = map[string]float32{
@@ -88,7 +86,6 @@ const (
 	SQLITE3_DBFILE_SUFFIX = ".sqlite"
 	SQLITE3_DRIVER        = "sqlite3"
 
-	LINE_SPLITTER        = ","
-	LINE_SPLIT_NUM       = 3
-	MAX_BEEP_VISUAL_HINT = 70
+	LINE_SPLITTER  = ","
+	LINE_SPLIT_NUM = 3
 )
