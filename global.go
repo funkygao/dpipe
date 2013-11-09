@@ -26,5 +26,5 @@ Flags:
 `
 
 	LOCKFILE = "var/alser.lock"
-	TICKER   = 60 * 2 // default ticker, 2 minutes
+	TICKER   = 60 * 10 // default ticker, 10 minutes
 )
