@@ -36,7 +36,7 @@ func runAlarmCollector(ch <-chan parser.Alarm) {
 }
 
 func notifyUnGuardedLogs(conf *config.Config) {
-	const prefixLen = 5
+	const prefixLen = 3
 
 	guardedLogs := make(map[string]bool)
 	for _, g := range conf.Guards {
