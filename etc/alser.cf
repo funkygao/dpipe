@@ -18,6 +18,13 @@
     guards: 
     [
         {
+            tail_glob:      "/mnt/funplus/logs/fp_rstory/dau*"
+            history_glob:   "/mnt/funplus/logs/fp_rstory/history/dau*"
+            parsers:        [
+                "Dau",
+            ]
+        },
+        {
             tail_glob:      "/mnt/funplus/logs/fp_rstory/bigdata_rcfail*"
             history_glob:   "/mnt/funplus/logs/fp_rstory/history/bigdata_rcfail*"
             parsers:        [
@@ -196,6 +203,28 @@
             ]
         },
 
+        // dau
+        //===================================================
+        {
+            id:     "Dau"
+            class:  "JsonCollectorParser"
+            title:  "DAU"
+            colors: [
+                "FgGreen", "Dim",
+            ]
+            sleep:          129
+            create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, uid INT);"
+            insert_stmt:    "INSERT INTO %s(area, ts, uid) VALUES(?,?,?)"
+            stats_stmt:     "SELECT COUNT(DISTINCT(uid)) AS c, area FROM %s where ts<=? GROUP BY area ORDER BY c DESC"
+            dbname:         "dau"
+            printf: "%5d %3s"
+            keys: [
+                {
+                    name: "uid"
+                    type: "int"
+                },
+            ]
+        },
         // payment type
         //===================================================
         {
