@@ -77,3 +77,5 @@ ALS guard
     flashlog alarm, data source
 
     send alarm mail
+    kernal parser
+    mongo
