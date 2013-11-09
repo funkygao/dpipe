@@ -5,6 +5,10 @@ ALS guard
 
 [![Build Status](https://travis-ci.org/funkygao/alser.png?branch=master)](https://travis-ci.org/funkygao/alser)
 
+### Install
+
+    go get github.com/funkygao/alser
+
 ### Architecture
     
 
@@ -76,4 +80,4 @@ ALS guard
     IRC alarm channel
     flashlog alarm, data source
 
-    mongo
+    mongo unit test
