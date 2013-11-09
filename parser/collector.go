@@ -94,6 +94,10 @@ func (this *CollectorParser) CollectAlarms() {
 			err := rows.Scan(valuePtrs...)
 			checkError(this.id(), err)
 
+			if debug {
+				logger.Printf("%#v\n", values)
+			}
+
 			var amount = values[0].(int64)
 			if amount == 0 {
 				break
