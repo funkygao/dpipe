@@ -38,7 +38,7 @@ func parseFlags() *Option {
 		daemon      = flag.Bool("daemon", false, "run as daemon")
 		test        = flag.Bool("test", false, "test mode")
 		tick        = flag.Int("t", TICKER, "tick interval in seconds")
-		tailmode    = flag.Bool("tail", false, "tail mode")
+		tailmode    = flag.Bool("tail", true, "tail mode")
 		dryrun      = flag.Bool("dryrun", false, "dry run")
 		cpuprof     = flag.String("cpuprof", "", "cpu profiling file")
 		parser      = flag.String("parser", "", "only run this parser")
