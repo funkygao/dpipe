@@ -88,10 +88,6 @@ func invokeWorkers(wg *sync.WaitGroup, workersCanWait chan<- bool, conf *config.
 				panic(err)
 			}
 
-			if options.debug {
-				logger.Printf("glob: %s, got: %+v\n", pattern, logfiles)
-			}
-
 			for _, logfile := range logfiles {
 				if _, present := allWorkers[logfile]; present {
 					// this logfile is already being guarded
