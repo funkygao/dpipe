@@ -75,3 +75,7 @@ ALS guard
     backoff email alarm/priority queue https://github.com/daviddengcn/go-villa
     IRC alarm
     flashlog alarm, data source
+
+    money type
+    phperr not shown
+    send alarm mail
