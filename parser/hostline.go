@@ -50,7 +50,6 @@ func (this *HostLineParser) ParseLine(line string) (area string, ts uint64, msg 
 
 		// dropped parsing
 		dropped := syslogngDropped.FindAllStringSubmatch(rawStats, 10000)
-		logger.Printf("%#v\n", dropped)
 		for _, d := range dropped {
 			num := d[2]
 			if num == "0" {
@@ -65,14 +64,13 @@ func (this *HostLineParser) ParseLine(line string) (area string, ts uint64, msg 
 
 		// processed parsing
 		processed := syslogngProcessed.FindAllStringSubmatch(rawStats, 10000)
-		logger.Printf("%#v\n", processed)
 		for _, p := range processed {
 			val, err := strconv.Atoi(p[2])
 			if err != nil || val == 0 {
 				continue
 			}
 
-			this.insert(p[1], val)
+			this.insert(area, ts, p[1], val)
 		}
 
 		return
