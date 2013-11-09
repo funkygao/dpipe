@@ -394,6 +394,7 @@
             id:     "Kernal"
             class:  "HostLineParser"
             enabled: true
+            title:  "Kernal"
             colors: [
                 "FgWhite", "Bright",
             ]
