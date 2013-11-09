@@ -29,10 +29,7 @@ func TestLoadConfig(t *testing.T) {
 	assert.Equal(t, "Line", p.Class)
 	assert.Equal(t, "MemcacheFailParser", p.Id)
 	assert.Equal(t, []string{"FgYellow"}, p.Colors)
-	assert.Equal(t, "ALS Guard ", p.MailSubjectPrefix)
-	assert.Equal(t, true, p.MailEnabled())
-	assert.Equal(t, []string{"peng.gao@funplusgamenet.com", "zhengkai@gmail.com"}, p.MailRecipients)
-	assert.Equal(t, "peng.gao@funplusgamenet.com,zhengkai@gmail.com", p.MailTos())
+
 	// parser keys
 	assert.Equal(t, 2, len(p.Keys))
 	assert.Equal(t, "key", p.Keys[0].Name)
@@ -45,7 +42,6 @@ func TestLoadConfig(t *testing.T) {
 	// get parser by id
 	mp := c.ParserById("MemcacheFailParser")
 	assert.Equal(t, "Line", mp.Class)
-	assert.Equal(t, "ALS Guard ", mp.MailSubjectPrefix)
 
 	np := c.ParserById("NonExistsParser")
 	if np != nil {

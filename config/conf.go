@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 	conf "github.com/daviddengcn/go-ljson-conf"
-	"strings"
 )
 
 type ConfGuard struct {
@@ -35,9 +34,6 @@ type ConfParser struct {
 
 	PrintFormat string // printf
 	ShowSummary bool
-
-	MailRecipients    []string
-	MailSubjectPrefix string
 
 	Sleep         int
 	BeepThreshold int
@@ -72,8 +68,6 @@ func LoadConfig(fn string) (*Config, error) {
 		parser := ConfParser{}
 		parser.Id = this.String(keyPrefix+"id", "")
 		parser.Class = this.String(keyPrefix+"class", "")
-		parser.MailRecipients = this.StringList(keyPrefix+"mail_recipents", nil)
-		parser.MailSubjectPrefix = this.String(keyPrefix+"mail_subject_prefix", "")
 		parser.PrintFormat = this.String(keyPrefix+"printf", "")
 		parser.Title = this.String(keyPrefix+"title", "")
 		parser.BeepThreshold = this.Int(keyPrefix+"beep_threshold", 0)
@@ -159,14 +153,6 @@ func (this *Config) ParserById(id string) *ConfParser {
 	}
 
 	return nil
-}
-
-func (this *ConfParser) MailEnabled() bool {
-	return len(this.MailRecipients) > 0
-}
-
-func (this *ConfParser) MailTos() string {
-	return strings.Join(this.MailRecipients, ",")
 }
 
 func (this *ConfParser) StatsSql() string {
