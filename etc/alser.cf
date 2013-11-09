@@ -210,7 +210,7 @@
             insert_stmt:    "INSERT INTO %s(area, ts, type) VALUES(?,?,?)"
             stats_stmt:     "SELECT COUNT(*) AS c, area, type FROM %s where ts<=? GROUP BY area, type ORDER BY c DESC"
             dbname:         "pay"
-            printf: "%5d %3s %10s"
+            printf: "%5d %3s %s"
             keys: [
                 {
                     name: "type"
