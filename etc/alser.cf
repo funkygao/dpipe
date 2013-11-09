@@ -90,9 +90,9 @@
             // insert_stmt must be like INSERT INTO (area, ts, ...)
             //===================================================
             insert_stmt:    "INSERT INTO %s(area, ts, msg, level, host, src) VALUES(?,?,?,?,?,?)"
-            stats_stmt:     "SELECT COUNT(*) AS c, area, level, msg, src FROM %s where ts<=? GROUP BY area, level, msg, src ORDER BY c DESC"
+            stats_stmt:     "SELECT COUNT(*) AS c, area, src, msg FROM %s where ts<=? GROUP BY area, src, msg ORDER BY c DESC"
             dbname:         "phperr"
-            printf: "%5d %3s %12s %18s %s"
+            printf: "%5d %3s %18s %s"
         },
 
         // mongo error
@@ -307,7 +307,7 @@
         {
             id:     "HostLine"
             class:  "HostLineParser"
-            enabled: true
+            enabled: false
             colors: [
                 "FgWhite", "Bright",
             ]
