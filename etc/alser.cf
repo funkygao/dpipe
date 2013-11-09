@@ -393,9 +393,18 @@
         {
             id:     "Kernal"
             class:  "HostLineParser"
-            enabled: false
+            enabled: true
             colors: [
                 "FgWhite", "Bright",
+            ]
+            keys: [
+                {
+                    name: "data"
+                    ignores: [
+                        "==>",
+                        "<==",
+                    ]
+                },
             ]
         },
 

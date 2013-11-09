@@ -30,6 +30,15 @@ func (this *HostLineParser) ParseLine(line string) (area string, ts uint64, msg 
 		return
 	}
 
+	// ignores(cons: key name must be 'data')
+	if key, err := this.conf.LineKeyByName("data"); err == nil && key.Ignores != nil {
+		for _, ignore := range key.Ignores {
+			if strings.Contains(data, ignore) {
+				return
+			}
+		}
+	}
+
 	this.colorPrintfLn("%3s %15s %s", area, host, data)
 	if this.conf.BeepThreshold > 0 {
 		this.beep()
