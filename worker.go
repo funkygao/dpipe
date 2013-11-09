@@ -70,8 +70,9 @@ func (this *worker) run() {
 		// a valid line scanned
 		this.chLines <- 1
 
-		for _, p := range this.conf.Parsers {
-			parser.Dispatch(p, line.Text)
+		// feed the parsers one by one
+		for _, parserId := range this.conf.Parsers {
+			parser.Dispatch(parserId, line.Text)
 		}
 	}
 
