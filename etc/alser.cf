@@ -267,7 +267,8 @@
             colors: [
                 "FgGreen", "Underscore",
             ]
-            sleep:          99
+            sleep:          399
+            beep_threshold: 1000
             create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, type VARCHAR(50));"
             insert_stmt:    "INSERT INTO %s(area, ts, type) VALUES(?,?,?)"
             stats_stmt:     "SELECT COUNT(*) AS c, area, type FROM %s where ts<=? GROUP BY area, type ORDER BY c DESC"
@@ -289,7 +290,8 @@
             colors: [
                 "FgGreen",
             ]
-            sleep:          99
+            sleep:          199
+            beep_threshold: 1000
             create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, amount INT, currency VARCHAR(20));"
             insert_stmt:    "INSERT INTO %s(area, ts, currency, amount) VALUES(?,?,?,?)"
             stats_stmt:     "SELECT SUM(amount) AS c, area, currency FROM %s where ts<=? GROUP BY area, currency ORDER BY c DESC"
