@@ -139,7 +139,7 @@
             keys: [
                 {
                     name: "class"
-                    contains: "MongoException"
+                    contain: "MongoException"
                     visible: false
                 },
                 {
@@ -301,7 +301,7 @@
             keys: [
                 {
                     name: "type"
-                    contains: "OK"
+                    contain: "OK"
                     visible: false
                 },
                 {
