@@ -1,0 +1,99 @@
+#! /usr/bin/env php
+<?php
+
+/*
+ * Web collector.
+ *
+ * Continuously append php errorlog and kernal log to ALS
+ *
+ */
+
+const
+    PHP_BOOTSTRAP = '/mnt/htdocs/royal/system/sgncore.php',
+    PHPERROR_LOG = '/mnt/htdocs/logs/php_error.txt',
+    SPRINKLE_LOG = '/var/log/sprinkled.log',
+    NGINX_ERRLOG = '/mnt/logs/nginx/nginx_error.log',
+    FPM_ERRLOG = '/usr/var/log/php-fpm.log',
+    KERNALMSG_LOG = '/var/log/messages';
+
+require PHP_BOOTSTRAP;
+
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+
+sgncore::init();
+
+$skippedMsgs = array(
+    "Illegal offset type in unset",
+    "Invalid argument supplied for foreach",
+    "in_array()",
+    "array_key_exists",
+    "Undefined index:",
+    "Undefined variable:",
+    "Array must contain at least",
+    "Undefined offset",
+    "Uninitialized string offset",
+    "Cannot modify header information - headers already sent",
+);
+
+// get local IP and locale
+$instanceInfo = json_decode(`instance_info`);
+$localIp = $instanceInfo->{'privateip'};
+$locale = Config::getConfig('game.locale');
+if (!$locale) {
+    $locale = 'sp'; // spilgame's locale was not set in config file
+}
+
+$alsSocket = fsockopen('unix:///tmp/als.sock');
+
+$tail = "tail -F " . PHPERROR_LOG;
+$tail .= " -F " . KERNALMSG_LOG;
+$tail .= " -F " . SPRINKLE_LOG;
+$tail .= " -F " . FPM_ERRLOG;
+$tail .= " -F " . NGINX_ERRLOG;
+$tail .= " 2>&1";
+echo time(), " started ", $locale, ", ", $localIp, ", $tail\n";
+
+$handle = popen($tail, 'r');
+while(!feof($handle)) {
+    $line = fgets($handle);
+    if (!$line || skipLine($skippedMsgs, $line)) {
+        continue;
+    }
+
+    if (strpos($line, '==>') !== FALSE && strpos($line, '<==') !== FALSE) {
+        // output from tail -F itself
+        continue;
+    }
+
+    $category = 'phperror';
+    if (strpos($line, '[') !== 0) {
+        // feeds from /var/log/messages instead of php_error.txt
+        $category = 'kernal';
+    }
+
+    $msg = sprintf(":%s,%s,%d,%s,%s\n",
+        $category,
+        $locale,
+        time(),
+        trim($line),
+        $localIp
+    );
+    fwrite($alsSocket, $msg);
+}
+pclose($handle);
+
+echo time(), " terminated";
+
+function skipLine($skippedMsgs, $line) {
+    foreach ($skippedMsgs as $skip) {
+        if (strpos($line, $skip) === FALSE) {
+            continue;
+        }
+
+        return true;
+    }
+
+    return false;
+}
+
