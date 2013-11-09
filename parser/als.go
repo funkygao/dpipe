@@ -109,6 +109,8 @@ func (this *AlsParser) jsonValue(data *json.Json, key, typ string) (val interfac
 		val, err = data.Get(key).Float64()
 	case "int", "money":
 		val, err = data.Get(key).Int()
+	default:
+		panic("invalid key type: " + typ)
 	}
 
 	return
