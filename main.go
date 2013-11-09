@@ -27,6 +27,9 @@ func init() {
 	}
 
 	if options.daemon {
+		if options.verbose {
+			logger.Println("daemonizing...")
+		}
 		daemonize(false, true)
 	}
 
@@ -50,7 +53,10 @@ func main() {
 	}
 
 	if options.showparsers {
-		fmt.Fprintf(os.Stderr, "All parsers\n%s\n%+v\n", strings.Repeat("=", 20), conf.Parsers)
+		fmt.Fprintf(os.Stderr, "All parsers\n%s\n", strings.Repeat("=", 20))
+		for _, p := conf.Parsers {
+			fmt.Fprintf(os.Stderr, "%+v\n", p)
+		}
 		shutdown()
 	}
 
