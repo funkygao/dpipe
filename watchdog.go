@@ -52,7 +52,8 @@ func notifyUnGuardedLogs(conf *config.Config) {
 	}
 
 	if options.debug {
-		logger.Printf("%#v\n", *conf)
+		logger.Printf("%#v\n", conf.Guards)
+		logger.Printf("%#v\n", conf.Parsers)
 	}
 
 	// FIXME we assume that all the guarded logs are in the same dir
