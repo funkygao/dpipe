@@ -95,7 +95,7 @@ func (this *AlsParser) keysCount() int {
 func (this *AlsParser) msgToJson(msg string) (data *json.Json) {
 	var err error
 	data, err = json.NewJson([]byte(msg))
-	checkError(this.id(), err)
+	this.checkError(err)
 
 	return
 }
@@ -204,4 +204,10 @@ func (this *AlsParser) beep() {
 	}
 
 	fmt.Print("\a")
+}
+
+func (this *AlsParser) checkError(err error) {
+	if err != nil {
+		panic(this.id() + ": " + err.Error())
+	}
 }
