@@ -69,5 +69,5 @@ func setupMaxProcs() {
 	numCpu := runtime.NumCPU()
 	maxProcs := numCpu/2 + 1
 	runtime.GOMAXPROCS(numCpu)
-	logger.Printf("starting with %d/%d CPUs...\n", maxProcs, numCpu)
+	logger.Printf("build[%s] starting with %d/%d CPUs...\n", BuildID, maxProcs, numCpu)
 }

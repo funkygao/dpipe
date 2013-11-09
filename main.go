@@ -80,8 +80,8 @@ func main() {
 
 	setupMaxProcs()
 
-	logger.Printf("build[%s] conf[%s] has %d kinds of logs to guard\n",
-		BuildID, options.config, len(conf.Guards))
+	logger.Printf("conf[%s] has %d kinds of logs to guard\n",
+		options.config, len(conf.Guards))
 
 	guard(conf)
 
