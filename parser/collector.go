@@ -102,20 +102,15 @@ func (this *CollectorParser) CollectAlarms() {
 				break
 			}
 
-			logger.Println("a")
-
 			if this.conf.ShowSummary {
 				summary += amount
 			}
 
-			logger.Println("b")
-
 			if this.conf.BeepThreshold > 0 && int(amount) >= this.conf.BeepThreshold {
 				this.beep()
-				this.alarmf(this.conf.PrintFormat, values...)
+				//this.alarmf(this.conf.PrintFormat, values...)
 			}
 
-			logger.Printf("%s %#v\n", this.conf.PrintFormat, values)
 			this.colorPrintfLn(this.conf.PrintFormat, values...)
 		}
 

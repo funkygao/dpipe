@@ -24,6 +24,10 @@ func runSendAlarmsWatchdog() {
 				break
 			}
 
+			if debug {
+				logger.Printf("got alarm: %s\n", line)
+			}
+
 			mailBody += line + "\n"
 			bodyLines += 1
 
