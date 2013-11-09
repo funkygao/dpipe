@@ -95,9 +95,6 @@ func (this *CollectorParser) CollectAlarms() {
 			this.checkError(err)
 
 			var amount = values[0].(int64)
-			if debug {
-				logger.Printf("amount=%d beep=%d vals=%#v\n", amount, this.conf.BeepThreshold, values)
-			}
 			if amount == 0 {
 				break
 			}
@@ -164,6 +161,9 @@ func (this *CollectorParser) prepareInsertStmt() {
 // auto lock/unlock
 func (this *CollectorParser) insert(args ...interface{}) {
 	this.Lock()
+	if debug {
+		logger.Printf("%s %+v\n", this.id(), args)
+	}
 	_, err := this.insertStmt.Exec(args...)
 	this.Unlock()
 	this.checkError(err)
