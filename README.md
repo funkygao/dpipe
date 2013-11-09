@@ -76,6 +76,4 @@ ALS guard
     IRC alarm
     flashlog alarm, data source
 
-    money type
-    phperr not shown
     send alarm mail
