@@ -129,7 +129,7 @@
                 "Bright",
                 "BgRed",
             ]
-            sleep:          15
+            sleep:          35
             beep_threshold: 1
             create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, msg VARCHAR(200));"
             insert_stmt:    "INSERT INTO %s(area, ts, msg) VALUES(?,?,?)"
