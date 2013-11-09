@@ -73,9 +73,7 @@ ALS guard
 
     alarm according to history behavior
     backoff email alarm/priority queue https://github.com/daviddengcn/go-villa
-    IRC alarm
+    IRC alarm channel
     flashlog alarm, data source
 
-    send alarm mail
-    kernal parser
     mongo
