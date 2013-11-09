@@ -157,8 +157,8 @@
             colors: [
                 "FgRed",
             ]
-            sleep:          87
-            beep_threshold: 60
+            sleep:          287
+            beep_threshold: 90
             create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, cls VARCHAR(50), msg VARCHAR(200));"
             insert_stmt:    "INSERT INTO %s(area, ts, cls, msg) VALUES(?,?,?,?)"
             stats_stmt:     "SELECT COUNT(*) AS c, area, cls, msg FROM %s where ts<=? GROUP BY area, cls, msg ORDER BY c DESC"
