@@ -24,12 +24,15 @@ func init() {
 			os.Exit(1)
 		}
 		lockInstance()
+	} else if options.verbose {
+		logger.Println("instance locking disabled")
 	}
 
 	if options.daemon {
 		if options.verbose {
 			logger.Println("daemonizing...")
 		}
+
 		daemonize(false, true)
 	}
 
@@ -54,7 +57,7 @@ func main() {
 
 	if options.showparsers {
 		fmt.Fprintf(os.Stderr, "All parsers\n%s\n", strings.Repeat("=", 20))
-		for _, p := conf.Parsers {
+		for _, p := range conf.Parsers {
 			fmt.Fprintf(os.Stderr, "%+v\n", p)
 		}
 		shutdown()
