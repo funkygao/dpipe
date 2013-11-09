@@ -197,7 +197,7 @@ func (this *CollectorParser) query(querySql string, args ...interface{}) *sql.Ro
 
 // caller is responsible for locking
 func (this *CollectorParser) delRecordsBefore(ts int) (affectedRows int64) {
-	affectedRows = this.execSql("delete from "+this.conf.DbName+"  where ts<=?", ts)
+	affectedRows = this.execSql("DELETE FROM "+this.conf.DbName+"  WHERE ts<=?", ts)
 
 	return
 }
