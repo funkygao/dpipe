@@ -404,7 +404,7 @@
             insert_stmt:    "INSERT INTO %s(area, ts, type, num) VALUES(?,?,?,?)"
             stats_stmt:     "SELECT SUM(num) AS c, area, type FROM %s WHERE ts<=? GROUP BY area, type ORDER BY c DESC"
             dbname:         "kernal"
-            printf: "%8d %3s %s"
+            printf: "%12d %3s %s"
             keys: [
                 {
                     name: "data"
