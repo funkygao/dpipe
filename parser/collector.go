@@ -111,6 +111,7 @@ func (this *CollectorParser) CollectAlarms() {
 				this.alarmf(this.conf.PrintFormat, values...)
 			}
 
+			logger.Printf("%s %#v\n", this.conf.PrintFormat, values)
 			this.colorPrintfLn(this.conf.PrintFormat, values...)
 		}
 
