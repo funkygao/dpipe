@@ -4,8 +4,6 @@
 # update
 #===========
 if [[ $1 = "-u" ]]; then
-    go get -u github.com/funkygao/tail
-    go get -u github.com/funkygao/gotime
     go get -u github.com/funkygao/alser
 fi
 
@@ -19,6 +17,4 @@ go build -v -ldflags "-X main.BuildID $ID"
 #===========
 # show ver
 #===========
-mkdir -p var
-rm -f var/*
 ./alser -version
