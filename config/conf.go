@@ -159,6 +159,16 @@ func (this *ConfParser) StatsSql() string {
 	return fmt.Sprintf(this.StatsStmt, this.DbName)
 }
 
+func (this *ConfParser) LineKeyByName(name string) (lineKey LineKey, err error) {
+	for _, lk := range this.Keys {
+		if lk.Name == name {
+			return lk, nil
+		}
+	}
+
+	return LineKey{Name: ""}, errors.New("not found")
+}
+
 func (this *ConfGuard) HasParser(parser string) bool {
 	for _, p := range this.Parsers {
 		if p == parser {
