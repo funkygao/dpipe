@@ -162,10 +162,10 @@ func (this *AlsParser) valuesOfKeys(data *json.Json) (values []interface{}) {
 		}
 
 		if strings.HasSuffix(key.Name, "currency") {
-			currency = val
+			currency = val.(string)
 		}
 		if key.Type == "money" && currency != "" { // currency key必须在money之前定义
-			money := float32(val) * CURRENCY_TABLE[currency]
+			money := float32(val.(int)) * CURRENCY_TABLE[currency]
 			val = int(money) / 100 // 以分为单位，而不是元
 		}
 
