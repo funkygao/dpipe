@@ -169,7 +169,7 @@ func (this *CollectorParser) insert(args ...interface{}) {
 // caller is responsible for locking
 func (this *CollectorParser) execSql(sqlStmt string, args ...interface{}) (afftectedRows int64) {
 	if debug {
-		logger.Println(sqlStmt)
+		logger.Printf("%s %+v\n", sqlStmt, args)
 	}
 
 	res, err := this.db.Exec(sqlStmt, args...)
