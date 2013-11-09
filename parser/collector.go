@@ -183,7 +183,7 @@ func (this *CollectorParser) execSql(sqlStmt string, args ...interface{}) (affte
 
 func (this *CollectorParser) query(querySql string, args ...interface{}) *sql.Rows {
 	if debug {
-		logger.Println(querySql, args...)
+		logger.Printf("%s %+v\n", querySql, args)
 	}
 
 	rows, err := this.db.Query(querySql, args...)
