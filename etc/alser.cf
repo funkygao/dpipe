@@ -56,7 +56,7 @@
             tail_glob:      "/mnt/funplus/logs/fp_rstory/payment.*.log"
             history_glob:   "/mnt/funplus/logs/fp_rstory/history/payment*"
             parsers:        [
-                "Payment",
+                "Revenue", "Pay",
             ]
         },
         {
@@ -166,10 +166,32 @@
             ]
         },
 
-        // payment log
+        // payment type
         //===================================================
         {
-            id:     "Payment"
+            id:     "Pay"
+            class:  "JsonCollectorParser"
+            title:  "Pay"
+            colors: [
+                "FgGreen", "Underscore",
+            ]
+            sleep:          99
+            create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, type VARCHAR(50));"
+            insert_stmt:    "INSERT INTO %s(area, ts, type) VALUES(?,?,?)"
+            stats_stmt:     "SELECT COUNT(*) AS c, area, type FROM %s where ts<=? GROUP BY area, type ORDER BY c DESC"
+            dbname:         "pay"
+            printf: "%5d %3s %10s"
+            keys: [
+                {
+                    name: "type"
+                },
+            ]
+        },
+
+        // revenue
+        //===================================================
+        {
+            id:     "Revenue"
             class:  "JsonCollectorParser"
             title:  "Revenue"
             colors: [
@@ -179,7 +201,7 @@
             create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, amount INT, type VARCHAR(50), currency VARCHAR(20));"
             insert_stmt:    "INSERT INTO %s(area, ts, type, currency, amount) VALUES(?,?,?,?,?)"
             stats_stmt:     "SELECT SUM(amount) AS c, area, type, currency FROM %s where ts<=? GROUP BY type, area, currency ORDER BY c DESC"
-            dbname:         "payment"
+            dbname:         "revenue"
             summary:        true
             printf: "%5d %3s %10s %s"
             keys: [
