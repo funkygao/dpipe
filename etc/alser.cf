@@ -135,7 +135,7 @@
             insert_stmt:    "INSERT INTO %s(area, ts, msg) VALUES(?,?,?)"
             stats_stmt:     "SELECT COUNT(*) AS c, area, msg FROM %s where ts<=? GROUP BY area, msg ORDER BY c DESC"
             dbname:         "mongo"
-            printf: "%5d %3s %20s %s"
+            printf: "%5d %3s %s"
             keys: [
                 {
                     name: "class"
