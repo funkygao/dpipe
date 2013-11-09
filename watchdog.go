@@ -85,14 +85,14 @@ func notifyUnGuardedLogs(conf *config.Config) {
 		}
 		sort.Strings(files)
 
-		var subject = fmt.Sprintf("ALS Logs Unguarded %d", len(files))
+		var subject = fmt.Sprintf("ALS Logs Unguarded - %d", len(files))
 		var mailBody = ""
 		for _, logfile := range files {
 			mailBody += logfile + "\n"
 		}
 
 		mailTo := conf.String("unguarded.mail_to", "")
-		if err := mail.Sendmail(conf.String("unguarded.mail_to", ""), subject, mailBody); err == nil && options.verbose {
+		if err := mail.Sendmail(conf.String("mail.unguarded", ""), subject, mailBody); err == nil && options.verbose {
 			logger.Printf("unguarded logs alarm sent => %s\n", mailTo)
 		}
 	}

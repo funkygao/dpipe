@@ -6,10 +6,12 @@
     // comment must be start of line(excluding the leading spaces)
 
     //===================================================
-    // 1. unguarded logs alarm, send once on startup
+    // 1. alarm mail settings
     //===================================================
-    unguarded: {
-        mail_to: "peng.gao@funplusgame.com"
+    mail: {
+        unguarded: "peng.gao@funplusgame.com"
+        guarded: "peng.gao@funplusgame.com"
+        sleep: 150
     }
 
     //===================================================
@@ -319,11 +321,6 @@
             colors: [
                 "FgBlue",
             ]
-            mail_recipents: [
-                "peng.gao@funplusgamenet.com",
-                "zhengkai@gmail.com"
-            ]
-            mail_subject_prefix:    "ALS Guard/Slow Response>10s"
             beep_threshold:         20
             sleep:                  23
             create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, uri VARCHAR(50));"
@@ -362,11 +359,6 @@
                     name: "_log_info.host"
                 }
             ]
-            mail_recipents: [
-                "peng.gao@funplusgamenet.com",
-                "zhengkai@gmail.com"
-            ]
-            mail_subject_prefix: "ALS Guard/MemcacheFail"
         },
 
         // memcache timeout
@@ -392,11 +384,6 @@
                     name: "_log_info.host"
                 }
             ]
-            mail_recipents: [
-                "peng.gao@funplusgamenet.com",
-                "zhengkai@gmail.com"
-            ]
-            mail_subject_prefix: "ALS Guard/MemcacheFail"
         },
 
         // host ended raw text log

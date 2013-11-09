@@ -2,6 +2,7 @@ package parser
 
 import (
 	"fmt"
+	"github.com/funkygao/alser/config"
 	mail "github.com/funkygao/alser/sendmail"
 	"time"
 )
@@ -11,9 +12,15 @@ type Alarm interface {
 	String() string
 }
 
-func runSendAlarmsWatchdog() {
+func runSendAlarmsWatchdog(conf *config.Config) {
+	const mailTitlePrefix = "ALS Alarm"
 	mailBody := ""
 	bodyLines := 0
+	mailTo := conf.String("mail.guarded", "")
+	if mailTo == "" {
+		panic("empty mail.guarded")
+	}
+	mailSleep := time.Duration(conf.Int("mail.sleep", 120))
 
 	for {
 		select {
@@ -30,10 +37,10 @@ func runSendAlarmsWatchdog() {
 			mailBody += line + "\n"
 			bodyLines += 1
 
-		case <-time.After(time.Second * 120):
+		case <-time.After(time.Second * mailSleep):
 			if mailBody != "" {
-				go mail.Sendmail("peng.gao@funplusgame.com", fmt.Sprintf("%s %d", "ALS ", bodyLines), mailBody)
-				logger.Printf("alarm sent=> %s\n", "peng.gao@funplusgame.com")
+				go mail.Sendmail(mailTo, fmt.Sprintf("%s - %d", mailTitlePrefix, bodyLines), mailBody)
+				logger.Printf("alarm sent=> %s\n", mailTo)
 
 				mailBody = ""
 				bodyLines = 0
