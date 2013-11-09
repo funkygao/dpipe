@@ -22,7 +22,7 @@ prof:build
 
 his:build
 	@rm -f var/*
-	./alser -c conf/alser.history.json
+	./alser -tail=false
 
 tail:build
 	while true; do \
