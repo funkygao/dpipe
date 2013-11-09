@@ -44,7 +44,7 @@
             tail_glob:      "/mnt/funplus/logs/fp_rstory/kernal*"
             history_glob:   "/mnt/funplus/logs/fp_rstory/history/kernal*"
             parsers:        [
-                "HostLine",
+                "Kernal",
             ]
         },
         {
@@ -388,10 +388,10 @@
             ]
         },
 
-        // host ended raw text log
+        // /var/log/messages
         //===================================================
         {
-            id:     "HostLine"
+            id:     "Kernal"
             class:  "HostLineParser"
             enabled: false
             colors: [
