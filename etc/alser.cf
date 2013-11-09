@@ -199,7 +199,7 @@
             sleep:          309
             create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, mission VARCHAR(50));"
             insert_stmt:    "INSERT INTO %s(area, ts, mission) VALUES(?,?,?)"
-            stats_stmt:     "SELECT COUNT(*) AS c, area, mission FROM %s where ts<=? GROUP BY area, mission ORDER BY c DESC"
+            stats_stmt:     "SELECT COUNT(*) AS c, area, mission FROM %s where ts<=? GROUP BY area, mission ORDER BY c DESC LIMIT 10"
             dbname:         "mission"
             printf: "%5d %3s %s"
             keys: [
