@@ -92,7 +92,7 @@ func notifyUnGuardedLogs(conf *config.Config) {
 		}
 
 		mailTo := conf.String("unguarded.mail_to", "")
-		if err := mail.Sendmail(conf.String("unguarded.mail_to", ""), subject, mailBody); err == nil {
+		if err := mail.Sendmail(conf.String("unguarded.mail_to", ""), subject, mailBody); err == nil && options.verbose {
 			logger.Printf("unguarded logs alarm sent => %s\n", mailTo)
 		}
 	}
