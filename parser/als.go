@@ -105,10 +105,11 @@ func (this *AlsParser) jsonValue(data *json.Json, key, typ string) (val interfac
 	switch typ {
 	case "string":
 		val, err = data.Get(key).String()
-	case "int":
-		val, err = data.Get(key).Int()
 	case "float":
 		val, err = data.Get(key).Float64()
+	case "int":
+	case "money":
+		val, err = data.Get(key).Int()
 	}
 
 	return
@@ -117,6 +118,7 @@ func (this *AlsParser) jsonValue(data *json.Json, key, typ string) (val interfac
 // Extract values of json according config keys
 func (this *AlsParser) valuesOfKeys(data *json.Json) (values []interface{}) {
 	var err error
+	var currency string
 	var val interface{}
 	values = make([]interface{}, 0)
 
@@ -157,6 +159,14 @@ func (this *AlsParser) valuesOfKeys(data *json.Json) (values []interface{}) {
 					val = this.normalizeBatchToken(val.(string))
 				}
 			}
+		}
+
+		if strings.HasSuffix(key.Name, "currency") {
+			currency = val
+		}
+		if key.Type == "money" && currency != "" { // currency key必须在money之前定义
+			money := float32(val) * CURRENCY_TABLE[currency]
+			val = int(money) / 100 // 以分为单位，而不是元
 		}
 
 		values = append(values, val)

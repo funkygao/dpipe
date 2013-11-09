@@ -18,7 +18,7 @@ type ConfGuard struct {
 
 type LineKey struct {
 	Name    string
-	Type    string // float, string(default), int
+	Type    string // float, string(default), int, money
 	Contain string
 	Ignores []string
 	Visible bool
