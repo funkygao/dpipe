@@ -14,6 +14,7 @@
 package parser
 
 import (
+	"errors"
 	"fmt"
 	json "github.com/bitly/go-simplejson"
 	"github.com/funkygao/alser/config"
@@ -88,15 +89,6 @@ func (this *AlsParser) id() string {
 	return this.conf.Id
 }
 
-func (this *AlsParser) visibleKeysCount() (total int) {
-	for _, k := range this.conf.Keys {
-		if k.Visible {
-			total += 1
-		}
-	}
-	return
-}
-
 func (this *AlsParser) msgToJson(msg string) (data *json.Json) {
 	var err error
 	data, err = json.NewJson([]byte(msg))
@@ -121,8 +113,7 @@ func (this *AlsParser) jsonValue(data *json.Json, key, typ string) (val interfac
 }
 
 // Extract values of json according config keys
-func (this *AlsParser) valuesOfKeys(data *json.Json) (values []interface{}) {
-	var err error
+func (this *AlsParser) valuesOfKeys(data *json.Json) (values []interface{}, err error) {
 	var currency string
 	var val interface{}
 	values = make([]interface{}, 0)
@@ -140,6 +131,7 @@ func (this *AlsParser) valuesOfKeys(data *json.Json) (values []interface{}) {
 		}
 
 		if key.Contain != "" && !strings.Contains(val.(string), key.Contain) {
+			err = errors.New("not found")
 			return
 		}
 
@@ -150,6 +142,7 @@ func (this *AlsParser) valuesOfKeys(data *json.Json) (values []interface{}) {
 		if key.Ignores != nil {
 			for _, ignore := range key.Ignores {
 				if strings.Contains(val.(string), ignore) {
+					err = errors.New("ignored")
 					return
 				}
 			}
