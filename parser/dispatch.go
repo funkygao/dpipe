@@ -21,6 +21,8 @@ func createParser(conf *config.ConfParser, chUpstreamAlarm chan<- Alarm, chDowns
 
 // pid: only run this single parser id
 func InitParsers(pid string, conf *config.Config, chUpstreamAlarm chan<- Alarm) {
+	go runSendAlarmsWatchdog()
+
 	for _, g := range conf.Guards {
 		for _, parserId := range g.Parsers {
 			if pid != "" && pid != parserId {

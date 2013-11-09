@@ -108,7 +108,7 @@ func (this *CollectorParser) CollectAlarms() {
 
 			if this.conf.BeepThreshold > 0 && int(amount) >= this.conf.BeepThreshold {
 				this.beep()
-				//this.alarmf(this.conf.PrintFormat, values...)
+				this.alarmf(this.conf.PrintFormat, values...)
 			}
 
 			this.colorPrintfLn(this.conf.PrintFormat, values...)
