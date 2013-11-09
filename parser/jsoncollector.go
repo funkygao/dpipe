@@ -27,7 +27,7 @@ func (this *JsonCollectorParser) ParseLine(line string) (area string, ts uint64,
 	}
 
 	args := this.valuesOfKeys(jsonData)
-	if len(args) != this.keysCount() {
+	if len(args) != this.visibleKeysCount() {
 		return
 	}
 

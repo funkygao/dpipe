@@ -88,8 +88,13 @@ func (this *AlsParser) id() string {
 	return this.conf.Id
 }
 
-func (this *AlsParser) keysCount() int {
-	return len(this.conf.Keys)
+func (this *AlsParser) visibleKeysCount() (total int) {
+	for _, k := range this.conf.Keys {
+		if k.Visible {
+			total += 1
+		}
+	}
+	return
 }
 
 func (this *AlsParser) msgToJson(msg string) (data *json.Json) {
