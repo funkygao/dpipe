@@ -195,7 +195,7 @@ func (this *AlsParser) colorPrintfLn(format string, args ...interface{}) {
 }
 
 func (this *AlsParser) alarmf(format string, args ...interface{}) {
-	this.chDownstreamAlarm <- fmt.Sprintf(format, args...)
+	this.chDownstreamAlarm <- fmt.Sprintf("%s %s", fmt.Sprintf(format, args...), this.conf.Title)
 }
 
 func (this *AlsParser) beep() {
