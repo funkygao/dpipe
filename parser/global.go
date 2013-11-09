@@ -11,9 +11,11 @@ var (
 
 	mutex = new(sync.Mutex) // lock across all parsers
 
-	digitsRegexp     = regexp.MustCompile(`\d+`)
-	batchTokenRegexp = regexp.MustCompile(`pre: .*; current: .*`)
-	phpErrorRegexp   = regexp.MustCompile(`\[(.+)\] (.+?): (.+) - (.+) \[(.+)\],(.+)`)
+	digitsRegexp      = regexp.MustCompile(`\d+`)
+	batchTokenRegexp  = regexp.MustCompile(`pre: .*; current: .*`)
+	phpErrorRegexp    = regexp.MustCompile(`\[(.+)\] (.+?): (.+) - (.+) \[(.+)\],(.+)`)
+	syslogngDropped   = regexp.MustCompile(`dropped=\'program\((.+?)\)=(\d+)\'`)
+	syslogngProcessed = regexp.MustCompile(`processed=\'destination\((.+?)\)=(\d+)\'`)
 
 	// passed from main
 	logger    *log.Logger

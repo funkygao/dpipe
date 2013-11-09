@@ -11,7 +11,7 @@
     mail: {
         unguarded: "peng.gao@funplusgame.com"
         guarded: "peng.gao@funplusgame.com"
-        sleep: 150
+        sleep: 300
     }
 
     //===================================================
@@ -244,7 +244,7 @@
                 "FgGreen", "Dim",
             ]
             sleep:          180
-            beep_threshold: 450
+            beep_threshold: 650
             create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, uid INT);"
             insert_stmt:    "INSERT INTO %s(area, ts, uid) VALUES(?,?,?)"
             stats_stmt:     "SELECT COUNT(DISTINCT(uid)) AS c, area FROM %s where ts<=? GROUP BY area ORDER BY c DESC"
@@ -397,6 +397,13 @@
             colors: [
                 "FgWhite", "Bright",
             ]
+            beep_threshold:         43202340
+            sleep:                  23
+            create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, type VARCHAR(50), num INT);"
+            insert_stmt:    "INSERT INTO %s(area, ts, type, num) VALUES(?,?,?,?)"
+            stats_stmt:     "SELECT SUM(num) AS c, area, type FROM %s WHERE ts<=? GROUP BY area, type ORDER BY c DESC"
+            dbname:         "kernal"
+            printf: "%8d %3s %s"
             keys: [
                 {
                     name: "data"
