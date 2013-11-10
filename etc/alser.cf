@@ -241,7 +241,7 @@
             class:  "JsonCollectorParser"
             title:  "DAU"
             colors: [
-                "FgGreen", "Dim",
+                "FgWhite", "Dim",
             ]
             sleep:          180
             beep_threshold: 950
