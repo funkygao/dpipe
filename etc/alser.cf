@@ -403,6 +403,7 @@
                 "FgWhite", "Reverse",
             ]
             sleep:                  715
+            beep_threshold:         1
             create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, type VARCHAR(50), num INT);"
             insert_stmt:    "INSERT INTO %s(area, ts, type, num) VALUES(?,?,?,?)"
             stats_stmt:     "SELECT SUM(num) AS c, area, type FROM %s WHERE ts<=? GROUP BY area, type ORDER BY c DESC"
