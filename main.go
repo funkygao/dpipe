@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/funkygao/alser/config"
+	mail "github.com/funkygao/alser/sendmail"
 	"os"
 	"runtime/debug"
 	"runtime/pprof"
@@ -46,6 +47,9 @@ func main() {
 		if e := recover(); e != nil {
 			debug.PrintStack()
 			fmt.Fprintln(os.Stderr, e)
+
+			mailBody := fmt.Sprintf("%s\n\n%s", e, string(debug.Stack()))
+			mail.Sendmail("peng.gao@funplusgame.com", "ALS Crash", mailBody)
 		}
 	}()
 
