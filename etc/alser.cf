@@ -267,8 +267,8 @@
             colors: [
                 "FgGreen", "Underscore",
             ]
-            sleep:          799
-            beep_threshold: 100
+            sleep:          79
+            beep_threshold: 5
             create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, type VARCHAR(50));"
             insert_stmt:    "INSERT INTO %s(area, ts, type) VALUES(?,?,?)"
             stats_stmt:     "SELECT COUNT(*) AS c, area, type FROM %s where ts<=? GROUP BY area, type ORDER BY c DESC"
@@ -279,6 +279,7 @@
                     name: "type"
                     ignores: [
                         "OK",
+                        "start",
                     ]
                 },
             ]
