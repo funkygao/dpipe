@@ -277,6 +277,9 @@
             keys: [
                 {
                     name: "type"
+                    ignores: [
+                        "OK",
+                    ]
                 },
             ]
         },
