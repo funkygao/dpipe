@@ -45,9 +45,14 @@ func main() {
 		cleanup()
 
 		if e := recover(); e != nil {
-			debug.PrintStack()
+			// console
 			fmt.Fprintln(os.Stderr, e)
+			debug.PrintStack()
 
+			// log
+			logger.Printf("%s\n%s", e, string(debug.Stack()))
+
+			// mail
 			mailBody := fmt.Sprintf("%s\n\n%s", e, string(debug.Stack()))
 			mail.Sendmail("peng.gao@funplusgame.com", "ALS Crash", mailBody)
 		}
