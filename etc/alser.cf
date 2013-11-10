@@ -129,7 +129,7 @@
                 "Bright",
                 "BgRed",
             ]
-            sleep:          35
+            sleep:          15
             beep_threshold: 1
             create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, msg VARCHAR(200));"
             insert_stmt:    "INSERT INTO %s(area, ts, msg) VALUES(?,?,?)"
@@ -157,8 +157,8 @@
             colors: [
                 "FgRed",
             ]
-            sleep:          287
-            beep_threshold: 90
+            sleep:          387
+            beep_threshold: 120
             create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, cls VARCHAR(50), msg VARCHAR(200));"
             insert_stmt:    "INSERT INTO %s(area, ts, cls, msg) VALUES(?,?,?,?)"
             stats_stmt:     "SELECT COUNT(*) AS c, area, cls, msg FROM %s where ts<=? GROUP BY area, cls, msg ORDER BY c DESC"
@@ -198,7 +198,7 @@
             colors: [
                 "FgRed", "BgWhite",
             ]
-            sleep:          309
+            sleep:          909
             create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, mission VARCHAR(50));"
             insert_stmt:    "INSERT INTO %s(area, ts, mission) VALUES(?,?,?)"
             stats_stmt:     "SELECT COUNT(*) AS c, area, mission FROM %s where ts<=? GROUP BY area, mission ORDER BY c DESC LIMIT 10"
@@ -220,7 +220,7 @@
             colors: [
                 "FgRed", "Underscore",
             ]
-            sleep:          509
+            sleep:          709
             beep_threshold: 10
             create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, cls VARCHAR(50));"
             insert_stmt:    "INSERT INTO %s(area, ts, cls) VALUES(?,?,?)"
@@ -267,8 +267,8 @@
             colors: [
                 "FgGreen", "Underscore",
             ]
-            sleep:          399
-            beep_threshold: 1000
+            sleep:          799
+            beep_threshold: 100
             create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, type VARCHAR(50));"
             insert_stmt:    "INSERT INTO %s(area, ts, type) VALUES(?,?,?)"
             stats_stmt:     "SELECT COUNT(*) AS c, area, type FROM %s where ts<=? GROUP BY area, type ORDER BY c DESC"
@@ -326,8 +326,8 @@
             colors: [
                 "FgBlue",
             ]
-            beep_threshold:         80
             sleep:                  23
+            beep_threshold:         80
             create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, uri VARCHAR(50));"
             insert_stmt:    "INSERT INTO %s(area, ts, uri) VALUES(?,?,?)"
             stats_stmt:     "SELECT COUNT(*) AS c, area, uri FROM %s WHERE ts<=? GROUP BY area, uri ORDER BY c DESC"
@@ -401,8 +401,7 @@
             colors: [
                 "FgWhite", "Bright",
             ]
-            beep_threshold:         43202340
-            sleep:                  315
+            sleep:                  715
             create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, type VARCHAR(50), num INT);"
             insert_stmt:    "INSERT INTO %s(area, ts, type, num) VALUES(?,?,?,?)"
             stats_stmt:     "SELECT SUM(num) AS c, area, type FROM %s WHERE ts<=? GROUP BY area, type ORDER BY c DESC"
