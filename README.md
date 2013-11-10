@@ -20,7 +20,31 @@ to send alarms via beep/email/IRC/etc.
     alser -h # help
 
 ### Architecture
-    
+
+#### Arch
+
+        +---------+     +---------+     +---------+     +---------+
+        | server1 |     | server2 |     | server3 |     | serverN |
+        +---------+     +---------+     +---------+     +---------+
+            |               |               |               |
+             -----------------------------------------------
+                                    |
+                                    | push log events
+                                    |
+                            +-----------------+
+                            |   ALS Server    |
+                            |-----------------| 
+                            | alser daemon    |
+                            +-----------------+
+                                    |
+                                    | send alarm
+                                    |
+                   +------------------------------------+
+                   |            |           |           |
+                 beep         email       IRC          etc
+
+
+#### Process
 
           alser main()
               |
@@ -54,7 +78,7 @@ to send alarms via beep/email/IRC/etc.
       handle alarm            ---->------------
 
 
-### Parsers
+#### Parsers
 
         log1  log2  ...  logN
          |     |          |
