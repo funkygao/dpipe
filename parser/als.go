@@ -65,6 +65,12 @@ func (this *AlsParser) ParseLine(line string) (area string, ts uint64, msg strin
 	}
 
 	fields := strings.SplitN(line, LINE_SPLITTER, LINE_SPLIT_NUM)
+	if len(fields) != LINE_SPLIT_NUM {
+		// weired line, should never happen
+		this.colorPrintfLn("%s", line)
+		return
+	}
+
 	area = fields[0]
 	var err error
 	ts, err = strconv.ParseUint(fields[1], 10, 64)
