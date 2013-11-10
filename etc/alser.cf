@@ -241,7 +241,7 @@
             class:  "JsonCollectorParser"
             title:  "DAU"
             colors: [
-                "FgWhite", "Reverse",
+                "FgBlue",
             ]
             sleep:          180
             beep_threshold: 950
@@ -325,7 +325,7 @@
             class:  "JsonCollectorParser"
             title:  "Slow"
             colors: [
-                "FgBlue",
+                "FgMagenta", "Bright",
             ]
             sleep:                  23
             beep_threshold:         80
@@ -400,7 +400,7 @@
             enabled: true
             title:  "Kernal"
             colors: [
-                "FgMagenta", "Bright",
+                "FgWhite", "Reverse",
             ]
             sleep:                  715
             create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, type VARCHAR(50), num INT);"
