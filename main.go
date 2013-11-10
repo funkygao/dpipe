@@ -64,6 +64,11 @@ func main() {
 		panic(err)
 	}
 
+	if options.debug {
+		logger.Printf("%#v\n", conf.Guards)
+		logger.Printf("%#v\n", conf.Parsers)
+	}
+
 	if options.showparsers {
 		fmt.Fprintf(os.Stderr, "All parsers\n%s\n", strings.Repeat("=", 20))
 		for _, p := range conf.Parsers {
