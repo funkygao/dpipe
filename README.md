@@ -21,7 +21,7 @@ to send alarms via beep/email/IRC/etc.
 
 ### Architecture
 
-#### Arch
+#### Deployment
 
         +---------+     +---------+     +---------+     +---------+
         | server1 |     | server2 |     | server3 |     | serverN |
