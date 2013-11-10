@@ -9,7 +9,8 @@ import (
 func TestAlsParserParseLine(t *testing.T) {
 	line := `us,1381118458069,{"cheater":10301051,"type":"helpFriendsRewardAction","world_id":"100001823535095","user":"100001823535095","_log_info":{"uid":10301051,"script_id":3183040714,"serial":3,"host":"10.255.8.189","ip":"79.215.100.157"}}`
 	p := new(AlsParser)
-	area, ts, data := p.ParseLine(line)
+	area, ts, msg := p.ParseLine(line)
+	data := p.msgToJson(msg)
 	var (
 		exptectedTs  = uint64(1381118458069 / 1000)
 		extectedArea = "us"
@@ -51,30 +52,6 @@ func TestPhperrorRegexp(t *testing.T) {
 	matches = phpErrorRegexp.FindAllStringSubmatch(line, 10000)[0]
 	assert.Equal(t, "E_NOTICE", matches[2])
 	assert.Equal(t, "Undefined index: incProduct ", matches[3])
-}
-
-func TestExtractLogInfo(t *testing.T) {
-	line := `us,1381118458069,{"cheater":10301051,"type":"helpFriendsRewardAction","world_id":"100001823535095","user":"100001823535095","_log_info":{"uid":10301051,"script_id":3183040714,"serial":3,"host":"10.255.8.189","ip":"79.215.100.157"}}`
-	p := new(AlsParser)
-	_, _, msg := p.ParseLine(line)
-    data := p.msgToJson(msg)
-	info := extractLogInfo(data)
-	assert.Equal(t, info.host, "10.255.8.189")
-	assert.Equal(t, info.ip, "79.215.100.157")
-	var (
-		expectedScriptId int64 = 3183040714
-		expectedUid      int64 = 10301051
-	)
-	assert.Equal(t, expectedScriptId, info.scriptId)
-	assert.Equal(t, info.serial, 3)
-	assert.Equal(t, expectedUid, info.uid)
-}
-
-func TestDbParserCheckpointSql(t *testing.T) {
-	p := new(DbParser)
-	var expected = "SELECT min(ts), max(ts) FROM error WHERE 1=1 AND ts<5 AND cls!='MongoException'"
-	sql := p.checkpointSql("error", "ts<5", "cls!='MongoException'")
-	assert.Equal(t, expected, sql)
 }
 
 func TestParsersConfig(t *testing.T) {
