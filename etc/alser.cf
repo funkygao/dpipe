@@ -384,7 +384,8 @@
                     ]
                 },
                 {
-                    name: "to"
+                    name: "ts"
+                    type: "float"
                 },
                 {
                     name: "_log_info.host"
