@@ -220,7 +220,7 @@
             colors: [
                 "FgRed", "Underscore",
             ]
-            sleep:          109
+            sleep:          509
             beep_threshold: 10
             create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, cls VARCHAR(50));"
             insert_stmt:    "INSERT INTO %s(area, ts, cls) VALUES(?,?,?)"
