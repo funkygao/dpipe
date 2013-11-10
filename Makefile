@@ -14,6 +14,12 @@ run:build
 	@rm -f var/alser.lock
 	./alser -v -debug -test -tail -cpuprof var/cpu.prof -t 30
 
+lint:
+	golint .
+
+vet:
+	go tool vet -v .
+
 fmt:
 	@gofmt -s -tabs=false -tabwidth=4 -w=true .
 
