@@ -8,6 +8,7 @@ Distributed log collector push data to ALS center server where alser will run.
 alser keeps eyes on events from logs(defined in conf file) and has rule based engine
 to send alarms via beep/email/IRC/etc.
 
+*   als is aimed to be swiss knife kind tool instead of a complex system.
 *   als is different from splunk which is basically a search engine.
 *   als is different from opentsdb which is metrics based while als is event based.
 
