@@ -65,6 +65,7 @@ func (this *CollectorParser) isAbnormalChange(amount int64, key string) bool {
 		// will reset when history size is large enough
 		if len(this.history) > 16384 { // (1<<20)/64
 			this.history = make(map[string]int64) // clear
+			logger.Printf("[%s] history data cleared\n", this.id())
 		}
 
 		this.history[key] = amount // refresh
