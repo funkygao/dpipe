@@ -7,6 +7,7 @@ import (
 	"github.com/funkygao/alser/config"
 	"github.com/funkygao/gotime"
 	_ "github.com/mattn/go-sqlite3"
+	"strings"
 	"sync"
 	"time"
 )
@@ -21,6 +22,8 @@ type CollectorParser struct {
 	db         *sql.DB
 	insertStmt *sql.Stmt
 
+	history map[string]int64 // TODO LRU incase of OOM
+
 	chWait  chan bool
 	stopped bool
 }
@@ -31,6 +34,7 @@ func (this *CollectorParser) init(conf *config.ConfParser, chUpstream chan<- Ala
 	this.Mutex = new(sync.Mutex) // embedding constructor
 	this.chWait = make(chan bool)
 	this.stopped = false
+	this.history = make(map[string]int64)
 
 	this.createDB()
 	this.prepareInsertStmt()
@@ -52,6 +56,31 @@ func (this *CollectorParser) Wait() {
 	if this.db != nil {
 		this.db.Close()
 	}
+}
+
+func (this *CollectorParser) isAbnormalChange(amount int64, key string) bool {
+	defer func() {
+		this.history[key] = amount // refresh
+	}()
+
+	if lastAmount, present := this.history[key]; present {
+		delta := amount - lastAmount
+		if delta < 0 {
+			return false
+		}
+
+		if float64(delta)/float64(lastAmount) >= 0.2 { // 20%
+			return true
+		}
+	}
+
+	return false
+}
+
+func (this *CollectorParser) historyKey(printf string, values []interface{}) string {
+	parts := strings.SplitN(printf, "d", 2) // first column is always amount
+	format := strings.TrimSpace(parts[1])
+	return fmt.Sprintf(format, values[1:]...)
 }
 
 // TODO
@@ -103,7 +132,9 @@ func (this *CollectorParser) CollectAlarms() {
 				summary += amount
 			}
 
-			if this.conf.BeepThreshold > 0 && int(amount) >= this.conf.BeepThreshold {
+			abnormalChange := this.isAbnormalChange(amount, this.historyKey(this.conf.PrintFormat, values))
+			shouldBeep := this.conf.BeepThreshold > 0 && int(amount) >= this.conf.BeepThreshold
+			if shouldBeep || abnormalChange {
 				this.beep()
 				this.alarmf(this.conf.PrintFormat, values...)
 			}
