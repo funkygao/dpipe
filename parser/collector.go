@@ -87,11 +87,11 @@ func (this *CollectorParser) isAbnormalChange(amount int64, key string) bool {
 func (this *CollectorParser) historyKey(printf string, values []interface{}) string {
 	parts := strings.SplitN(printf, "d", 2) // first column is always amount
 	format := strings.TrimSpace(parts[1])
-	val := fmt.Sprintf(format, values[1:]...) // raw key
+	key := fmt.Sprintf(format, values[1:]...) // raw key
 
 	// use md5 to save memory
 	h := md5.New()
-	h.Write([]byte(val))
+	h.Write([]byte(key))
 	return hex.EncodeToString(h.Sum(nil))
 }
 
