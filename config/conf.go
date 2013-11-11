@@ -35,8 +35,9 @@ type ConfParser struct {
 	PrintFormat string // printf
 	ShowSummary bool
 
-	Sleep         int
-	BeepThreshold int
+	Sleep          int
+	BeepThreshold  int
+	AbormalPercent float64
 
 	DbName      string //db name is table name
 	CreateTable string
@@ -79,6 +80,7 @@ func LoadConfig(fn string) (*Config, error) {
 		parser.StatsStmt = this.String(keyPrefix+"stats_stmt", "")
 		parser.ShowSummary = this.Bool(keyPrefix+"summary", false)
 		parser.Enabled = this.Bool(keyPrefix+"enabled", true)
+		parser.AbormalPercent = this.Float(keyPrefix+"abnormal_percent", 0.2)
 
 		// keys
 		keys := this.List(keyPrefix+"keys", nil)

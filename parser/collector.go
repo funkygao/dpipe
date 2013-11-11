@@ -76,7 +76,7 @@ func (this *CollectorParser) isAbnormalChange(amount int64, key string) bool {
 			return false
 		}
 
-		if float64(delta)/float64(lastAmount) >= 0.2 { // 20%
+		if float64(delta)/float64(lastAmount) >= this.conf.AbormalPercent { // 20% by default
 			return true
 		}
 	}
