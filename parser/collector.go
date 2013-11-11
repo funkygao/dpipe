@@ -96,11 +96,7 @@ func (this *CollectorParser) historyKey(printf string, values []interface{}) str
 }
 
 // TODO
-// 各个字段显示顺心的问题，例如amount
-// normalize
-// payment的阶段汇总
 // 有的字段需要运算，例如slowresp
-// colorPrint的第一个字段必须是amount
 func (this *CollectorParser) CollectAlarms() {
 	if dryRun || !this.conf.Enabled {
 		this.chWait <- true
