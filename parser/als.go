@@ -95,10 +95,8 @@ func (this *AlsParser) id() string {
 	return this.conf.Id
 }
 
-func (this *AlsParser) msgToJson(msg string) (data *json.Json) {
-	var err error
+func (this *AlsParser) msgToJson(msg string) (data *json.Json, err error) {
 	data, err = json.NewJson([]byte(msg))
-	this.checkError(err)
 
 	return
 }

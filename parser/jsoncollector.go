@@ -21,7 +21,20 @@ func newJsonCollectorParser(conf *config.ConfParser, chUpstream chan<- Alarm, ch
 
 func (this *JsonCollectorParser) ParseLine(line string) (area string, ts uint64, msg string) {
 	area, ts, msg = this.AlsParser.ParseLine(line)
-	var jsonData *json.Json = this.msgToJson(msg)
+	if msg == "" {
+		return
+	}
+
+	var (
+		jsonData *json.Json
+		err      error
+	)
+	jsonData, err = this.msgToJson(msg)
+	if err != nil {
+		logger.Printf("[%s]invalid json msg: %s", this.id(), msg)
+		return
+	}
+
 	if dryRun {
 		return
 	}

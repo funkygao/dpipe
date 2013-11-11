@@ -22,7 +22,16 @@ func (this *JsonLineParser) ParseLine(line string) (area string, ts uint64, msg 
 		return
 	}
 
-	var jsonData *json.Json = this.msgToJson(msg)
+	var (
+		jsonData *json.Json
+		err      error
+	)
+	jsonData, err = this.msgToJson(msg)
+	if err != nil {
+		logger.Printf("[%s]invalid json msg: %s", this.id(), msg)
+		return
+	}
+
 	if dryRun {
 		return
 	}
