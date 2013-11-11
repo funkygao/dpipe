@@ -1,7 +1,9 @@
 package parser
 
 import (
+	"crypto/md5"
 	"database/sql"
+	"encoding/hex"
 	"errors"
 	"fmt"
 	"github.com/funkygao/alser/config"
@@ -60,6 +62,11 @@ func (this *CollectorParser) Wait() {
 
 func (this *CollectorParser) isAbnormalChange(amount int64, key string) bool {
 	defer func() {
+		// will reset when history size is large enough
+		if len(this.history) > 16384 { // (1<<20)/64
+			this.history = make(map[string]int64) // clear
+		}
+
 		this.history[key] = amount // refresh
 	}()
 
@@ -80,7 +87,12 @@ func (this *CollectorParser) isAbnormalChange(amount int64, key string) bool {
 func (this *CollectorParser) historyKey(printf string, values []interface{}) string {
 	parts := strings.SplitN(printf, "d", 2) // first column is always amount
 	format := strings.TrimSpace(parts[1])
-	return fmt.Sprintf(format, values[1:]...)
+	val := fmt.Sprintf(format, values[1:]...) // raw key
+
+	// use md5 to save memory
+	h := md5.New()
+	h.Write([]byte(val))
+	return hex.EncodeToString(h.Sum(nil))
 }
 
 // TODO
