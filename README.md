@@ -116,3 +116,4 @@ to send alarms via beep/email/IRC/etc.
     flashlog alarm, data source
 
     mongo unit test
+    abnormal change LRU in case of OOM
