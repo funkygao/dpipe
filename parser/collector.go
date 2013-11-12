@@ -79,7 +79,7 @@ func (this *CollectorParser) isAbnormalChange(amount int64, key string) bool {
 			return false
 		}
 
-		if float64(delta)/float64(lastAmount) >= this.conf.AbormalPercent {
+		if float64(delta)/float64(lastAmount) >= this.conf.AbnormalPercent {
 			return true
 		}
 	}
@@ -146,7 +146,8 @@ func (this *CollectorParser) CollectAlarms() {
 				this.alarmf(this.conf.PrintFormat, values...)
 			}
 
-			if this.isAbnormalChange(amount, this.historyKey(this.conf.PrintFormat, values)) {
+			if amount >= int64(this.conf.AbnormalBase) &&
+				this.isAbnormalChange(amount, this.historyKey(this.conf.PrintFormat, values)) {
 				this.beep()
 				this.blinkColorPrintfLn(this.conf.PrintFormat, values...)
 			}
