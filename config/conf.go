@@ -201,3 +201,11 @@ func (this *ConfGuard) DataSourceType() string {
 
 	return DATASOURCE_FILE
 }
+
+func (this *ConfGuard) IsDbSource() bool {
+	return this.DataSourceType() == DATASOURCE_DB
+}
+
+func (this *ConfGuard) IsFileSource() bool {
+	return this.DataSourceType() == DATASOURCE_FILE
+}
