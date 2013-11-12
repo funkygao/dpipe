@@ -33,7 +33,7 @@ func guard(conf *config.Config) {
 	var workersWg = new(sync.WaitGroup)
 	chLines := make(chan int)         // how many line have been scanned till now
 	workersCanWait := make(chan bool) // in case of wg.Add/Wait race condition
-	go invokeWorkers(workersWg, workersCanWait, conf, chLines, chAlarm)
+	go invokeWorkers(conf, workersWg, workersCanWait, chLines, chAlarm)
 
 	// wait for all workers finish
 	go func() {
