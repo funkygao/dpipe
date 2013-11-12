@@ -80,7 +80,7 @@ func LoadConfig(fn string) (*Config, error) {
 		parser.StatsStmt = this.String(keyPrefix+"stats_stmt", "")
 		parser.ShowSummary = this.Bool(keyPrefix+"summary", false)
 		parser.Enabled = this.Bool(keyPrefix+"enabled", true)
-		parser.AbormalPercent = this.Float(keyPrefix+"abnormal_percent", 0.2)
+		parser.AbormalPercent = this.Float(keyPrefix+"abnormal_percent", 3.0)
 
 		// keys
 		keys := this.List(keyPrefix+"keys", nil)
