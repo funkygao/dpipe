@@ -6,7 +6,9 @@ import (
 	"github.com/funkygao/alser/parser"
 	"github.com/funkygao/tail"
 	"os"
+	"path/filepath"
 	"sync"
+	"time"
 )
 
 type worker struct {
@@ -19,6 +21,62 @@ type worker struct {
 	wg      *sync.WaitGroup
 	chLines chan<- int
 	chAlarm chan<- parser.Alarm
+}
+
+func invokeWorkers(wg *sync.WaitGroup, workersCanWait chan<- bool, conf *config.Config, chLines chan<- int, chAlarm chan<- parser.Alarm) {
+	allWorkers = make(map[string]bool)
+	workersCanWaitOnce := new(sync.Once)
+	mutex := new(sync.Mutex)
+
+	// main loop to watch for newly emerging logfiles
+	for {
+		for _, g := range conf.Guards {
+			if options.parser != "" && !g.HasParser(options.parser) {
+				// only one parser applied
+				continue
+			}
+
+			var pattern string
+			if options.tailmode {
+				pattern = g.TailLogGlob
+			} else {
+				pattern = g.HistoryLogGlob
+			}
+
+			logfiles, err := filepath.Glob(pattern)
+			if err != nil {
+				panic(err)
+			}
+
+			for _, logfile := range logfiles {
+				if _, present := allWorkers[logfile]; present {
+					// this logfile is already being guarded
+					continue
+				}
+
+				wg.Add(1)
+				allWorkers[logfile] = true
+
+				// each logfile is a dedicated goroutine worker
+				worker := newWorker(len(allWorkers), logfile, g, options.tailmode, wg, mutex, chLines, chAlarm)
+				go worker.run()
+			}
+		}
+
+		workersCanWaitOnce.Do(func() {
+			workersCanWait <- true
+		})
+
+		if !options.tailmode {
+			break
+		} else {
+			<-time.After(time.Second * 2)
+		}
+	}
+
+	if options.parser != "" {
+		logger.Printf("only parser %s running\n", options.parser)
+	}
 }
 
 func newWorker(id int, logfile string, conf config.ConfGuard, tailMode bool,
