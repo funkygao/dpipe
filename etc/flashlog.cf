@@ -1,0 +1,54 @@
+{
+    //===================================================
+    // flashlog Guard main config
+    //===================================================
+
+    //===================================================
+    // 1. alarm mail settings
+    //===================================================
+    mail: {
+        unguarded: ""
+        guarded: "peng.gao@funplusgame.com"
+        sleep: 300
+    }
+
+    //===================================================
+    // 2. watch out for what logs and how
+    //===================================================
+    guards: 
+    [
+        {
+            table:   "log_us"
+            parsers:        [
+                "Flashlog",
+            ]
+        },
+    ]
+    
+    //===================================================
+    // 3. parsers
+    //===================================================
+    parsers: 
+    [
+        {
+            id:     "Flashlog"
+            class:  "xxx"
+            title:  "Flashlog"
+            colors: [
+                "FgYellow",
+                "Bright",
+            ]
+            sleep:          13
+            beep_threshold: 1
+            create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, msg VARCHAR(200), host CHAR(25), level CHAR(15), src VARCHAR(80));"
+            //===================================================
+            // insert_stmt must be like INSERT INTO (area, ts, ...)
+            //===================================================
+            insert_stmt:    "INSERT INTO %s(area, ts, msg, level, host, src) VALUES(?,?,?,?,?,?)"
+            stats_stmt:     "SELECT COUNT(*) AS c, area, src, msg FROM %s where ts<=? GROUP BY area, src, msg ORDER BY c DESC"
+            dbname:         "flashlog"
+            printf: "%5d %3s %18s %s"
+        },
+    ]
+
+}
