@@ -63,8 +63,10 @@ func (this *CollectorParser) Wait() {
 func (this *CollectorParser) isAbnormalChange(amount int64, key string) bool {
 	defer func() {
 		// will reset when history size is large enough
-		if len(this.history) > 16384 { // (1<<20)/64
-			this.history = make(map[string]int64) // clear
+		if len(this.history) > (5<<20)/64 {
+			// each parser consumes 5M history data
+			// each history entry consumes 64bytes
+			this.history = make(map[string]int64)
 			logger.Printf("[%s] history data cleared\n", this.id())
 		}
 
@@ -77,7 +79,7 @@ func (this *CollectorParser) isAbnormalChange(amount int64, key string) bool {
 			return false
 		}
 
-		if float64(delta)/float64(lastAmount) >= this.conf.AbormalPercent { // 20% by default
+		if float64(delta)/float64(lastAmount) >= this.conf.AbormalPercent {
 			return true
 		}
 	}
