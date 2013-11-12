@@ -98,8 +98,6 @@ func (this *CollectorParser) historyKey(printf string, values []interface{}) str
 	return hex.EncodeToString(h.Sum(nil))
 }
 
-// TODO
-// 有的字段需要运算，例如slowresp
 func (this *CollectorParser) CollectAlarms() {
 	if dryRun || !this.conf.Enabled {
 		this.chWait <- true
