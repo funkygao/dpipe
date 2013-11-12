@@ -10,7 +10,7 @@ var (
 
 	BuildID = "unknown" // git version id, passed in from shell
 
-	allWorkers map[string]bool // key is logfile name
+	allWorkers map[string]bool // key is datasource name
 )
 
 const (
