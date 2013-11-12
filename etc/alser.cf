@@ -9,7 +9,7 @@
     // 1. alarm mail settings
     //===================================================
     mail: {
-        unguarded: "peng.gao@funplusgame.com"
+        unguarded: ""
         guarded: "peng.gao@funplusgame.com"
         sleep: 300
     }
