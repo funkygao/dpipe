@@ -147,6 +147,7 @@ func (this *CollectorParser) CollectAlarms() {
 			}
 
 			if this.isAbnormalChange(amount, this.historyKey(this.conf.PrintFormat, values)) {
+				this.beep()
 				this.blinkColorPrintfLn(this.conf.PrintFormat, values...)
 			}
 
