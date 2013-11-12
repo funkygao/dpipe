@@ -20,7 +20,8 @@ func runSendAlarmsWatchdog(conf *config.Config) {
 	if mailTo == "" {
 		panic("empty mail.guarded")
 	}
-	mailSleep := time.Duration(conf.Int("mail.sleep", 120))
+	mailSleep := conf.Int("mail.sleep", 120)
+	maxSleep, minSleep, sleepStep := mailSleep*2, mailSleep/2, 5
 
 	for {
 		select {
@@ -37,10 +38,25 @@ func runSendAlarmsWatchdog(conf *config.Config) {
 			mailBody += line + "\n"
 			bodyLines += 1
 
-		case <-time.After(time.Second * mailSleep):
+		case <-time.After(time.Second * time.Duration(mailSleep)):
 			if mailBody != "" {
 				go mail.Sendmail(mailTo, fmt.Sprintf("%s - %d", mailTitlePrefix, bodyLines), mailBody)
 				logger.Printf("alarm sent=> %s\n", mailTo)
+
+				// backoff sleep
+				if bodyLines > 5 {
+					// busy alarm
+					mailSleep -= sleepStep
+					if mailSleep < minSleep {
+						mailSleep = minSleep
+					}
+				} else {
+					// idle alarm
+					mailSleep += sleepStep
+					if mailSleep > maxSleep {
+						mailSleep = maxSleep
+					}
+				}
 
 				mailBody = ""
 				bodyLines = 0
