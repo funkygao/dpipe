@@ -143,11 +143,13 @@ func (this *CollectorParser) CollectAlarms() {
 				summary += amount
 			}
 
-			abnormalChange := this.isAbnormalChange(amount, this.historyKey(this.conf.PrintFormat, values))
-			shouldBeep := this.conf.BeepThreshold > 0 && int(amount) >= this.conf.BeepThreshold
-			if shouldBeep || abnormalChange {
+			if this.conf.BeepThreshold > 0 && int(amount) >= this.conf.BeepThreshold {
 				this.beep()
 				this.alarmf(this.conf.PrintFormat, values...)
+			}
+
+			if this.isAbnormalChange(amount, this.historyKey(this.conf.PrintFormat, values)) {
+				this.blinkColorPrintfLn(this.conf.PrintFormat, values...)
 			}
 
 			this.colorPrintfLn(this.conf.PrintFormat, values...)
