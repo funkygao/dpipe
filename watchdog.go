@@ -38,6 +38,11 @@ func runAlarmCollector(ch <-chan parser.Alarm) {
 func notifyUnGuardedLogs(conf *config.Config) {
 	const prefixLen = 3
 
+	if conf.String("mail.unguarded", "") == "" {
+		// disabled
+		return
+	}
+
 	guardedLogs := make(map[string]bool)
 	for _, g := range conf.Guards {
 		var filePrefix string
