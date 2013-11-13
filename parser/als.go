@@ -143,7 +143,7 @@ func (this *AlsParser) valuesOfKeys(data *json.Json) (values []interface{}, err 
 			continue
 		}
 
-		if key.MsgIgnored(val.(string)) {
+		if key.Ignores != nil && key.MsgIgnored(val.(string)) {
 			err = errors.New("ignored")
 			return
 		}
