@@ -421,8 +421,8 @@
                         "==>",
                         "<==",
                         "dhclient",
-                        "regex: child \d+ exited with code 0",
-                        "regex: child \d+ started",
+                        "regex: child \\d+ exited with code 0",
+                        "regex: child \\d+ started",
                     ]
                 },
             ]
