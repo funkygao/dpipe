@@ -125,3 +125,4 @@ to send alarms via beep/email/IRC/etc.
 
     mongo unit test
     abnormal change LRU in case of OOM
+    colorPrint dest to logger when daemon mode
