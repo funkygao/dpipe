@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	conf "github.com/daviddengcn/go-ljson-conf"
+	"regexp"
 	"strings"
 )
 
@@ -215,6 +216,13 @@ func (this *LineKey) MsgIgnored(msg string) bool {
 	for _, ignore := range this.Ignores {
 		if strings.Contains(msg, ignore) {
 			return true
+		}
+
+		if strings.HasPrefix(ignore, "regex:") {
+			pattern := strings.TrimSpace(ignore[6:])
+			if matched, err := regexp.MatchString(pattern, msg); err == nil && matched {
+				return true
+			}
 		}
 	}
 
