@@ -17,9 +17,9 @@ type LogfileWorker struct {
 func newLogfileWorker(id int, dataSource string, conf config.ConfGuard, tailMode bool,
 	wg *sync.WaitGroup, mutex *sync.Mutex,
 	chLines chan<- int, chAlarm chan<- parser.Alarm) Worker {
-	this := LogfileWorker{id: id, dataSource: dataSource, conf: conf, tailMode: tailMode,
+	this := LogfileWorker{Worker{id: id, dataSource: dataSource, conf: conf, tailMode: tailMode,
 		wg: wg, Mutex: mutex,
-		chLines: chLines, chAlarm: chAlarm}
+		chLines: chLines, chAlarm: chAlarm}}
 
 	var tailConfig tail.Config
 	if this.tailMode {
