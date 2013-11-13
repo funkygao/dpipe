@@ -7,12 +7,18 @@ import (
 	"errors"
 	"fmt"
 	conf "github.com/daviddengcn/go-ljson-conf"
+	"regexp"
+	"strings"
 )
 
+// Currently support 2 datasource:
+// db, file
 type ConfGuard struct {
 	TailLogGlob    string
 	HistoryLogGlob string
-	Parsers        []string
+	Table          string
+
+	Parsers []string
 }
 
 type LineKey struct {
@@ -111,6 +117,13 @@ func LoadConfig(fn string) (*Config, error) {
 		guard.TailLogGlob = this.String(keyPrefix+"tail_glob", "")
 		guard.HistoryLogGlob = this.String(keyPrefix+"history_glob", "")
 		guard.Parsers = this.StringList(keyPrefix+"parsers", nil)
+		guard.Table = this.String(keyPrefix+"table", "")
+		if guard.Table != "" && (guard.TailLogGlob != "" || guard.HistoryLogGlob != "") {
+			return nil, errors.New("can't have both file and db as datasource")
+		}
+		if guard.Table == "" && guard.TailLogGlob == "" && guard.HistoryLogGlob == "" {
+			return nil, errors.New("non datasource defined")
+		}
 
 		this.Guards = append(this.Guards, guard)
 	}
@@ -177,6 +190,39 @@ func (this *ConfGuard) HasParser(parser string) bool {
 	for _, p := range this.Parsers {
 		if p == parser {
 			return true
+		}
+	}
+
+	return false
+}
+
+func (this *ConfGuard) DataSourceType() string {
+	if this.Table != "" {
+		return DATASOURCE_DB
+	}
+
+	return DATASOURCE_FILE
+}
+
+func (this *ConfGuard) IsDbSource() bool {
+	return this.DataSourceType() == DATASOURCE_DB
+}
+
+func (this *ConfGuard) IsFileSource() bool {
+	return this.DataSourceType() == DATASOURCE_FILE
+}
+
+func (this *LineKey) MsgIgnored(msg string) bool {
+	for _, ignore := range this.Ignores {
+		if strings.Contains(msg, ignore) {
+			return true
+		}
+
+		if strings.HasPrefix(ignore, "regex:") {
+			pattern := strings.TrimSpace(ignore[6:])
+			if matched, err := regexp.MatchString(pattern, msg); err == nil && matched {
+				return true
+			}
 		}
 	}
 

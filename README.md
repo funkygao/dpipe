@@ -45,39 +45,47 @@ to send alarms via beep/email/IRC/etc.
                  beep         email       IRC          etc
 
 
-#### Process
+#### Overview
 
           alser main()
               |
           LoadConfig
               |
-              |<-------------------------------
-              |                                |
-              | goN(wait group)                |
-              | each log a worker         -----------------
-              V                          | alarm collector |
-              |                          |    watchdog     |
-        -----------------------           -----------------
-       |       |       |       |               |
-      log1    log2    ...     logN             |
-      worker  worker  ...     worker           |
-       |       |       |       |               | send alarm
-        -----------------------                | 
-              |                                |
-              | feed lines                     | TODO(backoff alarms)
-              V                                | 
-        -----------------------                ^
-      parser is shared among logs              |
-        -----------------------                |
-       |       |       |       |               |
-     parser1 parser2  ...   parserM            |
-       |       |       |       |               |
-        -----------------------                |
-              |                                |
-          --------------------                 |
-         |                    |                |
-      handle alarm            ---->------------
-
+              |-----------------------------------------------------------------
+              |                                                                 |
+              | goN(wait group)                                                 |
+              | each datasource a worker                                -----------------
+              V                                                        | alarm collector |
+          DataSource                                                   |    watchdog     |
+              |                                                         ----------------- 
+           ------------------------------------------                           |
+          |                                          |                          |
+          | logfile                                  | db                       |
+          |                                          |                          |
+        -----------------------         -----------------------                 |
+       |       |       |       |       |       |        |      |                |
+      log1    log2    ...     logN    table1  table2   ...  tableN              |
+      worker  worker  ...     worker   |       |        |      |                |
+       |       |       |       |       |       |        |      |                |
+        -----------------------         -----------------------                 |
+              |                                   |                             |
+               -----------------------------------                              | feed
+                    |                                                           | alarms
+                    | feed lines                                                ^
+                    V                                                           |
+        -----------------------                                                 |
+       |       |       |       |                                                |
+     parser1 parser2  ...   parserM                                             |
+       |       |       |       |                                                |
+        -----------------------                                                 |
+                    |                                                           |
+          --------------------                                                  |
+         |                    |                                                 |
+      handle alarm            ---->---------------------------------------------
+         |
+        ------------
+       |     |      |
+     email console IRC
 
 #### Parsers
 
@@ -117,3 +125,6 @@ to send alarms via beep/email/IRC/etc.
 
     mongo unit test
     abnormal change LRU in case of OOM
+    colorPrint dest to logger when daemon mode
+    ignores support regex
+    colorPrintln output to log when daemon
