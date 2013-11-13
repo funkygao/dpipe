@@ -10,7 +10,7 @@ import (
 type NewWorker func(id int, dataSource string,
 	conf config.ConfGuard, tailMode bool,
 	wg *sync.WaitGroup, mutex *sync.Mutex,
-	chLines chan<- int, chAlarm chan<- parser.Alarm) Worker
+	chLines chan<- int, chAlarm chan<- parser.Alarm) Runnable
 
 type Runnable interface {
 	Run()
@@ -78,7 +78,8 @@ func invokeWorkers(conf *config.Config, wg *sync.WaitGroup, workersCanWait chan<
 					newWoker = newDbWorker
 				}
 
-				var worker = newWoker(len(allWorkers), dataSource, guard, options.tailmode, wg, mutex, chLines, chAlarm)
+				var worker = newWoker(len(allWorkers),
+					dataSource, guard, options.tailmode, wg, mutex, chLines, chAlarm)
 				go worker.Run()
 			}
 		}

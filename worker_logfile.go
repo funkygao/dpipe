@@ -5,6 +5,7 @@ import (
 	"github.com/funkygao/alser/config"
 	"github.com/funkygao/alser/parser"
 	"github.com/funkygao/tail"
+	"os"
 	"sync"
 )
 
@@ -14,15 +15,12 @@ type LogfileWorker struct {
 	tailConf tail.Config
 }
 
-func newLogfileWorker(id int, dataSource string, conf config.ConfGuard, tailMode bool,
+func newLogfileWorker(id int,
+	dataSource string, conf config.ConfGuard, tailMode bool,
 	wg *sync.WaitGroup, mutex *sync.Mutex,
-	chLines chan<- int, chAlarm chan<- parser.Alarm) Worker {
-	this := LogfileWorker{Worker{id: id, dataSource: dataSource, conf: conf, tailMode: tailMode,
-		wg: wg, Mutex: mutex,
-		chLines: chLines, chAlarm: chAlarm}}
-
+	chLines chan<- int, chAlarm chan<- parser.Alarm) Runnable {
 	var tailConfig tail.Config
-	if this.tailMode {
+	if tailMode {
 		tailConfig = tail.Config{
 			Follow:   true, // tail -f
 			Poll:     true, // Poll for file changes instead of using inotify
@@ -31,6 +29,12 @@ func newLogfileWorker(id int, dataSource string, conf config.ConfGuard, tailMode
 			//MustExist: false,
 		}
 	}
+
+	this := new(LogfileWorker)
+	this.Worker = Worker{id: id,
+		dataSource: dataSource, conf: conf, tailMode: tailMode,
+		wg: wg, Mutex: mutex,
+		chLines: chLines, chAlarm: chAlarm}
 	this.tailConf = tailConfig
 
 	return this
@@ -43,7 +47,7 @@ func (this LogfileWorker) String() string {
 func (this *LogfileWorker) Run() {
 	defer this.Done()
 
-	t, err := tail.TailFile(this.logfile, this.tailConf)
+	t, err := tail.TailFile(this.dataSource, this.tailConf)
 	if err != nil {
 		panic(err)
 	}

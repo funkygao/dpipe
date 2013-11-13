@@ -13,12 +13,15 @@ type DbWorker struct {
 	Worker
 }
 
-func newDbWorker(id int, dataSource string, conf config.ConfGuard, tailMode bool,
+func newDbWorker(id int,
+	dataSource string, conf config.ConfGuard, tailMode bool,
 	wg *sync.WaitGroup, mutex *sync.Mutex,
-	chLines chan<- int, chAlarm chan<- parser.Alarm) Worker {
-	this := DbWorker{Worker{id: id, dataSource: dataSource, conf: conf, tailMode: tailMode,
+	chLines chan<- int, chAlarm chan<- parser.Alarm) Runnable {
+	this := new(DbWorker)
+	this.Worker = Worker{id: id,
+		dataSource: dataSource, conf: conf, tailMode: tailMode,
 		wg: wg, Mutex: mutex,
-		chLines: chLines, chAlarm: chAlarm}}
+		chLines: chLines, chAlarm: chAlarm}
 	return this
 }
 
