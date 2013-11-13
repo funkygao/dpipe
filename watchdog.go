@@ -38,10 +38,6 @@ func runAlarmCollector(ch <-chan parser.Alarm) {
 func notifyUnGuardedLogs(conf *config.Config) {
 	const prefixLen = 3
 
-	if !conf.IsFileSource() {
-		return
-	}
-
 	if conf.String("mail.unguarded", "") == "" {
 		// disabled
 		return
