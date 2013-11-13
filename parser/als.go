@@ -143,13 +143,9 @@ func (this *AlsParser) valuesOfKeys(data *json.Json) (values []interface{}, err 
 			continue
 		}
 
-		if key.Ignores != nil {
-			for _, ignore := range key.Ignores {
-				if strings.Contains(val.(string), ignore) {
-					err = errors.New("ignored")
-					return
-				}
-			}
+		if key.MsgIgnored(val.(string)) {
+			err = errors.New("ignored")
+			return
 		}
 
 		if key.Regex != nil {

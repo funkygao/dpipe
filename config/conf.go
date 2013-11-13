@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	conf "github.com/daviddengcn/go-ljson-conf"
+	"strings"
 )
 
 // Currently support 2 datasource:
@@ -208,4 +209,14 @@ func (this *ConfGuard) IsDbSource() bool {
 
 func (this *ConfGuard) IsFileSource() bool {
 	return this.DataSourceType() == DATASOURCE_FILE
+}
+
+func (this *LineKey) MsgIgnored(msg string) bool {
+	for _, ignore := range this.Ignores {
+		if strings.Contains(msg, ignore) {
+			return true
+		}
+	}
+
+	return false
 }
