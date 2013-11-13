@@ -9,7 +9,7 @@
     mail: {
         unguarded: ""
         guarded: "peng.gao@funplusgame.com"
-        sleep: 300
+        sleep_start: 300
     }
 
     //===================================================

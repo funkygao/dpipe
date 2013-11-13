@@ -20,8 +20,9 @@ func runSendAlarmsWatchdog(conf *config.Config) {
 	if mailTo == "" {
 		panic("empty mail.guarded")
 	}
-	mailSleep := conf.Int("mail.sleep", 120)
-	maxSleep, minSleep, sleepStep := mailSleep*2, mailSleep/2, 5
+	mailSleep := conf.Int("mail.sleep_start", 120)
+	maxSleep, minSleep, sleepStep := conf.Int("mail.sleep_max", mailSleep*2),
+		conf.Int("mail.sleep_min", mailSleep/2), conf.Int("mail.sleep_step", 5)
 
 	for {
 		select {
