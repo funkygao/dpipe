@@ -22,6 +22,12 @@ func NewSqlDb(driver, dsn string, logger *log.Logger) *SqlDb {
 	this.dsn = dsn
 	this.logger = logger
 	this.debug = false
+
+	// conn to db
+	var err error
+	this.db, err = sql.Open(this.driver, this.dsn)
+	this.checkError(err)
+
 	return this
 }
 
@@ -41,9 +47,6 @@ func (this *SqlDb) checkError(err error) {
 
 func (this *SqlDb) CreateDb(createTableSql string) {
 	var err error
-	this.db, err = sql.Open(this.driver, this.dsn)
-	this.checkError(err)
-
 	_, err = this.db.Exec(createTableSql)
 	this.checkError(err)
 
