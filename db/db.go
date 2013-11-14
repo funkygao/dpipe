@@ -68,7 +68,7 @@ func (this *SqlDb) CreateDb(createTableSql string) {
 
 func (this *SqlDb) Query(query string, args ...interface{}) *sql.Rows {
 	if this.debug {
-		this.logger.Printf("%s %+v\n", query, args)
+		this.logger.Printf("%s, args=%+v\n", query, args)
 	}
 
 	rows, err := this.db.Query(query, args...)
@@ -79,7 +79,7 @@ func (this *SqlDb) Query(query string, args ...interface{}) *sql.Rows {
 
 func (this *SqlDb) QueryRow(query string, args ...interface{}) *sql.Row {
 	if this.debug {
-		this.logger.Printf("%s %+v\n", query, args)
+		this.logger.Printf("%s, args=%+v\n", query, args)
 	}
 
 	return this.db.QueryRow(query, args...)
@@ -87,7 +87,7 @@ func (this *SqlDb) QueryRow(query string, args ...interface{}) *sql.Row {
 
 func (this *SqlDb) ExecSql(query string, args ...interface{}) (afftectedRows int64) {
 	if this.debug {
-		this.logger.Printf("%s %+v\n", query, args)
+		this.logger.Printf("%s, args=%+v\n", query, args)
 	}
 
 	res, err := this.db.Exec(query, args...)
