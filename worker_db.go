@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"github.com/funkygao/alser/config"
+	sqldb "github.com/funkygao/alser/db"
 	"github.com/funkygao/alser/parser"
 	_ "github.com/go-sql-driver/mysql"
 	"sync"
@@ -48,7 +49,7 @@ func (this *DbWorker) Run() {
 +-------------+---------------------+------+-----+---------+----------------+
 */
 func flashlogDataSource() {
-	db, err := sql.Open(MYSQL_DRIVER, FLASHLOG_DSN)
+	db, err := sql.Open(sqldb.DRIVER_MYSQL, FLASHLOG_DSN)
 	if err != nil {
 		panic(err)
 		return

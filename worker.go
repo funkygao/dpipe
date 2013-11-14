@@ -62,7 +62,7 @@ func invokeWorkers(conf *config.Config, wg *sync.WaitGroup, workersCanWait chan<
 				continue
 			}
 
-			for _, dataSource := range buddyDataSources(guard) {
+			for _, dataSource := range guardDataSources(guard) {
 				if _, present := allWorkers[dataSource]; present {
 					// this data source is already being guarded
 					continue
