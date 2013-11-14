@@ -10,6 +10,7 @@ import (
 	"github.com/funkygao/alser/parser"
 	"io"
 	"os"
+	"regexp"
 	"strings"
 	"sync"
 	"time"
@@ -30,8 +31,9 @@ import (
 */
 type DbWorker struct {
 	Worker
-	Lines chan string
-	db    *sqldb.SqlDb
+	Lines        chan string
+	db           *sqldb.SqlDb
+	digitsRegexp *regexp.Regexp
 }
 
 func newDbWorker(id int,
@@ -46,6 +48,7 @@ func newDbWorker(id int,
 	this.Lines = make(chan string)
 	this.db = sqldb.NewSqlDb(sqldb.DRIVER_MYSQL, FLASHLOG_DSN, logger)
 	this.db.Debug(options.debug)
+	this.digitsRegexp = regexp.MustCompile(`\d+`)
 	return this
 }
 
@@ -141,6 +144,12 @@ func (this *DbWorker) genLine(typ int, data string) string {
 	if jsonData, e = json.NewJson(d); e != nil {
 		logger.Printf("unkown feed: %s\n", string(d))
 		return ""
+	}
+
+	msg, err := jsonData.Get("message").String()
+	if err == nil {
+		return fmt.Sprintf("%s,%d,%s", this.area(), time.Now().Unix(),
+			this.digitsRegexp.ReplaceAll([]byte(msg), []byte("?")))
 	}
 
 	logger.Printf("%s\n%v", string(d), *jsonData)
