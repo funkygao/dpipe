@@ -40,10 +40,6 @@ func newLogfileWorker(id int,
 	return this
 }
 
-func (this LogfileWorker) String() string {
-	return fmt.Sprintf("log.worker-%d[%s]", this.id, this.dataSource)
-}
-
 func (this *LogfileWorker) Run() {
 	defer this.Done()
 

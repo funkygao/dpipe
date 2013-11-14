@@ -26,10 +26,6 @@ func newDbWorker(id int,
 	return this
 }
 
-func (this DbWorker) String() string {
-	return fmt.Sprintf("db.worker-%d[%s]", this.id, this.dataSource)
-}
-
 func (this *DbWorker) Run() {
 	defer this.Done()
 

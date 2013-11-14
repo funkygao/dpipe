@@ -40,6 +40,10 @@ type Worker struct {
 	chAlarm chan<- parser.Alarm
 }
 
+func (this Worker) String() string {
+	return fmt.Sprintf("log.worker-%d[%s]", this.id, this.dataSource)
+}
+
 func (this *Worker) Done() {
 	this.wg.Done()
 
