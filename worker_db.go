@@ -98,7 +98,7 @@ func (this *DbWorker) feedLines() {
 func (this *DbWorker) getLastId() (lastId int64) {
 	row := this.db.QueryRow(fmt.Sprintf("SELECT max(id) from %s", this.dataSource))
 	if err := row.Scan(&lastId); err != nil {
-		panic(err)
+		panic(fmt.Printf("%s %s\n", this.dataSource, err.Error()))
 	}
 
 	return
