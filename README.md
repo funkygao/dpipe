@@ -118,10 +118,7 @@ to send alarms via beep/email/IRC/etc.
 
 ### TODO
 
-    alarm according to history behavior
     backoff email alarm/priority queue https://github.com/daviddengcn/go-villa
     IRC alarm channel
-    flashlog alarm, data source
-
-    mongo unit test
+    unit test
     abnormal change LRU in case of OOM
