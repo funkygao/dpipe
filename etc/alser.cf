@@ -25,6 +25,7 @@
         {
             tail_glob:      "/mnt/funplus/logs/fp_rstory/quest*"
             history_glob:   "/mnt/funplus/logs/fp_rstory/history/quest*"
+            format:         "als"
             parsers:        [
                 "Mission",
             ]
@@ -32,6 +33,7 @@
         {
             tail_glob:      "/mnt/funplus/logs/fp_rstory/dau*"
             history_glob:   "/mnt/funplus/logs/fp_rstory/history/dau*"
+            format:         "als"
             parsers:        [
                 "Dau",
             ]
@@ -39,6 +41,7 @@
         {
             tail_glob:      "/mnt/funplus/logs/fp_rstory/bigdata_rcfail*"
             history_glob:   "/mnt/funplus/logs/fp_rstory/history/bigdata_rcfail*"
+            format:         "als"
             parsers:        [
                 "RcFail",
             ]
@@ -46,6 +49,7 @@
         {
             tail_glob:      "/mnt/funplus/logs/fp_rstory/kernal*"
             history_glob:   "/mnt/funplus/logs/fp_rstory/history/kernal*"
+            format:         "als"
             parsers:        [
                 "Kernal",
             ]
@@ -53,6 +57,7 @@
         {
             tail_glob:      "/mnt/funplus/logs/fp_rstory/phperror*"
             history_glob:   "/mnt/funplus/logs/fp_rstory/history/phperror*"
+            format:         "als"
             parsers:        [
                 "PhpError",
             ]
@@ -60,6 +65,7 @@
         {
             tail_glob:      "/mnt/funplus/logs/fp_rstory/memcache_to.*.log"
             history_glob:   "/mnt/funplus/logs/fp_rstory/history/memcache_to*"
+            format:         "als"
             parsers:        [
                 "MemcacheTimeout",
             ]
@@ -67,6 +73,7 @@
         {
             tail_glob:      "/mnt/funplus/logs/fp_rstory/cache_set_fail.*.log"
             history_glob:   "/mnt/funplus/logs/fp_rstory/history/cache_set_fail*"
+            format:         "als"
             parsers:        [
                 "MemcacheFail",
             ]
@@ -74,6 +81,7 @@
         {
             tail_glob:      "/mnt/funplus/logs/fp_rstory/error.*.log"
             history_glob:   "/mnt/funplus/logs/fp_rstory/history/error*"
+            format:         "als"
             parsers:        [
                 "Error", "Mongo",
             ]
@@ -81,6 +89,7 @@
         {
             tail_glob:      "/mnt/funplus/logs/fp_rstory/payment.*.log"
             history_glob:   "/mnt/funplus/logs/fp_rstory/history/payment*"
+            format:         "als"
             parsers:        [
                 "Revenue", "Pay",
             ]
@@ -88,6 +97,7 @@
         {
             tail_glob:      "/mnt/funplus/logs/fp_rstory/slowresponse.*.log"
             history_glob:   "/mnt/funplus/logs/fp_rstory/history/slowresponse*"
+            format:         "als"
             parsers:        [
                 "SlowResponse",
             ]
