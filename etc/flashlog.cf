@@ -7,9 +7,11 @@
     // 1. alarm mail settings
     //===================================================
     mail: {
-        unguarded: ""
         guarded: "peng.gao@funplusgame.com"
-        sleep_start: 300
+        sleep_start:    300
+        sleep_step:     5
+        sleep_max:      600
+        sleep_min:      150
     }
 
     //===================================================
@@ -37,15 +39,16 @@
             title:  "Flash"
             colors: [
                 "FgYellow",
+                "Bright",
             ]
             sleep:          33
             beep_threshold: 10
-            abnormal_percent: 1.0
+            abnormal_percent: 0.5
             create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, msg VARCHAR(500));"
             insert_stmt:    "INSERT INTO %s(area, ts, msg) VALUES(?,?,?)"
-            stats_stmt:     "SELECT COUNT(*) AS c, area, msg FROM %s where ts<=? GROUP BY area, msg ORDER BY c DESC"
+            stats_stmt:     "SELECT COUNT(*) AS c, msg FROM %s where ts<=? GROUP BY msg HAVING c>1 ORDER BY c DESC"
             dbname:         "flash"
-            printf: "%5d %3s %s"
+            printf: "%6d %s"
             keys: [
                 {
                     name: "message"
