@@ -130,6 +130,9 @@ func (this *DbWorker) genLine(typ int, data string) (line string) {
 	var d []byte
 	b := bytes.NewBuffer(d)
     if _, err := io.Copy(b, r); err != nil {
+        if options.debug || options.verbose {
+            logger.Printf("io.Copy error: %s\n", err.Error())
+        }
         return ""
     }
 	unzippedData := string(b.Bytes())
