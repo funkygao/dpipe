@@ -7,8 +7,8 @@ import (
 	"errors"
 	"fmt"
 	"github.com/funkygao/alser/config"
+	sqldb "github.com/funkygao/alser/db"
 	"github.com/funkygao/gotime"
-	_ "github.com/mattn/go-sqlite3"
 	"strings"
 	"sync"
 	"time"
@@ -21,7 +21,7 @@ type CollectorParser struct {
 
 	*sync.Mutex
 
-	db         *sql.DB
+	db         *sqldb.SqlDb
 	insertStmt *sql.Stmt
 
 	history map[string]int64 // TODO LRU incase of OOM
@@ -116,7 +116,7 @@ func (this *CollectorParser) CollectAlarms() {
 			continue
 		}
 
-		rows := this.query(statsSql, tsTo)
+		rows := this.db.Query(statsSql, tsTo)
 		cols, _ := rows.Columns()
 		count := len(cols)
 		values := make([]interface{}, count)
@@ -174,22 +174,13 @@ func (this *CollectorParser) CollectAlarms() {
 // create table schema
 // for high TPS, each parser has a dedicated sqlite3 db file
 func (this *CollectorParser) createDB() {
-	var err error
-	this.db, err = sql.Open(SQLITE3_DRIVER, fmt.Sprintf("file:%s?cache=shared&mode=rwc",
-		DATA_BASEDIR+this.conf.DbName+SQLITE3_DBFILE_SUFFIX))
-	this.checkError(err)
+	this.db = sqldb.NewSqlDb(sqldb.DRIVER_SQLITE3,
+		fmt.Sprintf("file:%s?cache=shared&mode=rwc",
+			DATA_BASEDIR+this.conf.DbName+SQLITE3_DBFILE_SUFFIX),
+		logger)
 
-	_, err = this.db.Exec(fmt.Sprintf(this.conf.CreateTable, this.conf.DbName))
-	this.checkError(err)
-
-	// performance tuning for sqlite3
-	// http://www.sqlite.org/cvstrac/wiki?p=DatabaseIsLocked
-	_, err = this.db.Exec("PRAGMA synchronous = OFF")
-	this.checkError(err)
-	_, err = this.db.Exec("PRAGMA journal_mode = MEMORY")
-	this.checkError(err)
-	_, err = this.db.Exec("PRAGMA read_uncommitted = true")
-	this.checkError(err)
+	this.db.CreateDb(fmt.Sprintf(this.conf.CreateTable, this.conf.DbName))
+	this.db.Debug(debug)
 }
 
 func (this *CollectorParser) prepareInsertStmt() {
@@ -197,9 +188,7 @@ func (this *CollectorParser) prepareInsertStmt() {
 		panic("insert_stmt not configured")
 	}
 
-	var err error
-	this.insertStmt, err = this.db.Prepare(fmt.Sprintf(this.conf.InsertStmt, this.conf.DbName))
-	this.checkError(err)
+	this.insertStmt = this.db.Prepare(fmt.Sprintf(this.conf.InsertStmt, this.conf.DbName))
 }
 
 // auto lock/unlock
@@ -214,34 +203,8 @@ func (this *CollectorParser) insert(args ...interface{}) {
 }
 
 // caller is responsible for locking
-func (this *CollectorParser) execSql(sqlStmt string, args ...interface{}) (afftectedRows int64) {
-	if debug {
-		logger.Printf("%s %+v\n", sqlStmt, args)
-	}
-
-	res, err := this.db.Exec(sqlStmt, args...)
-	this.checkError(err)
-
-	afftectedRows, err = res.RowsAffected()
-	this.checkError(err)
-
-	return
-}
-
-func (this *CollectorParser) query(querySql string, args ...interface{}) *sql.Rows {
-	if debug {
-		logger.Printf("%s %+v\n", querySql, args)
-	}
-
-	rows, err := this.db.Query(querySql, args...)
-	this.checkError(err)
-
-	return rows
-}
-
-// caller is responsible for locking
 func (this *CollectorParser) delRecordsBefore(ts int) (affectedRows int64) {
-	affectedRows = this.execSql("DELETE FROM "+this.conf.DbName+"  WHERE ts<=?", ts)
+	affectedRows = this.db.ExecSql("DELETE FROM "+this.conf.DbName+"  WHERE ts<=?", ts)
 
 	return
 }
