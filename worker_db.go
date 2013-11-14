@@ -8,6 +8,8 @@ import (
 	"github.com/funkygao/alser/config"
 	sqldb "github.com/funkygao/alser/db"
 	"github.com/funkygao/alser/parser"
+	"io"
+	"os"
 	"strings"
 	"sync"
 	"time"
@@ -78,7 +80,7 @@ func (this *DbWorker) feedLines() {
 	}
 
 	for {
-		time.Sleep(20)
+		time.Sleep(time.Second * 20)
 
 		var (
 			id   int64
@@ -126,6 +128,8 @@ func (this *DbWorker) genLine(typ int, data string) string {
 		panic(err)
 	}
 	defer r.Close()
+
+	io.Copy(os.Stdout, r)
 
 	var d []byte
 	if _, err := r.Read(d); err != nil {
