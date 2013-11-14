@@ -14,7 +14,7 @@ var (
 )
 
 const (
-	VERSION = "0.3.stable"
+	VERSION = "0.4.rc1"
 	AUTHOR  = "gaopeng"
 
 	LOG_OPTIONS       = log.Ldate | log.Ltime
