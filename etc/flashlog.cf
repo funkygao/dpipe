@@ -18,7 +18,7 @@
     guards: 
     [
         {
-            table:   "log_*"
+            tables:   "log_%"
             format:  "flashlog"
             parsers:        [
                 "Flashlog",

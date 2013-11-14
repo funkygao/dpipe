@@ -1,8 +1,11 @@
 package main
 
 import (
+	"fmt"
 	"github.com/funkygao/alser/config"
+	sqldb "github.com/funkygao/alser/db"
 	"github.com/funkygao/alser/parser"
+	"path/filepath"
 	"sync"
 	"time"
 )
@@ -60,4 +63,49 @@ func guard(conf *config.Config) {
 	parser.WaitAll()
 
 	logger.Printf("%d lines scanned, %s elapsed\n", lines, time.Since(startTime))
+}
+
+func guardDataSources(guard config.ConfGuard) []string {
+	if guard.IsFileSource() {
+		var pattern string
+		if options.tailmode {
+			pattern = guard.TailLogGlob
+		} else {
+			pattern = guard.HistoryLogGlob
+		}
+
+		logfiles, err := filepath.Glob(pattern)
+		if err != nil {
+			panic(err)
+		}
+
+		if options.debug {
+			logger.Printf("pattern:%s -> %+v\n", pattern, logfiles)
+		}
+
+		return logfiles
+	} else if guard.IsDbSource() {
+		tables := make([]string, 0)
+		db := sqldb.NewSqlDb(sqldb.DRIVER_MYSQL, FLASHLOG_DSN, logger)
+		rows := db.Query(fmt.Sprintf("SHOW TABLES LIKE '%s'", guard.Tables))
+		for rows.Next() {
+			var table string
+			if err := rows.Scan(&table); err != nil {
+				panic(err)
+			}
+			tables = append(tables, table)
+		}
+
+		if options.debug {
+			logger.Printf("pattern:%s -> %+v\n", guard.Table, tables)
+		}
+
+		db.Close()
+
+		return tables
+	} else {
+		panic("unkown guards data source: " + guard.DataSourceType())
+	}
+
+	return nil
 }

@@ -29,5 +29,4 @@ Flags:
 	TICKER   = 60 * 10 // default ticker, 10 minutes
 
 	FLASHLOG_DSN = "flashlog:flashlog@unix(/var/run/mysqld/mysqld.sock)/flashlog?charset=utf8"
-	MYSQL_DRIVER = "mysql"
 )
