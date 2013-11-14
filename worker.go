@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/funkygao/alser/config"
 	"github.com/funkygao/alser/parser"
 	"sync"
