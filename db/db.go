@@ -79,7 +79,7 @@ func (this *SqlDb) Query(query string, args ...interface{}) *sql.Rows {
 
 func (this *SqlDb) QueryRow(query string, args ...interface{}) *sql.Row {
 	if this.debug {
-		this.logger.Panicf("%s %+v\n", query, args)
+		this.logger.Printf("%s %+v\n", query, args)
 	}
 
 	return this.db.QueryRow(query, args...)
