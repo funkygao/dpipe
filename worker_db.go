@@ -135,7 +135,7 @@ func (this *DbWorker) genLine(typ int, data string) string {
 	var jsonData *json.Json
 	var e error
 	if jsonData, e = json.NewJson(d); e != nil {
-		logger.Printf("unkown feed: %s\n", data)
+		logger.Printf("unkown feed: %s\n", string(d))
 		return ""
 	}
 
