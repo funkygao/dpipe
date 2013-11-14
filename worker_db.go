@@ -9,7 +9,6 @@ import (
 	sqldb "github.com/funkygao/alser/db"
 	"github.com/funkygao/alser/parser"
 	"io"
-	"os"
 	"regexp"
 	"strings"
 	"sync"
@@ -132,17 +131,15 @@ func (this *DbWorker) genLine(typ int, data string) string {
 	}
 	defer r.Close()
 
-	io.Copy(os.Stdout, r)
-
 	var d []byte
-	if _, err := r.Read(d); err != nil {
-		panic(err)
-	}
+	b := bytes.NewBuffer(d)
+	io.Copy(b, r)
+	unzippedData := string(b.Bytes())
 
 	var jsonData *json.Json
 	var e error
-	if jsonData, e = json.NewJson(d); e != nil {
-		logger.Printf("unkown feed: %s\n", string(d))
+	if jsonData, e = json.NewJson(b.Bytes()); e != nil {
+		logger.Printf("unkown feed: %s\n", unzippedData)
 		return ""
 	}
 
