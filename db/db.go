@@ -70,6 +70,10 @@ func (this *SqlDb) Query(query string, args ...interface{}) *sql.Rows {
 	return rows
 }
 
+func (this *SqlDb) QueryRow(query string, args ...interface{}) *sql.Row {
+	return this.db.QueryRow(query, args...)
+}
+
 func (this *SqlDb) ExecSql(query string, args ...interface{}) (afftectedRows int64) {
 	if this.debug {
 		this.logger.Printf("%s %+v\n", query, args)
@@ -88,6 +92,10 @@ func (this *SqlDb) Prepare(query string) *sql.Stmt {
 	r, err := this.db.Prepare(query)
 	this.checkError(err)
 	return r
+}
+
+func (this *SqlDb) Close() error {
+	return this.db.Close()
 }
 
 func (this *SqlDb) Db() *sql.DB {
