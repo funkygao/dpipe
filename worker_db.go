@@ -78,7 +78,7 @@ func (this *DbWorker) feedLines() {
 
 	var query string
 	for {
-		time.Sleep(10)
+		time.Sleep(20)
 
 		var (
 			id   int64
@@ -86,8 +86,7 @@ func (this *DbWorker) feedLines() {
 			data string
 		)
 
-		query = fmt.Sprintf("SELECT id,type,data FROM %s WHERE id>=%d ORDER BY id", this.dataSource, lastId)
-		rows := this.db.Query(query)
+		rows := this.db.Query(fmt.Sprintf("SELECT id,type,data FROM %s WHERE id>=%d ORDER BY id", this.dataSource, lastId))
 		for rows.Next() {
 			if err := rows.Scan(&id, &typ, &data); err != nil {
 				panic(err)
