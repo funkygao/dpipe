@@ -137,7 +137,6 @@ func (this *DbWorker) genLine(typ int, data string) (line string) {
 	}
 
 	line = fmt.Sprintf("%s,%d,%s", this.area(), time.Now().Unix(), unzippedData)
-	logger.Println(line)
 	return
 
 }

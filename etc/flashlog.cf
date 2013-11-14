@@ -33,7 +33,7 @@
     [
         {
             id:     "Flashlog"
-            class:  "JsonLineParser"
+            class:  "JsonCollectorParser"
             title:  "Flash"
             colors: [
                 "FgYellow",
@@ -48,6 +48,7 @@
             keys: [
                 {
                     name: "message"
+                    type: "string"
                     regex: [
                         "digit",
                     ]
