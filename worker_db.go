@@ -69,6 +69,13 @@ func (this *DbWorker) Run() {
 
 func (this *DbWorker) feedLines() {
 	var lastId int64 = this.getLastId()
+	if lastId < 0 {
+		logger.Printf("table[%s] skipped\n", this.dataSource)
+
+		close(this.Lines)
+		return
+	}
+
 	var query string
 	for {
 		time.Sleep(10)
@@ -98,7 +105,11 @@ func (this *DbWorker) feedLines() {
 func (this *DbWorker) getLastId() (lastId int64) {
 	row := this.db.QueryRow(fmt.Sprintf("SELECT max(id) from %s", this.dataSource))
 	if err := row.Scan(&lastId); err != nil {
-		panic(fmt.Sprintf("%s %s\n", this.dataSource, err.Error()))
+		if options.verbose || options.debug {
+			logger.Printf("%s %s\n", this.dataSource, err.Error())
+		}
+
+		lastId = -1
 	}
 
 	return
