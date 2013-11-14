@@ -102,7 +102,7 @@ func (this *DbWorker) feedLines() {
 }
 
 func (this *DbWorker) getLastId() (lastId int64) {
-	row := this.db.QueryRow(fmt.Sprintf("SELECT max(id) from %s", this.dataSource))
+	row := this.db.QueryRow(fmt.Sprintf("SELECT max(id) FROM %s", this.dataSource))
 	if err := row.Scan(&lastId); err != nil {
 		if options.verbose || options.debug {
 			logger.Printf("%s %s\n", this.dataSource, err.Error())
@@ -129,9 +129,10 @@ func (this *DbWorker) genLine(typ int, data string) (line string) {
 
 	var d []byte
 	b := bytes.NewBuffer(d)
-	io.Copy(b, r)
+    if _, err := io.Copy(b, r); err != nil {
+        return ""
+    }
 	unzippedData := string(b.Bytes())
-
 	if unzippedData == "" {
 		return ""
 	}
