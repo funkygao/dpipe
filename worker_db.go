@@ -4,12 +4,10 @@ import (
 	"bytes"
 	"compress/zlib"
 	"fmt"
-	json "github.com/bitly/go-simplejson"
 	"github.com/funkygao/alser/config"
 	sqldb "github.com/funkygao/alser/db"
 	"github.com/funkygao/alser/parser"
 	"io"
-	"regexp"
 	"strings"
 	"sync"
 	"time"
@@ -30,9 +28,8 @@ import (
 */
 type DbWorker struct {
 	Worker
-	Lines        chan string
-	db           *sqldb.SqlDb
-	digitsRegexp *regexp.Regexp
+	Lines chan string
+	db    *sqldb.SqlDb
 }
 
 func newDbWorker(id int,
@@ -47,7 +44,6 @@ func newDbWorker(id int,
 	this.Lines = make(chan string)
 	this.db = sqldb.NewSqlDb(sqldb.DRIVER_MYSQL, FLASHLOG_DSN, logger)
 	this.db.Debug(options.debug)
-	this.digitsRegexp = regexp.MustCompile(`\d+`)
 	return this
 }
 
@@ -136,20 +132,10 @@ func (this *DbWorker) genLine(typ int, data string) string {
 	io.Copy(b, r)
 	unzippedData := string(b.Bytes())
 
-	var jsonData *json.Json
-	var e error
-	if jsonData, e = json.NewJson(b.Bytes()); e != nil {
-		logger.Printf("unkown feed: %s\n", unzippedData)
+	if unzippedData == "" {
 		return ""
 	}
 
-	msg, err := jsonData.Get("message").String()
-	if err == nil {
-		return fmt.Sprintf("%s,%d,%s", this.area(), time.Now().Unix(),
-			this.digitsRegexp.ReplaceAll([]byte(msg), []byte("?")))
-	}
+	return fmt.Sprintf("%s,%d,%s", this.area(), time.Now().Unix(), unzippedData)
 
-	logger.Printf("%s\n%v", string(d), *jsonData)
-
-	return ""
 }

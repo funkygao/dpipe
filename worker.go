@@ -74,7 +74,7 @@ func invokeWorkers(conf *config.Config, wg *sync.WaitGroup, workersCanWait chan<
 				}
 
 				if options.debug {
-					logger.Printf("data source: %s", dataSource)
+					logger.Printf("data source added: %s", dataSource)
 				}
 
 				wg.Add(1)
