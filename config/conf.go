@@ -120,10 +120,10 @@ func LoadConfig(fn string) (*Config, error) {
 		guard.Parsers = this.StringList(keyPrefix+"parsers", nil)
 		guard.Tables = this.String(keyPrefix+"tables", "")
 		guard.Format = this.String(keyPrefix+"format", "als")
-		if guard.Table != "" && (guard.TailLogGlob != "" || guard.HistoryLogGlob != "") {
+		if guard.Tables != "" && (guard.TailLogGlob != "" || guard.HistoryLogGlob != "") {
 			return nil, errors.New("can't have both file and db as datasource")
 		}
-		if guard.Table == "" && guard.TailLogGlob == "" && guard.HistoryLogGlob == "" {
+		if guard.Tables == "" && guard.TailLogGlob == "" && guard.HistoryLogGlob == "" {
 			return nil, errors.New("non datasource defined")
 		}
 
@@ -199,7 +199,7 @@ func (this *ConfGuard) HasParser(parser string) bool {
 }
 
 func (this *ConfGuard) DataSourceType() string {
-	if this.Table != "" {
+	if this.Tables != "" {
 		return DATASOURCE_DB
 	}
 
