@@ -114,7 +114,7 @@ func main() {
 
 	setupMaxProcs()
 
-	logger.Printf("conf[%s] has %d kinds of logs to guard\n",
+	logger.Printf("conf[%s] has %d kinds of guards\n",
 		options.config, len(conf.Guards))
 
 	guard(conf)
