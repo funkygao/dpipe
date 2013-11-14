@@ -97,7 +97,7 @@ func guardDataSources(guard config.ConfGuard) []string {
 		}
 
 		if options.debug {
-			logger.Printf("pattern:%s -> %+v\n", guard.Table, tables)
+			logger.Printf("pattern:%s -> %+v\n", guard.Tables, tables)
 		}
 
 		db.Close()
