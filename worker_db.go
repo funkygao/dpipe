@@ -8,6 +8,7 @@ import (
 	"github.com/funkygao/alser/config"
 	sqldb "github.com/funkygao/alser/db"
 	"github.com/funkygao/alser/parser"
+	"strings"
 	"sync"
 	"time"
 )
@@ -76,7 +77,6 @@ func (this *DbWorker) feedLines() {
 		return
 	}
 
-	var query string
 	for {
 		time.Sleep(20)
 
@@ -114,13 +114,19 @@ func (this *DbWorker) getLastId() (lastId int64) {
 	return
 }
 
+func (this *DbWorker) area() string {
+	p := strings.SplitN(this.dataSource, "_", 2)
+	return p[1]
+}
+
 func (this *DbWorker) genLine(typ int, data string) string {
 	// gzuncompress data
-	b := bytes.NewBufferString(data)
-	r, err := zlib.NewReader(b)
+	r, err := zlib.NewReader(bytes.NewBufferString(data))
 	if err != nil {
 		panic(err)
 	}
+	defer r.Close()
+
 	var d []byte
 	if _, err := r.Read(d); err != nil {
 		panic(err)
@@ -133,9 +139,7 @@ func (this *DbWorker) genLine(typ int, data string) string {
 		return ""
 	}
 
-	fmt.Println(*jsonData)
-
-	fmt.Println(string(d))
+	logger.Printf("%s\n%v", string(d), *jsonData)
 
 	return ""
 }
