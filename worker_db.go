@@ -42,6 +42,7 @@ func newDbWorker(id int,
 		chLines: chLines, chAlarm: chAlarm}
 	this.Lines = make(chan string)
 	this.db = sqldb.NewSqlDb(sqldb.DRIVER_MYSQL, FLASHLOG_DSN, logger)
+	this.db.Debug(options.debug)
 	return this
 }
 
@@ -79,7 +80,6 @@ func (this *DbWorker) feedLines() {
 		)
 
 		query = fmt.Sprintf("SELECT id,type,data FROM %s WHERE id>=%d ORDER BY id", this.dataSource, lastId)
-
 		rows := this.db.Query(query)
 		for rows.Next() {
 			if err := rows.Scan(&id, &typ, &data); err != nil {
