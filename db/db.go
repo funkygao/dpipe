@@ -46,6 +46,10 @@ func (this *SqlDb) checkError(err error) {
 }
 
 func (this *SqlDb) CreateDb(createTableSql string) {
+	if this.debug {
+		this.logger.Println(createTableSql)
+	}
+
 	var err error
 	_, err = this.db.Exec(createTableSql)
 	this.checkError(err)
@@ -74,6 +78,10 @@ func (this *SqlDb) Query(query string, args ...interface{}) *sql.Rows {
 }
 
 func (this *SqlDb) QueryRow(query string, args ...interface{}) *sql.Row {
+	if this.debug {
+		this.logger.Panicf("%s %+v\n", query, args)
+	}
+
 	return this.db.QueryRow(query, args...)
 }
 
@@ -92,6 +100,10 @@ func (this *SqlDb) ExecSql(query string, args ...interface{}) (afftectedRows int
 }
 
 func (this *SqlDb) Prepare(query string) *sql.Stmt {
+	if this.debug {
+		this.logger.Println(query)
+	}
+
 	r, err := this.db.Prepare(query)
 	this.checkError(err)
 	return r
