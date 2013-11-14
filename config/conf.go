@@ -220,6 +220,7 @@ func (this *LineKey) MsgIgnored(msg string) bool {
 
 		if strings.HasPrefix(ignore, "regex:") {
 			pattern := strings.TrimSpace(ignore[6:])
+			// TODO lessen the overhead
 			if matched, err := regexp.MatchString(pattern, msg); err == nil && matched {
 				return true
 			}
