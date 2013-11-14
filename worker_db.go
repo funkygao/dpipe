@@ -119,7 +119,7 @@ func (this *DbWorker) area() string {
 	return p[1]
 }
 
-func (this *DbWorker) genLine(typ int, data string) string {
+func (this *DbWorker) genLine(typ int, data string) (line string) {
 	// gzuncompress data
 	r, err := zlib.NewReader(bytes.NewBufferString(data))
 	if err != nil {
@@ -136,6 +136,8 @@ func (this *DbWorker) genLine(typ int, data string) string {
 		return ""
 	}
 
-	return fmt.Sprintf("%s,%d,%s", this.area(), time.Now().Unix(), unzippedData)
+	line = fmt.Sprintf("%s,%d,%s", this.area(), time.Now().Unix(), unzippedData)
+	logger.Println(line)
+	return
 
 }
