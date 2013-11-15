@@ -10,7 +10,7 @@
     //===================================================
     mail: {
         unguarded: ""
-        guarded: "peng.gao@funplusgame.com"
+        guarded: "peng.gao@funplusgame.com,zhengkai@gmail.com,yan.zhang@funplusgame.com"
         sleep_start:    300
         sleep_step:     5
         sleep_max:      600
