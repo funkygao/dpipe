@@ -19,25 +19,20 @@ func init() {
 		showVersion()
 	}
 
-	logger = newLogger(options) // create logger as soon as possible
-
 	if options.lock {
 		if instanceLocked() {
 			fmt.Fprintf(os.Stderr, "Another instance is running, exit...\n")
 			os.Exit(1)
 		}
 		lockInstance()
-	} else if options.verbose {
-		logger.Println("instance locking disabled")
 	}
 
 	if options.daemon {
-		if options.verbose {
-			logger.Println("daemonizing...")
-		}
-
 		daemonize(false, true)
 	}
+
+	// must be after daemonize, or the pid will be parent pid
+	logger = newLogger(options)
 
 	setupSignals()
 }
