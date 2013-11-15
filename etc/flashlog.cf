@@ -7,7 +7,7 @@
     // 1. alarm mail settings
     //===================================================
     mail: {
-        guarded: "peng.gao@funplusgame.com"
+        guarded: "peng.gao@funplusgame.com,qingchao.meng@funplusgame.com,shengkai.tang@funplusgame.com"
         sleep_start:    300
         sleep_step:     5
         sleep_max:      600
