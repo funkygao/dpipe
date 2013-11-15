@@ -84,8 +84,8 @@ var (
 )
 
 const (
-	DATA_BASEDIR          = "var/"
-	SQLITE3_DBFILE_SUFFIX = ".sqlite"
+	DATA_BASEDIR          = "var"
+	SQLITE3_DBFILE_SUFFIX = "sqlite"
 
 	LINE_SPLITTER  = ","
 	LINE_SPLIT_NUM = 3

@@ -9,6 +9,7 @@ import (
 	"github.com/funkygao/alser/config"
 	sqldb "github.com/funkygao/alser/db"
 	"github.com/funkygao/gotime"
+	"os"
 	"strings"
 	"sync"
 	"time"
@@ -174,10 +175,10 @@ func (this *CollectorParser) CollectAlarms() {
 // create table schema
 // for high TPS, each parser has a dedicated sqlite3 db file
 func (this *CollectorParser) createDB() {
-	this.db = sqldb.NewSqlDb(sqldb.DRIVER_SQLITE3,
-		fmt.Sprintf("file:%s?cache=shared&mode=rwc",
-			DATA_BASEDIR+this.conf.DbName+SQLITE3_DBFILE_SUFFIX),
-		logger)
+	dsn := fmt.Sprintf("file:%s?cache=shared&mode=rwc",
+		fmt.Sprintf("%s/%s-%d.%s", DATA_BASEDIR, this.conf.DbName, os.Getpid(),
+			SQLITE3_DBFILE_SUFFIX))
+	this.db = sqldb.NewSqlDb(sqldb.DRIVER_SQLITE3, dsn, logger)
 
 	this.db.CreateDb(fmt.Sprintf(this.conf.CreateTable, this.conf.DbName))
 	this.db.Debug(debug)
