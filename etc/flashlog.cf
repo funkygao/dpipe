@@ -46,9 +46,11 @@
             abnormal_percent: 0.6
             create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, msg VARCHAR(500));"
             insert_stmt:    "INSERT INTO %s(area, ts, msg) VALUES(?,?,?)"
-            stats_stmt:     "SELECT COUNT(*) AS c, msg FROM %s where ts<=? GROUP BY msg HAVING c>1 ORDER BY c DESC"
+            //stats_stmt:     "SELECT COUNT(*) AS c, msg FROM %s where ts<=? GROUP BY msg HAVING c>1 ORDER BY c DESC"
+            stats_stmt:     "SELECT COUNT(*) AS c, area, msg FROM %s where ts<=? GROUP BY area, msg HAVING c>1 ORDER BY c DESC"
             dbname:         "flash"
-            printf: "%6d %s"
+            //printf: "%6d %s"
+            printf: "%6d %6s %s"
             keys: [
                 {
                     name: "message"
