@@ -22,7 +22,7 @@ func guard(conf *config.Config) {
 
 	var lines int = 0
 	if options.tick > 0 { // ticker for reporting workers progress
-		ticker := time.NewTicker(time.Second * time.Duration(options.tick))
+		ticker = time.NewTicker(time.Second * time.Duration(options.tick))
 		go runTicker(ticker, &lines)
 	}
 

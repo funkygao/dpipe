@@ -14,6 +14,10 @@ func cleanup() {
 	if options.cpuprof != "" {
 		pprof.StopCPUProfile()
 	}
+
+	if ticker != nil {
+		ticker.Stop()
+	}
 }
 
 func shutdown() {

@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"time"
 )
 
 var (
@@ -11,6 +12,7 @@ var (
 	BuildID = "unknown" // git version id, passed in from shell
 
 	allWorkers map[string]bool // key is datasource name
+	ticker     *time.Ticker
 )
 
 const (
