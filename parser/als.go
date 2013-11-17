@@ -210,7 +210,7 @@ func (this *AlsParser) beep() {
 		return
 	}
 
-	fmt.Print("\a")
+	fmt.Print(BEEP)
 }
 
 func (this *AlsParser) checkError(err error) {

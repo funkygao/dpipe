@@ -89,4 +89,5 @@ const (
 
 	LINE_SPLITTER  = ","
 	LINE_SPLIT_NUM = 3
+	BEEP           = "\a"
 )
