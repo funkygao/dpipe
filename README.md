@@ -122,3 +122,4 @@ to send alarms via beep/email/IRC/etc.
     IRC alarm channel
     unit test
     abnormal change LRU in case of OOM
+    sleep rename to window_duration
