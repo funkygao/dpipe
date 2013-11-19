@@ -58,6 +58,9 @@
                     regex: [
                         "digit",
                     ]
+                    ignores: [
+                        "getOGKey",
+                    ]
                 },
             ]
         },

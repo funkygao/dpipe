@@ -433,6 +433,8 @@
                         "dhclient",
                         "regex: child \\d+ exited with code 0",
                         "regex: child \\d+ started",
+                        "you may need to increase start_servers",
+                        "spawning \\d+ children",
                     ]
                 },
             ]
