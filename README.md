@@ -116,6 +116,36 @@ to send alarms via beep/email/IRC/etc.
                     +----------------+
 
 
+### BI
+
+* T+1
+
+* RealTime/streaming
+
+        +-------+   +-------+   +-------+   +-------+
+        | app   |   | app   |   | app   |   | app   |
+        |-------|   |-------|   |-------|   |-------|
+        | agent |   | agent |   | agent |   | agent |
+        +-------+   +-------+   +-------+   +-------+
+            |           |           |           |
+             -----------------------------------
+                                |
+                    +-----------------------+
+                    | load balance cluster  |
+                    | collector distributor |
+                    +-----------------------+
+                                | routing
+                                |
+                                |                           文件落地
+                                |-----------------------------------
+             RealTimeAnalysis   |                                   |
+             -----------------------------------            +-------------------------+
+            |           |           |           |           | central logfile cluster |
+        +-------+   +-------+   +-------+   +-------+       +-------------------------+
+        |secure |   | debug |   |monitor|   |analyse|
+        +-------+   +-------+   +-------+   +-------+
+
+
 ### TODO
 
     backoff email alarm/priority queue https://github.com/daviddengcn/go-villa
