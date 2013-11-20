@@ -123,3 +123,5 @@ to send alarms via beep/email/IRC/etc.
     unit test
     abnormal change LRU in case of OOM
     sleep rename to window_duration
+    use sphinx for full-text search
+    websocket for web based alarm
