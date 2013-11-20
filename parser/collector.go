@@ -24,6 +24,7 @@ type CollectorParser struct {
 
 	db         *sqldb.SqlDb
 	insertStmt *sql.Stmt
+	statsStmt  *sql.Stmt
 
 	history map[string]int64 // TODO LRU incase of OOM
 
@@ -41,6 +42,7 @@ func (this *CollectorParser) init(conf *config.ConfParser, chUpstream chan<- Ala
 
 	this.createDB()
 	this.prepareInsertStmt()
+	this.prepareStatsStmt()
 }
 
 func (this *CollectorParser) Stop() {
@@ -105,8 +107,6 @@ func (this *CollectorParser) CollectAlarms() {
 		return
 	}
 
-	statsSql := this.conf.StatsSql()
-
 	for {
 		time.Sleep(time.Second * time.Duration(this.conf.Sleep))
 
@@ -117,7 +117,7 @@ func (this *CollectorParser) CollectAlarms() {
 			continue
 		}
 
-		rows := this.db.Query(statsSql, tsTo)
+		rows, _ := this.statsStmt.Query(tsTo)
 		cols, _ := rows.Columns()
 		count := len(cols)
 		values := make([]interface{}, count)
@@ -192,12 +192,22 @@ func (this *CollectorParser) prepareInsertStmt() {
 	this.insertStmt = this.db.Prepare(fmt.Sprintf(this.conf.InsertStmt, this.conf.DbName))
 }
 
+func (this *CollectorParser) prepareStatsStmt() {
+	statsSql := this.conf.StatsSql()
+	if statsSql == "" {
+		panic("stats_stmt not configured")
+	}
+
+	this.statsStmt = this.db.Prepare(statsSql)
+}
+
 // auto lock/unlock
 func (this *CollectorParser) insert(args ...interface{}) {
-	this.Lock()
 	if debug {
 		logger.Printf("%s %+v\n", this.id(), args)
 	}
+
+	this.Lock()
 	_, err := this.insertStmt.Exec(args...)
 	this.Unlock()
 	this.checkError(err)
