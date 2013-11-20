@@ -63,11 +63,19 @@
             ]
         },
         {
+            tail_glob:      "/mnt/funplus/logs/fp_rstory/mongo_slow.*.log"
+            history_glob:   "/mnt/funplus/logs/fp_rstory/history/mongo_slow*"
+            format:         "als"
+            parsers:        [
+                "MongoSlow",
+            ]
+        },
+        {
             tail_glob:      "/mnt/funplus/logs/fp_rstory/memcache_to.*.log"
             history_glob:   "/mnt/funplus/logs/fp_rstory/history/memcache_to*"
             format:         "als"
             parsers:        [
-                "MemcacheTimeout",
+                "MemcacheSlow",
             ]
         },
         {
@@ -381,10 +389,33 @@
             ]
         },
 
-        // memcache timeout
+        // mongodb slow
         //===================================================
         {
-            id:     "MemcacheTimeout"
+            id:     "MongoSlow"
+            class:  "JsonLineParser"
+            colors: [
+                "FgYellow", "Reverse",
+            ]
+            printf: "%3s %12s %8s %6.4f"
+            keys:   [
+                {
+                    name: "table"
+                },
+                {
+                    name: "method"
+                },
+                {
+                    name: "ts"
+                    type: "float"
+                },
+            ]
+        },
+
+        // memcache slow
+        //===================================================
+        {
+            id:     "MemcacheSlow"
             class:  "JsonLineParser"
             colors: [
                 "FgYellow",
