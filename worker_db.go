@@ -43,7 +43,8 @@ func newDbWorker(id int,
 		chLines: chLines, chAlarm: chAlarm}
 	this.Lines = make(chan string)
 	this.db = sqldb.NewSqlDb(sqldb.DRIVER_MYSQL, FLASHLOG_DSN, logger)
-	this.db.Debug(options.debug)
+	this.db.SetMaxIdleConns(10)
+	this.db.SetDebug(options.debug)
 	return this
 }
 
@@ -129,12 +130,12 @@ func (this *DbWorker) genLine(typ int, data string) (line string) {
 
 	var d []byte
 	b := bytes.NewBuffer(d)
-    if _, err := io.Copy(b, r); err != nil {
-        if options.debug || options.verbose {
-            logger.Printf("io.Copy error: %s\n", err.Error())
-        }
-        return ""
-    }
+	if _, err := io.Copy(b, r); err != nil {
+		if options.debug || options.verbose {
+			logger.Printf("io.Copy error: %s\n", err.Error())
+		}
+		return ""
+	}
 	unzippedData := string(b.Bytes())
 	if unzippedData == "" {
 		return ""

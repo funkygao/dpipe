@@ -35,8 +35,13 @@ func (this SqlDb) String() string {
 	return fmt.Sprintf("%s[%s]", this.driver, this.dsn)
 }
 
-func (this *SqlDb) Debug(d bool) {
+func (this *SqlDb) SetDebug(d bool) {
 	this.debug = d
+}
+
+// sets the maximum number of connections in the idle connection pool
+func (this *SqlDb) SetMaxIdleConns(n int) {
+	this.db.SetMaxIdleConns(n)
 }
 
 func (this *SqlDb) checkError(err error) {
