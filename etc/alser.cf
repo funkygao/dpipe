@@ -371,7 +371,7 @@
             colors: [
                 "FgYellow", "Underscore",
             ]
-            printf: "%3s %22s %6.4f %15s"
+            printf: "%3s %22s %6.4f %15s CacheFail"
             keys:   [
                 {
                     name: "key"
@@ -420,7 +420,7 @@
             colors: [
                 "FgYellow",
             ]
-            printf: "%3s %22s %6.4f %15s"
+            printf: "%3s %22s %6.4f %15s CacheSlow"
             keys:   [
                 {
                     name: "key"
