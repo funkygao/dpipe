@@ -181,7 +181,7 @@ func (this *CollectorParser) createDB() {
 	this.db = sqldb.NewSqlDb(sqldb.DRIVER_SQLITE3, dsn, logger)
 
 	this.db.CreateDb(fmt.Sprintf(this.conf.CreateTable, this.conf.DbName))
-	this.db.Debug(debug)
+	this.db.SetDebug(debug)
 }
 
 func (this *CollectorParser) prepareInsertStmt() {
