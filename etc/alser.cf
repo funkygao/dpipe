@@ -243,7 +243,7 @@
                 "FgRed", "Underscore",
             ]
             sleep:          709
-            beep_threshold: 10
+            beep_threshold: 50
             create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, cls VARCHAR(50));"
             insert_stmt:    "INSERT INTO %s(area, ts, cls) VALUES(?,?,?)"
             stats_stmt:     "SELECT COUNT(*) AS c, area, cls FROM %s where ts<=? GROUP BY area, cls ORDER BY c DESC"
