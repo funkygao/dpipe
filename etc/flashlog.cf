@@ -55,6 +55,7 @@
                 {
                     name: "message"
                     type: "string"
+                    maxlen: 60
                     regex: [
                         "digit",
                     ]

@@ -27,6 +27,7 @@ type LineKey struct {
 	Type    string // float, string(default), int, money
 	Contain string
 	Ignores []string
+	MaxLen  int
 	Visible bool
 	Regex   []string
 }
@@ -106,6 +107,7 @@ func LoadConfig(fn string) (*Config, error) {
 				key.Contain = this.String(prefix+"contain", "")
 				key.Ignores = this.StringList(prefix+"ignores", nil)
 				key.Regex = this.StringList(prefix+"regex", nil)
+				key.MaxLen = this.Int(prefix+"maxlen", 0)
 				key.Visible = this.Bool(prefix+"visible", true)
 				parser.Keys = append(parser.Keys, key)
 			}
