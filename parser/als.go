@@ -18,6 +18,7 @@ import (
 	"fmt"
 	json "github.com/bitly/go-simplejson"
 	"github.com/funkygao/alser/config"
+	"path/filepath"
 	"strconv"
 	"strings"
 )
@@ -109,6 +110,8 @@ func (this *AlsParser) jsonValue(data *json.Json, key, typ string) (val interfac
 		val, err = data.Get(key).Float64()
 	case "int", "money":
 		val, err = data.Get(key).Int()
+	case "base_file":
+		val = filepath.Base(file)
 	default:
 		panic("invalid key type: " + typ)
 	}
