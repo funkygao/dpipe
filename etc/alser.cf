@@ -11,6 +11,7 @@
     mail: {
         unguarded: ""
         guarded: "peng.gao@funplusgame.com,zhengkai@gmail.com,yan.zhang@funplusgame.com"
+        backoff_threshold: 15
         sleep_start:    300
         sleep_step:     25
         sleep_max:      600

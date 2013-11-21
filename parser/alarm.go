@@ -21,6 +21,7 @@ func runSendAlarmsWatchdog(conf *config.Config) {
 		panic("empty mail.guarded")
 	}
 	mailSleep := conf.Int("mail.sleep_start", 120)
+	backoffThreshold := conf.Int("mail.backoff_threshold", 10)
 	maxSleep, minSleep, sleepStep := conf.Int("mail.sleep_max", mailSleep*2),
 		conf.Int("mail.sleep_min", mailSleep/2), conf.Int("mail.sleep_step", 5)
 
@@ -45,7 +46,7 @@ func runSendAlarmsWatchdog(conf *config.Config) {
 				logger.Printf("alarm sent=> %s, sleep=%d\n", mailTo, mailSleep)
 
 				// backoff sleep
-				if bodyLines > 5 {
+				if bodyLines >= backoffThreshold {
 					// busy alarm
 					mailSleep -= sleepStep
 					if mailSleep < minSleep {
