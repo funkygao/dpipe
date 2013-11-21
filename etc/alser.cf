@@ -12,7 +12,7 @@
         unguarded: ""
         guarded: "peng.gao@funplusgame.com,zhengkai@gmail.com,yan.zhang@funplusgame.com"
         sleep_start:    300
-        sleep_step:     5
+        sleep_step:     25
         sleep_max:      600
         sleep_min:      150
     }
@@ -131,6 +131,7 @@
             beep_threshold: 1
             msg_regex:      "\\[(.+)\\] (.+?): (.+) - (.+) \\[(.+)\\],(.+)"
             msg_regex_keys: [
+                // level, msg, file, line, host
                 2, 3, 4, 5, 6,
             ]
             create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, msg VARCHAR(200), host CHAR(25), level CHAR(15), src VARCHAR(80));"
