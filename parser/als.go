@@ -111,7 +111,12 @@ func (this *AlsParser) jsonValue(data *json.Json, key, typ string) (val interfac
 	case "int", "money":
 		val, err = data.Get(key).Int()
 	case "base_file":
-		val = filepath.Base(file)
+		var fullFilename string
+		fullFilename, err = data.Get(key).String()
+		if err != nil {
+			return
+		}
+		val = filepath.Base(fullFilename)
 	default:
 		panic("invalid key type: " + typ)
 	}
