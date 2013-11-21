@@ -43,7 +43,10 @@ func (this *JsonLineParser) ParseLine(line string) (area string, ts uint64, msg 
 
 	args = append([]interface{}{area}, args...)
 	this.colorPrintfLn(this.conf.PrintFormat, args...)
-	this.beep()
+	if this.conf.BeepThreshold > 0 {
+		this.beep()
+		this.alarmf(this.conf.PrintFormat, args...)
+	}
 
 	return
 }
