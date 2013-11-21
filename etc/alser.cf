@@ -371,6 +371,7 @@
             colors: [
                 "FgYellow", "Underscore",
             ]
+            beep_threshold: 1
             printf: "%3s %22s %6.4f %15s CacheFail"
             keys:   [
                 {
@@ -381,6 +382,33 @@
                 },
                 {
                     name: "timeout"
+                    type: "float"
+                },
+                {
+                    name: "_log_info.host"
+                }
+            ]
+        },
+
+        // memcache slow
+        //===================================================
+        {
+            id:     "MemcacheSlow"
+            class:  "JsonLineParser"
+            colors: [
+                "FgYellow",
+            ]
+            beep_threshold: 1
+            printf: "%3s %22s %6.4f %15s CacheSlow"
+            keys:   [
+                {
+                    name: "key"
+                    regex:  [
+                        "digit",
+                    ]
+                },
+                {
+                    name: "ts"
                     type: "float"
                 },
                 {
@@ -409,32 +437,6 @@
                     name: "ts"
                     type: "float"
                 },
-            ]
-        },
-
-        // memcache slow
-        //===================================================
-        {
-            id:     "MemcacheSlow"
-            class:  "JsonLineParser"
-            colors: [
-                "FgYellow",
-            ]
-            printf: "%3s %22s %6.4f %15s CacheSlow"
-            keys:   [
-                {
-                    name: "key"
-                    regex:  [
-                        "digit",
-                    ]
-                },
-                {
-                    name: "ts"
-                    type: "float"
-                },
-                {
-                    name: "_log_info.host"
-                }
             ]
         },
 
