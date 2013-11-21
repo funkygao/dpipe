@@ -403,7 +403,7 @@
                 "FgYellow",
             ]
             beep_threshold: 1
-            printf: "%3s %22s %6.4f %15s CacheSlow"
+            printf: "%3s %32s %6.4f %15s CacheSlow"
             keys:   [
                 {
                     name: "key"
