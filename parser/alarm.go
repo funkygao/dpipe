@@ -42,7 +42,7 @@ func runSendAlarmsWatchdog(conf *config.Config) {
 		case <-time.After(time.Second * time.Duration(mailSleep)):
 			if mailBody != "" {
 				go mail.Sendmail(mailTo, fmt.Sprintf("%s - %d", mailTitlePrefix, bodyLines), mailBody)
-				logger.Printf("alarm sent=> %s\n", mailTo)
+				logger.Printf("alarm sent=> %s, sleep=%d\n", mailTo, mailSleep)
 
 				// backoff sleep
 				if bodyLines > 5 {
