@@ -211,6 +211,8 @@
                         "Sorry, someone has logged in on your account from another computer.",
                         "batch token error! pre cur",
                         "payment error: OK",
+                        "new pay : OK",
+                        "new pay : start",
                     ]
                 },
             ]
