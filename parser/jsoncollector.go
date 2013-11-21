@@ -39,7 +39,7 @@ func (this *JsonCollectorParser) ParseLine(line string) (area string, ts uint64,
 		return
 	}
 
-	args, err := this.valuesOfKeys(jsonData)
+	args, err := this.valuesOfJsonKeys(jsonData)
 	if err != nil {
 		return
 	}

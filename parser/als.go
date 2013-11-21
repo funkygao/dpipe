@@ -125,7 +125,7 @@ func (this *AlsParser) jsonValue(data *json.Json, key, typ string) (val interfac
 }
 
 // Extract values of json according config keys
-func (this *AlsParser) valuesOfKeys(data *json.Json) (values []interface{}, err error) {
+func (this *AlsParser) valuesOfJsonKeys(data *json.Json) (values []interface{}, err error) {
 	var currency string
 	var val interface{}
 	values = make([]interface{}, 0)

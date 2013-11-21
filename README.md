@@ -155,3 +155,4 @@ to send alarms via beep/email/IRC/etc.
     sleep rename to window_duration
     use sphinx for full-text search
     websocket for web based alarm
+    replace PhperrorCollectorParser with RegexCollectorParser
