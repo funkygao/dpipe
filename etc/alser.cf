@@ -430,7 +430,7 @@
             colors: [
                 "FgYellow", "Reverse",
             ]
-            printf: "%3s %12s %8s %6.4f %15s MongoSlow"
+            printf: "%3s %15s %8s %6.4f %15s MongoSlow"
             keys:   [
                 {
                     name: "table"
