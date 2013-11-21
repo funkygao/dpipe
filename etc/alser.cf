@@ -430,7 +430,7 @@
             colors: [
                 "FgYellow", "Reverse",
             ]
-            printf: "%3s %12s %8s %6.4f"
+            printf: "%3s %12s %8s %6.4f %15s MongoSlow"
             keys:   [
                 {
                     name: "table"
@@ -441,6 +441,9 @@
                 {
                     name: "ts"
                     type: "float"
+                },
+                {
+                    name: "_log_info.host"
                 },
             ]
         },
