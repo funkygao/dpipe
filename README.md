@@ -156,3 +156,6 @@ to send alarms via beep/email/IRC/etc.
     use sphinx for full-text search
     websocket for web based alarm
     replace PhperrorCollectorParser with RegexCollectorParser
+    click.log
+    level.log
+    lua integration to parse complex log
