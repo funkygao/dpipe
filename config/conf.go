@@ -14,6 +14,7 @@ import (
 // Currently support 2 datasource:
 // db, file
 type ConfGuard struct {
+	Enabled        bool
 	TailLogGlob    string
 	HistoryLogGlob string
 	Tables         string // sql like grammer, e,g. log_%
@@ -121,6 +122,7 @@ func LoadConfig(fn string) (*Config, error) {
 	for i := 0; i < len(guards); i++ {
 		keyPrefix := fmt.Sprintf("guards[%d].", i)
 		guard := ConfGuard{}
+		guard.Enabled = this.Bool(keyPrefix+"enabled", true)
 		guard.TailLogGlob = this.String(keyPrefix+"tail_glob", "")
 		guard.HistoryLogGlob = this.String(keyPrefix+"history_glob", "")
 		guard.Parsers = this.StringList(keyPrefix+"parsers", nil)

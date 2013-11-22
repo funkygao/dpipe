@@ -66,6 +66,9 @@ func invokeWorkers(conf *config.Config, wg *sync.WaitGroup, workersCanWait chan<
 				// only one parser applied
 				continue
 			}
+			if !guard.Enabled {
+				continue
+			}
 
 			for _, dataSource := range guardDataSources(guard) {
 				if _, present := allWorkers[dataSource]; present {
