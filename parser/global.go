@@ -24,7 +24,7 @@ var (
 	dryRun    bool = false
 	daemonize bool = false
 
-	chParserAlarm = make(chan string)
+	chParserAlarm = make(chan string, 10)
 
 	CURRENCY_TABLE = map[string]float32{
 		"IDR": 0.00009,

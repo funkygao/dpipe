@@ -38,7 +38,7 @@ func runSendAlarmsWatchdog(conf *config.Config) {
 				logger.Printf("got alarm: %s\n", line)
 			}
 
-			mailBody += line + gotime.TsToString(int(time.Now().UTC().Unix())) + "\n"
+			mailBody += gotime.TsToString(int(time.Now().UTC().Unix())) + " " + line + "\n"
 			bodyLines += 1
 
 		case <-time.After(time.Second * time.Duration(mailSleep)):
