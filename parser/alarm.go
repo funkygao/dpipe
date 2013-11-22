@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/funkygao/alser/config"
 	mail "github.com/funkygao/alser/sendmail"
+	"github.com/funkygao/gotime"
 	"time"
 )
 
@@ -37,7 +38,7 @@ func runSendAlarmsWatchdog(conf *config.Config) {
 				logger.Printf("got alarm: %s\n", line)
 			}
 
-			mailBody += line + "\n"
+			mailBody += line + gotime.TsToString(int(time.Now().UTC().Unix())) + "\n"
 			bodyLines += 1
 
 		case <-time.After(time.Second * time.Duration(mailSleep)):
