@@ -321,7 +321,7 @@
             class:  "JsonCollectorParser"
             title:  "Click"
             colors: [
-                "FgBlue", "Underscore",
+                "FgGreen", "Underscore",
             ]
             sleep:          580
             beep_threshold: 650
