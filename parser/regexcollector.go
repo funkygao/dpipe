@@ -55,6 +55,13 @@ func (this *RegexCollectorParser) ParseLine(line string) (area string, ts uint64
 			case "base_file":
 				val = filepath.Base(val.(string))
 			}
+            if err != nil {
+                if debug {
+			        logger.Printf("%s invalid msg: %s\n", this.id(), msg)
+                }
+
+                return
+            }
 		}
 
 		args = append(args, val)
