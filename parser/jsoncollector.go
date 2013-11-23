@@ -44,6 +44,15 @@ func (this *JsonCollectorParser) ParseLine(line string) (area string, ts uint64,
 		return
 	}
 
+	if this.conf.InstantFormat != "" {
+		args = append([]interface{}{area}, args...)
+		this.colorPrintfLn(this.conf.InstantFormat, args...)
+		if this.conf.BeepThreshold > 0 {
+			this.beep()
+			this.alarmf(this.conf.InstantFormat, args...)
+		}
+	}
+
 	// insert_stmt must be like INSERT INTO (area, ts, ...)
 	args = append([]interface{}{area, ts}, args...)
 	this.insert(args...)
