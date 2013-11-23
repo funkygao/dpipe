@@ -77,7 +77,7 @@ func (this *AlsParser) ParseLine(line string) (area string, ts uint64, msg strin
 	ts, err = strconv.ParseUint(fields[1], 10, 64)
 	if err != nil {
 		if debug {
-			logger.Printf("[%s]invalid line:", this.id(), line)
+			logger.Printf("[%s]invalid line: %s", this.id(), line)
 		}
 		return
 	}
