@@ -284,14 +284,21 @@
             ]
             sleep:          180
             beep_threshold: 950
-            create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, lv INT, type VARCHAR(60), );"
-            insert_stmt:    "INSERT INTO %s(area, ts, uid) VALUES(?,?,?)"
-            stats_stmt:     "SELECT COUNT(DISTINCT(uid)) AS c, area FROM %s where ts<=? GROUP BY area ORDER BY c DESC"
+            create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, lv INT, type VARCHAR(60), uid INT);"
+            insert_stmt:    "INSERT INTO %s(area, ts, lv, type, uid) VALUES(?,?,?,?,?)"
+            stats_stmt:     "SELECT COUNT(DISTINCT(uid)) AS c, type FROM %s where ts<=? GROUP BY type ORDER BY c DESC"
             dbname:         "click"
-            printf: "%5d %3s"
+            printf: "%5d %s"
             keys: [
                 {
-                    name: "uid"
+                    name: "lv"
+                    type: "int"
+                },
+                {
+                    name: "type"
+                },
+                {
+                    name: "guid"
                     type: "int"
                 },
             ]
