@@ -438,7 +438,7 @@
             colors: [
                 "FgMagenta", "Bright",
             ]
-            sleep:                  123
+            sleep:                  523
             beep_threshold:         80
             create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, uri VARCHAR(50));"
             insert_stmt:    "INSERT INTO %s(area, ts, uri) VALUES(?,?,?)"
