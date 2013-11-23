@@ -354,8 +354,8 @@
             colors: [
                 "FgBlue",
             ]
-            sleep:          180
-            beep_threshold: 950
+            sleep:          580
+            beep_threshold: 3950
             create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, uid INT);"
             insert_stmt:    "INSERT INTO %s(area, ts, uid) VALUES(?,?,?)"
             stats_stmt:     "SELECT COUNT(DISTINCT(uid)) AS c, area FROM %s where ts<=? GROUP BY area ORDER BY c DESC"
@@ -438,13 +438,14 @@
             colors: [
                 "FgMagenta", "Bright",
             ]
-            sleep:                  23
+            sleep:                  123
             beep_threshold:         80
             create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, uri VARCHAR(50));"
             insert_stmt:    "INSERT INTO %s(area, ts, uri) VALUES(?,?,?)"
             stats_stmt:     "SELECT COUNT(*) AS c, area, uri FROM %s WHERE ts<=? GROUP BY area, uri ORDER BY c DESC"
             dbname:         "slowresp"
             printf: "%5d %3s %s"
+            instantf: "SlowPhp %3s %s"
             keys: [
                 {
                     name: "_log_info.uri"
@@ -516,13 +517,13 @@
             ]
             sleep:                  393
             beep_threshold:         10
-            instant:                true
             create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, tbl VARCHAR(50), method VARCHAR(30), t FLOAT, host CHAR(30));"
             insert_stmt:    "INSERT INTO %s(area, ts, tbl, method, t, host) VALUES(?,?,?,?,?,?)"
             stats_stmt:     "SELECT COUNT(*) AS c, method, tbl FROM %s WHERE ts<=? GROUP BY tbl, method ORDER BY c DESC"
             dbname:         "mongoslow"
             persistdb:      "hist_mongoslow"
             title:          "MongoSlow"
+            // instantf's first col is always 'area'
             instantf: "MongoSlow %3s %15s %8s %8.4f %15s"
             printf: "%5d %15s %s"
             keys:   [
