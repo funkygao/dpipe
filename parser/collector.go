@@ -181,17 +181,16 @@ func (this *CollectorParser) createDB() {
 		fmt.Sprintf("%s/%s-%d.%s", DATA_BASEDIR, this.conf.DbName, os.Getpid(),
 			SQLITE3_DBFILE_SUFFIX))
 	this.db = sqldb.NewSqlDb(sqldb.DRIVER_SQLITE3, dsn, logger)
-
-	this.db.CreateDb(fmt.Sprintf(this.conf.CreateTable, this.conf.DbName))
 	this.db.SetDebug(debug)
+	this.db.CreateDb(fmt.Sprintf(this.conf.CreateTable, this.conf.DbName))
 
 	if this.conf.PersistDb != "" {
 		dsn = fmt.Sprintf("file:%s?cache=shared&mode=rwc",
 			fmt.Sprintf("%s/%s.%s", DATA_BASEDIR, this.conf.PersistDb,
 				SQLITE3_DBFILE_SUFFIX))
 		this.pdb = sqldb.NewSqlDb(sqldb.DRIVER_SQLITE3, dsn, logger)
-		this.pdb.CreateDb(fmt.Sprintf(this.conf.CreateTable, this.conf.PersistDb))
 		this.pdb.SetDebug(debug)
+		this.pdb.CreateDb(fmt.Sprintf(this.conf.CreateTable, this.conf.PersistDb))
 	}
 }
 
