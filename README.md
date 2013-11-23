@@ -148,14 +148,10 @@ to send alarms via beep/email/IRC/etc.
 
 ### TODO
 
-    backoff email alarm/priority queue https://github.com/daviddengcn/go-villa
-    IRC alarm channel
-    unit test
+    priority queue https://github.com/daviddengcn/go-villa
     abnormal change LRU in case of OOM
-    sleep rename to window_duration
     use sphinx for full-text search
     websocket for web based alarm
     replace PhperrorCollectorParser with RegexCollectorParser
     click.log
-    level.log
     lua integration to parse complex log
