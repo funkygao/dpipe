@@ -76,8 +76,12 @@ func (this *AlsParser) ParseLine(line string) (area string, ts uint64, msg strin
 	var err error
 	ts, err = strconv.ParseUint(fields[1], 10, 64)
 	if err != nil {
-		panic(err)
+		if debug {
+			logger.Printf("[%s]invalid line:", this.id(), line)
+		}
+		return
 	}
+
 	if ts > 1283931748344 {
 		ts /= 1000 // raw timestamp is in ms
 	}
