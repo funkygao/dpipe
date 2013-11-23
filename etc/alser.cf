@@ -32,6 +32,15 @@
             ]
         },
         {
+            tail_glob:      "/mnt/funplus/logs/fp_rstory/click*"
+            history_glob:   "/mnt/funplus/logs/fp_rstory/history/click*"
+            format:         "als"
+            enabled:        false
+            parsers:        [
+                "FlashClick",
+            ]
+        },
+        {
             tail_glob:      "/mnt/funplus/logs/fp_rstory/dau*"
             history_glob:   "/mnt/funplus/logs/fp_rstory/history/dau*"
             format:         "als"
@@ -264,6 +273,30 @@
             ]
         },
 
+        // click event fired from flash
+        //===================================================
+        {
+            id:     "FlashClick"
+            class:  "JsonCollectorParser"
+            title:  "Click"
+            colors: [
+                "FgBlue", "Underscore",
+            ]
+            sleep:          180
+            beep_threshold: 950
+            create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, lv INT, type VARCHAR(60), );"
+            insert_stmt:    "INSERT INTO %s(area, ts, uid) VALUES(?,?,?)"
+            stats_stmt:     "SELECT COUNT(DISTINCT(uid)) AS c, area FROM %s where ts<=? GROUP BY area ORDER BY c DESC"
+            dbname:         "click"
+            printf: "%5d %3s"
+            keys: [
+                {
+                    name: "uid"
+                    type: "int"
+                },
+            ]
+        },
+
         // dau
         //===================================================
         {
@@ -380,7 +413,7 @@
                 "FgYellow", "Underscore",
             ]
             beep_threshold: 1
-            printf: "%3s %22s %6.4f %15s CacheFail"
+            printf: "%3s %22s %8.4f %15s CacheFail"
             keys:   [
                 {
                     name: "key"
@@ -407,7 +440,7 @@
                 "FgYellow",
             ]
             beep_threshold: 1
-            printf: "%3s %32s %6.4f %15s CacheSlow"
+            printf: "%3s %32s %8.4f %15s CacheSlow"
             keys:   [
                 {
                     name: "key"
@@ -434,7 +467,7 @@
                 "FgYellow", "Reverse",
             ]
             beep_threshold: 1
-            printf: "%3s %15s %8s %6.4f %15s MongoSlow"
+            printf: "%3s %15s %8s %8.4f %15s MongoSlow"
             keys:   [
                 {
                     name: "table"
