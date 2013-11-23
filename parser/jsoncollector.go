@@ -45,11 +45,11 @@ func (this *JsonCollectorParser) ParseLine(line string) (area string, ts uint64,
 	}
 
 	if this.conf.InstantFormat != "" {
-		args = append([]interface{}{area}, args...) // 'area' is always 1st col
-		this.colorPrintfLn(this.conf.InstantFormat, args...)
+        iargs := append([]interface{}{area}, args...) // 'area' is always 1st col
+		this.colorPrintfLn(this.conf.InstantFormat, iargs...)
 		if this.conf.BeepThreshold > 0 {
 			this.beep()
-			this.alarmf(this.conf.InstantFormat, args...)
+			this.alarmf(this.conf.InstantFormat, iargs...)
 		}
 	}
 
