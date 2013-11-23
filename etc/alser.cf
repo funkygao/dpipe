@@ -323,7 +323,7 @@
             colors: [
                 "FgGreen", "Underscore",
             ]
-            sleep:          580
+            sleep:          980
             beep_threshold: 650
             create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, lv INT, type VARCHAR(60), uid INT);"
             insert_stmt:    "INSERT INTO %s(area, ts, lv, type, uid) VALUES(?,?,?,?,?)"
