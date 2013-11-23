@@ -28,6 +28,7 @@ type LineKey struct {
 	Type    string // float, string(default), int, money
 	Contain string
 	Ignores []string
+	Filters []string
 	MaxLen  int
 	Visible bool
 	Regex   []string
@@ -107,6 +108,7 @@ func LoadConfig(fn string) (*Config, error) {
 				key.Type = this.String(prefix+"type", "string")
 				key.Contain = this.String(prefix+"contain", "")
 				key.Ignores = this.StringList(prefix+"ignores", nil)
+				key.Filters = this.StringList(prefix+"filters", nil)
 				key.Regex = this.StringList(prefix+"regex", nil)
 				key.MaxLen = this.Int(prefix+"maxlen", 0)
 				key.Visible = this.Bool(prefix+"visible", true)
@@ -245,6 +247,18 @@ func (this *LineKey) MsgIgnored(msg string) bool {
 				return true
 			}
 		}
+	}
+
+	// filters means only when the key satisfy at least one of the filter rule
+	// will the msg be accepted
+	if this.Filters != nil {
+		for _, f := range this.Filters {
+			if msg == f {
+				return false
+			}
+		}
+
+		return true
 	}
 
 	return false
