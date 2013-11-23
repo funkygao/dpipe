@@ -92,6 +92,9 @@ func invokeWorkers(conf *config.Config, wg *sync.WaitGroup, workersCanWait chan<
 
 				var worker = newWoker(len(allWorkers),
 					dataSource, guard, options.tailmode, wg, mutex, chLines, chAlarm)
+				if conf.Bool("indexer.enabled", false) {
+					// TODO
+				}
 				go worker.Run()
 			}
 		}
