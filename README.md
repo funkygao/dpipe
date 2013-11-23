@@ -155,3 +155,4 @@ to send alarms via beep/email/IRC/etc.
     replace PhperrorCollectorParser with RegexCollectorParser
     click.log
     lua integration to parse complex log
+    merge jsonline with jsoncollector through instant param

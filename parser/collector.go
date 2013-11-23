@@ -22,9 +22,11 @@ type CollectorParser struct {
 
 	*sync.Mutex
 
-	db         *sqldb.SqlDb
-	insertStmt *sql.Stmt
-	statsStmt  *sql.Stmt
+	db          *sqldb.SqlDb
+	pdb         *sqldb.SqlDb // persist db
+	insertStmt  *sql.Stmt
+	pinsertStmt *sql.Stmt // persist
+	statsStmt   *sql.Stmt
 
 	history map[string]int64 // TODO LRU incase of OOM
 
@@ -182,6 +184,15 @@ func (this *CollectorParser) createDB() {
 
 	this.db.CreateDb(fmt.Sprintf(this.conf.CreateTable, this.conf.DbName))
 	this.db.SetDebug(debug)
+
+	if this.conf.PersistDb != "" {
+		dsn = fmt.Sprintf("file:%s?cache=shared&mode=rwc",
+			fmt.Sprintf("%s/%s.%s", DATA_BASEDIR, this.conf.PersistDb,
+				SQLITE3_DBFILE_SUFFIX))
+		this.pdb = sqldb.NewSqlDb(sqldb.DRIVER_SQLITE3, dsn, logger)
+		this.pdb.CreateDb(fmt.Sprintf(this.conf.CreateTable, this.conf.PersistDb))
+		this.pdb.SetDebug(debug)
+	}
 }
 
 func (this *CollectorParser) prepareInsertStmt() {
@@ -190,6 +201,9 @@ func (this *CollectorParser) prepareInsertStmt() {
 	}
 
 	this.insertStmt = this.db.Prepare(fmt.Sprintf(this.conf.InsertStmt, this.conf.DbName))
+	if this.pdb != nil {
+		this.pinsertStmt = this.pdb.Prepare(fmt.Sprintf(this.conf.InsertStmt, this.conf.PersistDb))
+	}
 }
 
 func (this *CollectorParser) prepareStatsStmt() {
@@ -211,6 +225,10 @@ func (this *CollectorParser) insert(args ...interface{}) {
 	_, err := this.insertStmt.Exec(args...)
 	this.Unlock()
 	this.checkError(err)
+
+	if this.pinsertStmt != nil {
+		this.pinsertStmt.Exec(args...)
+	}
 }
 
 // caller is responsible for locking

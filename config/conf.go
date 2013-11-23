@@ -44,8 +44,9 @@ type ConfParser struct {
 	Keys         []LineKey // besides area,ts
 	Colors       []string  // fg, effects, bg
 
-	PrintFormat string // printf
-	ShowSummary bool
+	PrintFormat   string // printf
+	InstantFormat string // instantf, echo for each occurence
+	ShowSummary   bool
 
 	Sleep           int
 	BeepThreshold   int
@@ -56,6 +57,7 @@ type ConfParser struct {
 	CreateTable string
 	InsertStmt  string
 	StatsStmt   string
+	PersistDb   string // will never auto delete for manual analytics
 }
 
 type Config struct {
@@ -83,6 +85,7 @@ func LoadConfig(fn string) (*Config, error) {
 		parser.Id = this.String(keyPrefix+"id", "")
 		parser.Class = this.String(keyPrefix+"class", "")
 		parser.PrintFormat = this.String(keyPrefix+"printf", "")
+		parser.InstantFormat = this.String(keyPrefix+"instantf", "")
 		parser.Title = this.String(keyPrefix+"title", "")
 		parser.MsgRegex = this.String(keyPrefix+"msg_regex", "")
 		parser.MsgRegexKeys = this.StringList(keyPrefix+"msg_regex_keys", nil)
@@ -90,6 +93,7 @@ func LoadConfig(fn string) (*Config, error) {
 		parser.Sleep = this.Int(keyPrefix+"sleep", 10)
 		parser.Colors = this.StringList(keyPrefix+"colors", nil)
 		parser.DbName = this.String(keyPrefix+"dbname", "")
+		parser.PersistDb = this.String(keyPrefix+"persistdb", "")
 		parser.CreateTable = this.String(keyPrefix+"create_table", "")
 		parser.InsertStmt = this.String(keyPrefix+"insert_stmt", "")
 		parser.StatsStmt = this.String(keyPrefix+"stats_stmt", "")
