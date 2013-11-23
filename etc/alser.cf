@@ -521,7 +521,7 @@
             insert_stmt:    "INSERT INTO %s(area, ts, tbl, method, t, host) VALUES(?,?,?,?,?,?)"
             stats_stmt:     "SELECT COUNT(*) AS c, method, tbl FROM %s WHERE ts<=? GROUP BY tbl, method ORDER BY c DESC"
             dbname:         "mongoslow"
-            persistdb:      "hist-mongoslow"
+            persistdb:      "hist_mongoslow"
             title:          "MongoSlow"
             instantf: "MongoSlow %3s %15s %8s %8.4f %15s"
             printf: "%5d %15s %s"
