@@ -243,14 +243,14 @@
             class:  "JsonCollectorParser"
             title:  "LevelUp"
             colors: [
-                "FgGreen", "BgWhite",
+                "FgGreen", "Bright", "BgMagenta",
             ]
             sleep:          909
             create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, frm INT);"
             insert_stmt:    "INSERT INTO %s(area, ts, frm) VALUES(?,?,?)"
             stats_stmt:     "SELECT COUNT(*) AS c, area, frm FROM %s where ts<=? GROUP BY area, frm ORDER BY c DESC LIMIT 20"
             dbname:         "lvup"
-            printf: "%5d %3s %2d"
+            printf: "%5d %3s %2d↑"
             keys: [
                 {
                     name: "from"
