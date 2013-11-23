@@ -50,7 +50,7 @@
             tail_glob:      "/mnt/funplus/logs/fp_rstory/click*"
             history_glob:   "/mnt/funplus/logs/fp_rstory/history/click*"
             format:         "als"
-            enabled:        false
+            enabled:        true
             parsers:        [
                 "FlashClick",
             ]
