@@ -167,7 +167,7 @@
         {
             id:     "Mongo"
             class:  "JsonCollectorParser"
-            title:  "Mongo"
+            title:  "MongoFail"
             colors: [
                 "FgCyan",
                 "Bright",
@@ -423,7 +423,7 @@
         {
             id:     "SlowResponse"
             class:  "JsonCollectorParser"
-            title:  "Slow"
+            title:  "SlowPhp"
             colors: [
                 "FgMagenta", "Bright",
             ]
