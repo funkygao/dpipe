@@ -210,7 +210,7 @@ func (this *AlsParser) blinkColorPrintfLn(format string, args ...interface{}) {
 }
 
 func (this *AlsParser) alarmf(format string, args ...interface{}) {
-	this.chDownstreamAlarm <- fmt.Sprintf("%s %s", fmt.Sprintf(format, args...), this.conf.Title)
+	this.chDownstreamAlarm <- fmt.Sprintf("%10s %s", this.conf.Title, fmt.Sprintf(format, args...))
 }
 
 func (this *AlsParser) beep() {

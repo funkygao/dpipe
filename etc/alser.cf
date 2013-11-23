@@ -233,7 +233,7 @@
         {
             id:     "Mission"
             class:  "JsonCollectorParser"
-            title:  "MissionComplete"
+            title:  "TaskDone"
             colors: [
                 "FgRed", "BgWhite",
             ]
@@ -420,7 +420,7 @@
                 "FgYellow", "Underscore",
             ]
             beep_threshold: 1
-            printf: "%3s %22s %8.4f %15s CacheFail"
+            printf: "CacheFail %3s %22s %8.4f %15s"
             keys:   [
                 {
                     name: "key"
@@ -447,7 +447,7 @@
                 "FgYellow",
             ]
             beep_threshold: 1
-            printf: "%3s %32s %8.4f %15s CacheSlow"
+            printf: "CacheSlow %3s %32s %8.4f %15s"
             keys:   [
                 {
                     name: "key"
@@ -474,7 +474,7 @@
                 "FgYellow", "Reverse",
             ]
             beep_threshold: 1
-            printf: "%3s %15s %8s %8.4f %15s MongoSlow"
+            printf: "MongoSlow %3s %15s %8s %8.4f %15s"
             keys:   [
                 {
                     name: "table"
