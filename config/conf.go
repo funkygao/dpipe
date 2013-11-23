@@ -172,6 +172,16 @@ func (this *Config) hasDupParsers() bool {
 	return false
 }
 
+func (this *Config) CountOfGuards() (c int) {
+	for _, g := range this.Guards {
+		if g.Enabled {
+			c += 1
+		}
+	}
+
+	return
+}
+
 func (this *Config) ParserById(id string) *ConfParser {
 	for _, p := range this.Parsers {
 		if p.Id == id {
