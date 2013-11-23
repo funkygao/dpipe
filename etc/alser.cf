@@ -116,7 +116,7 @@
             history_glob:   "/mnt/funplus/logs/fp_rstory/history/error*"
             format:         "als"
             parsers:        [
-                "Error", "Mongo",
+                "Error", "MongoError",
             ]
         },
         {
@@ -174,7 +174,7 @@
         // mongo error
         //===================================================
         {
-            id:     "Mongo"
+            id:     "MongoError"
             class:  "JsonCollectorParser"
             title:  "MongoFail"
             colors: [
@@ -188,7 +188,7 @@
             create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, msg VARCHAR(200));"
             insert_stmt:    "INSERT INTO %s(area, ts, msg) VALUES(?,?,?)"
             stats_stmt:     "SELECT COUNT(*) AS c, area, msg FROM %s where ts<=? GROUP BY area, msg ORDER BY c DESC"
-            dbname:         "mongo"
+            dbname:         "mongoerr"
             printf: "%5d %3s %s"
             keys: [
                 {
