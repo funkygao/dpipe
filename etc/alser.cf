@@ -146,8 +146,9 @@
         //===================================================
         {
             id:     "PhpError"
-            class:  "PhperrorCollectorParser"
-            title:  "PhpError"
+            class:  "RegexCollectorParser"
+            //class:  "PhperrorCollectorParser"
+            title:  "PhpErr"
             colors: [
                 "FgYellow",
                 "Bright",
@@ -159,14 +160,15 @@
                 // level, msg, file, line, host
                 2, 3, 4, 5, 6,
             ]
-            create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, msg VARCHAR(200), host CHAR(25), level CHAR(15), src VARCHAR(80));"
+            create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, level CHAR(15), msg VARCHAR(200), file VARCHAR(100), line CHAR(10), host CHAR(25));"
+            //create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, msg VARCHAR(200), host CHAR(25), level CHAR(15), src VARCHAR(80));"
             //===================================================
             // insert_stmt must be like INSERT INTO (area, ts, ...)
             //===================================================
-            insert_stmt:    "INSERT INTO %s(area, ts, msg, level, host, src) VALUES(?,?,?,?,?,?)"
-            stats_stmt:     "SELECT COUNT(*) AS c, area, src, msg FROM %s where ts<=? GROUP BY area, src, msg ORDER BY c DESC"
+            insert_stmt:    "INSERT INTO %s(area, ts, level, msg, file, line, host) VALUES(?,?,?,?,?,?,?)"
+            stats_stmt:     "SELECT COUNT(*) AS c, area, file, line, msg FROM %s where ts<=? GROUP BY area, file, line, msg ORDER BY c DESC"
             dbname:         "phperr"
-            printf: "%5d %3s %18s %s"
+            printf: "%5d %3s %28s:%4s %s"
         },
 
         // mongo error
