@@ -24,6 +24,14 @@
     guards: 
     [
         {
+            tail_glob:      "/mnt/funplus/logs/fp_rstory/level_up*"
+            history_glob:   "/mnt/funplus/logs/fp_rstory/history/level_up*"
+            format:         "als"
+            parsers:        [
+                "LevelUp",
+            ]
+        },
+        {
             tail_glob:      "/mnt/funplus/logs/fp_rstory/quest*"
             history_glob:   "/mnt/funplus/logs/fp_rstory/history/quest*"
             format:         "als"
@@ -224,6 +232,28 @@
                         "new pay : OK",
                         "new pay : start",
                     ]
+                },
+            ]
+        },
+
+        // LevelUp
+        //===================================================
+        {
+            id:     "LevelUp"
+            class:  "JsonCollectorParser"
+            title:  "LevelUp"
+            colors: [
+                "FgGreen", "BgWhite",
+            ]
+            sleep:          909
+            create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, frm INT);"
+            insert_stmt:    "INSERT INTO %s(area, ts, frm) VALUES(?,?,?)"
+            stats_stmt:     "SELECT COUNT(*) AS c, area, frm FROM %s where ts<=? GROUP BY area, frm ORDER BY c DESC LIMIT 20"
+            dbname:         "lvup"
+            printf: "%5d %3s %2d"
+            keys: [
+                {
+                    name: "from"
                 },
             ]
         },
