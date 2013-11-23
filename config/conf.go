@@ -39,7 +39,7 @@ type ConfParser struct {
 	Class        string
 	Title        string
 	MsgRegex     string
-	MsgRegexKeys []int
+	MsgRegexKeys []string
 	Enabled      bool
 	Keys         []LineKey // besides area,ts
 	Colors       []string  // fg, effects, bg
@@ -85,7 +85,7 @@ func LoadConfig(fn string) (*Config, error) {
 		parser.PrintFormat = this.String(keyPrefix+"printf", "")
 		parser.Title = this.String(keyPrefix+"title", "")
 		parser.MsgRegex = this.String(keyPrefix+"msg_regex", "")
-		parser.MsgRegexKeys = this.IntList(keyPrefix+"msg_regex_keys", nil)
+		parser.MsgRegexKeys = this.StringList(keyPrefix+"msg_regex_keys", nil)
 		parser.BeepThreshold = this.Int(keyPrefix+"beep_threshold", 0)
 		parser.Sleep = this.Int(keyPrefix+"sleep", 10)
 		parser.Colors = this.StringList(keyPrefix+"colors", nil)

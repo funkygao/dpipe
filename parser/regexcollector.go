@@ -2,7 +2,10 @@ package parser
 
 import (
 	"github.com/funkygao/alser/config"
+	"path/filepath"
 	"regexp"
+	"strconv"
+	"strings"
 )
 
 // Raw msg can be regex'ed
@@ -37,17 +40,24 @@ func (this *RegexCollectorParser) ParseLine(line string) (area string, ts uint64
 	}
 
 	vals := matches[0]
-	if len(vals) <= this.conf.MsgRegexKeys[len(this.conf.MsgRegexKeys)-1] {
-		if debug {
-			logger.Printf("%s invalid msg: %s\n", this.id(), msg)
+	args := make([]interface{}, 0)
+	for _, key := range this.conf.MsgRegexKeys {
+		parts := strings.SplitN(key, ":", 2) // idx:typ
+		idx, _ := strconv.Atoi(parts[0])
+		var val interface{} = vals[idx]
+		if len(parts) > 1 {
+			var err error
+			switch parts[1] {
+			case "float":
+				val, err = strconv.ParseFloat(val.(string), 64)
+			case "int", "money":
+				val, err = strconv.Atoi(val.(string))
+			case "base_file":
+				val = filepath.Base(val.(string))
+			}
 		}
 
-		return
-	}
-
-	args := make([]interface{}, 0)
-	for _, idx := range this.conf.MsgRegexKeys {
-		args = append(args, vals[idx])
+		args = append(args, val)
 	}
 
 	// insert_stmt must be like INSERT INTO (area, ts, ...)
