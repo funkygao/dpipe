@@ -148,7 +148,6 @@
         {
             id:     "PhpError"
             class:  "RegexCollectorParser"
-            //class:  "PhperrorCollectorParser"
             title:  "PhpErr"
             colors: [
                 "FgYellow",

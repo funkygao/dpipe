@@ -152,7 +152,5 @@ to send alarms via beep/email/IRC/etc.
     abnormal change LRU in case of OOM
     use sphinx for full-text search
     websocket for web based alarm
-    replace PhperrorCollectorParser with RegexCollectorParser
-    click.log
     lua integration to parse complex log
     merge jsonline with jsoncollector through instant param

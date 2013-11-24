@@ -8,7 +8,7 @@
                        |
                    ----------------
                   |                |
-         JsonCollectorParser   PhperrorCollectorParser
+         JsonCollectorParser   
 
 */
 package parser
