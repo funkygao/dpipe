@@ -22,12 +22,13 @@ func sendAlarmMails(conf *config.Config, mailBody *string, bodyLines *int) {
 
 	mailSleep := conf.Int("mail.sleep_start", 120)
 	backoffThreshold := conf.Int("mail.backoff_threshold", 10)
+    bodyLineThreshold := conf.Int("line_threshold", 10)
 	maxSleep, minSleep, sleepStep := conf.Int("mail.sleep_max", mailSleep*2),
 		conf.Int("mail.sleep_min", mailSleep/2), conf.Int("mail.sleep_step", 5)
 	for {
 		select {
 		case <-time.After(time.Second * time.Duration(mailSleep)):
-			if *mailBody != "" {
+			if *bodyLines >= bodyLineThreshold {
 				go mail.Sendmail(mailTo, fmt.Sprintf("%s - %d", mailTitlePrefix, *bodyLines), *mailBody)
 				logger.Printf("alarm sent=> %s, sleep=%d\n", mailTo, mailSleep)
 
