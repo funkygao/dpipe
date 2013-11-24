@@ -520,13 +520,13 @@
             beep_threshold:         10
             create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, tbl VARCHAR(50), method VARCHAR(30), t FLOAT, host CHAR(30));"
             insert_stmt:    "INSERT INTO %s(area, ts, tbl, method, t, host) VALUES(?,?,?,?,?,?)"
-            stats_stmt:     "SELECT COUNT(*) AS c, method, tbl FROM %s WHERE ts<=? GROUP BY tbl, method ORDER BY c DESC"
+            stats_stmt:     "SELECT COUNT(*) AS c, area, method, tbl FROM %s WHERE ts<=? GROUP BY area, tbl, method ORDER BY c DESC"
             dbname:         "mongoslow"
             persistdb:      "hist_mongoslow"
             title:          "MongoSlow"
             // instantf's first col is always 'area'
             instantf: "MongoSlow %3s %15s %8s %8.4f %15s"
-            printf: "%5d %15s %s"
+            printf: "%5d %3s %12s %s"
             keys:   [
                 {
                     name: "table"
