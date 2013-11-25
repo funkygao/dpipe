@@ -256,7 +256,7 @@
                 "FgGreen", "Bright", "BgMagenta",
             ]
             sleep:          1909
-            beep_threshold: 300
+            beep_threshold: 400
             create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, frm INT);"
             insert_stmt:    "INSERT INTO %s(area, ts, frm) VALUES(?,?,?)"
             stats_stmt:     "SELECT COUNT(*) AS c, frm FROM %s where ts<=? and area='us' GROUP BY frm ORDER BY c DESC LIMIT 20"
