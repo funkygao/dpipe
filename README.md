@@ -154,3 +154,5 @@ to send alarms via beep/email/IRC/etc.
     websocket for web based alarm
     lua integration to parse complex log
     merge jsonline with jsoncollector through instant param
+
+    logstash
