@@ -10,9 +10,14 @@ import (
 	"strings"
 )
 
+type indexEntry struct {
+	typ  string
+	data json.Json
+}
+
 type Indexer struct {
-	lineIn    chan string // typ:line
-	indexName string      // index name
+	c         chan indexEntry
+	indexName string // index name
 	conf      *config.Config
 }
 
@@ -44,26 +49,23 @@ func (this *Indexer) mainLoop() {
 	api.Port = this.conf.String("indexer.port", "9200")
 	this.indexName = this.conf.String("indexer.index", "rs")
 
-	for line := range this.lineIn {
-		this.store(line)
+	for item := range this.c {
+		this.store(item)
 	}
 }
 
-func (this *Indexer) store(line string) {
+func (this *Indexer) store(item indexEntry) {
 	id, err := this.genUUID()
 	if err != nil {
 		panic(err)
 	}
 
-	parts := strings.SplitN(line, ":", 2)
-	typ, msg := parts[0], parts[1]
-	data, _ := json.NewJson([]byte(msg))
-	response, err := core.Index(false, this.indexName, typ, id, *data)
+	response, err := core.Index(false, this.indexName, item.typ, id, item.data)
 	if err != nil || !response.Ok {
-		logger.Printf("%s %s %#v\n", typ, err, response)
+		logger.Printf("index error[%s] %s %#v\n", item.typ, err, response)
 	}
 }
 
-func (this *Indexer) index(typ, line string) {
-	this.lineIn <- typ + ":" + line
+func (this *Indexer) index(item indexEntry) {
+	this.c <- item
 }
