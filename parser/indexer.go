@@ -11,9 +11,9 @@ import (
 )
 
 type Indexer struct {
-	lineIn chan string // typ:line
-	index  string      // index name
-	conf   *config.Config
+	lineIn    chan string // typ:line
+	indexName string      // index name
+	conf      *config.Config
 }
 
 func newIndexer(conf *config.Config) (this *Indexer) {
@@ -41,8 +41,8 @@ func (this *Indexer) genUUID() (string, error) {
 
 func (this *Indexer) mainLoop() {
 	api.Domain = this.conf.String("indexer.domain", "localhost")
-	api.Port = this.conf.Int("indexer.port", 9200)
-	this.index = this.conf.String("indexer.index", "rs")
+	api.Port = this.conf.String("indexer.port", "9200")
+	this.indexName = this.conf.String("indexer.index", "rs")
 
 	for line := range this.lineIn {
 		this.store(line)
@@ -57,7 +57,8 @@ func (this *Indexer) store(line string) {
 
 	parts := strings.SplitN(line, ":", 2)
 	typ, data := parts[0], parts[1]
-	core.IndexBulk(this.index, typ, id, &time.Now(), data)
+	now := time.Now()
+	core.IndexBulk(this.indexName, typ, id, &now, data)
 }
 
 func (this *Indexer) index(typ, line string) {
