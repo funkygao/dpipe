@@ -7,7 +7,6 @@ import (
 	"github.com/funkygao/alser/config"
 	"github.com/mattbaird/elastigo/api"
 	"github.com/mattbaird/elastigo/core"
-	"strings"
 )
 
 type indexEntry struct {
@@ -24,7 +23,7 @@ type Indexer struct {
 func newIndexer(conf *config.Config) (this *Indexer) {
 	this = new(Indexer)
 	this.conf = conf
-	this.lineIn = make(chan string, 1000)
+	this.c = make(chan string, 1000)
 
 	return
 }
