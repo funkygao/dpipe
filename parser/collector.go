@@ -187,7 +187,7 @@ func (this *CollectorParser) createDB() {
 	if this.conf.PersistDb != "" {
 		dsn = fmt.Sprintf("file:%s?cache=shared&mode=rwc",
 			fmt.Sprintf("%s/%s.%s", DATA_BASEDIR, this.conf.PersistDb,
-				SQLITE3_DBFILE_SUFFIX))
+				PERSIST_DBFILE_SUFFIX))
 		this.pdb = sqldb.NewSqlDb(sqldb.DRIVER_SQLITE3, dsn, logger)
 		this.pdb.SetDebug(debug)
 		this.pdb.CreateDb(fmt.Sprintf(this.conf.CreateTable, this.conf.PersistDb))
