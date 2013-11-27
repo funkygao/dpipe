@@ -11,7 +11,7 @@
     indexer: {
         enabled: false
         domain: "localhost"
-        port: "9200"
+        port: "9300"
         index: "rs"
     }
 
