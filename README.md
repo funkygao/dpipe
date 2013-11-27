@@ -164,3 +164,6 @@ to send alarms via beep/email/IRC/etc.
 
     curl -XGET localhost:9200/error/gameexception/1
     curl -XGET localhost:9200/error/gameexception/_search?q=a=b
+
+    curl -s download.elasticsearch.org/es2unix/es >~/bin/es
+    chmod +x ~/bin/es
