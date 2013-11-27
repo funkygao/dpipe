@@ -3,6 +3,7 @@ package parser
 import (
 	"crypto/rand"
 	"encoding/hex"
+	json "github.com/bitly/go-simplejson"
 	"github.com/funkygao/alser/config"
 	"github.com/mattbaird/elastigo/api"
 	"github.com/mattbaird/elastigo/core"
@@ -55,8 +56,9 @@ func (this *Indexer) store(line string) {
 	}
 
 	parts := strings.SplitN(line, ":", 2)
-	typ, data := parts[0], parts[1]
-	response, err := core.Index(false, this.indexName, typ, id, data)
+	typ, msg := parts[0], parts[1]
+	data, _ := json.NewJson([]byte(msg))
+	response, err := core.Index(false, this.indexName, typ, id, *data)
 	if err != nil || !response.Ok {
 		logger.Printf("%s %+v\n", err, response)
 	}
