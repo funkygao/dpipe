@@ -23,7 +23,7 @@ type Indexer struct {
 func newIndexer(conf *config.Config) (this *Indexer) {
 	this = new(Indexer)
 	this.conf = conf
-	this.c = make(chan string, 1000)
+	this.c = make(chan indexEntry, 1000)
 
 	return
 }
