@@ -59,7 +59,7 @@ func (this *Indexer) store(line string) {
 	typ, data := parts[0], parts[1]
 	//now := time.Now()
 	logger.Println(data)
-	response, err := core.Index(true, this.indexName, typ, id, []byte(data))
+	response, err := core.Index(false, this.indexName, typ, id, []byte(data))
 	if err != nil {
 		panic(err)
 	}
