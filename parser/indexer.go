@@ -7,7 +7,6 @@ import (
 	"github.com/mattbaird/elastigo/api"
 	"github.com/mattbaird/elastigo/core"
 	"strings"
-	//"time"
 )
 
 type Indexer struct {
@@ -57,14 +56,11 @@ func (this *Indexer) store(line string) {
 
 	parts := strings.SplitN(line, ":", 2)
 	typ, data := parts[0], parts[1]
-	//now := time.Now()
-	logger.Println(data)
 	response, err := core.Index(false, this.indexName, typ, id, data)
-	if err != nil {
+	if err != nil || !response.Ok {
 		panic(err)
+		logger.Printf("%s %+v\n", err, response)
 	}
-
-	logger.Println(response)
 }
 
 func (this *Indexer) index(typ, line string) {
