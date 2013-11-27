@@ -60,7 +60,7 @@ func (this *Indexer) store(line string) {
 	data, _ := json.NewJson([]byte(msg))
 	response, err := core.Index(false, this.indexName, typ, id, *data)
 	if err != nil || !response.Ok {
-		logger.Printf("%s %+v\n", err, response)
+		logger.Printf("%s %s %#v\n", typ, err, response)
 	}
 }
 
