@@ -155,4 +155,12 @@ to send alarms via beep/email/IRC/etc.
     lua integration to parse complex log
     merge jsonline with jsoncollector through instant param
 
-    logstash
+    logstash  ElasticSearch
+
+    curl -XPUT localhost:9200/error/gameexception/1 -d '{"a": "b", "c": "d"}'
+    index: error
+    type: gameexception
+    id: 1
+
+    curl -XGET localhost:9200/error/gameexception/1
+    curl -XGET localhost:9200/error/gameexception/_search?q=a=b

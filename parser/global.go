@@ -8,6 +8,7 @@ import (
 
 var (
 	allParsers map[string]Parser = make(map[string]Parser) // key is parserId
+	indexer    *Indexer
 
 	mutex = new(sync.Mutex) // lock across all parsers
 

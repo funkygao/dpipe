@@ -44,6 +44,8 @@ func (this *JsonCollectorParser) ParseLine(line string) (area string, ts uint64,
 		return
 	}
 
+	indexer.index(this.conf.Id, msg)
+
 	if this.conf.InstantFormat != "" {
 		iargs := append([]interface{}{area}, args...) // 'area' is always 1st col
 		this.beep()
