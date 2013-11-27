@@ -58,7 +58,9 @@ func (this *Indexer) store(line string) {
 	parts := strings.SplitN(line, ":", 2)
 	typ, data := parts[0], parts[1]
 	now := time.Now()
-	core.IndexBulk(this.indexName, typ, id, &now, data)
+	if err := core.IndexBulk(this.indexName, typ, id, &now, data); err != nil {
+		logger.Println(err)
+	}
 }
 
 func (this *Indexer) index(typ, line string) {
