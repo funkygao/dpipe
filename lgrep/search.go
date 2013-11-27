@@ -12,6 +12,6 @@ func search(index, typ string, word string) {
 	}
 
 	for i := 0; i < out.Hits.Len(); i++ {
-		fmt.Println(out.Hits.Hits[i])
+		fmt.Println(string(out.Hits.Hits[i].Source))
 	}
 }
