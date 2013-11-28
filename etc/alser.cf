@@ -212,6 +212,7 @@
             id:     "Error"
             class:  "JsonCollectorParser"
             title:  "Error"
+            indexing: false
             colors: [
                 "FgRed",
             ]
