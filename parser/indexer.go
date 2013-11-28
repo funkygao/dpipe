@@ -59,6 +59,10 @@ func (this *Indexer) store(item indexEntry) {
 		panic(err)
 	}
 
+	if debug {
+		logger.Printf("index[%s] type=%s %v\n", this.indexName, item.typ, item.data)
+	}
+
 	response, err := core.Index(false, this.indexName, item.typ, id, item.data)
 	if err != nil || !response.Ok {
 		logger.Printf("index error[%s] %s %#v\n", item.typ, err, response)
