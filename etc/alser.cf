@@ -467,8 +467,8 @@
                 "FgYellow", "Underscore",
             ]
             beep_threshold:         1
-            create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, key VARCHAR(80), to FLOAT, host CHAR(20));"
-            insert_stmt:    "INSERT INTO %s(area, ts, key, to, host) VALUES(?,?,?,?,?)"
+            create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, key VARCHAR(80), elapsed FLOAT, host CHAR(20));"
+            insert_stmt:    "INSERT INTO %s(area, ts, key, elapsed, host) VALUES(?,?,?,?,?)"
             stats_stmt:     "SELECT COUNT(*) AS c, area, key FROM %s WHERE ts<=? GROUP BY area, key ORDER BY c DESC"
             dbname:         "memfail"
             persistdb:      "hist_memfail"
@@ -500,8 +500,8 @@
                 "FgYellow",
             ]
             beep_threshold:         1
-            create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, key VARCHAR(80), to FLOAT, host CHAR(20));"
-            insert_stmt:    "INSERT INTO %s(area, ts, key, to, host) VALUES(?,?,?,?,?)"
+            create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, key VARCHAR(80), elapsed FLOAT, host CHAR(20));"
+            insert_stmt:    "INSERT INTO %s(area, ts, key, elapsed, host) VALUES(?,?,?,?,?)"
             stats_stmt:     "SELECT COUNT(*) AS c, area, key FROM %s WHERE ts<=? GROUP BY area, key ORDER BY c DESC"
             dbname:         "memslow"
             persistdb:      "hist_memslow"
