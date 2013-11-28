@@ -461,12 +461,18 @@
         //===================================================
         {
             id:     "MemcacheFail"
-            class:  "JsonLineParser"
+            class:  "JsonCollectorParser"
             colors: [
                 "FgYellow", "Underscore",
             ]
-            beep_threshold: 1
-            printf: "CacheFail %3s %22s %8.4f %15s"
+            beep_threshold:         1
+            create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, key VARCHAR(80), to FLOAT, host CHAR(20));"
+            insert_stmt:    "INSERT INTO %s(area, ts, key, to, host) VALUES(?,?,?,?,?)"
+            stats_stmt:     "SELECT COUNT(*) AS c, area, key FROM %s WHERE ts<=? GROUP BY area, key ORDER BY c DESC"
+            dbname:         "memfail"
+            persistdb:      "hist_memfail"
+            printf: "%5d %3s %s"
+            instantf: "CacheFail %3s %22s %8.4f %15s"
             keys:   [
                 {
                     name: "key"
@@ -488,12 +494,18 @@
         //===================================================
         {
             id:     "MemcacheSlow"
-            class:  "JsonLineParser"
+            class:  "JsonCollectorParser"
             colors: [
                 "FgYellow",
             ]
-            beep_threshold: 1
-            printf: "CacheSlow %3s %32s %8.4f %15s"
+            beep_threshold:         1
+            create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, key VARCHAR(80), to FLOAT, host CHAR(20));"
+            insert_stmt:    "INSERT INTO %s(area, ts, key, to, host) VALUES(?,?,?,?,?)"
+            stats_stmt:     "SELECT COUNT(*) AS c, area, key FROM %s WHERE ts<=? GROUP BY area, key ORDER BY c DESC"
+            dbname:         "memslow"
+            persistdb:      "hist_memslow"
+            printf: "%5d %3s %s"
+            instantf: "CacheSlow %3s %32s %8.4f %15s"
             keys:   [
                 {
                     name: "key"
