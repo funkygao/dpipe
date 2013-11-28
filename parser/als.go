@@ -68,7 +68,7 @@ func (this *AlsParser) ParseLine(line string) (area string, ts uint64, msg strin
 	fields := strings.SplitN(line, LINE_SPLITTER, LINE_SPLIT_NUM)
 	if len(fields) != LINE_SPLIT_NUM {
 		// weired line, should never happen
-		this.colorPrintfLn("%s", line)
+        this.colorPrintfLn("[%s]weired line: %s", this.id(), line)
 		return
 	}
 

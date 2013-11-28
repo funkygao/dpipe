@@ -466,6 +466,7 @@
             colors: [
                 "FgYellow", "Underscore",
             ]
+            title:  "CacheFail"
             beep_threshold:         1
             create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, key VARCHAR(80), elapsed FLOAT, host CHAR(20));"
             insert_stmt:    "INSERT INTO %s(area, ts, key, elapsed, host) VALUES(?,?,?,?,?)"
@@ -499,6 +500,7 @@
             colors: [
                 "FgYellow",
             ]
+            title:  "CacheSlow"
             beep_threshold:         1
             create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, key VARCHAR(80), elapsed FLOAT, host CHAR(20));"
             insert_stmt:    "INSERT INTO %s(area, ts, key, elapsed, host) VALUES(?,?,?,?,?)"
