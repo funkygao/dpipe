@@ -1,3 +1,7 @@
+/*
+TODO refactor this ugly monster
+too much hidden rules
+*/
 package parser
 
 import (
