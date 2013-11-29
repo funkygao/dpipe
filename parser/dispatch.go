@@ -8,9 +8,7 @@ func createParser(conf *config.ConfParser, chUpstreamAlarm chan<- Alarm, chDowns
 	mutex.Lock()
 	defer mutex.Unlock()
 
-	if conf.Class == "JsonLineParser" {
-		return newJsonLineParser(conf, chUpstreamAlarm, chDownstreamAlarm)
-	} else if conf.Class == "HostLineParser" {
+	if conf.Class == "HostLineParser" {
 		return newHostLineParser(conf, chUpstreamAlarm, chDownstreamAlarm)
 	} else if conf.Class == "RegexCollectorParser" {
 		return newRegexCollectorParser(conf, chUpstreamAlarm, chDownstreamAlarm)
