@@ -245,6 +245,9 @@
                         "payment error: OK",
                         "new pay : OK",
                         "new pay : start",
+                        "Energy Error, Client:",
+                        "batch token error!",
+                        "key error",
                     ]
                 },
             ]
