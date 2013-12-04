@@ -201,7 +201,7 @@ func (this *AlsParser) normalizeBatchToken(msg string) string {
 
 func (this *AlsParser) colorPrintfLn(format string, args ...interface{}) {
 	msg := fmt.Sprintf(format, args...)
-	if daemonize {
+	if background {
 		logger.Println(msg)
 	} else {
 		fmt.Println(this.color + msg + COLOR_MAP["Reset"])
@@ -210,7 +210,7 @@ func (this *AlsParser) colorPrintfLn(format string, args ...interface{}) {
 
 func (this *AlsParser) blinkColorPrintfLn(format string, args ...interface{}) {
 	msg := fmt.Sprintf(format, args...)
-	if daemonize {
+	if background {
 		logger.Println(msg)
 	} else {
 		fmt.Println(this.color + COLOR_MAP["Blink"] + msg + COLOR_MAP["Reset"])

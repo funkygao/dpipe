@@ -42,8 +42,8 @@ func SetDryRun(dr bool) {
 	dryRun = dr
 }
 
-func SetDaemon(d bool) {
-	daemonize = d
+func SetBackground(b bool) {
+	background = b
 }
 
 // Stop all parsers and they will do their cleanup automatically

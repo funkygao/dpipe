@@ -18,7 +18,9 @@ func guard(conf *config.Config) {
 	parser.SetVerbose(options.verbose)
 	parser.SetDebug(options.debug)
 	parser.SetDryRun(options.dryrun)
-	parser.SetDaemon(options.daemon)
+	if options.logfile != "" || options.daemon {
+		parser.SetBackground(true)
+	}
 
 	var lines int = 0
 	if options.tick > 0 { // ticker for reporting workers progress

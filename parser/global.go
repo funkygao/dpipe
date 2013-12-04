@@ -19,11 +19,11 @@ var (
 	syslogngProcessed = regexp.MustCompile(`processed=\'destination\((.+?)\)=(\d+)\'`)
 
 	// passed from main
-	logger    *log.Logger
-	verbose   bool = false
-	debug     bool = false
-	dryRun    bool = false
-	daemonize bool = false
+	logger     *log.Logger
+	verbose    bool = false
+	debug      bool = false
+	dryRun     bool = false
+	background bool = false
 
 	chParserAlarm = make(chan string, 10)
 
