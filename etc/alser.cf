@@ -13,6 +13,7 @@
         domain: "localhost"
         port: "9200"
         index: "rs"
+        geodbfile: "GeoIP.dat"
     }
 
     //===================================================
@@ -319,6 +320,7 @@
                 },
                 {
                     name: "ip"
+                    type: "ip"
                 },
             ]
         },

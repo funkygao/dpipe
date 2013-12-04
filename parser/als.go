@@ -109,7 +109,7 @@ func (this *AlsParser) msgToJson(msg string) (data *json.Json, err error) {
 
 func (this *AlsParser) jsonValue(data *json.Json, key, typ string) (val interface{}, err error) {
 	switch typ {
-	case "string":
+	case "string", "ip":
 		val, err = data.Get(key).String()
 	case "float":
 		val, err = data.Get(key).Float64()
@@ -183,6 +183,9 @@ func (this *AlsParser) valuesOfJsonKeys(data *json.Json) (values []interface{}, 
 		}
 
 		values = append(values, val)
+		if key.Type == "ip" {
+			val = ipToGeo(val)
+		}
 		indexJson.Set(key.Name, val)
 	}
 
