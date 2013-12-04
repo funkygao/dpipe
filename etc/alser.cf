@@ -327,7 +327,7 @@
         {
             id:     "FlashClick"
             class:  "JsonCollectorParser"
-            title:  "Click"
+            title:  "FlashClick"
             colors: [
                 "FgGreen", "Underscore",
             ]
@@ -534,6 +534,7 @@
         {
             id:     "MongoSlow"
             class:  "JsonCollectorParser"
+            title:          "MongoSlow"
             colors: [
                 "FgYellow", "Reverse",
             ]
@@ -544,7 +545,6 @@
             stats_stmt:     "SELECT COUNT(*) AS c, area, method, tbl, server FROM %s WHERE ts<=? GROUP BY area, tbl, method, server ORDER BY c DESC"
             dbname:         "mongoslow"
             persistdb:      "hist_mongoslow"
-            title:          "MongoSlow"
             // instantf's first col is always 'area'
             instantf: "MongoSlow %3s %15s %8s %8.4f %15s %s"
             printf: "%5d %3s %12s %20s %s"
@@ -574,6 +574,7 @@
             id:     "Kernal"
             class:  "HostLineParser"
             enabled: true
+            indexing: false
             title:  "Kernal"
             colors: [
                 "FgWhite", "Reverse",
