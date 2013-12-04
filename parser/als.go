@@ -18,6 +18,7 @@ import (
 	"fmt"
 	json "github.com/bitly/go-simplejson"
 	"github.com/funkygao/alser/config"
+	"os"
 	"path/filepath"
 	"strconv"
 	"strings"
@@ -226,11 +227,7 @@ func (this *AlsParser) alarmf(format string, args ...interface{}) {
 }
 
 func (this *AlsParser) beep() {
-	if daemonize {
-		return
-	}
-
-	fmt.Print(BEEP)
+	fmt.Fprintln(os.Stderr, BEEP)
 }
 
 func (this *AlsParser) checkError(err error) {
