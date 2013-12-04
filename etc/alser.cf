@@ -36,6 +36,20 @@
     guards: 
     [
         {
+            tail_glob:      "/mnt/funplus/logs/fp_rstory/newaccount*"
+            history_glob:   "/mnt/funplus/logs/fp_rstory/history/newaccount*"
+            parsers:        [
+                "NewAccount",
+            ]
+        },
+        {
+            tail_glob:      "/mnt/funplus/logs/fp_rstory/session*"
+            history_glob:   "/mnt/funplus/logs/fp_rstory/history/session*"
+            parsers:        [
+                "Session",
+            ]
+        },
+        {
             tail_glob:      "/mnt/funplus/logs/fp_rstory/level_up*"
             history_glob:   "/mnt/funplus/logs/fp_rstory/history/level_up*"
             format:         "als"
@@ -253,6 +267,62 @@
             ]
         },
 
+        // Session recorded by flash
+        //===================================================
+        {
+            id:     "Session"
+            title:  "CCU"
+            class:  "JsonCollectorParser"
+            colors: [
+                "FgGreen", "BgMagenta",
+            ]
+            sleep:          909
+            beep_threshold: 800
+            create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, guid INT, typ CHAR(10));"
+            insert_stmt:    "INSERT INTO %s(area, ts, guid, typ) VALUES(?,?,?,?)"
+            stats_stmt:     "SELECT COUNT(DISTINCT(guid)) AS c, typ FROM %s where ts<=? and area='us' GROUP BY typ ORDER BY typ"
+            dbname:         "session"
+            printf: "%5d us %s"
+            keys: [
+                {
+                    name: "guid"
+                    type: "int"
+                },
+                {
+                    name: "type"
+                },
+            ]
+        },
+
+        // NewAccount
+        //===================================================
+        {
+            id:     "NewAccount"
+            title:  "NewUser"
+            class:  "JsonCollectorParser"
+            colors: [
+                "FgGreen", "Bright"
+            ]
+            sleep:          2909
+            beep_threshold: 600
+            create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, ref VARCHAR(150), lang CHAR(50), ip CHAR(20));"
+            insert_stmt:    "INSERT INTO %s(area, ts, ref, lang, ip) VALUES(?,?,?,?,?)"
+            stats_stmt:     "SELECT COUNT(*) AS c, area, ref FROM %s where ts<=? GROUP BY area, ref ORDER BY c DESC"
+            dbname:         "newuser"
+            printf: "%5d %3s %s"
+            keys: [
+                {
+                    name: "ref"
+                },
+                {
+                    name: "lang"
+                },
+                {
+                    name: "ip"
+                },
+            ]
+        },
+
         // LevelUp
         //===================================================
         {
@@ -364,14 +434,18 @@
             ]
             sleep:          1580
             beep_threshold: 7950
-            create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, uid INT);"
-            insert_stmt:    "INSERT INTO %s(area, ts, uid) VALUES(?,?,?)"
+            create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, uid INT, day INT);"
+            insert_stmt:    "INSERT INTO %s(area, ts, uid, day) VALUES(?,?,?,?)"
             stats_stmt:     "SELECT COUNT(DISTINCT(uid)) AS c, area FROM %s where ts<=? GROUP BY area ORDER BY c DESC"
             dbname:         "dau"
             printf: "%5d %3s"
             keys: [
                 {
                     name: "uid"
+                    type: "int"
+                },
+                {
+                    name: "date"
                     type: "int"
                 },
             ]
