@@ -3,6 +3,7 @@ package parser
 import (
 	"github.com/bmizerany/assert"
 	conf "github.com/daviddengcn/go-ljson-conf"
+	"regexp"
 	"testing"
 )
 
@@ -10,7 +11,7 @@ func TestAlsParserParseLine(t *testing.T) {
 	line := `us,1381118458069,{"cheater":10301051,"type":"helpFriendsRewardAction","world_id":"100001823535095","user":"100001823535095","_log_info":{"uid":10301051,"script_id":3183040714,"serial":3,"host":"10.255.8.189","ip":"79.215.100.157"}}`
 	p := new(AlsParser)
 	area, ts, msg := p.ParseLine(line)
-	data := p.msgToJson(msg)
+	data, _ := p.msgToJson(msg)
 	var (
 		exptectedTs  = uint64(1381118458069 / 1000)
 		extectedArea = "us"
@@ -63,4 +64,11 @@ func TestParsersConfig(t *testing.T) {
 	t.Logf("%#v\n", parsers)
 	assert.Equal(t, 2, len(parsers))
 
+}
+
+func TestNamedRegexp(t *testing.T) {
+	var myExp = NamedRegexp{regexp.MustCompile(`(?P<first>\d+)\.(\d+).(?P<second>\d+)`)}
+	m := myExp.FindStringSubmatchMap("1234.5678.9")
+	assert.Equal(t, "1234", m["first"])
+	assert.Equal(t, "9", m["second"])
 }
