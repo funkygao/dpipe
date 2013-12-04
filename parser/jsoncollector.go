@@ -3,6 +3,7 @@ package parser
 import (
 	json "github.com/bitly/go-simplejson"
 	"github.com/funkygao/alser/config"
+	"time"
 )
 
 // Child of AlsParser with db(sqlite3) features
@@ -39,14 +40,17 @@ func (this *JsonCollectorParser) ParseLine(line string) (area string, ts uint64,
 		return
 	}
 
-	args, err := this.valuesOfJsonKeys(jsonData)
+	args, indexJson, err := this.valuesOfJsonKeys(jsonData)
 	if err != nil {
 		return
 	}
 
 	if this.conf.Indexing {
-		// let indexer save to index for this entry
-		indexer.index(indexEntry{typ: this.conf.Id, data: *jsonData})
+		indexJson.Set("area", area)
+		indexJson.Set("t", ts)
+
+		date := time.Unix(int64(ts), 0)
+		indexer.c <- indexEntry{typ: this.conf.Id, date: &date, data: indexJson}
 	}
 
 	if this.conf.InstantFormat != "" {

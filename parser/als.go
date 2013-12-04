@@ -8,7 +8,7 @@
                        |
                    ----------------
                   |                |
-         JsonCollectorParser   
+         JsonCollectorParser
 
 */
 package parser
@@ -68,7 +68,7 @@ func (this *AlsParser) ParseLine(line string) (area string, ts uint64, msg strin
 	fields := strings.SplitN(line, LINE_SPLITTER, LINE_SPLIT_NUM)
 	if len(fields) != LINE_SPLIT_NUM {
 		// weired line, should never happen
-        this.colorPrintfLn("[%s]weired line: %s", this.id(), line)
+		this.colorPrintfLn("[%s]weired line: %s", this.id(), line)
 		return
 	}
 
@@ -129,7 +129,9 @@ func (this *AlsParser) jsonValue(data *json.Json, key, typ string) (val interfac
 }
 
 // Extract values of json according config keys
-func (this *AlsParser) valuesOfJsonKeys(data *json.Json) (values []interface{}, err error) {
+func (this *AlsParser) valuesOfJsonKeys(data *json.Json) (values []interface{}, indexJson *json.Json, err error) {
+	indexJson, _ = json.NewJson([]byte("{}"))
+
 	var currency string
 	var val interface{}
 	values = make([]interface{}, 0)
@@ -180,6 +182,7 @@ func (this *AlsParser) valuesOfJsonKeys(data *json.Json) (values []interface{}, 
 		}
 
 		values = append(values, val)
+		indexJson.Set(key.Name, val)
 	}
 
 	return

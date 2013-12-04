@@ -7,11 +7,13 @@ import (
 	"github.com/funkygao/alser/config"
 	"github.com/mattbaird/elastigo/api"
 	"github.com/mattbaird/elastigo/core"
+	"time"
 )
 
 type indexEntry struct {
 	typ  string
-	data json.Json
+	date *time.Time
+	data *json.Json
 }
 
 type Indexer struct {
@@ -48,27 +50,37 @@ func (this *Indexer) mainLoop() {
 	api.Port = this.conf.String("indexer.port", "9200")
 	this.indexName = this.conf.String("indexer.index", "rs")
 
+	done := make(chan bool)
+	indexor := core.NewBulkIndexor(this.conf.Int("indexer.bulk_max_conn", 10))
+	indexor.BulkMaxDocs /= 2   // default is 100, it has mem leakage, so we lower it
+	indexor.BulkMaxBuffer /= 2 // default is 1MB
+	indexor.Run(done)
+
 	for item := range this.c {
-		this.store(item)
+		this.store(indexor, item)
 	}
+
+	indexor.Flush()
+	done <- true
 }
 
-func (this *Indexer) store(item indexEntry) {
-	id, err := this.genUUID()
+func (this *Indexer) store(indexor *core.BulkIndexor, item indexEntry) {
+	docId, err := this.genUUID()
 	if err != nil {
 		panic(err)
 	}
 
 	if debug {
-		logger.Printf("index[%s] type=%s %v\n", this.indexName, item.typ, item.data)
+		logger.Printf("index[%s] type=%s %v\n", this.indexName, item.typ, *item.data)
 	}
 
-	response, err := core.Index(false, this.indexName, item.typ, id, item.data)
-	if err != nil || !response.Ok {
-		logger.Printf("index error[%s] %s %#v\n", item.typ, err, response)
+	jsonData, err := item.data.MarshalJSON()
+	if err != nil {
+		panic(err)
 	}
-}
 
-func (this *Indexer) index(item indexEntry) {
-	this.c <- item
+	err = indexor.Index(this.indexName, item.typ, docId, "", item.date, jsonData) // ttl empty
+	if err != nil {
+		logger.Printf("index error[%s] %s %#v\n", item.typ, err, *item.data)
+	}
 }
