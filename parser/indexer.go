@@ -46,6 +46,11 @@ func (this *Indexer) genUUID() (string, error) {
 }
 
 func (this *Indexer) mainLoop() {
+	if !this.conf.Bool("indexer.enabled", true) {
+		logger.Println("indexer disabled")
+		return
+	}
+
 	api.Domain = this.conf.String("indexer.domain", "localhost")
 	api.Port = this.conf.String("indexer.port", "9200")
 	this.indexName = this.conf.String("indexer.index", "rs")

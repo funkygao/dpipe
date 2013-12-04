@@ -9,7 +9,7 @@
     // 0. indexing
     //===================================================
     indexer: {
-        enabled: false
+        enabled: true
         domain: "localhost"
         port: "9200"
         index: "rs"
