@@ -150,8 +150,11 @@ to send alarms via beep/email/IRC/etc.
 
     priority queue https://github.com/daviddengcn/go-villa
     abnormal change LRU in case of OOM
-    use sphinx for full-text search
     websocket for web based alarm
     lua integration to parse complex log
 
-    logstash  ElasticSearch
+    confirm session/newaccount file format
+    geodbfile   indexer.domain
+
+    es grant access rights
+
