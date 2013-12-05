@@ -57,7 +57,7 @@ func handleInterrupt(sig os.Signal) {
 func setupSignals() {
 	go trapSignals()
 
-	registerSignalHandler(syscall.SIGHUP, handleInterrupt)
+	//registerSignalHandler(syscall.SIGHUP, handleInterrupt)
 	registerSignalHandler(syscall.SIGINT, handleInterrupt)
 	registerSignalHandler(syscall.SIGTERM, handleInterrupt)
 	registerSignalHandler(syscall.SIGUSR2, showWorkers)
