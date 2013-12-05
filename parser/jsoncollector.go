@@ -23,6 +23,10 @@ func newJsonCollectorParser(conf *config.ConfParser, chUpstream chan<- Alarm, ch
 func (this *JsonCollectorParser) ParseLine(line string) (area string, ts uint64, msg string) {
 	area, ts, msg = this.AlsParser.ParseLine(line)
 	if msg == "" {
+		if debug {
+			logger.Println("got empty msg")
+		}
+
 		return
 	}
 
@@ -42,6 +46,10 @@ func (this *JsonCollectorParser) ParseLine(line string) (area string, ts uint64,
 
 	args, indexJson, err := this.valuesOfJsonKeys(jsonData)
 	if err != nil {
+		if debug {
+			logger.Println(err)
+		}
+
 		return
 	}
 
