@@ -37,6 +37,13 @@
     guards: 
     [
         {
+            tail_glob:      "/mnt/funplus/logs/fp_rstory/order*"
+            history_glob:   "/mnt/funplus/logs/fp_rstory/history/order*"
+            parsers:        [
+                "Order",
+            ]
+        },
+        {
             tail_glob:      "/mnt/funplus/logs/fp_rstory/newaccount*"
             history_glob:   "/mnt/funplus/logs/fp_rstory/history/newaccount*"
             parsers:        [
@@ -264,6 +271,36 @@
                         "batch token error!",
                         "key error",
                     ]
+                },
+            ]
+        },
+
+        // Order related
+        //===================================================
+        {
+            id:     "Order"
+            title:  "Order"
+            class:  "JsonCollectorParser"
+            colors: [
+                "FgGreen", "BgMagenta",
+            ]
+            sleep:          1909
+            beep_threshold: 800
+            create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, uid INT, typ CHAR(30), level INT);"
+            insert_stmt:    "INSERT INTO %s(area, ts, uid, typ, level) VALUES(?,?,?,?,?)"
+            stats_stmt:     "SELECT COUNT(*) AS c, area, typ FROM %s where ts<=? GROUP BY rea, typ ORDER BY c DESC"
+            dbname:         "session"
+            printf: "%5d %3s %s"
+            keys: [
+                {
+                    name: "uid"
+                    type: "int"
+                },
+                {
+                    name: "type"
+                },
+                {
+                    name: "level"
                 },
             ]
         },
