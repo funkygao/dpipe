@@ -227,7 +227,7 @@ func (this *AlsParser) alarmf(format string, args ...interface{}) {
 }
 
 func (this *AlsParser) beep() {
-	fmt.Fprintln(os.Stderr, BEEP)
+	fmt.Fprint(os.Stderr, BEEP)
 }
 
 func (this *AlsParser) checkError(err error) {
