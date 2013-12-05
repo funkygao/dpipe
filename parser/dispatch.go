@@ -52,7 +52,7 @@ func InitParsers(pid string, conf *config.Config, chUpstreamAlarm chan<- Alarm) 
 func Dispatch(parserId, line string) {
 	if p, present := allParsers[parserId]; present {
 		if debug {
-			logger.Printf("%s will parse line: %s\n", p, line)
+			logger.Printf("%s will parse line: %s\n", parserId, line)
 		}
 
 		p.ParseLine(line)
