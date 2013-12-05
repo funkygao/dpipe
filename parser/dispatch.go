@@ -21,8 +21,6 @@ func createParser(conf *config.ConfParser, chUpstreamAlarm chan<- Alarm, chDowns
 func InitParsers(pid string, conf *config.Config, chUpstreamAlarm chan<- Alarm) {
 	go runSendAlarmsWatchdog(conf)
 
-	loadGeoDb(conf.String("indexer.geodbfile", ""))
-
 	indexer = newIndexer(conf)
 	go indexer.mainLoop()
 

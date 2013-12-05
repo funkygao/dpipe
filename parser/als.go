@@ -183,11 +183,6 @@ func (this *AlsParser) valuesOfJsonKeys(data *json.Json) (values []interface{}, 
 		}
 
 		values = append(values, val)
-
-		if key.Type == "ip" {
-			// extra field
-			indexJson.Set("loc", ipToGeo(val.(string)))
-		}
 		indexJson.Set(key.Name, val)
 	}
 
