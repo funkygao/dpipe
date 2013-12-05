@@ -47,6 +47,9 @@ func parseFlags() *Option {
 	flag.Usage = showUsage
 
 	flag.Parse()
+	if *debug {
+		*verbose = true
+	}
 
 	return &Option{*verbose, *config, *showversion, *logfile, *debug,
 		*test, *tick, *tailmode, *dryrun, *cpuprof, *parser, *locale, *lock, *daemon,
