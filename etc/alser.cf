@@ -300,7 +300,8 @@
                     name: "type"
                 },
                 {
-                    name: "level"
+                    name: "level",
+                    type: "int"
                 },
             ]
         },
