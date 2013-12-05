@@ -153,7 +153,6 @@ to send alarms via beep/email/IRC/etc.
     websocket for web based alarm
     lua integration to parse complex log
 
-    confirm session/newaccount file format
     geodbfile   indexer.domain
 
     es grant access rights
