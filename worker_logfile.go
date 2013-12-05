@@ -49,7 +49,7 @@ func (this *LogfileWorker) Run() {
 	defer t.Stop()
 
 	if options.verbose {
-		logger.Printf("%s started\n", *this)
+		logger.Printf("%s started %v\n", *this, *t)
 	}
 
 	for line := range t.Lines {
@@ -58,6 +58,9 @@ func (this *LogfileWorker) Run() {
 
 		// feed the parsers one by one
 		for _, parserId := range this.conf.Parsers {
+			if options.debug {
+				logger.Printf("%s got line:%s\n", *this, line.Text)
+			}
 			parser.Dispatch(parserId, line.Text)
 		}
 	}
