@@ -76,7 +76,7 @@ func (this *Indexer) store(indexor *core.BulkIndexor, item indexEntry) {
 	}
 
 	if debug {
-		logger.Printf("index[%s] type=%s %v\n", this.indexName, item.typ, *item.data)
+		logger.Printf("to index[%s] type=%s %v\n", this.indexName, item.typ, *item.data)
 	}
 
 	jsonData, err := item.data.MarshalJSON()
@@ -88,4 +88,9 @@ func (this *Indexer) store(indexor *core.BulkIndexor, item indexEntry) {
 	if err != nil {
 		logger.Printf("index error[%s] %s %#v\n", item.typ, err, *item.data)
 	}
+
+	if debug {
+		logger.Printf("done index[%s] type=%s %v\n", this.indexName, item.typ, *item.data)
+	}
+
 }

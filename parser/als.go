@@ -183,6 +183,10 @@ func (this *AlsParser) valuesOfJsonKeys(data *json.Json) (values []interface{}, 
 		}
 
 		values = append(values, val)
+		if key.Name == "type" {
+			// 'type' is reserved in ElasticSearch
+			key.Name = "typ"
+		}
 		indexJson.Set(key.Name, val)
 	}
 
