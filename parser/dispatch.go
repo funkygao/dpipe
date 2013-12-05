@@ -52,5 +52,7 @@ func InitParsers(pid string, conf *config.Config, chUpstreamAlarm chan<- Alarm) 
 func Dispatch(parserId, line string) {
 	if p, present := allParsers[parserId]; present {
 		p.ParseLine(line)
+	} else {
+		logger.Printf("parser[%s] not found\n", parserId)
 	}
 }
