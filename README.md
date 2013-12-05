@@ -157,3 +157,6 @@ to send alarms via beep/email/IRC/etc.
 
     es grant access rights
 
+    OK: dau, levelup, rcfail, taskdone, newuser, orders, flashclick, revenue
+    NO: CCU
+
