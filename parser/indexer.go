@@ -11,15 +11,16 @@ import (
 )
 
 type indexEntry struct {
-	typ  string
-	date *time.Time
-	data *json.Json
+	indexName string
+	typ       string
+	date      *time.Time
+	data      *json.Json
 }
 
 type Indexer struct {
-	c         chan indexEntry
-	indexName string // index name
-	conf      *config.Config
+	c            chan indexEntry
+	defaultIndex string // index name
+	conf         *config.Config
 }
 
 func newIndexer(conf *config.Config) (this *Indexer) {
@@ -30,21 +31,6 @@ func newIndexer(conf *config.Config) (this *Indexer) {
 	return
 }
 
-// 1914 ns/op from BenchmarkUUID
-func (this *Indexer) genUUID() (string, error) {
-	uuid := make([]byte, 16)
-	n, err := rand.Read(uuid)
-	if n != len(uuid) || err != nil {
-		return "", err
-	}
-
-	// TODO: verify the two lines implement RFC 4122 correctly
-	uuid[8] = 0x80 // variant bits see page 5
-	uuid[4] = 0x40 // version 4 Pseudo Random, see page 7
-
-	return hex.EncodeToString(uuid), nil
-}
-
 func (this *Indexer) mainLoop() {
 	if !this.conf.Bool("indexer.enabled", true) {
 		logger.Println("indexer disabled")
@@ -53,7 +39,7 @@ func (this *Indexer) mainLoop() {
 
 	api.Domain = this.conf.String("indexer.domain", "localhost")
 	api.Port = this.conf.String("indexer.port", "9200")
-	this.indexName = this.conf.String("indexer.index", "rs")
+	this.defaultIndex = this.conf.String("indexer.default_index", "rs")
 
 	done := make(chan bool)
 	indexor := core.NewBulkIndexor(this.conf.Int("indexer.bulk_max_conn", 10))
@@ -70,13 +56,17 @@ func (this *Indexer) mainLoop() {
 }
 
 func (this *Indexer) store(indexor *core.BulkIndexor, item indexEntry) {
+	if item.indexName == "" {
+		item.indexName = this.defaultIndex
+	}
+
 	docId, err := this.genUUID()
 	if err != nil {
 		panic(err)
 	}
 
 	if debug {
-		logger.Printf("to index[%s] type=%s %v\n", this.indexName, item.typ, *item.data)
+		logger.Printf("to index[%s] type=%s %v\n", item.indexName, item.typ, *item.data)
 	}
 
 	jsonData, err := item.data.MarshalJSON()
@@ -84,13 +74,28 @@ func (this *Indexer) store(indexor *core.BulkIndexor, item indexEntry) {
 		panic(err)
 	}
 
-	err = indexor.Index(this.indexName, item.typ, docId, "", item.date, jsonData) // ttl empty
+	err = indexor.Index(item.indexName, item.typ, docId, "", item.date, jsonData) // ttl empty
 	if err != nil {
 		logger.Printf("index error[%s] %s %#v\n", item.typ, err, *item.data)
 	}
 
 	if debug {
-		logger.Printf("done index[%s] type=%s %v\n", this.indexName, item.typ, *item.data)
+		logger.Printf("done index[%s] type=%s %v\n", item.indexName, item.typ, *item.data)
 	}
 
+}
+
+// 1914 ns/op from BenchmarkUUID
+func (this *Indexer) genUUID() (string, error) {
+	uuid := make([]byte, 16)
+	n, err := rand.Read(uuid)
+	if n != len(uuid) || err != nil {
+		return "", err
+	}
+
+	// TODO: verify the two lines implement RFC 4122 correctly
+	uuid[8] = 0x80 // variant bits see page 5
+	uuid[4] = 0x40 // version 4 Pseudo Random, see page 7
+
+	return hex.EncodeToString(uuid), nil
 }

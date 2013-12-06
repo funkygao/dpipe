@@ -66,7 +66,7 @@ func (this *JsonCollectorParser) ParseLine(line string) (area string, ts uint64,
 		indexJson.Set("t", ts)
 
 		date := time.Unix(int64(ts), 0)
-		indexer.c <- indexEntry{typ: this.conf.Title, date: &date, data: indexJson}
+		indexer.c <- indexEntry{indexName: this.conf.IndexName, typ: this.conf.Title, date: &date, data: indexJson}
 	}
 
 	if this.conf.InstantFormat != "" {
