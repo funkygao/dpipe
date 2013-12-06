@@ -315,13 +315,13 @@
             colors: [
                 "FgGreen", "BgMagenta",
             ]
-            sleep:          909
-            beep_threshold: 800
-            create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, guid INT, typ CHAR(10));"
-            insert_stmt:    "INSERT INTO %s(area, ts, guid, typ) VALUES(?,?,?,?)"
-            stats_stmt:     "SELECT COUNT(DISTINCT(guid)) AS c, typ FROM %s where ts<=? and area='us' GROUP BY typ ORDER BY typ"
+            sleep:          1909
+            beep_threshold: 22800
+            create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, guid INT, typ CHAR(20), ver CHAR(10));"
+            insert_stmt:    "INSERT INTO %s(area, ts, guid, typ, ver) VALUES(?,?,?,?,?)"
+            stats_stmt:     "SELECT COUNT(DISTINCT(guid)) AS c, area, typ FROM %s where ts<=? GROUP BY area, typ ORDER BY c DESC"
             dbname:         "session"
-            printf: "%5d us %s"
+            printf: "%5d %3s %s"
             keys: [
                 {
                     name: "guid"
