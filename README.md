@@ -156,3 +156,5 @@ to send alarms via beep/email/IRC/etc.
 
     add indexing to HostLineParser and RegexCollectorParser
 
+    add dimensions e,g. abtype/paid to log json
+
