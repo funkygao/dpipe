@@ -149,14 +149,10 @@ to send alarms via beep/email/IRC/etc.
 ### TODO
 
     priority queue https://github.com/daviddengcn/go-villa
-    abnormal change LRU in case of OOM
     websocket for web based alarm
     lua integration to parse complex log
 
     geodbfile   indexer.domain
 
-    es grant access rights
-
-    OK: dau, levelup, rcfail, taskdone, newuser, orders, flashclick, revenue
-    NO: CCU
+    add indexing to HostLineParser and RegexCollectorParser
 
