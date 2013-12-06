@@ -29,6 +29,13 @@ func newRegexCollectorParser(conf *config.ConfParser, chUpstream chan<- Alarm, c
 
 func (this *RegexCollectorParser) ParseLine(line string) (area string, ts uint64, msg string) {
 	area, ts, msg = this.CollectorParser.ParseLine(line)
+	if ts == 0 {
+		if verbose {
+			logger.Printf("invalid ts: %s\n", line)
+		}
+
+		return
+	}
 
 	matches := this.r.FindAllStringSubmatch(msg, 10000)
 	if len(matches) == 0 {
@@ -55,13 +62,13 @@ func (this *RegexCollectorParser) ParseLine(line string) (area string, ts uint64
 			case "base_file":
 				val = filepath.Base(val.(string))
 			}
-            if err != nil {
-                if debug {
-			        logger.Printf("%s invalid msg: %s\n", this.id(), msg)
-                }
+			if err != nil {
+				if debug {
+					logger.Printf("%s invalid msg: %s\n", this.id(), msg)
+				}
 
-                return
-            }
+				return
+			}
 		}
 
 		args = append(args, val)

@@ -85,6 +85,8 @@ func (this *AlsParser) ParseLine(line string) (area string, ts uint64, msg strin
 
 	if ts > 1283931748344 {
 		ts /= 1000 // raw timestamp is in ms
+	} else if ts < 1262275200 { // 2010/01/01, mark it invalid
+		ts = 0
 	}
 
 	msg = fields[2]

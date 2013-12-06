@@ -23,8 +23,16 @@ func newJsonCollectorParser(conf *config.ConfParser, chUpstream chan<- Alarm, ch
 func (this *JsonCollectorParser) ParseLine(line string) (area string, ts uint64, msg string) {
 	area, ts, msg = this.AlsParser.ParseLine(line)
 	if msg == "" {
-		if debug {
-			logger.Println("got empty msg")
+		if verbose {
+			logger.Printf("got empty msg: %s\n", line)
+		}
+
+		return
+	}
+
+	if ts == 0 {
+		if verbose {
+			logger.Printf("invalid ts: %s\n", line)
 		}
 
 		return
