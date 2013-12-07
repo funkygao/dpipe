@@ -1,3 +1,6 @@
+/*
+currently sqlite3 and mysql are supported
+*/
 package db
 
 import (
@@ -6,6 +9,11 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	_ "github.com/mattn/go-sqlite3"
 	"log"
+)
+
+const (
+	DRIVER_SQLITE3 = "sqlite3"
+	DRIVER_MYSQL   = "mysql"
 )
 
 type SqlDb struct {
