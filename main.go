@@ -13,7 +13,7 @@ import (
 )
 
 func init() {
-	options = parseFlags()
+	parseFlags()
 
 	if options.showversion {
 		showVersion()
@@ -32,23 +32,23 @@ func init() {
 	}
 
 	// must be after daemonize, or the pid will be parent pid
-	logger = newLogger(options)
+	logger = newLogger()
 
 	setupSignals()
 }
 
-func newLogger(option *Option) *log.Logger {
+func newLogger() *log.Logger {
 	var logWriter io.Writer = os.Stdout // default log writer
 	var err error
-	if option.logfile != "" {
-		logWriter, err = os.OpenFile(option.logfile, os.O_APPEND|os.O_CREATE|os.O_RDWR, 0644)
+	if options.logfile != "" {
+		logWriter, err = os.OpenFile(options.logfile, os.O_APPEND|os.O_CREATE|os.O_RDWR, 0644)
 		if err != nil {
 			panic(err)
 		}
 	}
 
 	prefix := fmt.Sprintf("[%d]", os.Getpid()) // prefix with pid
-	if option.debug {
+	if options.debug {
 		return log.New(logWriter, prefix, LOG_OPTIONS_DEBUG)
 	}
 

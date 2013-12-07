@@ -6,7 +6,6 @@ import (
 )
 
 var (
-	options *Option
 	logger  *log.Logger
 
 	BuildID = "unknown" // git version id, passed in from shell

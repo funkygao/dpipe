@@ -7,7 +7,7 @@ import (
 	"runtime"
 )
 
-type Option struct {
+var options struct {
 	verbose     bool
 	config      string
 	showversion bool
@@ -25,35 +25,30 @@ type Option struct {
 	showparsers bool
 }
 
-// parse argv to Option struct
-func parseFlags() *Option {
-	var (
-		verbose     = flag.Bool("v", false, "verbose")
-		config      = flag.String("c", "etc/alser.cf", "config json file")
-		logfile     = flag.String("l", "", "alser log file name")
-		lock        = flag.Bool("lock", true, "lock so that only 1 instance can run")
-		showversion = flag.Bool("version", false, "show version")
-		showparsers = flag.Bool("parsers", false, "show all parsers")
-		debug       = flag.Bool("debug", false, "debug mode")
-		daemon      = flag.Bool("daemon", false, "run as daemon")
-		test        = flag.Bool("test", false, "test mode")
-		tick        = flag.Int("t", TICKER, "tick interval in seconds")
-		tailmode    = flag.Bool("tail", true, "tail mode")
-		dryrun      = flag.Bool("dryrun", false, "dry run")
-		cpuprof     = flag.String("cpuprof", "", "cpu profiling file")
-		parser      = flag.String("parser", "", "only run this parser")
-		locale      = flag.String("locale", "", "only guard this locale")
-	)
+func parseFlags() {
+	flag.BoolVar(&options.verbose, "v", false, "verbose")
+	flag.StringVar(&options.config, "c", "etc/alser.cf", "config json file")
+	flag.StringVar(&options.logfile, "l", "", "alser log file name")
+	flag.BoolVar(&options.lock, "lock", true, "lock so that only 1 instance can run")
+	flag.BoolVar(&options.showversion, "version", false, "show version")
+	flag.BoolVar(&options.showparsers, "parsers", false, "show all parsers")
+	flag.BoolVar(&options.debug, "debug", false, "debug mode")
+	flag.BoolVar(&options.daemon, "daemon", false, "run as daemon")
+	flag.BoolVar(&options.test, "test", false, "test mode")
+	flag.IntVar(&options.tick, "t", TICKER, "tick interval in seconds")
+	flag.BoolVar(&options.tailmode, "tail", true, "tail mode")
+	flag.BoolVar(&options.dryrun, "dryrun", false, "dry run")
+	flag.StringVar(&options.cpuprof, "cpuprof", "", "cpu profiling file")
+	flag.StringVar(&options.parser, "parser", "", "only run this parser")
+	flag.StringVar(&options.locale, "locale", "", "only guard this locale")
+
 	flag.Usage = showUsage
 
 	flag.Parse()
-	if *debug {
-		*verbose = true
+	if options.debug {
+		options.verbose = true
 	}
 
-	return &Option{*verbose, *config, *showversion, *logfile, *debug,
-		*test, *tick, *tailmode, *dryrun, *cpuprof, *parser, *locale, *lock, *daemon,
-		*showparsers}
 }
 
 func showUsage() {
