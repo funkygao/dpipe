@@ -85,18 +85,3 @@ Performing "in-flight" processing of collected data, real time streaming analysi
         |secure |   | debug |   |monitor|   |analyse|
         +-------+   +-------+   +-------+   +-------+
 
-
-### TODO
-
-    priority queue https://github.com/daviddengcn/go-villa
-    websocket for web based alarm
-    lua integration to parse complex log
-
-    refactor ParseLine of jsoncollector/hostline/regexcollector
-
-    geodbfile   indexer.domain
-
-    add indexing to HostLineParser and RegexCollectorParser
-
-    add dimensions e,g. abtype/paid to log json
-
