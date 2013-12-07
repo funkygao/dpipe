@@ -3,6 +3,8 @@ alser
 
 ALS guard 
 
+ALS is short for application logging system
+
 Performing "in-flight" processing of collected data, real time streaming analysis and alarming, and delivering the results to any number of destinations for further analysis.
 
 *   als is aimed to be swiss knife kind tool instead of a complex system.
