@@ -92,6 +92,8 @@ Performing "in-flight" processing of collected data, real time streaming analysi
     websocket for web based alarm
     lua integration to parse complex log
 
+    refactor ParseLine of jsoncollector/hostline/regexcollector
+
     geodbfile   indexer.domain
 
     add indexing to HostLineParser and RegexCollectorParser
