@@ -1,16 +1,14 @@
 alser
 =====
 
-ALS guard
+ALS guard 
 
-Distributed log collector push data to ALS center server where alser will run.
-
-alser keeps eyes on events from logs(defined in conf file) and has rule based engine
-to send alarms via beep/email/IRC/etc.
+Performing "in-flight" processing of collected data, real time streaming analysis and alarming, and delivering the results to any number of destinations for further analysis.
 
 *   als is aimed to be swiss knife kind tool instead of a complex system.
 *   als is different from splunk which is basically a search engine.
 *   als is different from opentsdb which is metrics based while als is event based.
+*   als is like logstash but can do more data manipulations and has feature of real time analysis.
 
 
 [![Build Status](https://travis-ci.org/funkygao/alser.png?branch=master)](https://travis-ci.org/funkygao/alser)
@@ -22,7 +20,7 @@ to send alarms via beep/email/IRC/etc.
 
 ### Architecture
 
-#### Deployment
+#### Overview
 
         +---------+     +---------+     +---------+     +---------+
         | server1 |     | server2 |     | server3 |     | serverN |
@@ -30,7 +28,7 @@ to send alarms via beep/email/IRC/etc.
             |               |               |               |
              -----------------------------------------------
                                     |
-                                    | push log events
+                                    | log events datasources(db | text log)
                                     |
                             +-----------------+
                             |   ALS Server    |
@@ -38,83 +36,25 @@ to send alarms via beep/email/IRC/etc.
                             | alser daemon    |
                             +-----------------+
                                     |
-                                    | send alarm
+                                    | filtering/parsing based on rule engine
                                     |
-                   +------------------------------------+
-                   |            |           |           |
-                 beep         email       IRC          etc
+                                    | output target
+                                    |
+                            +-------------------------------------------+
+                            |                   |           |           |
+                       realtime analysis     indexer     archive    BehaviorDB
+                            |                   |           |           |
+                   +-----------------+          |           |           |
+                   |    |     |      |   ElasticSearch    HDFS      LevelDB/sky
+                 beep email console etc
 
-
-#### Overview
-
-          alser main()
-              |
-          LoadConfig
-              |
-              |-----------------------------------------------------------------
-              |                                                                 |
-              | goN(wait group)                                                 |
-              | each datasource a worker                                -----------------
-              V                                                        | alarm collector |
-          DataSource                                                   |    watchdog     |
-              |                                                         ----------------- 
-           ------------------------------------------                           |
-          |                                          |                          |
-          | logfile                                  | db                       |
-          |                                          |                          |
-        -----------------------         -----------------------                 |
-       |       |       |       |       |       |        |      |                |
-      log1    log2    ...     logN    table1  table2   ...  tableN              |
-      worker  worker  ...     worker   |       |        |      |                |
-       |       |       |       |       |       |        |      |                |
-        -----------------------         -----------------------                 |
-              |                                   |                             |
-               -----------------------------------                              | feed
-                    |                                                           | alarms
-                    | feed lines                                                ^
-                    V                                                           |
-        -----------------------                                                 |
-       |       |       |       |                                                |
-     parser1 parser2  ...   parserM                                             |
-       |       |       |       |                                                |
-        -----------------------                                                 |
-                    |                                                           |
-          --------------------                                                  |
-         |                    |                                                 |
-      handle alarm            ---->---------------------------------------------
-         |
-        ------------
-       |     |      |
-     email console IRC
 
 #### Parsers
 
-        log1  log2  ...  logN
-         |     |          |
-          ----------------
-                |
-                | log content line by line
-                |
-              parser
-                |
-            --------------------------------
-           |                                |
-           |                        go collectAlarms
-           |                                |                every N seconds
-       parse line into columns       +--------------------------------------+
-           |                         | got checkpoint period                |
-           |                         | group by(chkpoint period) order desc |
-       insert into sqlite3(columns)  | delete from db(chkpoint period)      |
-           |                         | send alarm(console/email/irc)        |
-           |                         +--------------------------------------+
-           |                                ^
-           V                                |
-            --------------------------------
-                          |
-                    +----------------+
-                    | sqlite DB file |
-                    +----------------+
-
+*   data filtering
+*   data parsing
+*   data chaining
+*   data monitoring and alarming
 
 ### BI
 
@@ -136,7 +76,7 @@ to send alarms via beep/email/IRC/etc.
                     +-----------------------+
                                 | routing
                                 |
-                                |                           文件落地
+                                |                            persist
                                 |-----------------------------------
              RealTimeAnalysis   |                                   |
              -----------------------------------            +-------------------------+
