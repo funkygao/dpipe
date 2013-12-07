@@ -1,11 +1,13 @@
 package parser
 
 import (
+	json "github.com/bitly/go-simplejson"
 	"github.com/funkygao/alser/config"
 	"path/filepath"
 	"regexp"
 	"strconv"
 	"strings"
+	"time"
 )
 
 // Raw msg can be regex'ed
@@ -72,6 +74,16 @@ func (this *RegexCollectorParser) ParseLine(line string) (area string, ts uint64
 		}
 
 		args = append(args, val)
+	}
+
+	if this.conf.Indexing {
+		indexJson, _ := json.NewJson([]byte("{}"))
+		indexJson.Set("area", area)
+		indexJson.Set("t", ts)
+		indexJson.Set("msg", msg)
+
+		date := time.Unix(int64(ts), 0)
+		indexer.c <- indexEntry{indexName: this.conf.IndexName, typ: this.conf.Title, date: &date, data: indexJson}
 	}
 
 	// insert_stmt must be like INSERT INTO (area, ts, ...)
