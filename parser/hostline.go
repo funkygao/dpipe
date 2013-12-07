@@ -5,9 +5,11 @@ too much hidden rules
 package parser
 
 import (
+	json "github.com/bitly/go-simplejson"
 	"github.com/funkygao/alser/config"
 	"strconv"
 	"strings"
+	"time"
 )
 
 // area,ts,....,hostIp
@@ -84,10 +86,33 @@ func (this *HostLineParser) ParseLine(line string) (area string, ts uint64, msg 
 				continue
 			}
 
+			if this.conf.Indexing {
+				indexJson, _ := json.NewJson([]byte("{}"))
+				indexJson.Set("area", area)
+				indexJson.Set("t", ts)
+				indexJson.Set("host", host)
+				indexJson.Set("ngtyp", p[1])
+				indexJson.Set("ngbytes", val)
+
+				date := time.Unix(int64(ts), 0)
+				indexer.c <- indexEntry{indexName: this.conf.IndexName, typ: this.conf.Title, date: &date, data: indexJson}
+			}
+
 			this.insert(area, ts, p[1], val)
 		}
 
 		return
+	}
+
+	if this.conf.Indexing {
+		indexJson, _ := json.NewJson([]byte("{}"))
+		indexJson.Set("area", area)
+		indexJson.Set("t", ts)
+		indexJson.Set("host", host)
+		indexJson.Set("msg", data)
+
+		date := time.Unix(int64(ts), 0)
+		indexer.c <- indexEntry{indexName: this.conf.IndexName, typ: this.conf.Title, date: &date, data: indexJson}
 	}
 
 	this.colorPrintfLn("%3s %15s %s", area, host, data)
