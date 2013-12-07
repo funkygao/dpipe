@@ -175,6 +175,7 @@
             id:     "PhpError"
             class:  "RegexCollectorParser"
             title:  "PhpErr"
+            indexname: "rsops"
             colors: [
                 "FgYellow",
                 "Bright",
@@ -203,6 +204,7 @@
             id:     "MongoError"
             class:  "JsonCollectorParser"
             title:  "MongoFail"
+            indexname: "rsops"
             colors: [
                 "FgCyan",
                 "Bright",
