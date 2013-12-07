@@ -11,6 +11,11 @@ import (
 	"strings"
 )
 
+const (
+	DATASOURCE_DB   = "db"
+	DATASOURCE_FILE = "file"
+)
+
 // Currently support 2 datasource:
 // db, file
 type ConfGuard struct {
