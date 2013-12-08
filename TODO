@@ -14,3 +14,4 @@
 
 *   add dimensions e,g. abtype/paid to log json
 
+*   alarm mail msg group by type, timestamp
