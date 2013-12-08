@@ -1,7 +1,7 @@
 *   priority queue https://github.com/daviddengcn/go-villa
 *   LRU to keep state of uid based data(e,g. anti-spam)
 
-*   95 99% stats
+*   95 99% stats   github.com/bmizerany/perks
 
 *   websocket for web based alarm
 *   lua integration to parse complex log
