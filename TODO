@@ -19,3 +19,5 @@
 *   maybe Kernal msg needn't send alarm email
 
 *   time based index
+
+*   key type: level, sessionlen, xp/indexonly key
