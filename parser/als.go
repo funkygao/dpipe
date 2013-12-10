@@ -17,10 +17,10 @@ import (
 	"errors"
 	"fmt"
 	json "github.com/bitly/go-simplejson"
+	"github.com/funkygao/als"
 	"github.com/funkygao/alser/config"
 	"os"
 	"path/filepath"
-	"strconv"
 	"strings"
 )
 
@@ -66,30 +66,14 @@ func (this *AlsParser) ParseLine(line string) (area string, ts uint64, msg strin
 		return
 	}
 
-	fields := strings.SplitN(line, LINE_SPLITTER, LINE_SPLIT_NUM)
-	if len(fields) != LINE_SPLIT_NUM {
-		// weired line, should never happen
-		this.colorPrintfLn("[%s]weired line: %s", this.id(), line)
-		return
-	}
-
-	area = fields[0]
 	var err error
-	ts, err = strconv.ParseUint(fields[1], 10, 64)
+	area, ts, msg, err = als.ParseAlsLine(line)
 	if err != nil {
 		if debug {
 			logger.Printf("[%s]invalid line: %s", this.id(), line)
 		}
-		return
 	}
 
-	if ts > 1283931748344 {
-		ts /= 1000 // raw timestamp is in ms
-	} else if ts < 1262275200 { // 2010/01/01, mark it invalid
-		ts = 0
-	}
-
-	msg = fields[2]
 	return
 }
 
@@ -104,7 +88,7 @@ func (this *AlsParser) id() string {
 }
 
 func (this *AlsParser) msgToJson(msg string) (data *json.Json, err error) {
-	data, err = json.NewJson([]byte(msg))
+	data, err = als.MsgToJson(msg)
 
 	return
 }
