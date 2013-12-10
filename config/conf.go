@@ -14,6 +14,8 @@ import (
 const (
 	DATASOURCE_DB   = "db"
 	DATASOURCE_FILE = "file"
+
+	INDEX_YEARMONTH = "@ym"
 )
 
 // Currently support 2 datasource:
@@ -106,7 +108,7 @@ func LoadConfig(fn string) (*Config, error) {
 		parser.StatsStmt = this.String(keyPrefix+"stats_stmt", "")
 		parser.ShowSummary = this.Bool(keyPrefix+"summary", false)
 		parser.Indexing = this.Bool(keyPrefix+"indexing", true)
-		parser.IndexName = this.String(keyPrefix+"indexname", "")
+		parser.IndexName = this.String(keyPrefix+"indexname", INDEX_YEARMONTH)
 		parser.Enabled = this.Bool(keyPrefix+"enabled", true)
 		parser.AbnormalPercent = this.Float(keyPrefix+"abnormal_percent", 1.5)
 		parser.AbnormalBase = this.Int(keyPrefix+"abnormal_base", 10)

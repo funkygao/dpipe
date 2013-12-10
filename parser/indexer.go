@@ -3,10 +3,12 @@ package parser
 import (
 	"crypto/rand"
 	"encoding/hex"
+	"fmt"
 	json "github.com/bitly/go-simplejson"
 	"github.com/funkygao/alser/config"
 	"github.com/mattbaird/elastigo/api"
 	"github.com/mattbaird/elastigo/core"
+	"strings"
 	"time"
 )
 
@@ -58,6 +60,14 @@ func (this *Indexer) mainLoop() {
 func (this *Indexer) store(indexor *core.BulkIndexor, item indexEntry) {
 	if item.indexName == "" {
 		item.indexName = this.defaultIndex
+	}
+	if strings.HasPrefix(item.indexName, config.INDEX_YEARMONTH) {
+		prefix := ""
+		fields := strings.SplitN(item.indexName, ":", 2)
+		if len(fields) == 2 {
+			prefix = fields[1]
+		}
+		item.indexName = fmt.Sprintf("%s%d_%d", prefix, item.date.Year(), item.date.Month())
 	}
 
 	docId, err := this.genUUID()
