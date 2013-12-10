@@ -17,3 +17,5 @@
 *   alarm mail msg group by type, timestamp
 
 *   maybe Kernal msg needn't send alarm email
+
+*   time based index
