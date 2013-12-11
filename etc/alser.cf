@@ -287,7 +287,7 @@
                 "FgGreen", "BgMagenta",
             ]
             sleep:          1909
-            beep_threshold: 3800
+            beep_threshold: 5800
             create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, uid INT, typ CHAR(30), level INT);"
             insert_stmt:    "INSERT INTO %s(area, ts, uid, typ, level) VALUES(?,?,?,?,?)"
             stats_stmt:     "SELECT COUNT(*) AS c, area, typ FROM %s where ts<=? GROUP BY area, typ ORDER BY c DESC"
