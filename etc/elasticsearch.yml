@@ -1,0 +1,19 @@
+index.number_of_shards: 3
+index.number_of_replicas: 0
+
+index.search.slowlog.threshold.query.warn: 10s
+index.indexing.slowlog.threshold.index.warn: 10s
+
+threadpool.bulk.queue_size: -1
+threadpool.index.queue_size: -1
+threadpool.search.queue_size: -1
+
+jmx.create_connector: true
+
+indices.memory.index_buffer_size: 10%
+index.cache.field.type: soft
+index.cache.field.expire: 10m
+
+gateway.type: local
+index.gateway.snapshot_interval: 60s
+index.translog.flush_threshold_ops: 50000
