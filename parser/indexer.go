@@ -65,7 +65,7 @@ func (this *Indexer) store(indexor *core.BulkIndexor, item indexEntry) {
 		prefix := ""
 		fields := strings.SplitN(item.indexName, ":", 2)
 		if len(fields) == 2 {
-			prefix = fields[1]
+			prefix = fields[1] + "_"
 		}
 		item.indexName = fmt.Sprintf("%s%d_%d", prefix, item.date.Year(), item.date.Month())
 	}
