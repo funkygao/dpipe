@@ -13,6 +13,7 @@ jmx.create_connector: true
 indices.memory.index_buffer_size: 10%
 index.cache.field.type: soft
 index.cache.field.expire: 10m
+index.cache.field.max_size: 50000
 
 gateway.type: local
 index.gateway.snapshot_interval: 60s
