@@ -3,7 +3,7 @@ package parser
 import (
 	"bytes"
 	"fmt"
-	"github.com/funkygao/alser/config"
+	"github.com/funkygao/alser/rule"
 	mail "github.com/funkygao/alser/sendmail"
 	"github.com/funkygao/gotime"
 	"time"

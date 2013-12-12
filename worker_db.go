@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"compress/zlib"
 	"fmt"
-	"github.com/funkygao/alser/config"
+	"github.com/funkygao/alser/rule"
 	sqldb "github.com/funkygao/alser/db"
 	"github.com/funkygao/alser/parser"
 	"io"

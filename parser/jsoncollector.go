@@ -2,7 +2,7 @@ package parser
 
 import (
 	json "github.com/bitly/go-simplejson"
-	"github.com/funkygao/alser/config"
+	"github.com/funkygao/alser/rule"
 	"time"
 )
 

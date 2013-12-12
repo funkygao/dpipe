@@ -18,7 +18,7 @@ import (
 	"fmt"
 	json "github.com/bitly/go-simplejson"
 	"github.com/funkygao/als"
-	"github.com/funkygao/alser/config"
+	"github.com/funkygao/alser/rule"
 	"os"
 	"path/filepath"
 	"strings"

@@ -5,7 +5,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	json "github.com/bitly/go-simplejson"
-	"github.com/funkygao/alser/config"
+	"github.com/funkygao/alser/rule"
 	"github.com/mattbaird/elastigo/api"
 	"github.com/mattbaird/elastigo/core"
 	"strings"

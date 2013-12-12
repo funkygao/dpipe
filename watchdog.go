@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/funkygao/alser/config"
+	"github.com/funkygao/alser/rule"
 	"github.com/funkygao/alser/parser"
 	mail "github.com/funkygao/alser/sendmail"
 	"github.com/funkygao/gofmt"

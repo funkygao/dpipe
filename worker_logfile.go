@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/funkygao/alser/config"
+	"github.com/funkygao/alser/rule"
 	"github.com/funkygao/alser/parser"
 	"github.com/funkygao/tail"
 	"os"

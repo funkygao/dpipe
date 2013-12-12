@@ -6,7 +6,7 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
-	"github.com/funkygao/alser/config"
+	"github.com/funkygao/alser/rule"
 	sqldb "github.com/funkygao/alser/db"
 	"github.com/funkygao/gotime"
 	"os"

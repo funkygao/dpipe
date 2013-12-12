@@ -1,7 +1,7 @@
 package parser
 
 import (
-	"github.com/funkygao/alser/config"
+	"github.com/funkygao/alser/rule"
 	"log"
 )
 
