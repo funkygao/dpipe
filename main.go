@@ -73,7 +73,7 @@ func main() {
 		}
 	}()
 
-	// load the big biz logic config file
+	// load the rule engine
 	conf, err := config.LoadConfig(options.config)
 	if err != nil || conf == nil {
 		panic(err)
