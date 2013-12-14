@@ -1,7 +1,10 @@
 package main
 
 import (
+	"fmt"
+	"io/ioutil"
 	"os"
+	"syscall"
 )
 
 func instanceLocked() bool {
@@ -10,9 +13,12 @@ func instanceLocked() bool {
 }
 
 func lockInstance() {
-	file, err := os.Create(LOCKFILE)
-	if err != nil {
+	pid := fmt.Sprintf("%d", os.Getpid())
+	if err := ioutil.WriteFile(LOCKFILE, []byte(pid), 0644); err != nil {
 		panic(err)
 	}
-	defer file.Close()
+}
+
+func unlockInstance() {
+	syscall.Unlink(LOCKFILE)
 }

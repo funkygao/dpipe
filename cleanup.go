@@ -3,12 +3,11 @@ package main
 import (
 	"os"
 	"runtime/pprof"
-	"syscall"
 )
 
 func cleanup() {
 	if options.lock {
-		syscall.Unlink(LOCKFILE) // cleanup lock file
+		unlockInstance()
 	}
 
 	if options.cpuprof != "" {
@@ -22,6 +21,7 @@ func cleanup() {
 
 func shutdown() {
 	cleanup()
+
 	logger.Println("terminated")
 	os.Exit(0)
 }
