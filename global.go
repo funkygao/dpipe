@@ -6,7 +6,7 @@ import (
 )
 
 var (
-	logger  *log.Logger
+	logger *log.Logger
 
 	BuildID = "unknown" // git version id, passed in from shell
 
@@ -15,9 +15,6 @@ var (
 )
 
 const (
-	VERSION = "0.4.stable"
-	AUTHOR  = "gaopeng"
-
 	LOG_OPTIONS       = log.Ldate | log.Ltime
 	LOG_OPTIONS_DEBUG = log.Ldate | log.Lshortfile | log.Ltime | log.Lmicroseconds
 
