@@ -30,14 +30,23 @@ type ConfGuard struct {
 	Parsers []string
 }
 
+// Key data sink to 4 kinds of targets
+// ======== ========== ==============
+// sqldb(d) indexer(i) sink
+// ======== ========== ==============
+//        Y Y          di, default
+//        Y N          d
+//        N Y          i
+//        N N          validator only
+// ======== ========== ==============
 type LineKey struct {
 	Name    string
 	Type    string // float, string(default), int, money
 	Contain string // only being validator instead of data
 	Ignores []string
-	Filters []string
-	MaxLen  int
+	Filters []string // currently not used yet TODO
 	Regex   []string
+	Sink    string // ai,a,i
 }
 
 type ConfParser struct {
@@ -121,11 +130,16 @@ func LoadConfig(fn string) (*Config, error) {
 				key.Name = this.String(prefix+"name", "")
 				key.Type = this.String(prefix+"type", "string")
 				key.Contain = this.String(prefix+"contain", "")
+				key.Sink = this.String(prefix+"sink", "di")
 				key.Ignores = this.StringList(prefix+"ignores", nil)
 				key.Filters = this.StringList(prefix+"filters", nil)
 				key.Regex = this.StringList(prefix+"regex", nil)
-				key.MaxLen = this.Int(prefix+"maxlen", 0)
 				parser.Keys = append(parser.Keys, key)
+
+				if key.Contain != "" {
+					// validator only, will never sink to db or indexer
+					key.Sink = ""
+				}
 			}
 		}
 

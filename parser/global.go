@@ -99,7 +99,7 @@ const (
 )
 
 const (
-	KEY_TYPE_STRING   = "string"
+	KEY_TYPE_STRING   = "string" // default type
 	KEY_TYPE_IP       = "ip"
 	KEY_TYPE_FLOAT    = "float"
 	KEY_TYPE_INT      = "int"
