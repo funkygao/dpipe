@@ -2,14 +2,20 @@ package parser
 
 import (
 	"github.com/bmizerany/assert"
-	conf "github.com/daviddengcn/go-ljson-conf"
+	"github.com/funkygao/alser/rule"
 	"regexp"
 	"testing"
+	"time"
 )
 
 func TestAlsParserParseLine(t *testing.T) {
+	conf, err := config.LoadRuleEngine("../etc/alser.cf")
+	if err != nil || conf == nil {
+		panic(err)
+	}
 	line := `us,1381118458069,{"cheater":10301051,"type":"helpFriendsRewardAction","world_id":"100001823535095","user":"100001823535095","_log_info":{"uid":10301051,"script_id":3183040714,"serial":3,"host":"10.255.8.189","ip":"79.215.100.157"}}`
 	p := new(AlsParser)
+	p.conf = conf.ParserById("Dau")
 	area, ts, msg := p.ParseLine(line)
 	data, _ := p.msgToJson(msg)
 	var (
@@ -55,20 +61,23 @@ func TestPhperrorRegexp(t *testing.T) {
 	assert.Equal(t, "Undefined index: incProduct ", matches[3])
 }
 
-func TestParsersConfig(t *testing.T) {
-	cf, err := conf.Load("../conf/parsers.cf")
-	assert.Equal(t, err, nil)
-
-	assert.Equal(t, "MemcacheTimeout", cf.String("parsers[1].name", ""))
-	parsers := cf.List("parsers", nil)
-	t.Logf("%#v\n", parsers)
-	assert.Equal(t, 2, len(parsers))
-
-}
-
 func TestNamedRegexp(t *testing.T) {
 	var myExp = NamedRegexp{regexp.MustCompile(`(?P<first>\d+)\.(\d+).(?P<second>\d+)`)}
 	m := myExp.FindStringSubmatchMap("1234.5678.9")
 	assert.Equal(t, "1234", m["first"])
 	assert.Equal(t, "9", m["second"])
+}
+
+func TestIndexEntryNormalizedIndexName(t *testing.T) {
+	d := time.Unix(int64(1387274365), 0)
+	e := indexEntry{indexName: "ab", date: &d}
+	t.Logf("%+v %+v %v\n", e.date, e.date.Year(), e.date.Month())
+	assert.Equal(t, "ab", e.normalizedIndexName(""))
+
+	e = indexEntry{indexName: "@ym"}
+	assert.Equal(t, "def_1013_12", e.normalizedIndexName("def"))
+
+	e = indexEntry{indexName: "haha@ym"}
+	assert.Equal(t, "haha_1013_12", e.normalizedIndexName("def"))
+
 }

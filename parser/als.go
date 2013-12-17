@@ -2,13 +2,13 @@
 
            AlsParser
                |
-        ------------------------------------
-       |               |                    |
-   JsonLineParser  CollectorParser   HostLineParser
+        ---------------
+       |               |                    
+                   CollectorParser   
                        |
                    ----------------
                   |                |
-         JsonCollectorParser
+         JsonCollectorParser   HostLineParser
 
 */
 package parser

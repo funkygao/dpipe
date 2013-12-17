@@ -58,25 +58,14 @@ func (this *Indexer) mainLoop() {
 }
 
 func (this *Indexer) store(indexor *core.BulkIndexor, item indexEntry) {
-	if item.indexName == "" {
-		item.indexName = this.defaultIndex
-	}
-	if strings.HasPrefix(item.indexName, config.INDEX_YEARMONTH) {
-		prefix := ""
-		fields := strings.SplitN(item.indexName, ":", 2)
-		if len(fields) == 2 {
-			prefix = fields[1] + "_"
-		}
-		item.indexName = fmt.Sprintf("%s%d_%d", prefix, item.date.Year(), item.date.Month())
-	}
-
+	indexName := item.normalizedIndexName(this.defaultIndex)
 	docId, err := this.genUUID()
 	if err != nil {
 		panic(err)
 	}
 
 	if debug {
-		logger.Printf("to index[%s] type=%s %v\n", item.indexName, item.typ, *item.data)
+		logger.Printf("to index[%s] type=%s %v\n", indexName, item.typ, *item.data)
 	}
 
 	jsonData, err := item.data.MarshalJSON()
@@ -108,4 +97,22 @@ func (this *Indexer) genUUID() (string, error) {
 	uuid[4] = 0x40 // version 4 Pseudo Random, see page 7
 
 	return hex.EncodeToString(uuid), nil
+}
+
+func (this *indexEntry) normalizedIndexName(defaultIndex string) string {
+	if this.indexName == "" {
+		return defaultIndex
+	}
+
+	if strings.HasSuffix(this.indexName, config.INDEX_YEARMONTH) {
+		prefix := defaultIndex
+		fields := strings.SplitN(this.indexName, "@", 2)
+		if len(fields) == 2 {
+			// e,g. rs@ym
+			prefix = fields[0]
+		}
+		return fmt.Sprintf("%s_%d_%d", prefix, this.date.Year(), this.date.Month())
+	}
+
+	return this.indexName
 }
