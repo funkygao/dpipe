@@ -32,12 +32,9 @@ type geoPoint struct {
 	Lon float32 `json:"lon"`
 }
 
-func loadGeoDb(geodbfile string) {
-	var err error
+func loadGeoDb(geodbfile string) (err error) {
 	geo, err = geoip.Open(geodbfile)
-	if err != nil {
-		logger.Printf("failed to load geoip: %s\n", geodbfile)
-	}
+	return
 }
 
 func geoEnabled() bool {

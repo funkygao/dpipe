@@ -87,6 +87,11 @@ func createParser(conf *config.ConfParser, chUpstreamAlarm chan<- Alarm, chDowns
 func InitParsers(pid string, conf *config.Config, chUpstreamAlarm chan<- Alarm) {
 	go runSendAlarmsWatchdog(conf)
 
+	geodbfile := conf.String("indexer.geodbfile", "/opt/local/share/GeoIP/GeoLiteCity.dat")
+	if err := loadGeoDb(geodbfile); err != nil {
+		logger.Printf("failed to load geoip: %s\n", geodbfile)
+	}
+
 	indexer = newIndexer(conf)
 	go indexer.mainLoop()
 
