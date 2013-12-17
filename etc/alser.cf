@@ -13,7 +13,7 @@
         domain: "localhost"
         port: "9200"
         default_index: "rs"
-        geodbfile: "GeoIP.dat"
+        geodbfile: "/opt/local/share/GeoIP/GeoLiteCity.dat"
     }
 
     //===================================================
