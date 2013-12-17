@@ -106,12 +106,12 @@ func (this *indexEntry) normalizedIndexName(defaultIndex string) string {
 
 	if strings.HasSuffix(this.indexName, config.INDEX_YEARMONTH) {
 		prefix := defaultIndex
-		fields := strings.SplitN(this.indexName, "@", 2)
-		if len(fields) == 2 {
+		fields := strings.SplitN(this.indexName, config.INDEX_YEARMONTH, 2)
+		if fields[0] != "" {
 			// e,g. rs@ym
 			prefix = fields[0]
 		}
-		return fmt.Sprintf("%s_%d_%d", prefix, this.date.Year(), this.date.Month())
+		return fmt.Sprintf("%s_%d_%d", prefix, this.date.Year(), int(this.date.Month()))
 	}
 
 	return this.indexName

@@ -69,15 +69,14 @@ func TestNamedRegexp(t *testing.T) {
 }
 
 func TestIndexEntryNormalizedIndexName(t *testing.T) {
-	d := time.Unix(int64(1387274365), 0)
-	e := indexEntry{indexName: "ab", date: &d}
-	t.Logf("%+v %+v %v\n", e.date, e.date.Year(), e.date.Month())
+	date := time.Unix(int64(1387274365), 0) // 2013-12-17 17:59:25 +0800 CST
+
+	e := indexEntry{indexName: "ab", typ: "test", date: &date}
 	assert.Equal(t, "ab", e.normalizedIndexName(""))
 
-	e = indexEntry{indexName: "@ym"}
-	assert.Equal(t, "def_1013_12", e.normalizedIndexName("def"))
+	e = indexEntry{indexName: "@ym", date: &date}
+	assert.Equal(t, "def_2013_12", e.normalizedIndexName("def"))
 
-	e = indexEntry{indexName: "haha@ym"}
-	assert.Equal(t, "haha_1013_12", e.normalizedIndexName("def"))
-
+	e = indexEntry{indexName: "haha@ym", date: &date}
+	assert.Equal(t, "haha_2013_12", e.normalizedIndexName("def"))
 }
