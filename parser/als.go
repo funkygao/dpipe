@@ -95,13 +95,13 @@ func (this *AlsParser) msgToJson(msg string) (data *json.Json, err error) {
 
 func (this *AlsParser) jsonValue(data *json.Json, key, typ string) (val interface{}, err error) {
 	switch typ {
-	case "string", "ip":
+	case KEY_TYPE_STRING, KEY_TYPE_IP:
 		val, err = data.Get(key).String()
-	case "float":
+	case KEY_TYPE_FLOAT:
 		val, err = data.Get(key).Float64()
-	case "int", "money":
+	case KEY_TYPE_INT, KEY_TYPE_MONEY:
 		val, err = data.Get(key).Int()
-	case "base_file":
+	case KEY_TYPE_BASEFILE:
 		var fullFilename string
 		fullFilename, err = data.Get(key).String()
 		if err != nil {
@@ -124,7 +124,7 @@ func (this *AlsParser) valuesOfJsonKeys(data *json.Json) (values []interface{}, 
 	values = make([]interface{}, 0)
 
 	for _, key := range this.conf.Keys {
-		keyParts := strings.SplitN(key.Name, ".", 2) // only 1 dot permitted
+		keyParts := strings.SplitN(key.Name, ".", 2) // only 1 dot permitted FIXME
 		if len(keyParts) > 1 {
 			subData := data.Get(keyParts[0])
 			val, err = this.jsonValue(subData, keyParts[1], key.Type)
@@ -160,26 +160,27 @@ func (this *AlsParser) valuesOfJsonKeys(data *json.Json) (values []interface{}, 
 			}
 		}
 
-		if strings.HasSuffix(key.Name, "currency") {
+		if strings.HasSuffix(key.Name, KEY_NAME_CURRENCY) {
 			currency = val.(string)
 		}
-		if key.Type == "money" && currency != "" { // currency key必须在money之前定义
+		if key.Type == KEY_TYPE_MONEY && currency != "" { // currency key必须在money之前定义
 			money := float32(val.(int)) * CURRENCY_TABLE[currency]
 			val = int(money) / 100 // 以分为单位，而不是元
 		}
 
 		values = append(values, val)
+
+		if key.Type == KEY_TYPE_IP && geoEnabled() {
+			// extra geo point info
+			indexJson.Set(KEY_NAME_LOCATION, ipToGeo(val.(string)))
+		}
+
 		if key.Name == "type" {
 			// 'type' is reserved in ElasticSearch
 			key.Name = "typ"
 		}
 
 		indexJson.Set(key.Name, val)
-
-		if key.Type == "ip" && geoEnabled() {
-			// extra geo point info
-			indexJson.Set("loc", ipToGeo(val.(string)))
-		}
 	}
 
 	return

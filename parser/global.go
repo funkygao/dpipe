@@ -97,3 +97,16 @@ const (
 
 	INDEX_YEARMONTH = "@ym"
 )
+
+const (
+	KEY_TYPE_STRING   = "string"
+	KEY_TYPE_IP       = "ip"
+	KEY_TYPE_FLOAT    = "float"
+	KEY_TYPE_INT      = "int"
+	KEY_TYPE_MONEY    = "money"
+	KEY_TYPE_BASEFILE = "base_file"
+
+	KEY_NAME_CURRENCY = "currency"
+	KEY_NAME_LOCATION = "loc"
+	KEY_NAME_TYPE     = "typ"
+)
