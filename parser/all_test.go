@@ -61,13 +61,6 @@ func TestPhperrorRegexp(t *testing.T) {
 	assert.Equal(t, "Undefined index: incProduct ", matches[3])
 }
 
-func TestNamedRegexp(t *testing.T) {
-	var myExp = NamedRegexp{regexp.MustCompile(`(?P<first>\d+)\.(\d+).(?P<second>\d+)`)}
-	m := myExp.FindStringSubmatchMap("1234.5678.9")
-	assert.Equal(t, "1234", m["first"])
-	assert.Equal(t, "9", m["second"])
-}
-
 func TestIndexEntryNormalizedIndexName(t *testing.T) {
 	date := time.Unix(int64(1387274365), 0) // 2013-12-17 17:59:25 +0800 CST
 
