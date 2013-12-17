@@ -36,14 +36,6 @@ func (this *HostLineParser) ParseLine(line string) (area string, ts uint64, msg 
 		return
 	}
 
-	if ts == 0 {
-		if verbose {
-			logger.Printf("invalid ts: %s\n", line)
-		}
-
-		return
-	}
-
 	parts := strings.Split(msg, ",")
 	n := len(parts)
 	host, data := parts[n-1], strings.Join(parts[:n-1], ",")

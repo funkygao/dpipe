@@ -30,14 +30,6 @@ func (this *JsonCollectorParser) ParseLine(line string) (area string, ts uint64,
 		return
 	}
 
-	if ts == 0 {
-		if verbose {
-			logger.Printf("invalid ts: %s\n", line)
-		}
-
-		return
-	}
-
 	var (
 		jsonData *json.Json
 		err      error
