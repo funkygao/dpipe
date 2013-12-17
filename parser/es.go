@@ -1,3 +1,6 @@
+/*
+ElasticSearch only parser
+*/
 package parser
 
 import (
@@ -6,21 +9,19 @@ import (
 	"time"
 )
 
-// Child of AlsParser with db(sqlite3) features
-type JsonCollectorParser struct {
-	CollectorParser
+// area,ts,json
+type EsParser struct {
+	AlsParser
 }
 
-func newJsonCollectorParser(conf *config.ConfParser, chUpstream chan<- Alarm, chDownstream chan<- string) (this *JsonCollectorParser) {
-	this = new(JsonCollectorParser)
+func newEsParser(conf *config.ConfParser, chUpstream chan<- Alarm, chDownstream chan<- string) (this *EsParser) {
+	this = new(EsParser)
 	this.init(conf, chUpstream, chDownstream)
-
-	go this.CollectAlarms()
 
 	return
 }
 
-func (this *JsonCollectorParser) ParseLine(line string) (area string, ts uint64, msg string) {
+func (this *EsParser) ParseLine(line string) (area string, ts uint64, msg string) {
 	area, ts, msg = this.AlsParser.ParseLine(line)
 	if msg == "" {
 		if verbose {
@@ -40,11 +41,7 @@ func (this *JsonCollectorParser) ParseLine(line string) (area string, ts uint64,
 		return
 	}
 
-	if dryRun {
-		return
-	}
-
-	args, indexJson, err := this.valuesOfJsonKeys(jsonData)
+	_, indexJson, err := this.valuesOfJsonKeys(jsonData)
 	if err != nil {
 		if debug {
 			logger.Println(err)
@@ -60,16 +57,6 @@ func (this *JsonCollectorParser) ParseLine(line string) (area string, ts uint64,
 		date := time.Unix(int64(ts), 0)
 		indexer.c <- indexEntry{indexName: this.conf.IndexName, typ: this.conf.Title, date: &date, data: indexJson}
 	}
-
-	if this.conf.InstantFormat != "" {
-		iargs := append([]interface{}{area}, args...) // 'area' is always 1st col
-		this.beep()
-		this.colorPrintfLn(this.conf.InstantFormat, iargs...)
-	}
-
-	// insert_stmt must be like INSERT INTO (area, ts, ...)
-	args = append([]interface{}{area, ts}, args...)
-	this.insert(args...)
 
 	return
 }

@@ -96,6 +96,10 @@ const (
 	BEEP           = "\a"
 
 	INDEX_YEARMONTH = "@ym"
+
+	INDEX_COL_AREA      = "area"
+	INDEX_COL_TIMESTAMP = "t"
+	INDEX_COL_LOCATION  = "loc"
 )
 
 const (
@@ -107,6 +111,5 @@ const (
 	KEY_TYPE_BASEFILE = "base_file"
 
 	KEY_NAME_CURRENCY = "currency"
-	KEY_NAME_LOCATION = "loc"
 	KEY_NAME_TYPE     = "typ"
 )

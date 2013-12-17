@@ -4,7 +4,7 @@
            |
     ---------------
    |               |
-               CollectorParser
+ EsParser      CollectorParser
                    |
                ----------------
               |                |
@@ -161,7 +161,7 @@ func (this *AlsParser) valuesOfJsonKeys(data *json.Json) (values []interface{}, 
 
 		if key.Type == KEY_TYPE_IP && geoEnabled() {
 			// extra geo point info
-			indexJson.Set(KEY_NAME_LOCATION, ipToGeo(val.(string)))
+			indexJson.Set(INDEX_COL_LOCATION, ipToGeo(val.(string)))
 		}
 
 		if key.Name == "type" {

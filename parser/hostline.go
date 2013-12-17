@@ -84,8 +84,8 @@ func (this *HostLineParser) ParseLine(line string) (area string, ts uint64, msg 
 
 			if this.conf.Indexing {
 				indexJson, _ := json.NewJson([]byte("{}"))
-				indexJson.Set("area", area)
-				indexJson.Set("t", ts)
+				indexJson.Set(INDEX_COL_AREA, area)
+				indexJson.Set(INDEX_COL_TIMESTAMP, ts)
 				indexJson.Set("host", host)
 				indexJson.Set("ngtyp", p[1])
 				indexJson.Set("ngbytes", val)
@@ -102,8 +102,8 @@ func (this *HostLineParser) ParseLine(line string) (area string, ts uint64, msg 
 
 	if this.conf.Indexing {
 		indexJson, _ := json.NewJson([]byte("{}"))
-		indexJson.Set("area", area)
-		indexJson.Set("t", ts)
+		indexJson.Set(INDEX_COL_AREA, area)
+		indexJson.Set(INDEX_COL_TIMESTAMP, ts)
 		indexJson.Set("host", host)
 		indexJson.Set("msg", data)
 
