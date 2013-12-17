@@ -50,6 +50,10 @@ func (this *HostLineParser) ParseLine(line string) (area string, ts uint64, msg 
 		}
 	}
 
+	if dryRun {
+		return
+	}
+
 	// syslog-ng als handling statastics
 	parts = strings.Split(msg, "Log statistics; ")
 	if len(parts) == 2 {
