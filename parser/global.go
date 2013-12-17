@@ -100,6 +100,7 @@ const (
 	INDEX_COL_AREA      = "area"
 	INDEX_COL_TIMESTAMP = "t"
 	INDEX_COL_LOCATION  = "loc"
+	INDEX_COL_LVRANGE   = "lvr"
 )
 
 const (
@@ -108,6 +109,7 @@ const (
 	KEY_TYPE_FLOAT    = "float"
 	KEY_TYPE_INT      = "int"
 	KEY_TYPE_MONEY    = "money"
+	KEY_TYPE_LEVEL    = "level"
 	KEY_TYPE_BASEFILE = "base_file"
 
 	KEY_NAME_CURRENCY = "currency"

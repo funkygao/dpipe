@@ -40,7 +40,7 @@
         {
             tail_glob:      "/mnt/funplus/logs/fp_rstory/order*"
             history_glob:   "/mnt/funplus/logs/fp_rstory/history/order*"
-            parsers:        [ "Order", ]
+            parsers:        [ "Orders", ]
         },
         {
             tail_glob:      "/mnt/funplus/logs/fp_rstory/newaccount*"
@@ -239,10 +239,11 @@
         // Order related
         //===================================================
         {
-            id:     "Order"
-            title:  "Order"
+            id:     "Orders"
+            title:  "Orders"
             class:  "JsonCollectorParser"
             colors: [ "FgGreen", "BgMagenta", ]
+            lvrange: [1, 5, 10, 100]
             sleep:          1909
             beep_threshold: 5800
             indexname:      "rs@ym"

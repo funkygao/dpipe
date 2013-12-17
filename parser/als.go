@@ -87,7 +87,7 @@ func (this *AlsParser) jsonValue(data *json.Json, key, typ string) (val interfac
 		val, err = data.Get(key).String()
 	case KEY_TYPE_FLOAT:
 		val, err = data.Get(key).Float64()
-	case KEY_TYPE_INT, KEY_TYPE_MONEY:
+	case KEY_TYPE_INT, KEY_TYPE_MONEY, KEY_TYPE_LEVEL:
 		val, err = data.Get(key).Int()
 	case KEY_TYPE_BASEFILE:
 		var fullFilename string
@@ -162,6 +162,15 @@ func (this *AlsParser) valuesOfJsonKeys(data *json.Json) (values []interface{}, 
 		if key.Type == KEY_TYPE_IP && geoEnabled() {
 			// extra geo point info
 			indexJson.Set(INDEX_COL_LOCATION, ipToGeo(val.(string)))
+		}
+
+		if key.Type == KEY_TYPE_LEVEL {
+			lvrange := als.GroupInt(val.(int), this.conf.LevelRange)
+			if lvrange != "" {
+				indexJson.Set(INDEX_COL_LVRANGE, lvrange)
+			} else if verbose {
+				logger.Printf("[%v]invalid level %d\n", *data, val.(int))
+			}
 		}
 
 		if key.Name == "type" {

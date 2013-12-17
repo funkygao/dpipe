@@ -64,6 +64,7 @@ type ConfParser struct {
 	ShowSummary   bool
 	Indexing      bool
 	IndexName     string
+	LevelRange    []int
 
 	Sleep           int
 	BeepThreshold   int
@@ -116,6 +117,7 @@ func LoadRuleEngine(fn string) (*Config, error) {
 		parser.StatsStmt = this.String(keyPrefix+"stats_stmt", "")
 		parser.ShowSummary = this.Bool(keyPrefix+"summary", false)
 		parser.Indexing = this.Bool(keyPrefix+"indexing", true)
+		parser.LevelRange = this.IntList(keyPrefix+"lvrange", nil)
 		parser.IndexName = this.String(keyPrefix+"indexname", INDEX_YEARMONTH)
 		parser.Enabled = this.Bool(keyPrefix+"enabled", true)
 		parser.AbnormalPercent = this.Float(keyPrefix+"abnormal_percent", 1.5)
