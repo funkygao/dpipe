@@ -33,11 +33,10 @@ type ConfGuard struct {
 type LineKey struct {
 	Name    string
 	Type    string // float, string(default), int, money
-	Contain string
+	Contain string // only being validator instead of data
 	Ignores []string
 	Filters []string
 	MaxLen  int
-	Visible bool
 	Regex   []string
 }
 
@@ -126,7 +125,6 @@ func LoadConfig(fn string) (*Config, error) {
 				key.Filters = this.StringList(prefix+"filters", nil)
 				key.Regex = this.StringList(prefix+"regex", nil)
 				key.MaxLen = this.Int(prefix+"maxlen", 0)
-				key.Visible = this.Bool(prefix+"visible", true)
 				parser.Keys = append(parser.Keys, key)
 			}
 		}

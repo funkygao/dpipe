@@ -135,13 +135,14 @@ func (this *AlsParser) valuesOfJsonKeys(data *json.Json) (values []interface{}, 
 			return
 		}
 
-		if key.Contain != "" && !strings.Contains(val.(string), key.Contain) {
-			err = errors.New("not found")
-			return
-		}
-
-		if !key.Visible {
-			continue
+		if key.Contain != "" {
+			if !strings.Contains(val.(string), key.Contain) {
+				err = errors.New("not found")
+				return
+			} else {
+				// get next key
+				continue
+			}
 		}
 
 		if key.Ignores != nil && key.MsgIgnored(val.(string)) {
