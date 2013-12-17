@@ -27,7 +27,7 @@ import (
 	"github.com/abh/geoip"
 )
 
-type geoPoint struct {
+type GeoPoint struct {
 	Lat float32 `json:"lat"`
 	Lon float32 `json:"lon"`
 }
@@ -41,9 +41,9 @@ func geoEnabled() bool {
 	return geo != nil
 }
 
-func ipToGeo(ip string) (this geoPoint) {
+func ipToGeo(ip string) (this GeoPoint) {
 	if rec := geo.GetRecord(ip); rec != nil {
-		this = geoPoint{Lat: rec.Latitude, Lon: rec.Longitude}
+		this = GeoPoint{Lat: rec.Latitude, Lon: rec.Longitude}
 	}
 
 	return

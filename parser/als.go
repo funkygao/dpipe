@@ -173,7 +173,13 @@ func (this *AlsParser) valuesOfJsonKeys(data *json.Json) (values []interface{}, 
 			// 'type' is reserved in ElasticSearch
 			key.Name = "typ"
 		}
+
 		indexJson.Set(key.Name, val)
+
+		if key.Type == "ip" && geoEnabled() {
+			// extra geo point info
+			indexJson.Set("loc", ipToGeo(val.(string)))
+		}
 	}
 
 	return
