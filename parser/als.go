@@ -1,14 +1,14 @@
 /*
 
-           AlsParser
-               |
-        ---------------
-       |               |                    
-                   CollectorParser   
-                       |
-                   ----------------
-                  |                |
-         JsonCollectorParser   HostLineParser
+       AlsParser
+           |
+    ---------------
+   |               |
+               CollectorParser
+                   |
+               ----------------
+              |                |
+     JsonCollectorParser   HostLineParser
 
 */
 package parser
@@ -23,18 +23,6 @@ import (
 	"path/filepath"
 	"strings"
 )
-
-type logInfo struct {
-	uid          int64
-	snsid        string
-	level        int
-	payment_cash int
-	uri          string
-	scriptId     int64
-	serial       int
-	host         string // aws instance ip
-	ip           string // remote user ip
-}
 
 // Parent parser for all
 type AlsParser struct {
