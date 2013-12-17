@@ -3,7 +3,6 @@ package parser
 import (
 	"github.com/bmizerany/assert"
 	"github.com/funkygao/alser/rule"
-	"regexp"
 	"testing"
 	"time"
 )
