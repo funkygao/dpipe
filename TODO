@@ -21,3 +21,7 @@
 *   time based index
 
 *   key type: level, sessionlen, xp/indexonly key
+
+*   rename LineKey to Field
+
+*   integration with behavior db
