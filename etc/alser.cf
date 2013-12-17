@@ -245,6 +245,7 @@
             colors: [ "FgGreen", "BgMagenta", ]
             sleep:          1909
             beep_threshold: 5800
+            indexname:      "rs@ym"
             create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, uid INT, typ CHAR(30), level INT);"
             insert_stmt:    "INSERT INTO %s(area, ts, uid, typ, level) VALUES(?,?,?,?,?)"
             stats_stmt:     "SELECT COUNT(*) AS c, area, typ FROM %s where ts<=? GROUP BY area, typ ORDER BY c DESC"
@@ -272,6 +273,7 @@
             title:  "CCU"
             class:  "JsonCollectorParser"
             colors: [ "FgGreen", "BgMagenta", ]
+            indexname:      "rs@ym"
             sleep:          1909
             beep_threshold: 42800
             create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, guid INT, typ CHAR(20), ver CHAR(10));"
@@ -300,6 +302,7 @@
             title:  "NewUser"
             class:  "JsonCollectorParser"
             colors: [ "FgGreen", "Bright" ]
+            indexname:      "rs@ym"
             sleep:          2909
             beep_threshold: 600
             create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, ref VARCHAR(150), lang CHAR(50), ip CHAR(20));"
@@ -328,6 +331,7 @@
             class:  "JsonCollectorParser"
             title:  "LevelUp"
             colors: [ "FgGreen", "Bright", "BgMagenta", ]
+            indexname:      "rs@ym"
             sleep:          1909
             beep_threshold: 400
             create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, frm INT);"
@@ -349,6 +353,7 @@
             id:     "Mission"
             class:  "JsonCollectorParser"
             title:  "TaskDone"
+            indexname:      "rs@ym"
             colors: [ "FgRed", "BgWhite", ]
             sleep:          1909
             create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, mission VARCHAR(50));"
@@ -370,6 +375,7 @@
             class:  "JsonCollectorParser"
             title:  "RcFail"
             colors: [ "FgRed", "Underscore", ]
+            indexname:      "rs@ym"
             sleep:          2709
             beep_threshold: 550
             create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, cls VARCHAR(50));"
@@ -391,6 +397,7 @@
             class:  "JsonCollectorParser"
             title:  "FlashClick"
             colors: [ "FgGreen", "Underscore", ]
+            indexname:      "rs@ym"
             sleep:          1980
             beep_threshold: 1650
             create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, lv INT, type VARCHAR(60), uid INT);"
@@ -447,6 +454,7 @@
             class:  "JsonCollectorParser"
             title:  "TryPay"
             colors: [ "FgGreen", "Underscore", ]
+            indexname:      "rs@ym"
             sleep:          279
             beep_threshold: 3
             create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, type VARCHAR(50));"
@@ -472,6 +480,7 @@
             class:  "JsonCollectorParser"
             title:  "Revenue"
             colors: [ "FgGreen", ]
+            indexname:      "rs@ym"
             sleep:          999
             beep_threshold: 1500
             create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, amount INT, currency VARCHAR(20));"
