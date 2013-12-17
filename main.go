@@ -74,7 +74,7 @@ func main() {
 	}()
 
 	// load the rule engine
-	conf, err := config.LoadConfig(options.config)
+	conf, err := config.LoadRuleEngine(options.config)
 	if err != nil || conf == nil {
 		panic(err)
 	}

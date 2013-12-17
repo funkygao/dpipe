@@ -83,7 +83,7 @@ type Config struct {
 	Parsers []ConfParser
 }
 
-func LoadConfig(fn string) (*Config, error) {
+func LoadRuleEngine(fn string) (*Config, error) {
 	cf, err := conf.Load(fn)
 	if err != nil {
 		return nil, err

@@ -5,8 +5,8 @@ import (
 	"testing"
 )
 
-func TestLoadConfig(t *testing.T) {
-	c, err := LoadConfig("fixture/alser.cf")
+func TestLoadRuleEngine(t *testing.T) {
+	c, err := LoadRuleEngine("fixture/alser.cf")
 	t.Log(err)
 
 	assert.Equal(t, nil, err)
