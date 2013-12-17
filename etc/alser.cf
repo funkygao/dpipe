@@ -39,128 +39,96 @@
         {
             tail_glob:      "/mnt/funplus/logs/fp_rstory/order*"
             history_glob:   "/mnt/funplus/logs/fp_rstory/history/order*"
-            parsers:        [
-                "Order",
-            ]
+            parsers:        [ "Order", ]
         },
         {
             tail_glob:      "/mnt/funplus/logs/fp_rstory/newaccount*"
             history_glob:   "/mnt/funplus/logs/fp_rstory/history/newaccount*"
-            parsers:        [
-                "NewAccount",
-            ]
+            parsers:        [ "NewAccount", ]
         },
         {
             tail_glob:      "/mnt/funplus/logs/fp_rstory/session*"
             history_glob:   "/mnt/funplus/logs/fp_rstory/history/session*"
-            parsers:        [
-                "Session",
-            ]
+            parsers:        [ "Session", ]
         },
         {
             tail_glob:      "/mnt/funplus/logs/fp_rstory/level_up*"
             history_glob:   "/mnt/funplus/logs/fp_rstory/history/level_up*"
             format:         "als"
-            parsers:        [
-                "LevelUp",
-            ]
+            parsers:        [ "LevelUp", ]
         },
         {
             tail_glob:      "/mnt/funplus/logs/fp_rstory/quest*"
             history_glob:   "/mnt/funplus/logs/fp_rstory/history/quest*"
             format:         "als"
-            parsers:        [
-                "Mission",
-            ]
+            parsers:        [ "Mission", ]
         },
         {
             tail_glob:      "/mnt/funplus/logs/fp_rstory/click*"
             history_glob:   "/mnt/funplus/logs/fp_rstory/history/click*"
             format:         "als"
             enabled:        true
-            parsers:        [
-                "FlashClick",
-            ]
+            parsers:        [ "FlashClick", ]
         },
         {
             tail_glob:      "/mnt/funplus/logs/fp_rstory/dau*"
             history_glob:   "/mnt/funplus/logs/fp_rstory/history/dau*"
             format:         "als"
-            parsers:        [
-                "Dau",
-            ]
+            parsers:        [ "Dau", ]
         },
         {
             tail_glob:      "/mnt/funplus/logs/fp_rstory/bigdata_rcfail*"
             history_glob:   "/mnt/funplus/logs/fp_rstory/history/bigdata_rcfail*"
             format:         "als"
-            parsers:        [
-                "RcFail",
-            ]
+            parsers:        [ "RcFail", ]
         },
         {
             tail_glob:      "/mnt/funplus/logs/fp_rstory/kernal*"
             history_glob:   "/mnt/funplus/logs/fp_rstory/history/kernal*"
             format:         "als"
-            parsers:        [
-                "Kernal",
-            ]
+            parsers:        [ "Kernal", ]
         },
         {
             tail_glob:      "/mnt/funplus/logs/fp_rstory/phperror*"
             history_glob:   "/mnt/funplus/logs/fp_rstory/history/phperror*"
             format:         "als"
-            parsers:        [
-                "PhpError",
-            ]
+            parsers:        [ "PhpError", ]
         },
         {
             tail_glob:      "/mnt/funplus/logs/fp_rstory/mongo_slow.*.log"
             history_glob:   "/mnt/funplus/logs/fp_rstory/history/mongo_slow*"
             format:         "als"
-            parsers:        [
-                "MongoSlow",
-            ]
+            parsers:        [ "MongoSlow", ]
         },
         {
             tail_glob:      "/mnt/funplus/logs/fp_rstory/memcache_to.*.log"
             history_glob:   "/mnt/funplus/logs/fp_rstory/history/memcache_to*"
             format:         "als"
-            parsers:        [
-                "MemcacheSlow",
-            ]
+            parsers:        [ "MemcacheSlow", ]
         },
         {
             tail_glob:      "/mnt/funplus/logs/fp_rstory/cache_set_fail.*.log"
             history_glob:   "/mnt/funplus/logs/fp_rstory/history/cache_set_fail*"
             format:         "als"
-            parsers:        [
-                "MemcacheFail",
-            ]
+            parsers:        [ "MemcacheFail", ]
         },
         {
             tail_glob:      "/mnt/funplus/logs/fp_rstory/error.*.log"
             history_glob:   "/mnt/funplus/logs/fp_rstory/history/error*"
             format:         "als"
-            parsers:        [
-                "Error", "MongoError",
-            ]
+            parsers:        [ "Error", "MongoError", ]
         },
         {
             tail_glob:      "/mnt/funplus/logs/fp_rstory/payment.*.log"
             history_glob:   "/mnt/funplus/logs/fp_rstory/history/payment*"
             format:         "als"
-            parsers:        [
-                "Revenue", "Pay",
-            ]
+            parsers:        [ "Revenue", "Pay", ]
         },
         {
             tail_glob:      "/mnt/funplus/logs/fp_rstory/slowresponse.*.log"
             history_glob:   "/mnt/funplus/logs/fp_rstory/history/slowresponse*"
             format:         "als"
-            parsers:        [
-                "SlowResponse",
-            ]
+            parsers:        [ "SlowResponse", ]
         },
     ]
     
@@ -176,10 +144,7 @@
             class:  "RegexCollectorParser"
             title:  "PhpErr"
             indexname: "rsops"
-            colors: [
-                "FgYellow",
-                "Bright",
-            ]
+            colors: [ "FgYellow", "Bright", ]
             sleep:          9
             beep_threshold: 1
             msg_regex:      "\\[(.+)\\] (.+?): (.+) - (.+) \\[(.+)\\],(.+)"
@@ -205,11 +170,7 @@
             class:  "JsonCollectorParser"
             title:  "MongoFail"
             indexname: "rsops"
-            colors: [
-                "FgCyan",
-                "Bright",
-                "BgRed",
-            ]
+            colors: [ "FgCyan", "Bright", "BgRed", ]
             sleep:          15
             beep_threshold: 1
             abnormal_percent: 0.3
@@ -236,9 +197,7 @@
             class:  "JsonCollectorParser"
             title:  "Error"
             indexname: "rsops"
-            colors: [
-                "FgRed",
-            ]
+            colors: [ "FgRed", ]
             sleep:          587
             beep_threshold: 120
             create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, cls VARCHAR(50), msg VARCHAR(200));"
@@ -282,9 +241,7 @@
             id:     "Order"
             title:  "Order"
             class:  "JsonCollectorParser"
-            colors: [
-                "FgGreen", "BgMagenta",
-            ]
+            colors: [ "FgGreen", "BgMagenta", ]
             sleep:          1909
             beep_threshold: 5800
             create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, uid INT, typ CHAR(30), level INT);"
@@ -313,9 +270,7 @@
             id:     "Session"
             title:  "CCU"
             class:  "JsonCollectorParser"
-            colors: [
-                "FgGreen", "BgMagenta",
-            ]
+            colors: [ "FgGreen", "BgMagenta", ]
             sleep:          1909
             beep_threshold: 42800
             create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, guid INT, typ CHAR(20), ver CHAR(10));"
@@ -343,9 +298,7 @@
             id:     "NewAccount"
             title:  "NewUser"
             class:  "JsonCollectorParser"
-            colors: [
-                "FgGreen", "Bright"
-            ]
+            colors: [ "FgGreen", "Bright" ]
             sleep:          2909
             beep_threshold: 600
             create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, ref VARCHAR(150), lang CHAR(50), ip CHAR(20));"
@@ -373,9 +326,7 @@
             id:     "LevelUp"
             class:  "JsonCollectorParser"
             title:  "LevelUp"
-            colors: [
-                "FgGreen", "Bright", "BgMagenta",
-            ]
+            colors: [ "FgGreen", "Bright", "BgMagenta", ]
             sleep:          1909
             beep_threshold: 400
             create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, frm INT);"
@@ -397,9 +348,7 @@
             id:     "Mission"
             class:  "JsonCollectorParser"
             title:  "TaskDone"
-            colors: [
-                "FgRed", "BgWhite",
-            ]
+            colors: [ "FgRed", "BgWhite", ]
             sleep:          1909
             create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, mission VARCHAR(50));"
             insert_stmt:    "INSERT INTO %s(area, ts, mission) VALUES(?,?,?)"
@@ -419,9 +368,7 @@
             id:     "RcFail"
             class:  "JsonCollectorParser"
             title:  "RcFail"
-            colors: [
-                "FgRed", "Underscore",
-            ]
+            colors: [ "FgRed", "Underscore", ]
             sleep:          2709
             beep_threshold: 550
             create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, cls VARCHAR(50));"
@@ -442,9 +389,7 @@
             id:     "FlashClick"
             class:  "JsonCollectorParser"
             title:  "FlashClick"
-            colors: [
-                "FgGreen", "Underscore",
-            ]
+            colors: [ "FgGreen", "Underscore", ]
             sleep:          1980
             beep_threshold: 1650
             create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, lv INT, type VARCHAR(60), uid INT);"
@@ -473,9 +418,7 @@
             id:     "Dau"
             class:  "JsonCollectorParser"
             title:  "DAU"
-            colors: [
-                "FgBlue",
-            ]
+            colors: [ "FgBlue", ]
             sleep:          1580
             beep_threshold: 7950
             create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, uid INT, day INT);"
@@ -501,9 +444,7 @@
             id:     "Pay"
             class:  "JsonCollectorParser"
             title:  "TryPay"
-            colors: [
-                "FgGreen", "Underscore",
-            ]
+            colors: [ "FgGreen", "Underscore", ]
             sleep:          279
             beep_threshold: 3
             create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, type VARCHAR(50));"
@@ -528,9 +469,7 @@
             id:     "Revenue"
             class:  "JsonCollectorParser"
             title:  "Revenue"
-            colors: [
-                "FgGreen",
-            ]
+            colors: [ "FgGreen", ]
             sleep:          999
             beep_threshold: 1500
             create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, amount INT, currency VARCHAR(20));"
@@ -561,9 +500,7 @@
             class:  "JsonCollectorParser"
             title:  "SlowPhp"
             indexname: "rsops"
-            colors: [
-                "FgMagenta", "Bright",
-            ]
+            colors: [ "FgMagenta", "Bright", ]
             sleep:                  523
             beep_threshold:         10
             create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, uri VARCHAR(50));"
@@ -584,9 +521,7 @@
         {
             id:     "MemcacheFail"
             class:  "JsonCollectorParser"
-            colors: [
-                "FgYellow", "Underscore",
-            ]
+            colors: [ "FgYellow", "Underscore", ]
             title:  "CacheFail"
             indexname: "rsops"
             beep_threshold:         1
@@ -619,9 +554,7 @@
         {
             id:     "MemcacheSlow"
             class:  "JsonCollectorParser"
-            colors: [
-                "FgYellow",
-            ]
+            colors: [ "FgYellow", ]
             title:  "CacheSlow"
             indexname: "rsops"
             beep_threshold:         1
@@ -656,9 +589,7 @@
             class:  "JsonCollectorParser"
             title:          "MongoSlow"
             indexname: "rsops"
-            colors: [
-                "FgYellow", "Reverse",
-            ]
+            colors: [ "FgYellow", "Reverse", ]
             sleep:                  393
             beep_threshold:         10
             create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, tbl VARCHAR(50), method VARCHAR(30), t FLOAT, host CHAR(30), server CHAR(60));"
@@ -697,9 +628,7 @@
             enabled: true
             indexname: "rsops"
             title:  "Kernal"
-            colors: [
-                "FgWhite", "Reverse",
-            ]
+            colors: [ "FgWhite", "Reverse", ]
             sleep:                  1715
             beep_threshold:         958332885
             create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, type VARCHAR(50), num INT);"
