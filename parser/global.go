@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"github.com/abh/geoip"
 	"log"
 	"regexp"
 	"sync"
@@ -9,6 +10,7 @@ import (
 var (
 	allParsers map[string]Parser = make(map[string]Parser) // key is parserId
 	indexer    *Indexer
+	geo        *geoip.GeoIP
 
 	mutex = new(sync.Mutex) // lock across all parsers
 
