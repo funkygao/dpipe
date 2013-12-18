@@ -1,0 +1,22 @@
+{
+        // dau
+        //===================================================
+        {
+            id:         "ffsDau"
+            class:      "EsParser"
+            title:      "DAU"
+            indexname:  "ffs@ym"
+            keys: [
+                {
+                    name: "lang"
+                },
+                {
+                    name: "uid"
+                    type: "int"
+                },
+                {
+                    name: "os"
+                },
+            ]
+        },
+}

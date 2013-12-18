@@ -1,0 +1,540 @@
+{
+        // phperror
+        //===================================================
+        {
+            id:     "PhpError"
+            class:  "RegexCollectorParser"
+            title:  "PhpErr"
+            indexname: "rsops"
+            colors: [ "FgYellow", "Bright", ]
+            sleep:          9
+            beep_threshold: 1
+            msg_regex:      "\\[(.+)\\] (.+?): (.+) - (.+) \\[(.+)\\],(.+)"
+            msg_regex_keys: [
+                // level, msg, file, line, host
+                "2", "3", "4:base_file", "5", "6",
+            ]
+            create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, level CHAR(15), msg VARCHAR(200), file VARCHAR(100), line CHAR(10), host CHAR(25));"
+            //create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, msg VARCHAR(200), host CHAR(25), level CHAR(15), src VARCHAR(80));"
+            //===================================================
+            // insert_stmt must be like INSERT INTO (area, ts, ...)
+            //===================================================
+            insert_stmt:    "INSERT INTO %s(area, ts, level, msg, file, line, host) VALUES(?,?,?,?,?,?,?)"
+            stats_stmt:     "SELECT COUNT(*) AS c, area, file, line, msg FROM %s where ts<=? GROUP BY area, file, line, msg ORDER BY c DESC"
+            dbname:         "phperr"
+            printf: "%5d %3s %15s:%-4s %s"
+        },
+
+        // mongo error
+        //===================================================
+        {
+            id:     "MongoError"
+            class:  "JsonCollectorParser"
+            title:  "MongoFail"
+            indexname: "rsops"
+            colors: [ "FgCyan", "Bright", "BgRed", ]
+            sleep:          15
+            beep_threshold: 1
+            abnormal_percent: 0.3
+            create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, msg VARCHAR(200));"
+            insert_stmt:    "INSERT INTO %s(area, ts, msg) VALUES(?,?,?)"
+            stats_stmt:     "SELECT COUNT(*) AS c, area, msg FROM %s where ts<=? GROUP BY area, msg ORDER BY c DESC"
+            dbname:         "mongoerr"
+            printf: "%5d %3s %s"
+            keys: [
+                {
+                    name: "class"
+                    contain: "MongoException"
+                },
+                {
+                    name: "message"
+                },
+            ]
+        },
+
+        // error log
+        //===================================================
+        {
+            id:     "Error"
+            class:  "JsonCollectorParser"
+            title:  "Error"
+            indexname: "rsops"
+            colors: [ "FgRed", ]
+            sleep:          587
+            beep_threshold: 120
+            create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, cls VARCHAR(50), msg VARCHAR(200));"
+            insert_stmt:    "INSERT INTO %s(area, ts, cls, msg) VALUES(?,?,?,?)"
+            stats_stmt:     "SELECT COUNT(*) AS c, area, cls, msg FROM %s where ts<=? GROUP BY area, cls, msg ORDER BY c DESC"
+            dbname:         "error"
+            printf: "%5d %3s %20s %s"
+            keys: [
+                {
+                    name: "class"
+                    ignores: [
+                        "MongoException",
+                    ]
+                },
+                {
+                    name: "message"
+                    regex:  [
+                        "digit",
+                        "token",
+                    ]
+                    ignores: [
+                        "Energy Error, Client: ?, Server: ?, info:batch",
+                        "snsid or uid error",
+                        "XP Error, Client: ?, Server: ?, info:batch",
+                        "Sorry, someone has logged in on your account from another computer.",
+                        "batch token error! pre cur",
+                        "payment error: OK",
+                        "new pay : OK",
+                        "new pay : start",
+                        "Energy Error, Client:",
+                        "batch token error!",
+                        "key error",
+                    ]
+                },
+            ]
+        },
+
+        // Order related
+        //===================================================
+        {
+            id:     "Orders"
+            title:  "Orders"
+            class:  "JsonCollectorParser"
+            colors: [ "FgGreen", "BgMagenta", ]
+            lvrange: [1, 14, 19, 23, 27, 31, 36, 41, 46, 51, 57, 63, 69, 75, 101]
+            sleep:          1909
+            beep_threshold: 5800
+            indexname:      "rs@ym"
+            create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, uid INT, typ CHAR(30), level INT);"
+            insert_stmt:    "INSERT INTO %s(area, ts, uid, typ, level) VALUES(?,?,?,?,?)"
+            stats_stmt:     "SELECT COUNT(*) AS c, area, typ FROM %s where ts<=? GROUP BY area, typ ORDER BY c DESC"
+            dbname:         "orders"
+            printf: "%5d %3s %s"
+            keys: [
+                {
+                    name: "uid"
+                    type: "int"
+                },
+                {
+                    name: "type"
+                },
+                {
+                    name: "level",
+                    type: "level"
+                },
+                {
+                    name: "ip",
+                    type: "ip",
+                    // sink, bit op, bit1: alarm, bit0: index
+                    sink: 1
+                },
+            ]
+        },
+
+        // Session recorded by flash
+        //===================================================
+        {
+            id:     "Session"
+            title:  "CCU"
+            class:  "JsonCollectorParser"
+            colors: [ "FgGreen", "BgMagenta", ]
+            indexing:       false
+            indexname:      "rs@ym"
+            sleep:          1909
+            beep_threshold: 42800
+            create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, guid INT, typ CHAR(20), ver CHAR(10));"
+            insert_stmt:    "INSERT INTO %s(area, ts, guid, typ, ver) VALUES(?,?,?,?,?)"
+            stats_stmt:     "SELECT COUNT(DISTINCT(guid)) AS c, area, typ FROM %s where ts<=? GROUP BY area, typ ORDER BY c DESC"
+            dbname:         "session"
+            printf: "%5d %3s %s"
+            keys: [
+                {
+                    name: "guid"
+                    type: "int"
+                },
+                {
+                    name: "type"
+                },
+                {
+                    name: "ver"
+                },
+            ]
+        },
+
+        // NewAccount
+        //===================================================
+        {
+            id:     "NewAccount"
+            title:  "NewUser"
+            class:  "JsonCollectorParser"
+            colors: [ "FgGreen", "Bright" ]
+            indexname:      "rs@ym"
+            sleep:          2909
+            beep_threshold: 600
+            create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, ref VARCHAR(150), lang CHAR(50), ip CHAR(20));"
+            insert_stmt:    "INSERT INTO %s(area, ts, ref, lang, ip) VALUES(?,?,?,?,?)"
+            stats_stmt:     "SELECT COUNT(*) AS c, area, ref FROM %s where ts<=? GROUP BY area, ref ORDER BY c DESC"
+            dbname:         "newuser"
+            printf: "%5d %3s %s"
+            keys: [
+                {
+                    name: "ref"
+                },
+                {
+                    name: "lang"
+                },
+                {
+                    name: "ip"
+                    type: "ip"
+                },
+            ]
+        },
+
+        // LevelUp
+        //===================================================
+        {
+            id:     "LevelUp"
+            class:  "JsonCollectorParser"
+            title:  "LevelUp"
+            colors: [ "FgGreen", "Bright", "BgMagenta", ]
+            indexname:      "rs@ym"
+            sleep:          1909
+            beep_threshold: 400
+            create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, frm INT);"
+            insert_stmt:    "INSERT INTO %s(area, ts, frm) VALUES(?,?,?)"
+            stats_stmt:     "SELECT COUNT(*) AS c, frm FROM %s where ts<=? and area='us' GROUP BY frm ORDER BY c DESC LIMIT 20"
+            dbname:         "lvup"
+            printf: "%5d us %2d↑"
+            keys: [
+                {
+                    name: "from"
+                    type: "int"
+                },
+            ]
+        },
+
+        // Mission
+        //===================================================
+        {
+            id:     "Mission"
+            class:  "JsonCollectorParser"
+            title:  "TaskDone"
+            indexname:      "rs@ym"
+            colors: [ "FgRed", "BgWhite", ]
+            sleep:          1909
+            create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, mission VARCHAR(50));"
+            insert_stmt:    "INSERT INTO %s(area, ts, mission) VALUES(?,?,?)"
+            stats_stmt:     "SELECT COUNT(*) AS c, area, mission FROM %s where ts<=? GROUP BY area, mission ORDER BY c DESC LIMIT 10"
+            dbname:         "mission"
+            printf: "%5d %3s %s"
+            keys: [
+                {
+                    name: "complete"
+                },
+            ]
+        },
+
+        // rc fail
+        //===================================================
+        {
+            id:     "RcFail"
+            class:  "JsonCollectorParser"
+            title:  "RcFail"
+            colors: [ "FgRed", "Underscore", ]
+            indexname:      "rs@ym"
+            sleep:          2709
+            beep_threshold: 550
+            create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, cls VARCHAR(50));"
+            insert_stmt:    "INSERT INTO %s(area, ts, cls) VALUES(?,?,?)"
+            stats_stmt:     "SELECT COUNT(*) AS c, area, cls FROM %s where ts<=? GROUP BY area, cls ORDER BY c DESC"
+            dbname:         "rcfail"
+            printf: "%5d %3s %s"
+            keys: [
+                {
+                    name: "2"
+                },
+            ]
+        },
+
+        // click event fired from flash
+        //===================================================
+        {
+            id:     "FlashClick"
+            class:  "JsonCollectorParser"
+            title:  "FlashClick"
+            colors: [ "FgGreen", "Underscore", ]
+            indexname:      "rs@ym"
+            sleep:          1980
+            beep_threshold: 1650
+            create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, lv INT, type VARCHAR(60), uid INT);"
+            insert_stmt:    "INSERT INTO %s(area, ts, lv, type, uid) VALUES(?,?,?,?,?)"
+            stats_stmt:     "SELECT COUNT(DISTINCT(uid)) AS c, type FROM %s where ts<=? GROUP BY type ORDER BY c DESC"
+            dbname:         "click"
+            printf: "%5d %s"
+            keys: [
+                {
+                    name: "lv"
+                    type: "int"
+                },
+                {
+                    name: "type"
+                },
+                {
+                    name: "guid"
+                    type: "int"
+                },
+            ]
+        },
+
+        // dau
+        //===================================================
+        {
+            id:     "Dau"
+            class:  "JsonCollectorParser"
+            title:  "DAU"
+            colors: [ "FgBlue", ]
+            sleep:          1580
+            beep_threshold: 7950
+            indexname:      "rs@ym"
+            create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, uid INT, day INT);"
+            insert_stmt:    "INSERT INTO %s(area, ts, uid, day) VALUES(?,?,?,?)"
+            stats_stmt:     "SELECT COUNT(DISTINCT(uid)) AS c, area FROM %s where ts<=? GROUP BY area ORDER BY c DESC"
+            dbname:         "dau"
+            printf: "%5d %3s"
+            keys: [
+                {
+                    name: "uid"
+                    type: "int"
+                },
+                {
+                    name: "date"
+                    type: "int"
+                },
+                {
+                    name: "ip"
+                    type: "ip"
+                    sink: 1
+                },
+            ]
+        },
+
+        // payment type
+        //===================================================
+        {
+            id:     "Pay"
+            class:  "JsonCollectorParser"
+            title:  "TryPay"
+            colors: [ "FgGreen", "Underscore", ]
+            indexname:      "rs@ym"
+            sleep:          279
+            beep_threshold: 3
+            create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, type VARCHAR(50));"
+            insert_stmt:    "INSERT INTO %s(area, ts, type) VALUES(?,?,?)"
+            stats_stmt:     "SELECT COUNT(*) AS c, area, type FROM %s where ts<=? GROUP BY area, type ORDER BY c DESC"
+            dbname:         "pay"
+            printf: "%5d %3s %s"
+            keys: [
+                {
+                    name: "type"
+                    ignores: [
+                        "OK",
+                        "start",
+                    ]
+                },
+            ]
+        },
+
+        // revenue
+        //===================================================
+        {
+            id:     "Revenue"
+            class:  "JsonCollectorParser"
+            title:  "Revenue"
+            colors: [ "FgGreen", ]
+            indexname:      "rs@ym"
+            sleep:          999
+            beep_threshold: 1500
+            create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, amount INT, currency VARCHAR(20));"
+            insert_stmt:    "INSERT INTO %s(area, ts, currency, amount) VALUES(?,?,?,?)"
+            stats_stmt:     "SELECT SUM(amount) AS c, area, currency FROM %s where ts<=? GROUP BY area, currency ORDER BY c DESC"
+            dbname:         "revenue"
+            summary:        true
+            printf: "%5d %3s %s"
+            keys: [
+                {
+                    name: "type"
+                    contain: "OK"
+                },
+                {
+                    name: "data.currency"
+                },
+                {
+                    name: "data.amount"
+                    type: "money"
+                },
+            ]
+        },
+
+        // slow response
+        //===================================================
+        {
+            id:     "SlowResponse"
+            class:  "JsonCollectorParser"
+            title:  "SlowPhp"
+            indexname: "rsops"
+            colors: [ "FgMagenta", "Bright", ]
+            sleep:                  523
+            beep_threshold:         10
+            create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, uri VARCHAR(50));"
+            insert_stmt:    "INSERT INTO %s(area, ts, uri) VALUES(?,?,?)"
+            stats_stmt:     "SELECT COUNT(*) AS c, area, uri FROM %s WHERE ts<=? GROUP BY area, uri ORDER BY c DESC"
+            dbname:         "slowresp"
+            printf: "%5d %3s %s"
+            instantf: "SlowPhp %3s %s"
+            keys: [
+                {
+                    name: "_log_info.uri"
+                },
+            ]
+        },
+
+        // memcache set fail
+        //===================================================
+        {
+            id:     "MemcacheFail"
+            class:  "JsonCollectorParser"
+            colors: [ "FgYellow", "Underscore", ]
+            title:  "CacheFail"
+            indexname: "rsops"
+            beep_threshold:         1
+            create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, key VARCHAR(80), elapsed FLOAT, host CHAR(20));"
+            insert_stmt:    "INSERT INTO %s(area, ts, key, elapsed, host) VALUES(?,?,?,?,?)"
+            stats_stmt:     "SELECT COUNT(*) AS c, area, key FROM %s WHERE ts<=? GROUP BY area, key ORDER BY c DESC"
+            dbname:         "memfail"
+            persistdb:      "hist_memfail"
+            printf: "%5d %3s %s"
+            instantf: "CacheFail %3s %22s %8.4f %15s"
+            keys:   [
+                {
+                    name: "key"
+                    regex:  [
+                        "digit",
+                    ]
+                },
+                {
+                    name: "timeout"
+                    type: "float"
+                },
+                {
+                    name: "_log_info.host"
+                }
+            ]
+        },
+
+        // memcache slow
+        //===================================================
+        {
+            id:     "MemcacheSlow"
+            class:  "JsonCollectorParser"
+            colors: [ "FgYellow", ]
+            title:  "CacheSlow"
+            indexname: "rsops"
+            beep_threshold:         1
+            create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, key VARCHAR(80), elapsed FLOAT, host CHAR(20));"
+            insert_stmt:    "INSERT INTO %s(area, ts, key, elapsed, host) VALUES(?,?,?,?,?)"
+            stats_stmt:     "SELECT COUNT(*) AS c, area, key FROM %s WHERE ts<=? GROUP BY area, key ORDER BY c DESC"
+            dbname:         "memslow"
+            persistdb:      "hist_memslow"
+            printf: "%5d %3s %s"
+            instantf: "CacheSlow %3s %32s %8.4f %15s"
+            keys:   [
+                {
+                    name: "key"
+                    regex:  [
+                        "digit",
+                    ]
+                },
+                {
+                    name: "ts"
+                    type: "float"
+                },
+                {
+                    name: "_log_info.host"
+                }
+            ]
+        },
+
+        // mongodb slow
+        //===================================================
+        {
+            id:     "MongoSlow"
+            class:  "JsonCollectorParser"
+            title:          "MongoSlow"
+            indexname: "rsops"
+            colors: [ "FgYellow", "Reverse", ]
+            sleep:                  393
+            beep_threshold:         10
+            create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, tbl VARCHAR(50), method VARCHAR(30), t FLOAT, host CHAR(30), server CHAR(60));"
+            insert_stmt:    "INSERT INTO %s(area, ts, tbl, method, t, host, server) VALUES(?,?,?,?,?,?,?)"
+            stats_stmt:     "SELECT COUNT(*) AS c, area, method, tbl, server FROM %s WHERE ts<=? GROUP BY area, tbl, method, server ORDER BY c DESC"
+            dbname:         "mongoslow"
+            persistdb:      "hist_mongoslow"
+            // instantf's first col is always 'area'
+            instantf: "MongoSlow %3s %15s %8s %8.4f %15s %s"
+            printf: "%5d %3s %12s %20s %s"
+            keys:   [
+                {
+                    name: "table"
+                },
+                {
+                    name: "method"
+                },
+                {
+                    name: "ts"
+                    type: "float"
+                },
+                {
+                    name: "_log_info.host"
+                },
+                {
+                    name: "server"
+                },
+            ]
+        },
+
+        // /var/log/messages
+        //===================================================
+        {
+            id:     "Kernal"
+            class:  "HostLineParser"
+            enabled: true
+            indexname: "rsops"
+            title:  "Kernal"
+            colors: [ "FgWhite", "Reverse", ]
+            sleep:                  1715
+            beep_threshold:         958332885
+            create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, type VARCHAR(50), num INT);"
+            insert_stmt:    "INSERT INTO %s(area, ts, type, num) VALUES(?,?,?,?)"
+            stats_stmt:     "SELECT SUM(num) AS c, area, type FROM %s WHERE ts<=? GROUP BY area, type ORDER BY c DESC"
+            dbname:         "kernal"
+            printf: "%12d %3s %s"
+            keys: [
+                {
+                    name: "data"
+                    ignores: [
+                        "==>",
+                        "<==",
+                        "dhclient",
+                        "regex: child \\d+ exited with code 0",
+                        "regex: child \\d+ started",
+                        "you may need to increase start_servers",
+                        "spawning \\d+ children",
+                    ]
+                },
+            ]
+        },
+
+}
