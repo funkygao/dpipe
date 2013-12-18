@@ -36,7 +36,9 @@
     //===================================================
     guards: 
     [
-        #include#: ["ffs.guard.cf", "rs.guard.cf"]
+        {
+            #include#: ["ffs.guard.cf", "rs.guard.cf"]
+        }
     ]
     
     //===================================================
@@ -44,7 +46,9 @@
     //===================================================
     parsers: 
     [
-        #include#: ["ffs.parser.cf", "rs.parser.cf"]
+        {
+            #include#: ["ffs.parser.cf", "rs.parser.cf"]
+        }
     ]
 
 }
