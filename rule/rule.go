@@ -140,7 +140,7 @@ func LoadRuleEngine(fn string) (*Config, error) {
 
 				if key.Contain != "" {
 					// validator only, will never sink to db or indexer
-					key.Sink = ""
+					key.Sink = 0
 				}
 			}
 		}
