@@ -133,6 +133,10 @@ func (this *AlsParser) valuesOfJsonKeys(data *json.Json) (values []interface{}, 
 			}
 		}
 
+		if !key.Alarmable() && !key.Indexable() {
+			continue
+		}
+
 		if key.Ignores != nil && key.MsgIgnored(val.(string)) {
 			err = errors.New("ignored")
 			return
@@ -157,28 +161,32 @@ func (this *AlsParser) valuesOfJsonKeys(data *json.Json) (values []interface{}, 
 			val = int(money) / 100 // 以分为单位，而不是元
 		}
 
-		values = append(values, val)
-
-		if key.Type == KEY_TYPE_IP && geoEnabled() {
-			// extra geo point info
-			indexJson.Set(INDEX_COL_LOCATION, ipToGeo(val.(string)))
+		if key.Alarmable() {
+			values = append(values, val)
 		}
 
-		if key.Type == KEY_TYPE_LEVEL {
-			lvrange := als.GroupInt(val.(int), this.conf.LevelRange)
-			if lvrange != "" {
-				indexJson.Set(INDEX_COL_LVRANGE, lvrange)
-			} else if verbose {
-				logger.Printf("[%v]invalid level %d\n", *data, val.(int))
+		if key.Indexable() {
+			if key.Type == KEY_TYPE_IP && geoEnabled() {
+				// extra geo point info
+				indexJson.Set(INDEX_COL_LOCATION, ipToGeo(val.(string)))
 			}
-		}
 
-		if key.Name == "type" {
-			// 'type' is reserved in ElasticSearch
-			key.Name = "typ"
-		}
+			if key.Type == KEY_TYPE_LEVEL {
+				lvrange := als.GroupInt(val.(int), this.conf.LevelRange)
+				if lvrange != "" {
+					indexJson.Set(INDEX_COL_LVRANGE, lvrange)
+				} else if verbose {
+					logger.Printf("[%v]invalid level %d\n", *data, val.(int))
+				}
+			}
 
-		indexJson.Set(key.Name, val)
+			if key.Name == "type" {
+				// 'type' is reserved in ElasticSearch
+				key.Name = "typ"
+			}
+
+			indexJson.Set(key.Name, val)
+		}
 	}
 
 	return
