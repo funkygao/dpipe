@@ -1,4 +1,5 @@
 {
+    guards: [
         {
             tail_glob:      "/mnt/funplus/logs/fp_rstory/order*"
             history_glob:   "/mnt/funplus/logs/fp_rstory/history/order*"
@@ -93,4 +94,5 @@
             format:         "als"
             parsers:        [ "SlowResponse", ]
         },
+    ]
 }
