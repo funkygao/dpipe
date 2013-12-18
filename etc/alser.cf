@@ -36,6 +36,13 @@
     //===================================================
     guards: 
     [
+        // FFS
+        {
+            tail_glob:      "/mnt/funplus/logs/fp_ffseaside/bi_dau*"
+            parsers:        [ "ffsDau", ]
+        },
+
+        // RS
         {
             tail_glob:      "/mnt/funplus/logs/fp_rstory/order*"
             history_glob:   "/mnt/funplus/logs/fp_rstory/history/order*"
@@ -423,6 +430,27 @@
                 {
                     name: "guid"
                     type: "int"
+                },
+            ]
+        },
+
+        // ffs dau
+        //===================================================
+        {
+            id:         "ffsDau"
+            class:      "EsParser"
+            title:      "DAU"
+            indexname:  "ffs@ym"
+            keys: [
+                {
+                    name: "lang"
+                },
+                {
+                    name: "uid"
+                    type: "int"
+                },
+                {
+                    name: "os"
                 },
             ]
         },
