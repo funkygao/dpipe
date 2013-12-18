@@ -73,13 +73,13 @@ func (this *Indexer) store(indexor *core.BulkIndexor, item indexEntry) {
 		panic(err)
 	}
 
-	err = indexor.Index(item.indexName, item.typ, docId, "", item.date, jsonData) // ttl empty
+	err = indexor.Index(indexName, item.typ, docId, "", item.date, jsonData) // ttl empty
 	if err != nil {
 		logger.Printf("index error[%s] %s %#v\n", item.typ, err, *item.data)
 	}
 
 	if debug {
-		logger.Printf("done index[%s] type=%s %v\n", item.indexName, item.typ, *item.data)
+		logger.Printf("done index[%s] type=%s %v\n", indexName, item.typ, *item.data)
 	}
 
 }
