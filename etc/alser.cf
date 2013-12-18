@@ -264,6 +264,11 @@
                     name: "level",
                     type: "int"
                 },
+                {
+                    name: "ip",
+                    type: "ip",
+                    sink: "i"
+                },
             ]
         },
 
