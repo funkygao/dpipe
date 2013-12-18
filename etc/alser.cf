@@ -32,23 +32,8 @@
     }
 
     //===================================================
-    // 2. watch out for what logs and how
+    // 2. guards and parsers by project
     //===================================================
-    guards: 
-    [
-        {
-            #include#: ["ffs.guard.cf", "rs.guard.cf"]
-        }
-    ]
+    #include#: ["ffs.cf", "rs.cf"]
     
-    //===================================================
-    // 3. all avaible parsers(plugins)
-    //===================================================
-    parsers: 
-    [
-        {
-            #include#: ["ffs.parser.cf", "rs.parser.cf"]
-        }
-    ]
-
 }
