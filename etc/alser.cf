@@ -262,7 +262,7 @@
                 },
                 {
                     name: "level",
-                    type: "int"
+                    type: "level"
                 },
                 {
                     name: "ip",
