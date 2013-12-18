@@ -34,10 +34,10 @@ type ConfGuard struct {
 // ======== ========== ==============
 // sqldb(d) indexer(i) sink
 // ======== ========== ==============
-//        Y Y          di, default
-//        Y N          d
-//        N Y          i
-//        N N          validator only
+//        Y Y          3, default
+//        Y N          2, alarm only
+//        N Y          1, index only
+//        N N          0, validator only
 // ======== ========== ==============
 type LineKey struct {
 	Name    string
@@ -46,7 +46,7 @@ type LineKey struct {
 	Ignores []string
 	Filters []string // currently not used yet TODO
 	Regex   []string
-	Sink    string // ai,a,i
+	Sink    int // bit op
 }
 
 type ConfParser struct {
@@ -132,7 +132,7 @@ func LoadRuleEngine(fn string) (*Config, error) {
 				key.Name = this.String(prefix+"name", "")
 				key.Type = this.String(prefix+"type", "string")
 				key.Contain = this.String(prefix+"contain", "")
-				key.Sink = this.String(prefix+"sink", "di")
+				key.Sink = this.Int(prefix+"sink", 3)
 				key.Ignores = this.StringList(prefix+"ignores", nil)
 				key.Filters = this.StringList(prefix+"filters", nil)
 				key.Regex = this.StringList(prefix+"regex", nil)
@@ -291,4 +291,12 @@ func (this *LineKey) MsgIgnored(msg string) bool {
 	}
 
 	return false
+}
+
+func (this *LineKey) Alarmable() bool {
+	return this.Sink&2 != 0
+}
+
+func (this *LineKey) Indexable() bool {
+	return this.Sink&1 != 0
 }

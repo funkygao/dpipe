@@ -267,7 +267,8 @@
                 {
                     name: "ip",
                     type: "ip",
-                    sink: "i"
+                    // sink, bit op, bit1: alarm, bit0: index
+                    sink: 1
                 },
             ]
         },
