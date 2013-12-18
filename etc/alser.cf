@@ -243,7 +243,7 @@
             title:  "Orders"
             class:  "JsonCollectorParser"
             colors: [ "FgGreen", "BgMagenta", ]
-            lvrange: [1, 5, 10, 100]
+            lvrange: [1, 14, 18, 22, 26, 30, 35, 40, 45, 50, 56, 62, 68, 74, 100]
             sleep:          1909
             beep_threshold: 5800
             indexname:      "rs@ym"
