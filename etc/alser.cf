@@ -279,6 +279,7 @@
             title:  "CCU"
             class:  "JsonCollectorParser"
             colors: [ "FgGreen", "BgMagenta", ]
+            indexing:       false
             indexname:      "rs@ym"
             sleep:          1909
             beep_threshold: 42800
