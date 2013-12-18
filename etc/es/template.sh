@@ -10,7 +10,7 @@ curl -XGET http://localhost:9200/_template/fun?pretty=1
 # put template to ES
 curl -XPUT localhost:9200/_template/fun -d '
 {
-    "template": "*",
+    "template": "fun*",
 
     "settings": {
         "index": {

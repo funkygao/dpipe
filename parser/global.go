@@ -96,6 +96,7 @@ const (
 	BEEP           = "\a"
 
 	INDEX_YEARMONTH = "@ym"
+	INDEX_PREFIX    = "fun_"
 
 	INDEX_COL_AREA      = "area"
 	INDEX_COL_TIMESTAMP = "t"

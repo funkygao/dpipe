@@ -41,7 +41,6 @@ func (this *Indexer) mainLoop() {
 
 	api.Domain = this.conf.String("indexer.domain", "localhost")
 	api.Port = this.conf.String("indexer.port", "9200")
-	this.defaultIndex = this.conf.String("indexer.default_index", "rs")
 
 	done := make(chan bool)
 	indexor := core.NewBulkIndexor(this.conf.Int("indexer.bulk_max_conn", 10))
@@ -58,7 +57,10 @@ func (this *Indexer) mainLoop() {
 }
 
 func (this *Indexer) store(indexor *core.BulkIndexor, item indexEntry) {
-	indexName := item.normalizedIndexName(this.defaultIndex)
+	indexName := item.normalizedIndexName()
+	if indexName == "" {
+		panic("empty index name")
+	}
 	docId, err := this.genUUID()
 	if err != nil {
 		panic(err)
@@ -99,20 +101,21 @@ func (this *Indexer) genUUID() (string, error) {
 	return hex.EncodeToString(uuid), nil
 }
 
-func (this *indexEntry) normalizedIndexName(defaultIndex string) string {
-	if this.indexName == "" {
-		return defaultIndex
-	}
-
+func (this *indexEntry) normalizedIndexName() string {
 	if strings.HasSuffix(this.indexName, config.INDEX_YEARMONTH) {
-		prefix := defaultIndex
+		prefix := ""
 		fields := strings.SplitN(this.indexName, config.INDEX_YEARMONTH, 2)
 		if fields[0] != "" {
 			// e,g. rs@ym
 			prefix = fields[0]
 		}
-		return fmt.Sprintf("%s_%d_%d", prefix, this.date.Year(), int(this.date.Month()))
+		if prefix == "" {
+			// must have suffix if time based index
+			return ""
+		}
+
+		return INDEX_PREFIX + fmt.Sprintf("%s_%d_%d", prefix, this.date.Year(), int(this.date.Month()))
 	}
 
-	return this.indexName
+	return INDEX_PREFIX + this.indexName
 }

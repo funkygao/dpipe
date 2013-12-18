@@ -12,7 +12,6 @@
         enabled: true
         domain: "localhost"
         port: "9200"
-        default_index: "rs"
         // if we want to disable geoip feature, just change 'geodbfile' to invalid file
         geodbfile: "/opt/local/share/GeoIP/GeoLiteCity.dat"
     }
