@@ -5,7 +5,7 @@ curl -XGET 'http://localhost:9200/rs/_mapping?pretty=true'
 
 curl -XGET http://localhost:9200/_template?pretty=1
 
-curl -XGET http://localhost:9200/_template/rs_template?pretty=1
+curl -XGET http://localhost:9200/_template/fun?pretty=1
 
 # put template to ES
 curl -XPUT localhost:9200/_template/fun -d '
@@ -25,7 +25,7 @@ curl -XPUT localhost:9200/_template/fun -d '
     "mappings": {
         "_default_": {
             "_source": {
-                "enabled": false,
+                "enabled": true,
                 "compress": true
             }, 
             "_all": {
