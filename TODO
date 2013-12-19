@@ -11,3 +11,5 @@
 
 *   integration with behavior db
 *   keep user related dimension in mem, such as gender, paid, abtype
+
+*   project level email alarm
