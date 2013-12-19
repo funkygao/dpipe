@@ -112,13 +112,13 @@ func (this *SysWorker) Run() {
 			continue
 		}
 
+		if options.debug {
+			logger.Printf("%s got line: %s\n", *this, line)
+		}
+
 		for _, parserId := range this.conf.Parsers {
 			line = fmt.Sprintf("als,%d,%s",
 				time.Now().Unix(), jsonStats)
-			if options.debug {
-				logger.Printf("%s got line: %s\n", *this, line)
-			}
-
 			parser.Dispatch(parserId, line)
 		}
 
