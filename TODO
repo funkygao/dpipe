@@ -1,27 +1,13 @@
 *   priority queue https://github.com/daviddengcn/go-villa
 *   LRU to keep state of uid based data(e,g. anti-spam)
 
-*   95 99% stats   github.com/bmizerany/perks
-
-*   websocket for web based alarm
 *   lua integration to parse complex log
 
 *   refactor ParseLine of jsoncollector/hostline/regexcollector
 
 *   geodbfile   indexer.domain
 
-*   add indexing to HostLineParser and RegexCollectorParser
-
-*   add dimensions e,g. abtype/paid to log json
-
-*   alarm mail msg group by type, timestamp
-
-*   maybe Kernal msg needn't send alarm email
-
-*   time based index
-
-*   key type: level, sessionlen, xp/indexonly key
-
 *   rename LineKey to Field
 
 *   integration with behavior db
+*   keep user related dimension in mem, such as gender, paid, abtype
