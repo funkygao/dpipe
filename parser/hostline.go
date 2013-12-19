@@ -112,7 +112,6 @@ func (this *HostLineParser) ParseLine(line string) (area string, ts uint64, msg 
 	}
 
 	this.colorPrintfLn("%3s %15s %s", area, host, data)
-	this.alarmf("%3s %15s %s", area, host, data)
 	if this.conf.BeepThreshold > 0 {
 		this.beep()
 	}
