@@ -402,7 +402,6 @@
             title:  "DAU"
             colors: [ "FgBlue", ]
             sleep:          1580
-            beep_threshold: 7950
             indexname:      "rs@ym"
             create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, uid INT, day INT);"
             insert_stmt:    "INSERT INTO %s(area, ts, uid, day) VALUES(?,?,?,?)"
