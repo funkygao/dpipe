@@ -3,7 +3,6 @@
     // 1. FFS data sources
     //==================================
     guards: [
-        // FFS
         {
             tail_glob:      "/mnt/funplus/logs/fp_ffseaside/bi_dau*"
             parsers:        [ "ffsDau", ]
