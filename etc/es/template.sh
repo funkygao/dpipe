@@ -83,3 +83,16 @@ curl -XPUT localhost:9200/_template/fun -d '
     }
 }'
 
+curl -XPUT localhost:9200/_template/dashboard -d '
+{
+    "template": "dashboard*",
+
+    "settings": {
+        "index": {
+            "number_of_shards": 3,
+            "number_of_replicas": 0,
+            "warmer.enabled": true,
+            "refresh_interval": "55s"
+        }
+    }
+}'
