@@ -71,14 +71,15 @@ func (s *stats) GatherStats(percent bool) {
 	s.procCPUSampled = true
 }
 
-func (s *stats) json() string {
+func (s *stats) json() (string, error) {
 	b, err := json.Marshal(s)
 	if err != nil {
-		panic(err)
+		return "", err
 	}
+
 	dst := new(bytes.Buffer)
 	dst.Write(b)
-	return dst.String()
+	return dst.String(), nil
 }
 
 func newSysWorker(id int,
@@ -90,7 +91,6 @@ func newSysWorker(id int,
 		dataSource: dataSource, conf: conf, tailMode: tailMode,
 		wg: wg, Mutex: mutex,
 		chLines: chLines, chAlarm: chAlarm}
-	this.Lines = make(chan string)
 
 	return this
 }
@@ -103,9 +103,18 @@ func (this *SysWorker) Run() {
 	for {
 		stats.GatherStats(true)
 
+		jsonStats, err := stats.json()
+		if err != nil {
+			if options.verbose {
+				logger.Printf("%s got invalid sysstat: %v\n", *this, *stats)
+			}
+
+			continue
+		}
+
 		for _, parserId := range this.conf.Parsers {
 			line = fmt.Sprintf("als,%d,%s",
-				time.Now().Unix(), stats.json())
+				time.Now().Unix(), jsonStats)
 			if options.debug {
 				logger.Printf("%s got line: %s\n", *this, line)
 			}
