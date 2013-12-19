@@ -104,7 +104,7 @@ func (this *SysWorker) Run() {
 		stats.GatherStats(true)
 
 		for _, parserId := range this.conf.Parsers {
-			line = fmt.Sprintf("sys,%d,%s",
+			line = fmt.Sprintf("als,%d,%s",
 				time.Now().Unix(), stats.json())
 			parser.Dispatch(parserId, line)
 		}

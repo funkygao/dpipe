@@ -22,6 +22,10 @@ func newEsParser(conf *config.ConfParser, chUpstream chan<- Alarm, chDownstream 
 }
 
 func (this *EsParser) ParseLine(line string) (area string, ts uint64, msg string) {
+	if !this.conf.Indexing {
+		return
+	}
+
 	area, ts, msg = this.AlsParser.ParseLine(line)
 	if msg == "" {
 		if verbose {
@@ -55,13 +59,11 @@ func (this *EsParser) ParseLine(line string) (area string, ts uint64, msg string
 		}
 	}
 
-	if this.conf.Indexing {
-		indexJson.Set(INDEX_COL_AREA, area)
-		indexJson.Set(INDEX_COL_TIMESTAMP, ts)
+	indexJson.Set(INDEX_COL_AREA, area)
+	indexJson.Set(INDEX_COL_TIMESTAMP, ts)
 
-		date := time.Unix(int64(ts), 0)
-		indexer.c <- indexEntry{indexName: this.conf.IndexName, typ: this.conf.Title, date: &date, data: indexJson}
-	}
+	date := time.Unix(int64(ts), 0)
+	indexer.c <- indexEntry{indexName: this.conf.IndexName, typ: this.conf.Title, date: &date, data: indexJson}
 
 	return
 }
