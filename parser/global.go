@@ -101,6 +101,7 @@ const (
 	INDEX_COL_AREA      = "area"
 	INDEX_COL_TIMESTAMP = "t"
 	INDEX_COL_LOCATION  = "loc"
+	INDEX_COL_COUNTRY   = "ctry"
 	INDEX_COL_LVRANGE   = "lvr"
 )
 

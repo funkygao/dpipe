@@ -168,7 +168,8 @@ func (this *AlsParser) valuesOfJsonKeys(data *json.Json) (values []interface{}, 
 		if key.Indexable() {
 			if key.Type == KEY_TYPE_IP && geoEnabled() {
 				// extra geo point info
-				indexJson.Set(INDEX_COL_LOCATION, ipToGeo(val.(string)))
+				//indexJson.Set(INDEX_COL_LOCATION, ipToGeo(val.(string)))
+				indexJson.Set(INDEX_COL_COUNTRY, ipToCountry(val.(string)))
 			}
 
 			if key.Type == KEY_TYPE_LEVEL {

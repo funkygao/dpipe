@@ -13,7 +13,7 @@
         domain: "localhost"
         port: "9200"
         // if we want to disable geoip feature, just change 'geodbfile' to invalid file
-        geodbfile: "/opt/local/share/GeoIP/GeoLiteCity.dat"
+        geodbfile: "/opt/local/share/GeoIP/GeoIP.dat"
     }
 
     //===================================================
