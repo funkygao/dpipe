@@ -3,6 +3,7 @@ package main
 import (
 	"bitbucket.org/bertimus9/systemstat"
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"github.com/funkygao/alser/parser"
 	"github.com/funkygao/alser/rule"
@@ -94,7 +95,7 @@ func newSysWorker(id int,
 	return this
 }
 
-func (this *DbWorker) Run() {
+func (this *SysWorker) Run() {
 	defer this.Done()
 
 	stats := newStats()
