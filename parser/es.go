@@ -32,8 +32,9 @@ func (this *EsParser) ParseLine(line string) (area string, ts uint64, msg string
 	}
 
 	var (
-		jsonData *json.Json
-		err      error
+		indexJson *json.Json
+		jsonData  *json.Json
+		err       error
 	)
 	jsonData, err = this.msgToJson(msg)
 	if err != nil {
@@ -41,13 +42,17 @@ func (this *EsParser) ParseLine(line string) (area string, ts uint64, msg string
 		return
 	}
 
-	_, indexJson, err := this.valuesOfJsonKeys(jsonData)
-	if err != nil {
-		if debug {
-			logger.Println(err)
-		}
+	if this.conf.IndexAll {
+		indexJson = jsonData
+	} else {
+		_, indexJson, err = this.valuesOfJsonKeys(jsonData)
+		if err != nil {
+			if debug {
+				logger.Println(err)
+			}
 
-		return
+			return
+		}
 	}
 
 	if this.conf.Indexing {

@@ -2,9 +2,9 @@ package main
 
 import (
 	"fmt"
-	"github.com/funkygao/alser/rule"
 	sqldb "github.com/funkygao/alser/db"
 	"github.com/funkygao/alser/parser"
+	"github.com/funkygao/alser/rule"
 	"path/filepath"
 	"sync"
 	"time"
@@ -68,7 +68,7 @@ func guard(conf *config.Config) {
 }
 
 func guardDataSources(guard config.ConfGuard) []string {
-	if guard.IsFileSource() {
+	if guard.Type == config.DATASOURCE_FILE || guard.Type == config.DATASOURCE_SYS {
 		var pattern string
 		if options.tailmode {
 			pattern = guard.TailLogGlob
@@ -86,7 +86,7 @@ func guardDataSources(guard config.ConfGuard) []string {
 		}
 
 		return logfiles
-	} else if guard.IsDbSource() {
+	} else if guard.Type == config.DATASOURCE_DB {
 		tables := make([]string, 0)
 		db := sqldb.NewSqlDb(sqldb.DRIVER_MYSQL, FLASHLOG_DSN, logger)
 		rows := db.Query(fmt.Sprintf("SHOW TABLES LIKE '%s'", guard.Tables))
@@ -102,7 +102,7 @@ func guardDataSources(guard config.ConfGuard) []string {
 
 		return tables
 	} else {
-		panic("unkown guards data source: " + guard.DataSourceType())
+		panic("unkown guards data source: " + guard.Type)
 	}
 
 	return nil

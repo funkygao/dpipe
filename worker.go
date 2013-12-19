@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"github.com/funkygao/alser/rule"
 	"github.com/funkygao/alser/parser"
+	"github.com/funkygao/alser/rule"
 	"sync"
 	"time"
 )
@@ -84,10 +84,12 @@ func invokeWorkers(conf *config.Config, wg *sync.WaitGroup, workersCanWait chan<
 				allWorkers[dataSource] = true
 
 				var newWoker NewWorker
-				if guard.IsFileSource() {
+				if guard.Type == config.DATASOURCE_FILE {
 					newWoker = newLogfileWorker
-				} else if guard.IsDbSource() {
+				} else if guard.Type == config.DATASOURCE_DB {
 					newWoker = newDbWorker
+				} else if guard.Type == config.DATASOURCE_SYS {
+					newWoker = newSysWorker
 				}
 
 				var worker = newWoker(len(allWorkers),

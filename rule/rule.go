@@ -14,6 +14,7 @@ import (
 const (
 	DATASOURCE_DB   = "db"
 	DATASOURCE_FILE = "file"
+	DATASOURCE_SYS  = "sys"
 
 	INDEX_YEARMONTH = "@ym"
 )
@@ -22,6 +23,7 @@ const (
 // db, file
 type ConfGuard struct {
 	Enabled        bool
+	Type           string
 	TailLogGlob    string
 	HistoryLogGlob string
 	Tables         string // sql like grammer, e,g. log_%
@@ -63,6 +65,7 @@ type ConfParser struct {
 	ShowSummary   bool
 	Indexing      bool
 	IndexName     string
+	IndexAll      bool // index all keys, we needn't define keys in rules
 	LevelRange    []int
 
 	Sleep           int
@@ -116,6 +119,7 @@ func LoadRuleEngine(fn string) (*Config, error) {
 		parser.StatsStmt = this.String(keyPrefix+"stats_stmt", "")
 		parser.ShowSummary = this.Bool(keyPrefix+"summary", false)
 		parser.Indexing = this.Bool(keyPrefix+"indexing", true)
+		parser.IndexAll = this.Bool(keyPrefix+"indexall", false)
 		parser.LevelRange = this.IntList(keyPrefix+"lvrange", nil)
 		parser.IndexName = this.String(keyPrefix+"indexname", INDEX_YEARMONTH)
 		parser.Enabled = this.Bool(keyPrefix+"enabled", true)
@@ -153,15 +157,18 @@ func LoadRuleEngine(fn string) (*Config, error) {
 		keyPrefix := fmt.Sprintf("guards[%d].", i)
 		guard := ConfGuard{}
 		guard.Enabled = this.Bool(keyPrefix+"enabled", true)
+		guard.Type = this.String(keyPrefix+"type", DATASOURCE_FILE)
 		guard.TailLogGlob = this.String(keyPrefix+"tail_glob", "")
 		guard.HistoryLogGlob = this.String(keyPrefix+"history_glob", "")
 		guard.Parsers = this.StringList(keyPrefix+"parsers", nil)
 		guard.Tables = this.String(keyPrefix+"tables", "")
-		if guard.Tables != "" && (guard.TailLogGlob != "" || guard.HistoryLogGlob != "") {
-			return nil, errors.New("can't have both file and db as datasource")
-		}
-		if guard.Tables == "" && guard.TailLogGlob == "" && guard.HistoryLogGlob == "" {
-			return nil, errors.New("non datasource defined")
+		if guard.Type != DATASOURCE_SYS {
+			if guard.Tables != "" && (guard.TailLogGlob != "" || guard.HistoryLogGlob != "") {
+				return nil, errors.New("can't have both file and db as datasource")
+			}
+			if guard.Tables == "" && guard.TailLogGlob == "" && guard.HistoryLogGlob == "" {
+				return nil, errors.New("non datasource defined")
+			}
 		}
 
 		this.Guards = append(this.Guards, guard)
@@ -243,22 +250,6 @@ func (this *ConfGuard) HasParser(parser string) bool {
 	}
 
 	return false
-}
-
-func (this *ConfGuard) DataSourceType() string {
-	if this.Tables != "" {
-		return DATASOURCE_DB
-	}
-
-	return DATASOURCE_FILE
-}
-
-func (this *ConfGuard) IsDbSource() bool {
-	return this.DataSourceType() == DATASOURCE_DB
-}
-
-func (this *ConfGuard) IsFileSource() bool {
-	return this.DataSourceType() == DATASOURCE_FILE
 }
 
 func (this *LineKey) MsgIgnored(msg string) bool {
