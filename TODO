@@ -5,8 +5,6 @@
 
 *   refactor ParseLine of jsoncollector/hostline/regexcollector
 
-*   geodbfile   indexer.domain
-
 *   rename LineKey to Field
 
 *   integration with behavior db
