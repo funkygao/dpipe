@@ -15,3 +15,5 @@
 *   project level email alarm
 
 *   monitor localhost load and alarm
+
+*   plugin just like golang sql pkg
