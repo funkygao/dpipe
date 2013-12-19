@@ -25,7 +25,6 @@ type ConfGuard struct {
 	TailLogGlob    string
 	HistoryLogGlob string
 	Tables         string // sql like grammer, e,g. log_%
-	Format         string // currently, has value of als|flashlog
 
 	Parsers []string
 }
@@ -158,7 +157,6 @@ func LoadRuleEngine(fn string) (*Config, error) {
 		guard.HistoryLogGlob = this.String(keyPrefix+"history_glob", "")
 		guard.Parsers = this.StringList(keyPrefix+"parsers", nil)
 		guard.Tables = this.String(keyPrefix+"tables", "")
-		guard.Format = this.String(keyPrefix+"format", "als")
 		if guard.Tables != "" && (guard.TailLogGlob != "" || guard.HistoryLogGlob != "") {
 			return nil, errors.New("can't have both file and db as datasource")
 		}

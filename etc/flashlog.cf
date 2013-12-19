@@ -21,7 +21,6 @@
     [
         {
             tables:   "log_%"
-            format:  "flashlog"
             parsers:        [
                 "Flashlog",
             ]
