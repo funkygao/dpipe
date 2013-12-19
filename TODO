@@ -5,16 +5,12 @@
 
 *   refactor ParseLine of jsoncollector/hostline/regexcollector
 
-*   geodbfile   indexer.domain
-
 *   rename LineKey to Field
 
 *   integration with behavior db
 *   keep user related dimension in mem, such as gender, paid, abtype
 
 *   project level email alarm
-
-*   monitor localhost load and alarm
 
 *   plugin just like golang sql pkg
 
