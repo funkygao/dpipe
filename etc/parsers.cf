@@ -572,19 +572,90 @@
             class:      "EsParser"
             title:      "DAU"
             indexname:  "ffs@ym"
-            keys: [
-                {
-                    name: "lang"
-                },
-                {
-                    name: "uid"
-                    type: "int"
-                },
-                {
-                    name: "os"
-                },
-            ]
+            indexall:    true
         },
+
+        // calendar
+        //===================================================
+        {
+            id:         "ffsCalendar"
+            class:      "EsParser"
+            title:      "Calendar"
+            indexname:  "ffs@ym"
+            indexall:    true
+        },
+
+        // collect machine buy
+        //===================================================
+        {
+            id:         "ffsCollectMachineBuy"
+            class:      "EsParser"
+            title:      "CollectMachineBuy"
+            indexname:  "ffs@ym"
+            indexall:    true
+        },
+
+        // collect machine drop
+        //===================================================
+        {
+            id:         "ffsCollectMachineDrop"
+            class:      "EsParser"
+            title:      "CollectMachineDrop"
+            indexname:  "ffs@ym"
+            indexall:    true
+        },
+
+        // collect machine trade
+        //===================================================
+        {
+            id:         "ffsCollectMachineTrade"
+            class:      "EsParser"
+            title:      "CollectMachineTrade"
+            indexname:  "ffs@ym"
+            indexall:    true
+        },
+
+        // fishing
+        //===================================================
+        {
+            id:         "ffsFishing"
+            class:      "EsParser"
+            title:      "Fishing"
+            indexname:  "ffs@ym"
+            indexall:    true
+        },
+
+        // orders
+        //===================================================
+        {
+            id:         "ffsOrders"
+            class:      "EsParser"
+            title:      "Orders"
+            indexname:  "ffs@ym"
+            indexall:    true
+        },
+
+        // machine upgrade
+        //===================================================
+        {
+            id:         "ffsMachineUpgrade"
+            class:      "EsParser"
+            title:      "MachineUpgrade"
+            indexname:  "ffs@ym"
+            indexall:    true
+        },
+
+        // fortune
+        //===================================================
+        {
+            id:         "ffsFortune"
+            class:      "EsParser"
+            title:      "Fortune"
+            indexname:  "ffs@ym"
+            indexall:    true
+        },
+
+
     ]
 
 }
