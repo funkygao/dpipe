@@ -17,3 +17,5 @@
 *   monitor localhost load and alarm
 
 *   plugin just like golang sql pkg
+
+*   guard parser adaptor with title@parserId
