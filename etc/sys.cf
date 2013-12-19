@@ -4,7 +4,7 @@
     //==================================
     guards: [
         {
-            tail_glob:  "/proc/cpuinfo"
+            tail_glob:  "/proc/stat"
             type:       "sys"
             parsers:    [ "sysMon", ]
         },
