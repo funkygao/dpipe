@@ -34,6 +34,6 @@
     //===================================================
     // 2. guards and parsers by project
     //===================================================
-    #include#: ["sys.cf", "ffs.cf", "rs.cf"]
+    #include#: ["guards.cf", "parsers.cf", ]
     
 }
