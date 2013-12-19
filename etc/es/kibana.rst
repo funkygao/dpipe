@@ -21,6 +21,8 @@ keynote
 
 - wildcard supported
 
+  * and ?
+
 Boolean Operators
 -----------------
 
@@ -34,10 +36,8 @@ Boolean Operators
 
   cannot be used with just one term
 
-range search
-------------
-
-case sensitive
+use cases
+---------
 
 ::
 
@@ -48,3 +48,4 @@ case sensitive
     title:{Aida TO Carmen}  // Aida and Carmen not inclusive
     area:*e NOT de
     (area:ae OR area:nl) AND uid:[1 TO 1000000]
+
