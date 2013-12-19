@@ -13,3 +13,5 @@
 *   keep user related dimension in mem, such as gender, paid, abtype
 
 *   project level email alarm
+
+*   monitor localhost load and alarm
