@@ -268,7 +268,6 @@
             colors: [ "FgGreen", "Underscore", ]
             indexname:      "rs@ym"
             sleep:          1980
-            beep_threshold: 1650
             create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, lv INT, type VARCHAR(60), uid INT);"
             insert_stmt:    "INSERT INTO %s(area, ts, lv, type, uid) VALUES(?,?,?,?,?)"
             stats_stmt:     "SELECT COUNT(DISTINCT(uid)) AS c, type FROM %s where ts<=? GROUP BY type ORDER BY c DESC"
