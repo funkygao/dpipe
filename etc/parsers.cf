@@ -4,8 +4,6 @@
         // RS
         //=====================
 
-        // phperror
-        //===================================================
         {
             id:     "PhpError"
             class:  "RegexCollectorParser"
@@ -30,8 +28,6 @@
             printf: "%5d %3s %15s:%-4s %s"
         },
 
-        // mongo error
-        //===================================================
         {
             id:     "MongoError"
             class:  "JsonCollectorParser"
@@ -57,8 +53,6 @@
             ]
         },
 
-        // error log
-        //===================================================
         {
             id:     "Error"
             class:  "JsonCollectorParser"
@@ -102,8 +96,6 @@
             ]
         },
 
-        // Order related
-        //===================================================
         {
             id:     "Orders"
             title:  "Orders"
@@ -139,8 +131,6 @@
             ]
         },
 
-        // Session recorded by flash
-        //===================================================
         {
             id:     "Session"
             title:  "CCU"
@@ -168,8 +158,6 @@
             ]
         },
 
-        // NewAccount
-        //===================================================
         {
             id:     "NewAccount"
             title:  "NewUser"
@@ -197,8 +185,6 @@
             ]
         },
 
-        // LevelUp
-        //===================================================
         {
             id:     "LevelUp"
             class:  "JsonCollectorParser"
@@ -220,8 +206,6 @@
             ]
         },
 
-        // Mission
-        //===================================================
         {
             id:     "Mission"
             class:  "JsonCollectorParser"
@@ -241,8 +225,6 @@
             ]
         },
 
-        // rc fail
-        //===================================================
         {
             id:     "RcFail"
             class:  "JsonCollectorParser"
@@ -263,8 +245,6 @@
             ]
         },
 
-        // click event fired from flash
-        //===================================================
         {
             id:     "FlashClick"
             class:  "JsonCollectorParser"
@@ -293,8 +273,6 @@
             ]
         },
 
-        // dau
-        //===================================================
         {
             id:     "Dau"
             class:  "JsonCollectorParser"
@@ -324,8 +302,6 @@
             ]
         },
 
-        // payment type
-        //===================================================
         {
             id:     "Pay"
             class:  "JsonCollectorParser"
@@ -350,8 +326,6 @@
             ]
         },
 
-        // revenue
-        //===================================================
         {
             id:     "Revenue"
             class:  "JsonCollectorParser"
@@ -381,8 +355,6 @@
             ]
         },
 
-        // slow response
-        //===================================================
         {
             id:     "SlowResponse"
             class:  "JsonCollectorParser"
@@ -404,8 +376,6 @@
             ]
         },
 
-        // memcache set fail
-        //===================================================
         {
             id:     "MemcacheFail"
             class:  "JsonCollectorParser"
@@ -437,8 +407,6 @@
             ]
         },
 
-        // memcache slow
-        //===================================================
         {
             id:     "MemcacheSlow"
             class:  "JsonCollectorParser"
@@ -470,8 +438,6 @@
             ]
         },
 
-        // mongodb slow
-        //===================================================
         {
             id:     "MongoSlow"
             class:  "JsonCollectorParser"
@@ -508,8 +474,6 @@
             ]
         },
 
-        // /var/log/messages
-        //===================================================
         {
             id:     "Kernal"
             class:  "HostLineParser"
@@ -540,8 +504,14 @@
             ]
         },
 
-        // cher
-        //===================================================
+        {
+            id:         "MiniGames"
+            class:      "EsParser"
+            title:      "MiniGames"
+            indexname:  "rs@ym"
+            indexall:    true
+        },
+
         {
             id:         "Cher"
             class:      "EsParser"
@@ -565,8 +535,6 @@
         // FFS
         //=====================
 
-        // dau
-        //===================================================
         {
             id:         "ffsDau"
             class:      "EsParser"
@@ -575,8 +543,6 @@
             indexall:    true
         },
 
-        // calendar
-        //===================================================
         {
             id:         "ffsCalendar"
             class:      "EsParser"
@@ -585,8 +551,6 @@
             indexall:    true
         },
 
-        // collect machine buy
-        //===================================================
         {
             id:         "ffsCollectMachineBuy"
             class:      "EsParser"
@@ -595,8 +559,6 @@
             indexall:    true
         },
 
-        // collect machine drop
-        //===================================================
         {
             id:         "ffsCollectMachineDrop"
             class:      "EsParser"
@@ -605,8 +567,6 @@
             indexall:    true
         },
 
-        // collect machine trade
-        //===================================================
         {
             id:         "ffsCollectMachineTrade"
             class:      "EsParser"
@@ -615,8 +575,6 @@
             indexall:    true
         },
 
-        // fishing
-        //===================================================
         {
             id:         "ffsFishing"
             class:      "EsParser"
@@ -625,8 +583,6 @@
             indexall:    true
         },
 
-        // orders
-        //===================================================
         {
             id:         "ffsOrders"
             class:      "EsParser"
@@ -635,8 +591,6 @@
             indexall:    true
         },
 
-        // machine upgrade
-        //===================================================
         {
             id:         "ffsMachineUpgrade"
             class:      "EsParser"
@@ -645,8 +599,6 @@
             indexall:    true
         },
 
-        // fortune
-        //===================================================
         {
             id:         "ffsFortune"
             class:      "EsParser"
