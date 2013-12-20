@@ -48,7 +48,10 @@ Performing "in-flight" processing of collected data, real time streaming analysi
                             |                   |           |           |
                    +-----------------+          |           |           |
                    |    |     |      |   ElasticSearch    HDFS      LevelDB/sky
-                 beep email console etc
+                 beep email console etc         |
+                                                |
+                                                |
+                                             Kibana3 ☺︎
 
 
 #### Parsers
