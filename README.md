@@ -51,8 +51,23 @@ Performing "in-flight" processing of collected data, real time streaming analysi
                  beep email console etc         |
                                                 |
                                                 |
-                                             Kibana3 ☺︎
-
+                                             Kibana3
+                                                |
+                                                |
+                                               .-.
+                                              (e.e)
+                                               (m)
+                                             .-="=-.  W
+                                            // =T= \\,/
+                                           () ==|== ()
+                                            \  =V=
+                                             M(oVo)
+                                              // \\
+                                             //   \\
+                                            ()     ()
+                                             \\    ||
+                                          PM  \'   '|
+                                            =="     "==
 
 #### Parsers
 
