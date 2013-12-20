@@ -5,6 +5,22 @@
         //=====================
 
         {
+            id:         "RcAction"
+            class:      "EsParser"
+            title:      "RcAction"
+            indexname:  "rs@ym"
+            indexall:    true
+        },
+
+        {
+            id:         "RcLog"
+            class:      "EsParser"
+            title:      "RcLog"
+            indexname:  "rs@ym"
+            indexall:    true
+        },
+
+        {
             id:     "PhpError"
             class:  "RegexCollectorParser"
             title:  "PhpErr"
