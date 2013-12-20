@@ -48,3 +48,8 @@ func ipToGeo(ip string) (this GeoPoint) {
 
 	return
 }
+
+func ipToCountry(ip string) string {
+    country, _ := geo.GetCountry(ip)
+    return country
+}

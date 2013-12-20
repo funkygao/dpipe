@@ -1,5 +1,20 @@
 /*
 Configurations shared between alser and parers.
+
+        Rule
+          |
+     +---------+
+     |         |
+  Project   Project
+               |
+          +---------------+
+          |               |
+     []DataSource     []Parser
+                          |
+                      +-------+
+                      |       |
+                     Key     Key
+
 */
 package config
 
