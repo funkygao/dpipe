@@ -15,3 +15,5 @@
 *   plugin just like golang sql pkg
 
 *   guard parser adaptor with title@parserId
+
+*   range for money besides lv range
