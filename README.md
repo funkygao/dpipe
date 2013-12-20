@@ -26,19 +26,23 @@ Performing "in-flight" processing of collected data, real time streaming analysi
 
         +---------+     +---------+     +---------+     +---------+
         | server1 |     | server2 |     | server3 |     | serverN |
+        |---------|     |---------|     |---------|     |---------|
+        |syslog-ng|     |syslog-ng|     |syslog-ng|     |syslog-ng|
+        |---------|     |---------|     |---------|     |---------|
+        |collector|     |collector|     |collector|     |collector|
         +---------+     +---------+     +---------+     +---------+
             |               |               |               |
              -----------------------------------------------
                                     |
-                                    | log events datasources(db | text log)
+                                    | HTTP POST
                                     |
                             +-----------------+
                             |   ALS Server    |
                             |-----------------| 
-                            | alser daemon    |
+                            |alser ETL daemon |
                             +-----------------+
                                     |
-                                    | filtering/parsing based on rule engine
+                                    | clean/filter/parse/transform based on rule engine
                                     |
                                     | output target
                                     |
