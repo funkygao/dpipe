@@ -20,4 +20,4 @@
 
 *   pipleline for parsers of a guard: decorate, filter, without IO
 
-*   cardinality estimation for MAU/WAU distinct count over a large data set
+*   cardinality estimation(Hyper LogLog) for MAU/WAU distinct count over a large data set
