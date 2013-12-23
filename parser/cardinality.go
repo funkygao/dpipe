@@ -4,6 +4,7 @@ import (
 	"errors"
 	h "github.com/eclesh/hyperloglog"
 	"hash/fnv"
+	"math"
 )
 
 type CardinalityCounter struct {
@@ -11,8 +12,8 @@ type CardinalityCounter struct {
 	hll map[string]*h.HyperLogLog
 }
 
-func NewCardinalityCounter(m uint) *CardinalityCounter {
-	c := &CardinalityCounter{m: m}
+func NewCardinalityCounter() *CardinalityCounter {
+	c := &CardinalityCounter{m: uint(math.Pow(2, float64(18)))} // 2^8KB mem space
 	c.hll = make(map[string]*h.HyperLogLog)
 	return c
 }
