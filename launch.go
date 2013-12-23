@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-func guard(conf *config.Config) {
+func launch(conf *config.Config) {
 	startTime := time.Now()
 
 	// pass config to parsers
