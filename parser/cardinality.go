@@ -44,7 +44,7 @@ func (this *CardinalityCounter) Add(key string, data interface{}) (err error) {
 	case uint64:
 		this.hll[key].Add(uint32(data.(uint64)))
 	default:
-		err = errors.New("unkown type")
+		err = errors.New("unknown type")
 	}
 
 	return
