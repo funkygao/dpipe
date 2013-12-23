@@ -112,7 +112,7 @@ func main() {
 	logger.Printf("conf[%s] has %d kinds of guards\n",
 		options.config, len(conf.Guards))
 
-	guard(conf)
+	launch(conf)
 
 	shutdown()
 }
