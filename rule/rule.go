@@ -34,8 +34,6 @@ const (
 	INDEX_YEARMONTH = "@ym"
 )
 
-// Currently support 2 datasource:
-// db, file
 type ConfGuard struct {
 	Enabled        bool
 	Type           string
