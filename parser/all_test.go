@@ -64,13 +64,13 @@ func TestIndexEntryNormalizedIndexName(t *testing.T) {
 	date := time.Unix(int64(1387274365), 0) // 2013-12-17 17:59:25 +0800 CST
 
 	e := indexEntry{indexName: "ab", typ: "test", date: &date}
-	assert.Equal(t, "ab", e.normalizedIndexName())
+	assert.Equal(t, "fun_ab", e.normalizedIndexName())
 
 	e = indexEntry{indexName: "@ym", date: &date}
-	assert.Equal(t, "def_2013_12", e.normalizedIndexName())
+	assert.Equal(t, "", e.normalizedIndexName()) // failed index name
 
 	e = indexEntry{indexName: "haha@ym", date: &date}
-	assert.Equal(t, "haha_2013_12", e.normalizedIndexName())
+	assert.Equal(t, "fun_haha_2013_12", e.normalizedIndexName())
 }
 
 func TestCardinalityCounter(t *testing.T) {
@@ -78,10 +78,10 @@ func TestCardinalityCounter(t *testing.T) {
 	c.Add("dau", 34343434)
 	c.Add("dau", 45454)
 	c.Add("dau", 888)
-	assert.Equal(t, 3, c.Count("dau"))
+	assert.Equal(t, uint64(3), c.Count("dau"))
 
 	c.Reset("msg")
 	c.Add("msg", "we are in China")
 	c.Add("msg", "where are you")
-	assert.Equal(t, 2, c.Count("msg"))
+	assert.Equal(t, uint64(2), c.Count("msg"))
 }
