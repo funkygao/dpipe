@@ -34,6 +34,12 @@ const (
 	INDEX_YEARMONTH = "@ym"
 )
 
+type Config struct {
+	*conf.Conf
+	Guards  []ConfGuard
+	Parsers []ConfParser
+}
+
 type ConfGuard struct {
 	Enabled        bool
 	Type           string
@@ -91,12 +97,6 @@ type ConfParser struct {
 	InsertStmt  string
 	StatsStmt   string
 	PersistDb   string // will never auto delete for manual analytics
-}
-
-type Config struct {
-	*conf.Conf
-	Guards  []ConfGuard
-	Parsers []ConfParser
 }
 
 func LoadRuleEngine(fn string) (*Config, error) {
