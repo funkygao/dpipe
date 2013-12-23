@@ -43,7 +43,7 @@ func (this *Indexer) mainLoop() {
 	api.Port = this.conf.String("indexer.port", "9200")
 
 	done := make(chan bool)
-	indexor := core.NewBulkIndexor(this.conf.Int("indexer.bulk_max_conn", 10))
+	indexor := core.NewBulkIndexer(this.conf.Int("indexer.bulk_max_conn", 10))
 	indexor.BulkMaxDocs /= 2   // default is 100, it has mem leakage, so we lower it
 	indexor.BulkMaxBuffer /= 2 // default is 1MB
 	indexor.Run(done)
@@ -56,7 +56,7 @@ func (this *Indexer) mainLoop() {
 	done <- true
 }
 
-func (this *Indexer) store(indexor *core.BulkIndexor, item indexEntry) {
+func (this *Indexer) store(indexor *core.BulkIndexer, item indexEntry) {
 	indexName := item.normalizedIndexName()
 	if indexName == "" {
 		panic("empty index name")
