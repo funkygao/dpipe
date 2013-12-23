@@ -41,10 +41,10 @@ type Config struct {
 }
 
 type ConfGuard struct {
-	Enabled        bool
-	Type           string
-	TailLogGlob    string
-	HistoryLogGlob string
+	Enabled        bool   // enabled
+	Type           string // type
+	TailLogGlob    string // tail_glob
+	HistoryLogGlob string // history_glob
 	Tables         string // sql like grammer, e,g. log_%
 
 	Parsers []string
