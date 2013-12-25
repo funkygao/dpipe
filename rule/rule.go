@@ -34,13 +34,17 @@ const (
 	INDEX_YEARMONTH = "@ym"
 )
 
-// Currently support 2 datasource:
-// db, file
+type Config struct {
+	*conf.Conf
+	Guards  []ConfGuard
+	Parsers []ConfParser
+}
+
 type ConfGuard struct {
-	Enabled        bool
-	Type           string
-	TailLogGlob    string
-	HistoryLogGlob string
+	Enabled        bool   // enabled
+	Type           string // type
+	TailLogGlob    string // tail_glob
+	HistoryLogGlob string // history_glob
 	Tables         string // sql like grammer, e,g. log_%
 
 	Parsers []string
@@ -93,12 +97,6 @@ type ConfParser struct {
 	InsertStmt  string
 	StatsStmt   string
 	PersistDb   string // will never auto delete for manual analytics
-}
-
-type Config struct {
-	*conf.Conf
-	Guards  []ConfGuard
-	Parsers []ConfParser
 }
 
 func LoadRuleEngine(fn string) (*Config, error) {
