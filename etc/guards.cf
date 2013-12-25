@@ -154,5 +154,21 @@
             parsers:        [ "ffsFortune", ]
         },
 
+        {
+            tail_glob:      "/mnt/funplus/logs/fp_ffseaside/bi_item_upgrade*"
+            parsers:        [ "ffsItemUpgrade", ]
+        },
+        {
+            tail_glob:      "/mnt/funplus/logs/fp_ffseaside/bi_seafood_house*"
+            parsers:        [ "ffsSeafoodHouse", ]
+        },
+        {
+            tail_glob:      "/mnt/funplus/logs/fp_ffseaside/bi_mystery_store*"
+            parsers:        [ "ffsMysteryStore", ]
+        },
+        {
+            tail_glob:      "/mnt/funplus/logs/fp_ffseaside/bi_batch_production_use_count*"
+            parsers:        [ "ffsBatchProductionUseCount", ]
+        },
     ]
 }

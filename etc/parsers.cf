@@ -622,6 +622,38 @@
             indexall:    true
         },
 
+        {
+            id:         "ffsItemUpgrade"
+            class:      "EsParser"
+            title:      "Fortune"
+            indexname:  "ffs@ym"
+            indexall:    true
+        },
+
+        {
+            id:         "ffsSeafoodHouse"
+            class:      "EsParser"
+            title:      "Fortune"
+            indexname:  "ffs@ym"
+            indexall:    true
+        },
+
+        {
+            id:         "ffsMysteryStore"
+            class:      "EsParser"
+            title:      "Fortune"
+            indexname:  "ffs@ym"
+            indexall:    true
+        },
+
+        {
+            id:         "ffsBatchProductionUseCount"
+            class:      "EsParser"
+            title:      "Fortune"
+            indexname:  "ffs@ym"
+            indexall:    true
+        },
+
 
     ]
 
