@@ -30,7 +30,7 @@ func sendAlarmMailsLoop(conf *config.Config, mailBody *bytes.Buffer, bodyLines *
 		select {
 		case <-time.After(time.Second * time.Duration(mailSleep)):
 			if *bodyLines >= bodyLineThreshold {
-				go mail.Sendmail(mailTo, fmt.Sprintf("%s - %d", mailTitlePrefix, *bodyLines), mailBody.String())
+				go mail.Sendmail(mailTo, fmt.Sprintf("%s - %d events", mailTitlePrefix, *bodyLines), mailBody.String())
 				logger.Printf("alarm sent=> %s, sleep=%d\n", mailTo, mailSleep)
 
 				// backoff sleep
