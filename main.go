@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/funkygao/alser/rule"
-	mail "github.com/funkygao/alser/sendmail"
+	"github.com/kr/pretty"
 	"io"
 	"log"
 	"os"
@@ -47,12 +47,12 @@ func newLogger() *log.Logger {
 		}
 	}
 
-	prefix := fmt.Sprintf("[%d]", os.Getpid()) // prefix with pid
+	logOptions := LOG_OPTIONS
 	if options.debug {
-		return log.New(logWriter, prefix, LOG_OPTIONS_DEBUG)
+		logOptions = LOG_OPTIONS_DEBUG
 	}
 
-	return log.New(logWriter, prefix, LOG_OPTIONS)
+	return log.New(logWriter, fmt.Sprintf("[%d]", os.Getpid()), logOptions)
 }
 
 func main() {
@@ -60,16 +60,8 @@ func main() {
 		cleanup()
 
 		if e := recover(); e != nil {
-			// console
-			fmt.Fprintln(os.Stderr, e)
+			fmt.Println(e)
 			debug.PrintStack()
-
-			// log
-			logger.Printf("%s\n%s", e, string(debug.Stack()))
-
-			// mail
-			mailBody := fmt.Sprintf("%s\n\n%s", e, string(debug.Stack()))
-			mail.Sendmail("peng.gao@funplusgame.com", "ALS Crash", mailBody)
 		}
 	}()
 
@@ -80,8 +72,8 @@ func main() {
 	}
 
 	if options.debug {
-		logger.Printf("%#v\n", conf.Guards)
-		logger.Printf("%#v\n", conf.Parsers)
+		pretty.Logf("%# v\n", conf.Guards)
+		pretty.Logf("%# v\n", conf.Parsers)
 	}
 
 	if options.showparsers {
