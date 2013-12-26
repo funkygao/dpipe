@@ -9,11 +9,11 @@ Configurations shared between alser and parers.
                |
           +---------------+
           |               |
-     []DataSource     []Parser
+     []Worker         []Parser
                           |
                       +-------+
                       |       |
-                     Key     Key
+                    Field   Field
 
 */
 package rule
@@ -36,11 +36,11 @@ const (
 
 type RuleEngine struct {
 	*conf.Conf
-	Guards  []ConfGuard
+	Workers []ConfWorker
 	Parsers []ConfParser
 }
 
-type ConfGuard struct {
+type ConfWorker struct {
 	Enabled        bool   // enabled
 	Type           string // type
 	TailLogGlob    string // tail_glob
@@ -59,7 +59,7 @@ type ConfGuard struct {
 //        N Y          1, index only
 //        N N          0, validator only
 // ======== ========== ==============
-type LineKey struct {
+type Field struct {
 	Name    string
 	Type    string // float, string(default), int, money
 	Contain string // only being validator instead of data
@@ -76,8 +76,8 @@ type ConfParser struct {
 	MsgRegex     string
 	MsgRegexKeys []string
 	Enabled      bool
-	Keys         []LineKey // besides area,ts
-	Colors       []string  // fg, effects, bg
+	Fields       []Field  // besides area,ts
+	Colors       []string // fg, effects, bg
 
 	PrintFormat   string // printf
 	InstantFormat string // instantf, echo for each occurence
@@ -107,7 +107,7 @@ func LoadRuleEngine(fn string) (*RuleEngine, error) {
 
 	this := new(RuleEngine)
 	this.Conf = cf
-	this.Guards = make([]ConfGuard, 0)
+	this.Workers = make([]ConfWorker, 0)
 	this.Parsers = make([]ConfParser, 0)
 
 	// parsers section
@@ -144,19 +144,19 @@ func LoadRuleEngine(fn string) (*RuleEngine, error) {
 		if keys != nil {
 			for j := 0; j < len(keys); j++ {
 				prefix := fmt.Sprintf("%s[%d].", keyPrefix+"keys", j)
-				key := LineKey{}
-				key.Name = this.String(prefix+"name", "")
-				key.Type = this.String(prefix+"type", "string")
-				key.Contain = this.String(prefix+"contain", "")
-				key.Sink = this.Int(prefix+"sink", 3)
-				key.Ignores = this.StringList(prefix+"ignores", nil)
-				key.Filters = this.StringList(prefix+"filters", nil)
-				key.Regex = this.StringList(prefix+"regex", nil)
-				parser.Keys = append(parser.Keys, key)
+				field := Field{}
+				field.Name = this.String(prefix+"name", "")
+				field.Type = this.String(prefix+"type", "string")
+				field.Contain = this.String(prefix+"contain", "")
+				field.Sink = this.Int(prefix+"sink", 3)
+				field.Ignores = this.StringList(prefix+"ignores", nil)
+				field.Filters = this.StringList(prefix+"filters", nil)
+				field.Regex = this.StringList(prefix+"regex", nil)
+				parser.Fields = append(parser.Fields, field)
 
-				if key.Contain != "" {
+				if field.Contain != "" {
 					// validator only, will never sink to db or indexer
-					key.Sink = 0
+					field.Sink = 0
 				}
 			}
 		}
@@ -165,26 +165,26 @@ func LoadRuleEngine(fn string) (*RuleEngine, error) {
 	}
 
 	// guards section
-	guards := this.List("guards", nil)
-	for i := 0; i < len(guards); i++ {
-		keyPrefix := fmt.Sprintf("guards[%d].", i)
-		guard := ConfGuard{}
-		guard.Enabled = this.Bool(keyPrefix+"enabled", true)
-		guard.Type = this.String(keyPrefix+"type", DATASOURCE_FILE)
-		guard.TailLogGlob = this.String(keyPrefix+"tail_glob", "")
-		guard.HistoryLogGlob = this.String(keyPrefix+"history_glob", "")
-		guard.Parsers = this.StringList(keyPrefix+"parsers", nil)
-		guard.Tables = this.String(keyPrefix+"tables", "")
-		if guard.Type != DATASOURCE_SYS {
-			if guard.Tables != "" && (guard.TailLogGlob != "" || guard.HistoryLogGlob != "") {
+	workers := this.List("workers", nil)
+	for i := 0; i < len(workers); i++ {
+		keyPrefix := fmt.Sprintf("workers[%d].", i)
+		worker := ConfWorker{}
+		worker.Enabled = this.Bool(keyPrefix+"enabled", true)
+		worker.Type = this.String(keyPrefix+"type", DATASOURCE_FILE)
+		worker.TailLogGlob = this.String(keyPrefix+"tail_glob", "")
+		worker.HistoryLogGlob = this.String(keyPrefix+"history_glob", "")
+		worker.Parsers = this.StringList(keyPrefix+"parsers", nil)
+		worker.Tables = this.String(keyPrefix+"tables", "")
+		if worker.Type != DATASOURCE_SYS {
+			if worker.Tables != "" && (worker.TailLogGlob != "" || worker.HistoryLogGlob != "") {
 				return nil, errors.New("can't have both file and db as datasource")
 			}
-			if guard.Tables == "" && guard.TailLogGlob == "" && guard.HistoryLogGlob == "" {
+			if worker.Tables == "" && worker.TailLogGlob == "" && worker.HistoryLogGlob == "" {
 				return nil, errors.New("non datasource defined")
 			}
 		}
 
-		this.Guards = append(this.Guards, guard)
+		this.Workers = append(this.Workers, worker)
 	}
 
 	// validation
@@ -196,7 +196,7 @@ func LoadRuleEngine(fn string) (*RuleEngine, error) {
 }
 
 func (this *RuleEngine) IsParserApplied(parser string) bool {
-	for _, g := range this.Guards {
+	for _, g := range this.Workers {
 		for _, p := range g.Parsers {
 			if p == parser {
 				return true
@@ -221,8 +221,8 @@ func (this *RuleEngine) hasDupParsers() bool {
 	return false
 }
 
-func (this *RuleEngine) CountOfGuards() (c int) {
-	for _, g := range this.Guards {
+func (this *RuleEngine) CountOfWorkers() (c int) {
+	for _, g := range this.Workers {
 		if g.Enabled {
 			c += 1
 		}
@@ -245,17 +245,17 @@ func (this *ConfParser) StatsSql() string {
 	return fmt.Sprintf(this.StatsStmt, this.DbName)
 }
 
-func (this *ConfParser) LineKeyByName(name string) (lineKey LineKey, err error) {
-	for _, lk := range this.Keys {
+func (this *ConfParser) FieldByName(name string) (field Field, err error) {
+	for _, lk := range this.Fields {
 		if lk.Name == name {
 			return lk, nil
 		}
 	}
 
-	return LineKey{Name: ""}, errors.New("not found")
+	return Field{Name: ""}, errors.New("not found")
 }
 
-func (this *ConfGuard) HasParser(parser string) bool {
+func (this *ConfWorker) HasParser(parser string) bool {
 	for _, p := range this.Parsers {
 		if p == parser {
 			return true
@@ -265,7 +265,7 @@ func (this *ConfGuard) HasParser(parser string) bool {
 	return false
 }
 
-func (this *LineKey) MsgIgnored(msg string) bool {
+func (this *Field) MsgIgnored(msg string) bool {
 	for _, ignore := range this.Ignores {
 		if strings.Contains(msg, ignore) {
 			return true
@@ -295,10 +295,10 @@ func (this *LineKey) MsgIgnored(msg string) bool {
 	return false
 }
 
-func (this *LineKey) Alarmable() bool {
+func (this *Field) Alarmable() bool {
 	return this.Sink&2 != 0
 }
 
-func (this *LineKey) Indexable() bool {
+func (this *Field) Indexable() bool {
 	return this.Sink&1 != 0
 }

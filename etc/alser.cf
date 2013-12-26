@@ -33,6 +33,6 @@
     //===================================================
     // 2. guards and parsers by project
     //===================================================
-    #include#: ["guards.cf", "parsers.cf", ]
+    #include#: ["workers.cf", "parsers.cf", ]
     
 }

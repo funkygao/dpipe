@@ -15,7 +15,7 @@ type LogfileWorker struct {
 }
 
 func newLogfileWorker(id int,
-	dataSource string, conf rule.ConfGuard, tailMode bool,
+	dataSource string, conf rule.ConfWorker, tailMode bool,
 	wg *sync.WaitGroup, mutex *sync.Mutex,
 	chLines chan<- int) Runnable {
 	var tailConfig tail.Config

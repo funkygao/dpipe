@@ -8,7 +8,7 @@ import (
 )
 
 type NewWorker func(id int, dataSource string,
-	conf rule.ConfGuard, tailMode bool,
+	conf rule.ConfWorker, tailMode bool,
 	wg *sync.WaitGroup, mutex *sync.Mutex,
 	chLines chan<- int) Runnable
 
@@ -31,7 +31,7 @@ type Worker struct {
 
 	id         int
 	dataSource string // a single file or a single db table
-	conf       rule.ConfGuard
+	conf       rule.ConfWorker
 	tailMode   bool
 
 	*sync.Mutex

@@ -11,7 +11,7 @@ type SysWorker struct {
 }
 
 func newSysWorker(id int,
-	dataSource string, conf rule.ConfGuard, tailMode bool,
+	dataSource string, conf rule.ConfWorker, tailMode bool,
 	wg *sync.WaitGroup, mutex *sync.Mutex,
 	chLines chan<- int) Runnable {
 	this := new(SysWorker)

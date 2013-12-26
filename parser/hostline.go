@@ -44,7 +44,7 @@ func (this *HostLineParser) ParseLine(line string) (area string, ts uint64, msg 
 	}
 
 	// ignores(cons: key name must be 'data')
-	if key, err := this.conf.LineKeyByName("data"); err == nil && key.Ignores != nil {
+	if key, err := this.conf.FieldByName("data"); err == nil && key.Ignores != nil {
 		if key.MsgIgnored(data) {
 			return
 		}

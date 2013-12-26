@@ -70,8 +70,8 @@ func main() {
 
 	setupMaxProcsAndProfiler()
 
-	logger.Printf("rule engine[%s] has %d kinds of input\n",
-		options.config, len(ruleEngine.Guards))
+	logger.Printf("rule engine[%s] has %d kinds of workers input\n",
+		options.config, ruleEngine.CountOfWorkers())
 
 	launch(ruleEngine)
 

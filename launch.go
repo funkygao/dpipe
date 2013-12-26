@@ -64,13 +64,13 @@ func launch(ruleEngine *rule.RuleEngine) {
 	logger.Printf("%d lines scanned, %s elapsed\n", lines, time.Since(startTime))
 }
 
-func guardDataSources(guard rule.ConfGuard) []string {
-	if guard.Type == rule.DATASOURCE_FILE || guard.Type == rule.DATASOURCE_SYS {
+func guardDataSources(worker rule.ConfWorker) []string {
+	if worker.Type == rule.DATASOURCE_FILE || worker.Type == rule.DATASOURCE_SYS {
 		var pattern string
 		if options.tailmode {
-			pattern = guard.TailLogGlob
+			pattern = worker.TailLogGlob
 		} else {
-			pattern = guard.HistoryLogGlob
+			pattern = worker.HistoryLogGlob
 		}
 
 		logfiles, err := filepath.Glob(pattern)
@@ -83,7 +83,7 @@ func guardDataSources(guard rule.ConfGuard) []string {
 		}
 
 		return logfiles
-	} else if guard.Type == rule.DATASOURCE_DB {
+	} else if worker.Type == rule.DATASOURCE_DB {
 		tables := make([]string, 0)
 		db := sqldb.NewSqlDb(sqldb.DRIVER_MYSQL, FLASHLOG_DSN, logger)
 		rows := db.Query(fmt.Sprintf("SHOW TABLES LIKE '%s'", guard.Tables))
