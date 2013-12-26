@@ -71,7 +71,7 @@ func Parsers() map[string]Parser {
 	return allParsers
 }
 
-func createParser(conf *config.ConfParser, chDownstreamAlarm chan<- string) Parser {
+func createParser(conf *rule.ConfParser, chDownstreamAlarm chan<- string) Parser {
 	mutex.Lock()
 	defer mutex.Unlock()
 
@@ -87,18 +87,18 @@ func createParser(conf *config.ConfParser, chDownstreamAlarm chan<- string) Pars
 }
 
 // pid: only run this single parser id
-func InitParsers(pid string, conf *config.Config) {
-	go runSendAlarmsWatchdog(conf)
+func InitParsers(pid string, ruleEngine *rule.RuleEngine) {
+	go runSendAlarmsWatchdog(ruleEngine)
 
-	geodbfile := conf.String("indexer.geodbfile", "/opt/local/share/GeoIP/GeoLiteCity.dat")
+	geodbfile := ruleEngine.String("indexer.geodbfile", "/opt/local/share/GeoIP/GeoLiteCity.dat")
 	if err := als.LoadGeoDb(geodbfile); err != nil {
 		logger.Printf("failed to load geoip: %s\n", geodbfile)
 	}
 
-	indexer = newIndexer(conf)
+	indexer = newIndexer(ruleEngine)
 	go indexer.mainLoop()
 
-	for _, g := range conf.Guards {
+	for _, g := range ruleEngine.Guards {
 		for _, parserId := range g.Parsers {
 			if pid != "" && pid != parserId {
 				continue
@@ -108,7 +108,7 @@ func InitParsers(pid string, conf *config.Config) {
 				continue
 			}
 
-			confParser := conf.ParserById(parserId)
+			confParser := ruleEngine.ParserById(parserId)
 			if confParser == nil {
 				panic("invalid parser id: " + parserId)
 			}

@@ -16,7 +16,7 @@ type RegexCollectorParser struct {
 	r *regexp.Regexp
 }
 
-func newRegexCollectorParser(conf *config.ConfParser, chDownstream chan<- string) (this *RegexCollectorParser) {
+func newRegexCollectorParser(conf *rule.ConfParser, chDownstream chan<- string) (this *RegexCollectorParser) {
 	this = new(RegexCollectorParser)
 	this.init(conf, chDownstream)
 	if this.conf.MsgRegex == "" {

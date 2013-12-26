@@ -34,7 +34,7 @@ type CollectorParser struct {
 	stopped bool
 }
 
-func (this *CollectorParser) init(conf *config.ConfParser, chDownstream chan<- string) {
+func (this *CollectorParser) init(conf *rule.ConfParser, chDownstream chan<- string) {
 	this.AlsParser.init(conf, chDownstream) // super
 
 	this.Mutex = new(sync.Mutex) // embedding constructor

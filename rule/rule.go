@@ -16,7 +16,7 @@ Configurations shared between alser and parers.
                      Key     Key
 
 */
-package config
+package rule
 
 import (
 	"errors"
@@ -34,7 +34,7 @@ const (
 	INDEX_YEARMONTH = "@ym"
 )
 
-type Config struct {
+type RuleEngine struct {
 	*conf.Conf
 	Guards  []ConfGuard
 	Parsers []ConfParser
@@ -99,13 +99,13 @@ type ConfParser struct {
 	PersistDb   string // will never auto delete for manual analytics
 }
 
-func LoadRuleEngine(fn string) (*Config, error) {
+func LoadRuleEngine(fn string) (*RuleEngine, error) {
 	cf, err := conf.Load(fn)
 	if err != nil {
 		return nil, err
 	}
 
-	this := new(Config)
+	this := new(RuleEngine)
 	this.Conf = cf
 	this.Guards = make([]ConfGuard, 0)
 	this.Parsers = make([]ConfParser, 0)
@@ -195,7 +195,7 @@ func LoadRuleEngine(fn string) (*Config, error) {
 	return this, nil
 }
 
-func (this *Config) IsParserApplied(parser string) bool {
+func (this *RuleEngine) IsParserApplied(parser string) bool {
 	for _, g := range this.Guards {
 		for _, p := range g.Parsers {
 			if p == parser {
@@ -208,7 +208,7 @@ func (this *Config) IsParserApplied(parser string) bool {
 }
 
 // Dup parser id
-func (this *Config) hasDupParsers() bool {
+func (this *RuleEngine) hasDupParsers() bool {
 	parsers := make(map[string]bool)
 	for _, p := range this.Parsers {
 		if _, present := parsers[p.Id]; present {
@@ -221,7 +221,7 @@ func (this *Config) hasDupParsers() bool {
 	return false
 }
 
-func (this *Config) CountOfGuards() (c int) {
+func (this *RuleEngine) CountOfGuards() (c int) {
 	for _, g := range this.Guards {
 		if g.Enabled {
 			c += 1
@@ -231,7 +231,7 @@ func (this *Config) CountOfGuards() (c int) {
 	return
 }
 
-func (this *Config) ParserById(id string) *ConfParser {
+func (this *RuleEngine) ParserById(id string) *ConfParser {
 	for _, p := range this.Parsers {
 		if p.Id == id {
 			return &p

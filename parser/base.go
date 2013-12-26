@@ -28,13 +28,13 @@ import (
 type AlsParser struct {
 	Parser
 
-	conf              *config.ConfParser
+	conf              *rule.ConfParser
 	chDownstreamAlarm chan<- string // consumed by parser itself
 
 	color string
 }
 
-func (this *AlsParser) init(conf *config.ConfParser, chDownstream chan<- string) {
+func (this *AlsParser) init(conf *rule.ConfParser, chDownstream chan<- string) {
 	this.conf = conf
 	this.chDownstreamAlarm = chDownstream
 

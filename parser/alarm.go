@@ -14,18 +14,18 @@ type Alarm interface {
 	String() string
 }
 
-func sendAlarmMailsLoop(conf *config.Config, mailBody *bytes.Buffer, bodyLines *int) {
+func sendAlarmMailsLoop(ruleEngine *rule.Config, mailBody *bytes.Buffer, bodyLines *int) {
 	const mailTitlePrefix = "ALS Alarm"
-	mailTo := conf.String("mail.guarded", "")
+	mailTo := ruleEngine.String("mail.guarded", "")
 	if mailTo == "" {
 		panic("empty mail.guarded")
 	}
 
-	mailSleep := conf.Int("mail.sleep_start", 120)
-	backoffThreshold := conf.Int("mail.backoff_threshold", 10)
-	bodyLineThreshold := conf.Int("line_threshold", 10)
-	maxSleep, minSleep, sleepStep := conf.Int("mail.sleep_max", mailSleep*2),
-		conf.Int("mail.sleep_min", mailSleep/2), conf.Int("mail.sleep_step", 5)
+	mailSleep := ruleEngine.Int("mail.sleep_start", 120)
+	backoffThreshold := ruleEngine.Int("mail.backoff_threshold", 10)
+	bodyLineThreshold := ruleEngine.Int("line_threshold", 10)
+	maxSleep, minSleep, sleepStep := ruleEngine.Int("mail.sleep_max", mailSleep*2),
+		ruleEngine.Int("mail.sleep_min", mailSleep/2), ruleEngine.Int("mail.sleep_step", 5)
 	for {
 		select {
 		case <-time.After(time.Second * time.Duration(mailSleep)):
@@ -55,13 +55,13 @@ func sendAlarmMailsLoop(conf *config.Config, mailBody *bytes.Buffer, bodyLines *
 	}
 }
 
-func runSendAlarmsWatchdog(conf *config.Config) {
+func runSendAlarmsWatchdog(ruleEngine *rule.RuleEngine) {
 	var (
 		bodyLines int
 		mailBody  bytes.Buffer
 	)
 
-	go sendAlarmMailsLoop(conf, &mailBody, &bodyLines)
+	go sendAlarmMailsLoop(ruleEngine, &mailBody, &bodyLines)
 
 	for line := range chParserAlarm {
 		if debug {

@@ -22,28 +22,28 @@ type indexEntry struct {
 type Indexer struct {
 	c            chan indexEntry
 	defaultIndex string // index name
-	conf         *config.Config
+	ruleEngine   *rule.RuleEngine
 }
 
-func newIndexer(conf *config.Config) (this *Indexer) {
+func newIndexer(ruleEngine *rule.RuleEngine) (this *Indexer) {
 	this = new(Indexer)
-	this.conf = conf
+	this.ruleEngine = ruleEngine
 	this.c = make(chan indexEntry, 1000)
 
 	return
 }
 
 func (this *Indexer) mainLoop() {
-	if !this.conf.Bool("indexer.enabled", true) {
+	if !this.ruleEngine.Bool("indexer.enabled", true) {
 		logger.Println("indexer disabled")
 		return
 	}
 
-	api.Domain = this.conf.String("indexer.domain", "localhost")
-	api.Port = this.conf.String("indexer.port", "9200")
+	api.Domain = this.ruleEngine.String("indexer.domain", "localhost")
+	api.Port = this.ruleEngine.String("indexer.port", "9200")
 
 	done := make(chan bool)
-	indexor := core.NewBulkIndexer(this.conf.Int("indexer.bulk_max_conn", 10))
+	indexor := core.NewBulkIndexer(this.ruleEngine.Int("indexer.bulk_max_conn", 10))
 	indexor.BulkMaxDocs /= 2   // default is 100, it has mem leakage, so we lower it
 	indexor.BulkMaxBuffer /= 2 // default is 1MB
 	indexor.Run(done)
@@ -102,9 +102,9 @@ func (this *Indexer) genUUID() (string, error) {
 }
 
 func (this *indexEntry) normalizedIndexName() string {
-	if strings.HasSuffix(this.indexName, config.INDEX_YEARMONTH) {
+	if strings.HasSuffix(this.indexName, rule.INDEX_YEARMONTH) {
 		prefix := ""
-		fields := strings.SplitN(this.indexName, config.INDEX_YEARMONTH, 2)
+		fields := strings.SplitN(this.indexName, rule.INDEX_YEARMONTH, 2)
 		if fields[0] != "" {
 			// e,g. rs@ym
 			prefix = fields[0]

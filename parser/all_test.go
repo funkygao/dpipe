@@ -8,13 +8,13 @@ import (
 )
 
 func TestAlsParserParseLine(t *testing.T) {
-	conf, err := config.LoadRuleEngine("../etc/alser.cf")
-	if err != nil || conf == nil {
+	ruleEngine, err := rule.LoadRuleEngine("../etc/alser.cf")
+	if err != nil || ruleEngine == nil {
 		panic(err)
 	}
 	line := `us,1381118458069,{"cheater":10301051,"type":"helpFriendsRewardAction","world_id":"100001823535095","user":"100001823535095","_log_info":{"uid":10301051,"script_id":3183040714,"serial":3,"host":"10.255.8.189","ip":"79.215.100.157"}}`
 	p := new(AlsParser)
-	p.conf = conf.ParserById("Dau")
+	p.conf = ruleEngine.ParserById("Dau")
 	area, ts, msg := p.ParseLine(line)
 	data, _ := p.msgToJson(msg)
 	var (
@@ -72,4 +72,3 @@ func TestIndexEntryNormalizedIndexName(t *testing.T) {
 	e = indexEntry{indexName: "haha@ym", date: &date}
 	assert.Equal(t, "fun_haha_2013_12", e.normalizedIndexName())
 }
-

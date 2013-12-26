@@ -33,7 +33,7 @@ type DbWorker struct {
 }
 
 func newDbWorker(id int,
-	dataSource string, conf config.ConfGuard, tailMode bool,
+	dataSource string, conf rule.ConfGuard, tailMode bool,
 	wg *sync.WaitGroup, mutex *sync.Mutex,
 	chLines chan<- int) Runnable {
 	this := new(DbWorker)

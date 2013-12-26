@@ -1,4 +1,4 @@
-package config
+package rule
 
 import (
 	"github.com/bmizerany/assert"

@@ -8,7 +8,7 @@ import (
 )
 
 type NewWorker func(id int, dataSource string,
-	conf config.ConfGuard, tailMode bool,
+	conf rule.ConfGuard, tailMode bool,
 	wg *sync.WaitGroup, mutex *sync.Mutex,
 	chLines chan<- int) Runnable
 
@@ -31,7 +31,7 @@ type Worker struct {
 
 	id         int
 	dataSource string // a single file or a single db table
-	conf       config.ConfGuard
+	conf       rule.ConfGuard
 	tailMode   bool
 
 	*sync.Mutex
@@ -51,7 +51,7 @@ func (this *Worker) Done() {
 	this.Unlock()
 }
 
-func invokeWorkers(conf *config.Config, wg *sync.WaitGroup, workersCanWait chan<- bool,
+func invokeWorkers(ruleEngine *rule.RuleEngine, wg *sync.WaitGroup, workersCanWait chan<- bool,
 	chLines chan<- int) {
 	allWorkers = make(map[string]bool)
 	workersCanWaitOnce := new(sync.Once)
@@ -60,7 +60,7 @@ func invokeWorkers(conf *config.Config, wg *sync.WaitGroup, workersCanWait chan<
 	// main loop to watch for newly emerging data sources
 	// when we start, they may not exist, but latter on, they come out suddenly
 	for {
-		for _, guard := range conf.Guards {
+		for _, guard := range ruleEngine.Guards {
 			if options.parser != "" && !guard.HasParser(options.parser) {
 				// only one parser applied
 				continue
@@ -83,11 +83,11 @@ func invokeWorkers(conf *config.Config, wg *sync.WaitGroup, workersCanWait chan<
 				allWorkers[dataSource] = true
 
 				var newWoker NewWorker
-				if guard.Type == config.DATASOURCE_FILE {
+				if guard.Type == rule.DATASOURCE_FILE {
 					newWoker = newLogfileWorker
-				} else if guard.Type == config.DATASOURCE_DB {
+				} else if guard.Type == rule.DATASOURCE_DB {
 					newWoker = newDbWorker
-				} else if guard.Type == config.DATASOURCE_SYS {
+				} else if guard.Type == rule.DATASOURCE_SYS {
 					newWoker = newSysWorker
 				}
 

@@ -25,16 +25,16 @@ func runTicker(ticker *time.Ticker, lines *int) {
 	}
 }
 
-func notifyUnGuardedLogs(conf *config.Config) {
+func notifyUnGuardedLogs(ruleEngine *rule.RuleEngine) {
 	const prefixLen = 3
 
-	if conf.String("mail.unguarded", "") == "" {
+	if ruleEngine.String("mail.unguarded", "") == "" {
 		// disabled
 		return
 	}
 
 	guardedLogs := make(map[string]bool)
-	for _, g := range conf.Guards {
+	for _, g := range ruleEngine.Guards {
 		var filePrefix string
 		if options.tailmode {
 			filePrefix = g.TailLogGlob
@@ -49,9 +49,9 @@ func notifyUnGuardedLogs(conf *config.Config) {
 	// FIXME we assume that all the guarded logs are in the same dir
 	var logfile string
 	if options.tailmode {
-		logfile = conf.Guards[0].TailLogGlob
+		logfile = ruleEngine.Guards[0].TailLogGlob
 	} else {
-		logfile = conf.Guards[0].HistoryLogGlob
+		logfile = ruleEngine.Guards[0].HistoryLogGlob
 	}
 
 	unGuardedLogs := make(map[string]bool)
@@ -82,8 +82,8 @@ func notifyUnGuardedLogs(conf *config.Config) {
 			mailBody += logfile + "\n"
 		}
 
-		mailTo := conf.String("unguarded.mail_to", "")
-		if err := mail.Sendmail(conf.String("mail.unguarded", ""), subject, mailBody); err == nil && options.verbose {
+		mailTo := ruleEngine.String("unguarded.mail_to", "")
+		if err := mail.Sendmail(ruleEngine.String("mail.unguarded", ""), subject, mailBody); err == nil && options.verbose {
 			logger.Printf("unguarded logs alarm sent => %s\n", mailTo)
 		}
 	}

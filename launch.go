@@ -10,10 +10,10 @@ import (
 	"time"
 )
 
-func launch(conf *config.Config) {
+func launch(ruleEngine *rule.Config) {
 	startTime := time.Now()
 
-	// pass config to parsers
+	// pass vars to parser pkg
 	parser.SetLogger(logger)
 	parser.SetVerbose(options.verbose)
 	parser.SetDebug(options.debug)
@@ -29,14 +29,14 @@ func launch(conf *config.Config) {
 	}
 
 	// are we missing newly emerged logs?
-	go notifyUnGuardedLogs(conf)
+	go notifyUnGuardedLogs(ruleEngine)
 
-	parser.InitParsers(options.parser, conf)
+	parser.InitParsers(options.parser, ruleEngine)
 
 	var workersWg = new(sync.WaitGroup)
 	chLines := make(chan int)         // how many line have been scanned till now
 	workersCanWait := make(chan bool) // in case of wg.Add/Wait race condition
-	go invokeWorkers(conf, workersWg, workersCanWait, chLines)
+	go invokeWorkers(ruleEngine, workersWg, workersCanWait, chLines)
 
 	// wait for all workers finish
 	go func() {
@@ -64,8 +64,8 @@ func launch(conf *config.Config) {
 	logger.Printf("%d lines scanned, %s elapsed\n", lines, time.Since(startTime))
 }
 
-func guardDataSources(guard config.ConfGuard) []string {
-	if guard.Type == config.DATASOURCE_FILE || guard.Type == config.DATASOURCE_SYS {
+func guardDataSources(guard rule.ConfGuard) []string {
+	if guard.Type == rule.DATASOURCE_FILE || guard.Type == rule.DATASOURCE_SYS {
 		var pattern string
 		if options.tailmode {
 			pattern = guard.TailLogGlob
@@ -83,7 +83,7 @@ func guardDataSources(guard config.ConfGuard) []string {
 		}
 
 		return logfiles
-	} else if guard.Type == config.DATASOURCE_DB {
+	} else if guard.Type == rule.DATASOURCE_DB {
 		tables := make([]string, 0)
 		db := sqldb.NewSqlDb(sqldb.DRIVER_MYSQL, FLASHLOG_DSN, logger)
 		rows := db.Query(fmt.Sprintf("SHOW TABLES LIKE '%s'", guard.Tables))
