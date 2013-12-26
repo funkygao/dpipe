@@ -20,10 +20,9 @@
     workers: 
     [
         {
-            tables:   "log_%"
-            parsers:        [
-                "Flashlog",
-            ]
+            dsn:        "mysql://flashlog:flashlog@unix(/var/run/mysqld/mysqld.sock)/flashlog?charset=utf8"
+            tail_glob:  "log_%"
+            parsers:    [ "Flashlog", ]
         },
     ]
     
@@ -50,7 +49,7 @@
             dbname:         "flash"
             //printf: "%6d %s"
             printf: "%6d %6s %s"
-            keys: [
+            fields: [
                 {
                     name: "message"
                     type: "string"

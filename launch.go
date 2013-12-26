@@ -68,9 +68,9 @@ func guardDataSources(worker rule.ConfWorker) []string {
 	if worker.Type == rule.DATASOURCE_FILE || worker.Type == rule.DATASOURCE_SYS {
 		var pattern string
 		if options.tailmode {
-			pattern = worker.TailLogGlob
+			pattern = worker.TailGlob
 		} else {
-			pattern = worker.HistoryLogGlob
+			pattern = worker.HistoryGlob
 		}
 
 		logfiles, err := filepath.Glob(pattern)

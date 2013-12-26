@@ -1,17 +1,18 @@
 /*
 Configurations shared between alser and parers.
+TODO
 
         Rule
           |
-     +---------+
-     |         |
-  Project   Project
+     +---------+---------------+
+     |         |               |
+  Project   Project     (rule shared across projects)
                |
           +---------------+
           |               |
      []Worker         []Parser
-                          |
-                      +-------+
+          |               |
+     []ParserId       +-------+
                       |       |
                     Field   Field
 
@@ -22,16 +23,7 @@ import (
 	"errors"
 	"fmt"
 	conf "github.com/daviddengcn/go-ljson-conf"
-	"regexp"
-	"strings"
-)
-
-const (
-	DATASOURCE_DB   = "db"
-	DATASOURCE_FILE = "file"
-	DATASOURCE_SYS  = "sys"
-
-	INDEX_YEARMONTH = "@ym"
+	"net/url"
 )
 
 type RuleEngine struct {
@@ -41,33 +33,15 @@ type RuleEngine struct {
 	Parsers []ConfParser
 }
 
+// Every worker has 2 modes:
+// tail mode and history mode
 type ConfWorker struct {
-	Enabled        bool   // enabled
-	Type           string // type
-	TailLogGlob    string // tail_glob
-	HistoryLogGlob string // history_glob
-	Tables         string // sql like grammer, e,g. log_%
+	Enabled     bool   // enabled
+	Dsn         string // data source name base
+	TailGlob    string // tail_glob
+	HistoryGlob string // history_glob
 
 	Parsers []string
-}
-
-// Key data sink to 4 kinds of targets
-// ======== ========== ==============
-// sqldb(d) indexer(i) sink
-// ======== ========== ==============
-//        Y Y          3, default
-//        Y N          2, alarm only
-//        N Y          1, index only
-//        N N          0, validator only
-// ======== ========== ==============
-type Field struct {
-	Name    string
-	Type    string // float, string(default), int, money
-	Contain string // only being validator instead of data
-	Ignores []string
-	Filters []string // currently not used yet TODO
-	Regex   []string
-	Sink    int // bit op
 }
 
 type ConfParser struct {
@@ -76,7 +50,6 @@ type ConfParser struct {
 	Title        string
 	MsgRegex     string
 	MsgRegexKeys []string
-	Enabled      bool
 	Fields       []Field  // besides area,ts
 	Colors       []string // fg, effects, bg
 
@@ -136,15 +109,14 @@ func LoadRuleEngine(fn string) (*RuleEngine, error) {
 		parser.IndexAll = this.Bool(keyPrefix+"indexall", false)
 		parser.LevelRange = this.IntList(keyPrefix+"lvrange", nil)
 		parser.IndexName = this.String(keyPrefix+"indexname", INDEX_YEARMONTH)
-		parser.Enabled = this.Bool(keyPrefix+"enabled", true)
 		parser.AbnormalPercent = this.Float(keyPrefix+"abnormal_percent", 1.5)
 		parser.AbnormalBase = this.Int(keyPrefix+"abnormal_base", 10)
 
-		// keys
-		keys := this.List(keyPrefix+"keys", nil)
-		if keys != nil {
-			for j := 0; j < len(keys); j++ {
-				prefix := fmt.Sprintf("%s[%d].", keyPrefix+"keys", j)
+		// fields
+		fields := this.List(keyPrefix+"fields", nil)
+		if fields != nil {
+			for j := 0; j < len(fields); j++ {
+				prefix := fmt.Sprintf("%s[%d].", keyPrefix+"fields", j)
 				field := Field{}
 				field.Name = this.String(prefix+"name", "")
 				field.Type = this.String(prefix+"type", "string")
@@ -165,25 +137,16 @@ func LoadRuleEngine(fn string) (*RuleEngine, error) {
 		this.Parsers = append(this.Parsers, parser)
 	}
 
-	// guards section
+	// workers section
 	workers := this.List("workers", nil)
 	for i := 0; i < len(workers); i++ {
 		keyPrefix := fmt.Sprintf("workers[%d].", i)
 		worker := ConfWorker{}
 		worker.Enabled = this.Bool(keyPrefix+"enabled", true)
-		worker.Type = this.String(keyPrefix+"type", DATASOURCE_FILE)
-		worker.TailLogGlob = this.String(keyPrefix+"tail_glob", "")
-		worker.HistoryLogGlob = this.String(keyPrefix+"history_glob", "")
+		worker.Dsn = this.String(keyPrefix+"dsn", "file://")
+		worker.TailGlob = this.String(keyPrefix+"tail_glob", "")
+		worker.HistoryGlob = this.String(keyPrefix+"history_glob", "")
 		worker.Parsers = this.StringList(keyPrefix+"parsers", nil)
-		worker.Tables = this.String(keyPrefix+"tables", "")
-		if worker.Type != DATASOURCE_SYS {
-			if worker.Tables != "" && (worker.TailLogGlob != "" || worker.HistoryLogGlob != "") {
-				return nil, errors.New("can't have both file and db as datasource")
-			}
-			if worker.Tables == "" && worker.TailLogGlob == "" && worker.HistoryLogGlob == "" {
-				return nil, errors.New("non datasource defined")
-			}
-		}
 
 		this.Workers = append(this.Workers, worker)
 	}
@@ -253,12 +216,12 @@ func (this *ConfParser) FieldByName(name string) (field Field, err error) {
 		}
 	}
 
-	return Field{Name: ""}, errors.New("not found")
+	return Field{Name: ""}, errors.New("field: " + name + ": not found")
 }
 
-func (this *ConfWorker) HasParser(parser string) bool {
-	for _, p := range this.Parsers {
-		if p == parser {
+func (this *ConfWorker) HasParser(parserId string) bool {
+	for _, pid := range this.Parsers {
+		if pid == parserId {
 			return true
 		}
 	}
@@ -266,40 +229,11 @@ func (this *ConfWorker) HasParser(parser string) bool {
 	return false
 }
 
-func (this *Field) MsgIgnored(msg string) bool {
-	for _, ignore := range this.Ignores {
-		if strings.Contains(msg, ignore) {
-			return true
-		}
-
-		if strings.HasPrefix(ignore, "regex:") {
-			pattern := strings.TrimSpace(ignore[6:])
-			// TODO lessen the overhead
-			if matched, err := regexp.MatchString(pattern, msg); err == nil && matched {
-				return true
-			}
-		}
+func (this *ConfWorker) Scheme() string {
+	u, err := url.Parse(this.TailGlob)
+	if err != nil {
+		panic(err)
 	}
 
-	// filters means only when the key satisfy at least one of the filter rule
-	// will the msg be accepted
-	if this.Filters != nil {
-		for _, f := range this.Filters {
-			if msg == f {
-				return false
-			}
-		}
-
-		return true
-	}
-
-	return false
-}
-
-func (this *Field) Alarmable() bool {
-	return this.Sink&2 != 0
-}
-
-func (this *Field) Indexable() bool {
-	return this.Sink&1 != 0
+	return u.Scheme
 }

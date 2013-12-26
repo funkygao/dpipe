@@ -114,7 +114,7 @@ func InitParsers(pid string, ruleEngine *rule.RuleEngine) {
 			}
 
 			if debug {
-				logger.Printf("create parser[%s] for %s\n", parserId, w.TailLogGlob)
+				logger.Printf("create parser[%s] for %s\n", parserId, w.TailGlob)
 			}
 
 			allParsers[parserId] = createParser(confParser, chParserAlarm)

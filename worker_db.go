@@ -42,7 +42,7 @@ func newDbWorker(id int,
 		wg: wg, Mutex: mutex,
 		chLines: chLines}
 	this.Lines = make(chan string)
-	this.db = sqldb.NewSqlDb(sqldb.DRIVER_MYSQL, FLASHLOG_DSN, logger)
+	this.db = sqldb.NewSqlDb(conf.Scheme(), conf.Dsn, logger)
 	this.db.SetMaxIdleConns(10)
 	this.db.SetDebug(options.debug)
 	return this

@@ -58,7 +58,7 @@
             stats_stmt:     "SELECT COUNT(*) AS c, area, msg FROM %s where ts<=? GROUP BY area, msg ORDER BY c DESC"
             dbname:         "mongoerr"
             printf: "%5d %3s %s"
-            keys: [
+            fields: [
                 {
                     name: "class"
                     contain: "MongoException"
@@ -82,7 +82,7 @@
             stats_stmt:     "SELECT COUNT(*) AS c, area, cls, msg FROM %s where ts<=? GROUP BY area, cls, msg ORDER BY c DESC"
             dbname:         "error"
             printf: "%5d %3s %20s %s"
-            keys: [
+            fields: [
                 {
                     name: "class"
                     ignores: [
@@ -126,7 +126,7 @@
             stats_stmt:     "SELECT COUNT(*) AS c, area, typ FROM %s where ts<=? GROUP BY area, typ ORDER BY c DESC"
             dbname:         "orders"
             printf: "%5d %3s %s"
-            keys: [
+            fields: [
                 {
                     name: "uid"
                     type: "int"
@@ -160,7 +160,7 @@
             stats_stmt:     "SELECT COUNT(DISTINCT(guid)) AS c, area, typ FROM %s where ts<=? GROUP BY area, typ ORDER BY c DESC"
             dbname:         "session"
             printf: "%5d %3s %s"
-            keys: [
+            fields: [
                 {
                     name: "guid"
                     type: "int"
@@ -187,7 +187,7 @@
             stats_stmt:     "SELECT COUNT(*) AS c, area, ref FROM %s where ts<=? GROUP BY area, ref ORDER BY c DESC"
             dbname:         "newuser"
             printf: "%5d %3s %s"
-            keys: [
+            fields: [
                 {
                     name: "ref"
                 },
@@ -214,7 +214,7 @@
             stats_stmt:     "SELECT COUNT(*) AS c, frm FROM %s where ts<=? and area='us' GROUP BY frm ORDER BY c DESC LIMIT 20"
             dbname:         "lvup"
             printf: "%5d us %2d↑"
-            keys: [
+            fields: [
                 {
                     name: "from"
                     type: "int"
@@ -234,7 +234,7 @@
             stats_stmt:     "SELECT COUNT(*) AS c, area, mission FROM %s where ts<=? GROUP BY area, mission ORDER BY c DESC LIMIT 10"
             dbname:         "mission"
             printf: "%5d %3s %s"
-            keys: [
+            fields: [
                 {
                     name: "complete"
                 },
@@ -254,7 +254,7 @@
             stats_stmt:     "SELECT COUNT(*) AS c, area, cls FROM %s where ts<=? GROUP BY area, cls ORDER BY c DESC"
             dbname:         "rcfail"
             printf: "%5d %3s %s"
-            keys: [
+            fields: [
                 {
                     name: "2"
                 },
@@ -273,7 +273,7 @@
             stats_stmt:     "SELECT COUNT(DISTINCT(uid)) AS c, type FROM %s where ts<=? GROUP BY type ORDER BY c DESC"
             dbname:         "click"
             printf: "%5d %s"
-            keys: [
+            fields: [
                 {
                     name: "lv"
                     type: "int"
@@ -300,7 +300,7 @@
             stats_stmt:     "SELECT COUNT(DISTINCT(uid)) AS c, area FROM %s where ts<=? GROUP BY area ORDER BY c DESC"
             dbname:         "dau"
             printf: "%5d %3s"
-            keys: [
+            fields: [
                 {
                     name: "uid"
                     type: "int"
@@ -330,7 +330,7 @@
             stats_stmt:     "SELECT COUNT(*) AS c, area, type FROM %s where ts<=? GROUP BY area, type ORDER BY c DESC"
             dbname:         "pay"
             printf: "%5d %3s %s"
-            keys: [
+            fields: [
                 {
                     name: "type"
                     ignores: [
@@ -355,7 +355,7 @@
             dbname:         "revenue"
             summary:        true
             printf: "%5d %3s %s"
-            keys: [
+            fields: [
                 {
                     name: "type"
                     contain: "OK"
@@ -384,7 +384,7 @@
             dbname:         "slowresp"
             printf: "%5d %3s %s"
             instantf: "SlowPhp %3s %s"
-            keys: [
+            fields: [
                 {
                     name: "_log_info.uri"
                 },
@@ -405,7 +405,7 @@
             persistdb:      "hist_memfail"
             printf: "%5d %3s %s"
             instantf: "CacheFail %3s %22s %8.4f %15s"
-            keys:   [
+            fields:   [
                 {
                     name: "key"
                     regex:  [
@@ -436,7 +436,7 @@
             persistdb:      "hist_memslow"
             printf: "%5d %3s %s"
             instantf: "CacheSlow %3s %32s %8.4f %15s"
-            keys:   [
+            fields:   [
                 {
                     name: "key"
                     regex:  [
@@ -469,7 +469,7 @@
             // instantf's first col is always 'area'
             instantf: "MongoSlow %3s %15s %8s %8.4f %15s %s"
             printf: "%5d %3s %12s %20s %s"
-            keys:   [
+            fields:   [
                 {
                     name: "table"
                 },
@@ -492,7 +492,6 @@
         {
             id:     "Kernal"
             class:  "HostLineParser"
-            enabled: true
             indexname: "rsops"
             title:  "Kernal"
             colors: [ "FgWhite", "Reverse", ]
@@ -503,7 +502,7 @@
             stats_stmt:     "SELECT SUM(num) AS c, area, type FROM %s WHERE ts<=? GROUP BY area, type ORDER BY c DESC"
             dbname:         "kernal"
             printf: "%12d %3s %s"
-            keys: [
+            fields: [
                 {
                     name: "data"
                     ignores: [

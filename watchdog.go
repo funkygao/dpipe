@@ -37,9 +37,9 @@ func notifyUnGuardedLogs(ruleEngine *rule.RuleEngine) {
 	for _, w := range ruleEngine.Workers {
 		var filePrefix string
 		if options.tailmode {
-			filePrefix = w.TailLogGlob
+			filePrefix = w.TailGlob
 		} else {
-			filePrefix = w.HistoryLogGlob
+			filePrefix = w.HistoryGlob
 		}
 
 		baseName := filepath.Base(filePrefix)
@@ -49,9 +49,9 @@ func notifyUnGuardedLogs(ruleEngine *rule.RuleEngine) {
 	// FIXME we assume that all the guarded logs are in the same dir
 	var logfile string
 	if options.tailmode {
-		logfile = ruleEngine.Workers[0].TailLogGlob
+		logfile = ruleEngine.Workers[0].TailGlob
 	} else {
-		logfile = ruleEngine.Workers[0].HistoryLogGlob
+		logfile = ruleEngine.Workers[0].HistoryGlob
 	}
 
 	unGuardedLogs := make(map[string]bool)
