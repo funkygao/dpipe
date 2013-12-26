@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/funkygao/alser/rule"
+	"github.com/funkygao/golib"
 	"github.com/kr/pretty"
 	"os"
 	"runtime/debug"
@@ -17,21 +18,19 @@ func init() {
 	}
 
 	if options.lock {
-		if instanceLocked() {
+		if golib.InstanceLocked(LOCKFILE) {
 			fmt.Fprintf(os.Stderr, "Another instance is running, exit...\n")
 			os.Exit(1)
 		}
-		lockInstance()
+		golib.LockInstance(LOCKFILE)
 	}
 
 	if options.daemon {
-		daemonize(false, true)
+		golib.Daemonize(false, true)
 	}
 
 	// must be after daemonize, or the pid will be parent pid
 	logger = newLogger()
-
-	setupSignals()
 }
 
 func main() {
