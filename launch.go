@@ -86,7 +86,7 @@ func guardDataSources(worker rule.ConfWorker) []string {
 	} else if worker.Type == rule.DATASOURCE_DB {
 		tables := make([]string, 0)
 		db := sqldb.NewSqlDb(sqldb.DRIVER_MYSQL, FLASHLOG_DSN, logger)
-		rows := db.Query(fmt.Sprintf("SHOW TABLES LIKE '%s'", guard.Tables))
+		rows := db.Query(fmt.Sprintf("SHOW TABLES LIKE '%s'", worker.Tables))
 		for rows.Next() {
 			var table string
 			if err := rows.Scan(&table); err != nil {
@@ -99,7 +99,7 @@ func guardDataSources(worker rule.ConfWorker) []string {
 
 		return tables
 	} else {
-		panic("unkown guards data source: " + guard.Type)
+		panic("unkown guards data source: " + worker.Type)
 	}
 
 	return nil

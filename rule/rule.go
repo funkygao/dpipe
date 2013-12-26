@@ -36,6 +36,7 @@ const (
 
 type RuleEngine struct {
 	*conf.Conf
+
 	Workers []ConfWorker
 	Parsers []ConfParser
 }

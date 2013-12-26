@@ -51,7 +51,7 @@ func main() {
 	}
 
 	if options.debug {
-		pretty.Logf("%# v\n", ruleEngine.Guards)
+		pretty.Logf("%# v\n", ruleEngine.Workers)
 		pretty.Logf("%# v\n", ruleEngine.Parsers)
 	}
 
