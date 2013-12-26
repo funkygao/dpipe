@@ -11,9 +11,9 @@ type JsonCollectorParser struct {
 	CollectorParser
 }
 
-func newJsonCollectorParser(conf *config.ConfParser, chUpstream chan<- Alarm, chDownstream chan<- string) (this *JsonCollectorParser) {
+func newJsonCollectorParser(conf *config.ConfParser, chDownstream chan<- string) (this *JsonCollectorParser) {
 	this = new(JsonCollectorParser)
-	this.init(conf, chUpstream, chDownstream)
+	this.init(conf, chDownstream)
 
 	go this.CollectAlarms()
 

@@ -30,8 +30,8 @@ var getTests = []struct {
 
 func TestGet(t *testing.T) {
 	for _, tt := range getTests {
-		lru := New(0)
-		lru.Add(tt.keyToAdd, 1234)
+		lru := NewLruCache(0)
+		lru.Set(tt.keyToAdd, 1234)
 		val, ok := lru.Get(tt.keyToGet)
 		if ok != tt.expectedOk {
 			t.Fatalf("%s: cache hit = %v; want %v", tt.name, ok, !ok)
@@ -42,15 +42,15 @@ func TestGet(t *testing.T) {
 }
 
 func TestRemove(t *testing.T) {
-	lru := New(0)
-	lru.Add("myKey", 1234)
+	lru := NewLruCache(0)
+	lru.Set("myKey", 1234)
 	if val, ok := lru.Get("myKey"); !ok {
 		t.Fatal("TestRemove returned no match")
 	} else if val != 1234 {
 		t.Fatalf("TestRemove failed.  Expected %d, got %v", 1234, val)
 	}
 
-	lru.Remove("myKey")
+	lru.Del("myKey")
 	if _, ok := lru.Get("myKey"); ok {
 		t.Fatal("TestRemove returned a removed entry")
 	}

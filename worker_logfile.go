@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/funkygao/alser/rule"
 	"github.com/funkygao/alser/parser"
+	"github.com/funkygao/alser/rule"
 	"github.com/funkygao/tail"
 	"os"
 	"sync"
@@ -17,7 +17,7 @@ type LogfileWorker struct {
 func newLogfileWorker(id int,
 	dataSource string, conf config.ConfGuard, tailMode bool,
 	wg *sync.WaitGroup, mutex *sync.Mutex,
-	chLines chan<- int, chAlarm chan<- parser.Alarm) Runnable {
+	chLines chan<- int) Runnable {
 	var tailConfig tail.Config
 	if tailMode {
 		tailConfig = tail.Config{
@@ -33,7 +33,7 @@ func newLogfileWorker(id int,
 	this.Worker = Worker{id: id,
 		dataSource: dataSource, conf: conf, tailMode: tailMode,
 		wg: wg, Mutex: mutex,
-		chLines: chLines, chAlarm: chAlarm}
+		chLines: chLines}
 	this.tailConf = tailConfig
 
 	return this

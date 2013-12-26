@@ -6,8 +6,8 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
-	"github.com/funkygao/alser/rule"
 	sqldb "github.com/funkygao/alser/db"
+	"github.com/funkygao/alser/rule"
 	"github.com/funkygao/gotime"
 	"os"
 	"strings"
@@ -34,8 +34,8 @@ type CollectorParser struct {
 	stopped bool
 }
 
-func (this *CollectorParser) init(conf *config.ConfParser, chUpstream chan<- Alarm, chDownstream chan<- string) {
-	this.AlsParser.init(conf, chUpstream, chDownstream) // super
+func (this *CollectorParser) init(conf *config.ConfParser, chDownstream chan<- string) {
+	this.AlsParser.init(conf, chDownstream) // super
 
 	this.Mutex = new(sync.Mutex) // embedding constructor
 	this.chWait = make(chan bool)

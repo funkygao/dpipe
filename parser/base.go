@@ -29,15 +29,13 @@ type AlsParser struct {
 	Parser
 
 	conf              *config.ConfParser
-	chUpstreamAlarm   chan<- Alarm  // TODO not used yet
 	chDownstreamAlarm chan<- string // consumed by parser itself
 
 	color string
 }
 
-func (this *AlsParser) init(conf *config.ConfParser, chUpstream chan<- Alarm, chDownstream chan<- string) {
+func (this *AlsParser) init(conf *config.ConfParser, chDownstream chan<- string) {
 	this.conf = conf
-	this.chUpstreamAlarm = chUpstream
 	this.chDownstreamAlarm = chDownstream
 
 	// setup color
@@ -166,10 +164,10 @@ func (this *AlsParser) valuesOfJsonKeys(data *json.Json) (values []interface{}, 
 		}
 
 		if key.Indexable() {
-			if key.Type == KEY_TYPE_IP && geoEnabled() {
+			if als.GeoEnabled() && (key.Type == KEY_TYPE_IP || key.Name == KEY_NAME_IP) {
 				// extra geo point info
 				//indexJson.Set(INDEX_COL_LOCATION, ipToGeo(val.(string)))
-				indexJson.Set(INDEX_COL_COUNTRY, ipToCountry(val.(string)))
+				indexJson.Set(INDEX_COL_COUNTRY, als.IpToCountry(val.(string)))
 			}
 
 			if key.Type == KEY_TYPE_LEVEL {

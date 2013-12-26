@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"github.com/funkygao/alser/rule"
 	"github.com/funkygao/alser/parser"
+	"github.com/funkygao/alser/rule"
 	mail "github.com/funkygao/alser/sendmail"
 	"github.com/funkygao/gofmt"
 	"os"
@@ -22,16 +22,6 @@ func runTicker(ticker *time.Ticker, lines *int) {
 			BuildID,
 			runtime.NumGoroutine(), gofmt.ByteSize(ms.Alloc),
 			len(allWorkers), parser.ParsersCount(), *lines, time.Since(startTime))
-	}
-}
-
-func runAlarmCollector(ch <-chan parser.Alarm) {
-	// we don't know when to send alarm, we just send alarm one by one
-	// alarm can span several lines
-	// it's parsers' responsibility for flow control such as backoff
-	for alarm := range ch {
-		// TODO send email
-		logger.Println(alarm)
 	}
 }
 

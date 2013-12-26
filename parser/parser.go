@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"github.com/funkygao/als"
 	"github.com/funkygao/alser/rule"
 	"log"
 )
@@ -70,27 +71,27 @@ func Parsers() map[string]Parser {
 	return allParsers
 }
 
-func createParser(conf *config.ConfParser, chUpstreamAlarm chan<- Alarm, chDownstreamAlarm chan<- string) Parser {
+func createParser(conf *config.ConfParser, chDownstreamAlarm chan<- string) Parser {
 	mutex.Lock()
 	defer mutex.Unlock()
 
 	if conf.Class == "HostLineParser" {
-		return newHostLineParser(conf, chUpstreamAlarm, chDownstreamAlarm)
+		return newHostLineParser(conf, chDownstreamAlarm)
 	} else if conf.Class == "RegexCollectorParser" {
-		return newRegexCollectorParser(conf, chUpstreamAlarm, chDownstreamAlarm)
+		return newRegexCollectorParser(conf, chDownstreamAlarm)
 	} else if conf.Class == "EsParser" {
-		return newEsParser(conf, chUpstreamAlarm, chDownstreamAlarm)
+		return newEsParser(conf, chDownstreamAlarm)
 	}
 
-	return newJsonCollectorParser(conf, chUpstreamAlarm, chDownstreamAlarm)
+	return newJsonCollectorParser(conf, chDownstreamAlarm)
 }
 
 // pid: only run this single parser id
-func InitParsers(pid string, conf *config.Config, chUpstreamAlarm chan<- Alarm) {
+func InitParsers(pid string, conf *config.Config) {
 	go runSendAlarmsWatchdog(conf)
 
 	geodbfile := conf.String("indexer.geodbfile", "/opt/local/share/GeoIP/GeoLiteCity.dat")
-	if err := loadGeoDb(geodbfile); err != nil {
+	if err := als.LoadGeoDb(geodbfile); err != nil {
 		logger.Printf("failed to load geoip: %s\n", geodbfile)
 	}
 
@@ -116,7 +117,7 @@ func InitParsers(pid string, conf *config.Config, chUpstreamAlarm chan<- Alarm) 
 				logger.Printf("create parser[%s] for %s\n", parserId, g.TailLogGlob)
 			}
 
-			allParsers[parserId] = createParser(confParser, chUpstreamAlarm, chParserAlarm)
+			allParsers[parserId] = createParser(confParser, chParserAlarm)
 		}
 	}
 }

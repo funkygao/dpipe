@@ -17,9 +17,9 @@ type HostLineParser struct {
 	CollectorParser
 }
 
-func newHostLineParser(conf *config.ConfParser, chUpstream chan<- Alarm, chDownstream chan<- string) (this *HostLineParser) {
+func newHostLineParser(conf *config.ConfParser, chDownstream chan<- string) (this *HostLineParser) {
 	this = new(HostLineParser)
-	this.init(conf, chUpstream, chDownstream)
+	this.init(conf, chDownstream)
 
 	go this.CollectAlarms()
 
