@@ -24,6 +24,7 @@ func parseFlags() {
 	flag.BoolVar(&options.tailmode, "tail", true, "tail mode")
 	flag.BoolVar(&options.dryrun, "dryrun", false, "dry run")
 	flag.StringVar(&options.cpuprof, "cpuprof", "", "cpu profiling file")
+	flag.StringVar(&options.memprof, "memprof", "", "memory profiling file")
 	flag.StringVar(&options.parser, "parser", "", "only run this parser id")
 	flag.StringVar(&options.locale, "locale", "", "only guard this locale")
 
@@ -61,6 +62,16 @@ func setupMaxProcsAndProfiler() {
 
 		logger.Printf("CPU profiler %s enabled\n", options.cpuprof)
 		pprof.StartCPUProfile(f)
+	}
+
+	if options.memprof != "" {
+		f, err := os.Create(options.cpuprof)
+		if err != nil {
+			panic(err)
+		}
+
+		logger.Printf("CPU profiler %s enabled\n", options.cpuprof)
+		pprof.WriteHeapProfile(f)
 	}
 }
 

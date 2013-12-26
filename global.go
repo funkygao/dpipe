@@ -24,6 +24,7 @@ var (
 		tailmode    bool
 		dryrun      bool
 		cpuprof     string
+		memprof     string
 		parser      string
 		locale      string
 		lock        bool
