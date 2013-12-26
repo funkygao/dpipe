@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/funkygao/alser/parser"
-	"github.com/funkygao/golib"
+	"github.com/funkygao/goserver"
 	"os"
 	"os/signal"
 	"strings"
@@ -11,9 +11,9 @@ import (
 )
 
 func init() {
-	golib.RegisterSignalHandler(syscall.SIGINT, handleInterrupt)
-	golib.RegisterSignalHandler(syscall.SIGTERM, handleInterrupt)
-	golib.RegisterSignalHandler(syscall.SIGUSR2, func(sig os.Signal) {
+	goserver.RegisterSignalHandler(syscall.SIGINT, handleInterrupt)
+	goserver.RegisterSignalHandler(syscall.SIGTERM, handleInterrupt)
+	goserver.RegisterSignalHandler(syscall.SIGUSR2, func(sig os.Signal) {
 		// TODO reload rule engine
 	})
 }

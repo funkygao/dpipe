@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/funkygao/alser/rule"
-	"github.com/funkygao/golib"
+	"github.com/funkygao/goserver"
 	"github.com/kr/pretty"
 	"os"
 	"runtime/debug"
@@ -18,15 +18,15 @@ func init() {
 	}
 
 	if options.lock {
-		if golib.InstanceLocked(LOCKFILE) {
+		if goserver.InstanceLocked(LOCKFILE) {
 			fmt.Fprintf(os.Stderr, "Another instance is running, exit...\n")
 			os.Exit(1)
 		}
-		golib.LockInstance(LOCKFILE)
+		goserver.LockInstance(LOCKFILE)
 	}
 
 	if options.daemon {
-		golib.Daemonize(false, true)
+		goserver.Daemonize(false, true)
 	}
 
 	// must be after daemonize, or the pid will be parent pid

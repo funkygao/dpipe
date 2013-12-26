@@ -1,14 +1,14 @@
 package main
 
 import (
-	"github.com/funkygao/golib"
+	"github.com/funkygao/goserver"
 	"os"
 	"runtime/pprof"
 )
 
 func cleanup() {
 	if options.lock {
-		golib.UnlockInstance(LOCKFILE)
+		goserver.UnlockInstance(LOCKFILE)
 	}
 
 	if options.cpuprof != "" {
