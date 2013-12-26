@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-func launch(ruleEngine *rule.Config) {
+func launch(ruleEngine *rule.RuleEngine) {
 	startTime := time.Now()
 
 	// pass vars to parser pkg
