@@ -4,11 +4,8 @@ import (
 	"fmt"
 	"github.com/funkygao/alser/rule"
 	"github.com/kr/pretty"
-	"io"
-	"log"
 	"os"
 	"runtime/debug"
-	"runtime/pprof"
 	"strings"
 )
 
@@ -35,24 +32,6 @@ func init() {
 	logger = newLogger()
 
 	setupSignals()
-}
-
-func newLogger() *log.Logger {
-	var logWriter io.Writer = os.Stdout // default log writer
-	var err error
-	if options.logfile != "" {
-		logWriter, err = os.OpenFile(options.logfile, os.O_APPEND|os.O_CREATE|os.O_RDWR, 0644)
-		if err != nil {
-			panic(err)
-		}
-	}
-
-	logOptions := LOG_OPTIONS
-	if options.debug {
-		logOptions = LOG_OPTIONS_DEBUG
-	}
-
-	return log.New(logWriter, fmt.Sprintf("[%d]", os.Getpid()), logOptions)
 }
 
 func main() {
@@ -89,17 +68,7 @@ func main() {
 		shutdown()
 	}
 
-	if options.cpuprof != "" {
-		f, err := os.Create(options.cpuprof)
-		if err != nil {
-			panic(err)
-		}
-
-		logger.Printf("CPU profiler %s enabled\n", options.cpuprof)
-		pprof.StartCPUProfile(f)
-	}
-
-	setupMaxProcs()
+	setupMaxProcsAndProfiler()
 
 	logger.Printf("conf[%s] has %d kinds of guards\n",
 		options.config, len(conf.Guards))

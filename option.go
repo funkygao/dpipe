@@ -3,27 +3,12 @@ package main
 import (
 	"flag"
 	"fmt"
+	"io"
+	"log"
 	"os"
 	"runtime"
+	"runtime/pprof"
 )
-
-var options struct {
-	verbose     bool
-	config      string
-	showversion bool
-	logfile     string
-	debug       bool
-	test        bool
-	tick        int
-	tailmode    bool
-	dryrun      bool
-	cpuprof     string
-	parser      string
-	locale      string
-	lock        bool
-	daemon      bool
-	showparsers bool
-}
 
 func parseFlags() {
 	flag.BoolVar(&options.verbose, "v", false, "verbose")
@@ -48,7 +33,6 @@ func parseFlags() {
 	if options.debug {
 		options.verbose = true
 	}
-
 }
 
 func showUsage() {
@@ -63,9 +47,37 @@ func showVersion() {
 	os.Exit(0)
 }
 
-func setupMaxProcs() {
+func setupMaxProcsAndProfiler() {
 	numCpu := runtime.NumCPU()
 	maxProcs := numCpu/2 + 1
 	runtime.GOMAXPROCS(numCpu)
 	logger.Printf("build[%s] starting with %d/%d CPUs...\n", BuildID, maxProcs, numCpu)
+
+	if options.cpuprof != "" {
+		f, err := os.Create(options.cpuprof)
+		if err != nil {
+			panic(err)
+		}
+
+		logger.Printf("CPU profiler %s enabled\n", options.cpuprof)
+		pprof.StartCPUProfile(f)
+	}
+}
+
+func newLogger() *log.Logger {
+	var logWriter io.Writer = os.Stdout // default log writer
+	var err error
+	if options.logfile != "" {
+		logWriter, err = os.OpenFile(options.logfile, os.O_APPEND|os.O_CREATE|os.O_RDWR, 0644)
+		if err != nil {
+			panic(err)
+		}
+	}
+
+	logOptions := LOG_OPTIONS
+	if options.debug {
+		logOptions = LOG_OPTIONS_DEBUG
+	}
+
+	return log.New(logWriter, fmt.Sprintf("[%d]", os.Getpid()), logOptions)
 }

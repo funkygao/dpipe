@@ -12,6 +12,24 @@ var (
 
 	allWorkers map[string]bool // key is datasource name
 	ticker     *time.Ticker
+
+	options struct {
+		verbose     bool
+		config      string
+		showversion bool
+		logfile     string
+		debug       bool
+		test        bool
+		tick        int
+		tailmode    bool
+		dryrun      bool
+		cpuprof     string
+		parser      string
+		locale      string
+		lock        bool
+		daemon      bool
+		showparsers bool
+	}
 )
 
 const (
