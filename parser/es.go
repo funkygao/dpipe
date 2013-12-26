@@ -14,9 +14,9 @@ type EsParser struct {
 	AlsParser
 }
 
-func newEsParser(conf *config.ConfParser, chUpstream chan<- Alarm, chDownstream chan<- string) (this *EsParser) {
+func newEsParser(conf *config.ConfParser, chDownstream chan<- string) (this *EsParser) {
 	this = new(EsParser)
-	this.init(conf, chUpstream, chDownstream)
+	this.init(conf, chDownstream)
 
 	return
 }

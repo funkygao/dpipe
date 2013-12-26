@@ -4,9 +4,9 @@ import (
 	"bytes"
 	"compress/zlib"
 	"fmt"
-	"github.com/funkygao/alser/rule"
 	sqldb "github.com/funkygao/alser/db"
 	"github.com/funkygao/alser/parser"
+	"github.com/funkygao/alser/rule"
 	"io"
 	"strings"
 	"sync"
@@ -35,12 +35,12 @@ type DbWorker struct {
 func newDbWorker(id int,
 	dataSource string, conf config.ConfGuard, tailMode bool,
 	wg *sync.WaitGroup, mutex *sync.Mutex,
-	chLines chan<- int, chAlarm chan<- parser.Alarm) Runnable {
+	chLines chan<- int) Runnable {
 	this := new(DbWorker)
 	this.Worker = Worker{id: id,
 		dataSource: dataSource, conf: conf, tailMode: tailMode,
 		wg: wg, Mutex: mutex,
-		chLines: chLines, chAlarm: chAlarm}
+		chLines: chLines}
 	this.Lines = make(chan string)
 	this.db = sqldb.NewSqlDb(sqldb.DRIVER_MYSQL, FLASHLOG_DSN, logger)
 	this.db.SetMaxIdleConns(10)

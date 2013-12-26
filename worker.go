@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"github.com/funkygao/alser/parser"
 	"github.com/funkygao/alser/rule"
 	"sync"
 	"time"
@@ -11,7 +10,7 @@ import (
 type NewWorker func(id int, dataSource string,
 	conf config.ConfGuard, tailMode bool,
 	wg *sync.WaitGroup, mutex *sync.Mutex,
-	chLines chan<- int, chAlarm chan<- parser.Alarm) Runnable
+	chLines chan<- int) Runnable
 
 type Runnable interface {
 	Run()
@@ -38,7 +37,6 @@ type Worker struct {
 	*sync.Mutex
 	wg      *sync.WaitGroup
 	chLines chan<- int
-	chAlarm chan<- parser.Alarm
 }
 
 func (this Worker) String() string {
@@ -53,7 +51,8 @@ func (this *Worker) Done() {
 	this.Unlock()
 }
 
-func invokeWorkers(conf *config.Config, wg *sync.WaitGroup, workersCanWait chan<- bool, chLines chan<- int, chAlarm chan<- parser.Alarm) {
+func invokeWorkers(conf *config.Config, wg *sync.WaitGroup, workersCanWait chan<- bool,
+	chLines chan<- int) {
 	allWorkers = make(map[string]bool)
 	workersCanWaitOnce := new(sync.Once)
 	mutex := new(sync.Mutex) // mutex for all workers
@@ -93,7 +92,7 @@ func invokeWorkers(conf *config.Config, wg *sync.WaitGroup, workersCanWait chan<
 				}
 
 				var worker = newWoker(len(allWorkers),
-					dataSource, guard, options.tailmode, wg, mutex, chLines, chAlarm)
+					dataSource, guard, options.tailmode, wg, mutex, chLines)
 				go worker.Run()
 			}
 		}

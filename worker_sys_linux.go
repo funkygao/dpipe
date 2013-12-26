@@ -85,12 +85,12 @@ func (s *stats) json() (string, error) {
 func newSysWorker(id int,
 	dataSource string, conf config.ConfGuard, tailMode bool,
 	wg *sync.WaitGroup, mutex *sync.Mutex,
-	chLines chan<- int, chAlarm chan<- parser.Alarm) Runnable {
+	chLines chan<- int) Runnable {
 	this := new(SysWorker)
 	this.Worker = Worker{id: id,
 		dataSource: dataSource, conf: conf, tailMode: tailMode,
 		wg: wg, Mutex: mutex,
-		chLines: chLines, chAlarm: chAlarm}
+		chLines: chLines}
 
 	return this
 }

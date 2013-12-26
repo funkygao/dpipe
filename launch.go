@@ -28,17 +28,15 @@ func launch(conf *config.Config) {
 		go runTicker(ticker, &lines)
 	}
 
-	chAlarm := make(chan parser.Alarm, 1000) // collect alarms from all parsers
-	go runAlarmCollector(chAlarm)            // unified alarm handling
-
+	// are we missing newly emerged logs?
 	go notifyUnGuardedLogs(conf)
 
-	parser.InitParsers(options.parser, conf, chAlarm)
+	parser.InitParsers(options.parser, conf)
 
 	var workersWg = new(sync.WaitGroup)
 	chLines := make(chan int)         // how many line have been scanned till now
 	workersCanWait := make(chan bool) // in case of wg.Add/Wait race condition
-	go invokeWorkers(conf, workersWg, workersCanWait, chLines, chAlarm)
+	go invokeWorkers(conf, workersWg, workersCanWait, chLines)
 
 	// wait for all workers finish
 	go func() {
@@ -46,7 +44,6 @@ func launch(conf *config.Config) {
 		workersWg.Wait()
 
 		close(chLines)
-		close(chAlarm)
 	}()
 
 	// after all workers finished, collect how many lines scanned
