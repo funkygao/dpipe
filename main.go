@@ -70,7 +70,7 @@ func main() {
 
 	setupMaxProcsAndProfiler()
 
-	logger.Printf("conf[%s] has %d kinds of guards\n",
+	logger.Printf("conf[%s] has %d kinds of input\n",
 		options.config, len(conf.Guards))
 
 	launch(conf)
