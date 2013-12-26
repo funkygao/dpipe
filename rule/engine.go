@@ -23,7 +23,6 @@ import (
 	"errors"
 	"fmt"
 	conf "github.com/daviddengcn/go-ljson-conf"
-	"net/url"
 )
 
 type RuleEngine struct {
@@ -31,45 +30,6 @@ type RuleEngine struct {
 
 	Workers []ConfWorker
 	Parsers []ConfParser
-}
-
-// Every worker has 2 modes:
-// tail mode and history mode
-type ConfWorker struct {
-	Enabled     bool     // enabled
-	Dsn         string   // data source name base, default file://
-	TailGlob    string   // tail_glob
-	HistoryGlob string   // history_glob
-	Parsers     []string // slice of parser id
-}
-
-type ConfParser struct {
-	Id           string
-	Class        string
-	Title        string
-	MsgRegex     string
-	MsgRegexKeys []string
-	Fields       []Field  // besides area,ts
-	Colors       []string // fg, effects, bg
-
-	PrintFormat   string // printf
-	InstantFormat string // instantf, echo for each occurence
-	ShowSummary   bool
-	Indexing      bool
-	IndexName     string
-	IndexAll      bool // index all keys, we needn't define keys in rules
-	LevelRange    []int
-
-	Sleep           int
-	BeepThreshold   int
-	AbnormalPercent float64
-	AbnormalBase    int
-
-	DbName      string //db name is table name
-	CreateTable string
-	InsertStmt  string
-	StatsStmt   string
-	PersistDb   string // will never auto delete for manual analytics
 }
 
 func LoadRuleEngine(fn string) (*RuleEngine, error) {
@@ -201,37 +161,4 @@ func (this *RuleEngine) ParserById(id string) *ConfParser {
 	}
 
 	return nil
-}
-
-func (this *ConfParser) StatsSql() string {
-	return fmt.Sprintf(this.StatsStmt, this.DbName)
-}
-
-func (this *ConfParser) FieldByName(name string) (field Field, err error) {
-	for _, lk := range this.Fields {
-		if lk.Name == name {
-			return lk, nil
-		}
-	}
-
-	return Field{Name: ""}, errors.New("field: " + name + ": not found")
-}
-
-func (this *ConfWorker) HasParser(parserId string) bool {
-	for _, pid := range this.Parsers {
-		if pid == parserId {
-			return true
-		}
-	}
-
-	return false
-}
-
-func (this *ConfWorker) Scheme() string {
-	u, err := url.Parse(this.TailGlob)
-	if err != nil {
-		panic(err)
-	}
-
-	return u.Scheme
 }
