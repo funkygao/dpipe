@@ -98,8 +98,8 @@ func InitParsers(pid string, ruleEngine *rule.RuleEngine) {
 	indexer = newIndexer(ruleEngine)
 	go indexer.mainLoop()
 
-	for _, g := range ruleEngine.Guards {
-		for _, parserId := range g.Parsers {
+	for _, w := range ruleEngine.Workers {
+		for _, parserId := range w.Parsers {
 			if pid != "" && pid != parserId {
 				continue
 			}
@@ -114,7 +114,7 @@ func InitParsers(pid string, ruleEngine *rule.RuleEngine) {
 			}
 
 			if debug {
-				logger.Printf("create parser[%s] for %s\n", parserId, g.TailLogGlob)
+				logger.Printf("create parser[%s] for %s\n", parserId, w.TailLogGlob)
 			}
 
 			allParsers[parserId] = createParser(confParser, chParserAlarm)

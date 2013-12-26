@@ -109,7 +109,7 @@ func (this *AlsParser) valuesOfJsonKeys(data *json.Json) (values []interface{}, 
 	var val interface{}
 	values = make([]interface{}, 0)
 
-	for _, key := range this.conf.Keys {
+	for _, key := range this.conf.Fields {
 		keyParts := strings.SplitN(key.Name, ".", 2) // only 1 dot permitted FIXME
 		if len(keyParts) > 1 {
 			subData := data.Get(keyParts[0])
