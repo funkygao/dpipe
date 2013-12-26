@@ -20,7 +20,6 @@ TODO
 package rule
 
 import (
-	"errors"
 	"fmt"
 	conf "github.com/daviddengcn/go-ljson-conf"
 )
@@ -29,7 +28,7 @@ type RuleEngine struct {
 	*conf.Conf
 
 	Workers []ConfWorker
-	Parsers []ConfParser
+	Parsers map[string]*ConfParser
 }
 
 func LoadRuleEngine(fn string) (*RuleEngine, error) {
@@ -41,13 +40,13 @@ func LoadRuleEngine(fn string) (*RuleEngine, error) {
 	this := new(RuleEngine)
 	this.Conf = cf
 	this.Workers = make([]ConfWorker, 0)
-	this.Parsers = make([]ConfParser, 0)
+	this.Parsers = make(map[string]*ConfParser)
 
 	// parsers section
 	parsers := this.List("parsers", nil)
 	for i := 0; i < len(parsers); i++ {
 		keyPrefix := fmt.Sprintf("parsers[%d].", i)
-		parser := ConfParser{}
+		parser := new(ConfParser)
 		parser.Id = this.String(keyPrefix+"id", "")
 		parser.Class = this.String(keyPrefix+"class", "")
 		parser.PrintFormat = this.String(keyPrefix+"printf", "")
@@ -93,7 +92,12 @@ func LoadRuleEngine(fn string) (*RuleEngine, error) {
 			}
 		}
 
-		this.Parsers = append(this.Parsers, parser)
+		if _, present := this.Parsers[parser.Id]; present {
+			panic("parser with id:" + parser.Id + " already exists")
+		} else {
+			this.Parsers[parser.Id] = parser
+		}
+
 	}
 
 	// workers section
@@ -108,11 +112,6 @@ func LoadRuleEngine(fn string) (*RuleEngine, error) {
 		worker.Parsers = this.StringList(keyPrefix+"parsers", nil)
 
 		this.Workers = append(this.Workers, worker)
-	}
-
-	// validation
-	if this.hasDupParsers() {
-		return nil, errors.New("has dup parsers")
 	}
 
 	return this, nil
@@ -130,19 +129,6 @@ func (this *RuleEngine) IsParserApplied(parserId string) bool {
 	return false
 }
 
-func (this *RuleEngine) hasDupParsers() bool {
-	parsers := make(map[string]bool)
-	for _, p := range this.Parsers {
-		if _, present := parsers[p.Id]; present {
-			return true
-		}
-
-		parsers[p.Id] = true
-	}
-
-	return false
-}
-
 func (this *RuleEngine) WorkersCount() (c int) {
 	for _, g := range this.Workers {
 		if g.Enabled {
@@ -153,12 +139,19 @@ func (this *RuleEngine) WorkersCount() (c int) {
 	return
 }
 
-func (this *RuleEngine) ParserById(id string) *ConfParser {
-	for _, p := range this.Parsers {
-		if p.Id == id {
-			return &p
-		}
+func (this *RuleEngine) ParserById(pid string) *ConfParser {
+	p, present := this.Parsers[pid]
+	if !present {
+		return nil
 	}
 
-	return nil
+	return p
+}
+
+func (this *RuleEngine) DiscardParsersExcept(pid string) {
+	for id, _ := range this.Parsers {
+		if id != pid {
+			delete(this.Parsers, id)
+		}
+	}
 }
