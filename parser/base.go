@@ -48,10 +48,6 @@ func (this *AlsParser) init(conf *rule.ConfParser, chDownstream chan<- string) {
 // Each ALS log line is area,timestamp,msg
 // Most msg are json struct while some are raw text
 func (this *AlsParser) ParseLine(line string) (area string, ts uint64, msg string) {
-	if !this.conf.Enabled {
-		return
-	}
-
 	var err error
 	area, ts, msg, err = als.ParseAlsLine(line)
 	if err != nil {

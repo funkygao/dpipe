@@ -104,7 +104,7 @@ func (this *CollectorParser) historyKey(printf string, values []interface{}) str
 }
 
 func (this *CollectorParser) CollectAlarms() {
-	if dryRun || !this.conf.Enabled {
+	if dryRun {
 		this.chWait <- true
 		return
 	}

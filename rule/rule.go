@@ -37,7 +37,7 @@ type RuleEngine struct {
 // tail mode and history mode
 type ConfWorker struct {
 	Enabled     bool   // enabled
-	Dsn         string // data source name base
+	Dsn         string // data source name base, default file://
 	TailGlob    string // tail_glob
 	HistoryGlob string // history_glob
 
