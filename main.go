@@ -45,35 +45,35 @@ func main() {
 	}()
 
 	// load the rule engine
-	conf, err := config.LoadRuleEngine(options.config)
-	if err != nil || conf == nil {
+	ruleEngine, err := config.LoadRuleEngine(options.config)
+	if err != nil || ruleEngine == nil {
 		panic(err)
 	}
 
 	if options.debug {
-		pretty.Logf("%# v\n", conf.Guards)
-		pretty.Logf("%# v\n", conf.Parsers)
+		pretty.Logf("%# v\n", ruleEngine.Guards)
+		pretty.Logf("%# v\n", ruleEngine.Parsers)
 	}
 
 	if options.showparsers {
 		fmt.Fprintf(os.Stderr, "All parsers\n%s\n", strings.Repeat("=", 20))
-		for _, p := range conf.Parsers {
+		for _, p := range ruleEngine.Parsers {
 			fmt.Fprintf(os.Stderr, "%+v\n", p)
 		}
 		shutdown()
 	}
 
-	if options.parser != "" && !conf.IsParserApplied(options.parser) {
+	if options.parser != "" && !ruleEngine.IsParserApplied(options.parser) {
 		fmt.Fprintf(os.Stderr, "Invalid parser: %s\n", options.parser)
 		shutdown()
 	}
 
 	setupMaxProcsAndProfiler()
 
-	logger.Printf("conf[%s] has %d kinds of input\n",
-		options.config, len(conf.Guards))
+	logger.Printf("rule engine[%s] has %d kinds of input\n",
+		options.config, len(ruleEngine.Guards))
 
-	launch(conf)
+	launch(ruleEngine)
 
 	shutdown()
 }
