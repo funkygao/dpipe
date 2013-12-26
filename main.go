@@ -14,7 +14,7 @@ func init() {
 	parseFlags()
 
 	if options.showversion {
-		showVersion()
+		showVersionAndExit()
 	}
 
 	if options.lock {
