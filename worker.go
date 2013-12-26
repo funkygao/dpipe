@@ -40,7 +40,7 @@ type Worker struct {
 }
 
 func (this Worker) String() string {
-	return fmt.Sprintf("log.worker-%d[%s]", this.id, this.dataSource)
+	return fmt.Sprintf("worker-%d[%s]", this.id, this.dataSource)
 }
 
 func (this *Worker) Done() {
@@ -51,8 +51,8 @@ func (this *Worker) Done() {
 	this.Unlock()
 }
 
-func invokeWorkers(ruleEngine *rule.RuleEngine, wg *sync.WaitGroup, workersCanWait chan<- bool,
-	chLines chan<- int) {
+func invokeWorkers(ruleEngine *rule.RuleEngine, wg *sync.WaitGroup,
+	workersCanWait chan<- bool, chLines chan<- int) {
 	allWorkers = make(map[string]bool)
 	workersCanWaitOnce := new(sync.Once)
 	mutex := new(sync.Mutex) // mutex for all workers

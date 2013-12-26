@@ -90,7 +90,8 @@ func createParser(conf *rule.ConfParser, chDownstreamAlarm chan<- string) Parser
 func InitParsers(pid string, ruleEngine *rule.RuleEngine) {
 	go runSendAlarmsWatchdog(ruleEngine)
 
-	geodbfile := ruleEngine.String("indexer.geodbfile", "/opt/local/share/GeoIP/GeoLiteCity.dat")
+	geodbfile := ruleEngine.String("indexer.geodbfile",
+		"/opt/local/share/GeoIP/GeoLiteCity.dat")
 	if err := als.LoadGeoDb(geodbfile); err != nil {
 		logger.Printf("failed to load geoip: %s\n", geodbfile)
 	}

@@ -36,12 +36,11 @@ type RuleEngine struct {
 // Every worker has 2 modes:
 // tail mode and history mode
 type ConfWorker struct {
-	Enabled     bool   // enabled
-	Dsn         string // data source name base, default file://
-	TailGlob    string // tail_glob
-	HistoryGlob string // history_glob
-
-	Parsers []string
+	Enabled     bool     // enabled
+	Dsn         string   // data source name base, default file://
+	TailGlob    string   // tail_glob
+	HistoryGlob string   // history_glob
+	Parsers     []string // slice of parser id
 }
 
 type ConfParser struct {
@@ -159,10 +158,10 @@ func LoadRuleEngine(fn string) (*RuleEngine, error) {
 	return this, nil
 }
 
-func (this *RuleEngine) IsParserApplied(parser string) bool {
+func (this *RuleEngine) IsParserApplied(parserId string) bool {
 	for _, g := range this.Workers {
-		for _, p := range g.Parsers {
-			if p == parser {
+		for _, pid := range g.Parsers {
+			if pid == parserId {
 				return true
 			}
 		}
@@ -171,7 +170,6 @@ func (this *RuleEngine) IsParserApplied(parser string) bool {
 	return false
 }
 
-// Dup parser id
 func (this *RuleEngine) hasDupParsers() bool {
 	parsers := make(map[string]bool)
 	for _, p := range this.Parsers {
@@ -185,7 +183,7 @@ func (this *RuleEngine) hasDupParsers() bool {
 	return false
 }
 
-func (this *RuleEngine) CountOfWorkers() (c int) {
+func (this *RuleEngine) WorkersCount() (c int) {
 	for _, g := range this.Workers {
 		if g.Enabled {
 			c += 1

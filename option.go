@@ -24,7 +24,7 @@ func parseFlags() {
 	flag.BoolVar(&options.tailmode, "tail", true, "tail mode")
 	flag.BoolVar(&options.dryrun, "dryrun", false, "dry run")
 	flag.StringVar(&options.cpuprof, "cpuprof", "", "cpu profiling file")
-	flag.StringVar(&options.parser, "parser", "", "only run this parser")
+	flag.StringVar(&options.parser, "parser", "", "only run this parser id")
 	flag.StringVar(&options.locale, "locale", "", "only guard this locale")
 
 	flag.Usage = showUsage

@@ -65,7 +65,8 @@ func launch(ruleEngine *rule.RuleEngine) {
 }
 
 func guardDataSources(worker rule.ConfWorker) []string {
-	if worker.Type == rule.DATASOURCE_FILE || worker.Type == rule.DATASOURCE_SYS {
+	var workerScheme string = worker.Scheme()
+	if workerScheme == rule.DATASOURCE_FILE || workerScheme == rule.DATASOURCE_SYS {
 		var pattern string
 		if options.tailmode {
 			pattern = worker.TailGlob
@@ -83,10 +84,10 @@ func guardDataSources(worker rule.ConfWorker) []string {
 		}
 
 		return logfiles
-	} else if worker.Type == rule.DATASOURCE_DB {
+	} else if workerScheme == rule.DATASOURCE_DB { // mysql TODO
 		tables := make([]string, 0)
 		db := sqldb.NewSqlDb(sqldb.DRIVER_MYSQL, FLASHLOG_DSN, logger)
-		rows := db.Query(fmt.Sprintf("SHOW TABLES LIKE '%s'", worker.Tables))
+		rows := db.Query(fmt.Sprintf("SHOW TABLES LIKE '%s'", worker.TailGlob))
 		for rows.Next() {
 			var table string
 			if err := rows.Scan(&table); err != nil {
@@ -99,7 +100,7 @@ func guardDataSources(worker rule.ConfWorker) []string {
 
 		return tables
 	} else {
-		panic("unkown guards data source: " + worker.Type)
+		panic("unkown worker scheme: " + workerScheme)
 	}
 
 	return nil

@@ -71,7 +71,7 @@ func main() {
 	setupMaxProcsAndProfiler()
 
 	logger.Printf("rule engine[%s] has %d kinds of workers input\n",
-		options.config, ruleEngine.CountOfWorkers())
+		options.config, ruleEngine.WorkersCount())
 
 	launch(ruleEngine)
 

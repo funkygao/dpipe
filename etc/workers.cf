@@ -109,7 +109,8 @@
         // als sys
         //===========================
         {
-            tail_glob:  "sys:///proc/stat"
+            dsn:        "sys://"
+            tail_glob:  "/proc/stat"
             parsers:    [ "sysMon", ]
         },
 
