@@ -14,7 +14,7 @@ type Alarm interface {
 	String() string
 }
 
-func sendAlarmMailsLoop(ruleEngine *rule.Config, mailBody *bytes.Buffer, bodyLines *int) {
+func sendAlarmMailsLoop(ruleEngine *rule.RuleEngine, mailBody *bytes.Buffer, bodyLines *int) {
 	const mailTitlePrefix = "ALS Alarm"
 	mailTo := ruleEngine.String("mail.guarded", "")
 	if mailTo == "" {
