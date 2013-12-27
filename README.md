@@ -1,24 +1,20 @@
-alser
-=====
-
-ALS guard 
-
-ALS is short for application logging system
+funpipe
+=======
 
 Performing "in-flight" processing of collected data, real time streaming analysis and alarming, and delivering the results to any number of destinations for further analysis.
 
-*   als is aimed to be swiss knife kind tool instead of a complex system.
-*   als is different from splunk which is basically a search engine.
-*   als is different from opentsdb which is metrics based while als is event based.
-*   als is like logstash but can do more data manipulations and has feature of real time analysis.
+*   aimed to be swiss knife kind tool instead of a complex system.
+*   different from splunk which is basically a search engine.
+*   different from opentsdb which is metrics based while funpipe is event based.
+*   like logstash but can do more data manipulations and has feature of real time analysis.
 
 
-[![Build Status](https://travis-ci.org/funkygao/alser.png?branch=master)](https://travis-ci.org/funkygao/alser)
+[![Build Status](https://travis-ci.org/funkygao/funpipe.png?branch=master)](https://travis-ci.org/funkygao/funpipe)
 
 ### Install
 
-    go get github.com/funkygao/alser
-    alser -h # help
+    go get github.com/funkygao/funpipe
+    funpipe -h # help
 
 ### Architecture
 
@@ -39,7 +35,7 @@ Performing "in-flight" processing of collected data, real time streaming analysi
                             +-----------------+
                             |   ALS Server    |
                             |-----------------| 
-                            |alser ETL daemon |
+                            | funpipe daemon  |
                             +-----------------+
                                     |
                                     | clean/filter/parse/transform based on rule engine
