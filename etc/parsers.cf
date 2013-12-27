@@ -13,6 +13,14 @@
         },
 
         {
+            id:         "RcDetail"
+            class:      "EsParser"
+            title:      "RcDetail"
+            indexname:  "rs@ym"
+            indexall:    true
+        },
+
+        {
             id:         "RcLog"
             class:      "EsParser"
             title:      "RcLog"
