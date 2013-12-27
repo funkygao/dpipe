@@ -8,16 +8,24 @@ import (
 	"sync"
 )
 
+type LogfileWorker struct {
+	Worker
+
+	tailConf tail.Config
+}
+
 func init() {
 	RegisterWorkerPlugin("file", func() interface{} {
 		return new(LogfileWorker)
 	})
 }
 
-type LogfileWorker struct {
-	Worker
+func (this *LogfileWorker) Init(config interface{}) error {
 
-	tailConf tail.Config
+}
+
+func (this *LogfileWorker) Run(runner pipeline.FilterRunner, helper pipeline.PluginHelper) (err error) {
+
 }
 
 func newLogfileWorker(id int,
@@ -45,7 +53,7 @@ func newLogfileWorker(id int,
 	return this
 }
 
-func (this *LogfileWorker) Run() {
+func (this *LogfileWorker) Run1() {
 	defer this.Done()
 
 	t, err := tail.TailFile(this.dataSource, this.tailConf)
