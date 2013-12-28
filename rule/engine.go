@@ -92,6 +92,7 @@ func LoadRuleEngine(fn string) (*RuleEngine, error) {
 			}
 		}
 
+		parser.validate()
 		if _, present := this.Parsers[parser.Id]; present {
 			panic("parser with id:" + parser.Id + " already exists")
 		} else {

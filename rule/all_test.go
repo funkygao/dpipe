@@ -12,32 +12,32 @@ func TestLoadRuleEngine(t *testing.T) {
 	assert.Equal(t, nil, err)
 	assert.NotEqual(t, nil, c)
 
-	assert.Equal(t, 2, len(c.Guards))
+	assert.Equal(t, 2, len(c.Workers))
 	assert.Equal(t, 1, len(c.Parsers))
 
 	assert.Equal(t, true, c.IsParserApplied("MemcacheFailParser"))
 	assert.Equal(t, false, c.IsParserApplied("NonExistParser"))
 
 	// guards
-	assert.Equal(t, "/mnt/funplus/logs/fp_rstory/memcache_to.*.log", c.Guards[0].TailGlob)
-	assert.Equal(t, "/mnt/funplus/logs/fp_rstory/history/cache_set_fail*", c.Guards[1].HistoryGlob)
-	assert.Equal(t, false, c.Guards[0].HasParser("NonExistParser"))
-	assert.Equal(t, true, c.Guards[0].HasParser("MemcacheFailParser"))
+	assert.Equal(t, "/mnt/funplus/logs/fp_rstory/memcache_to.*.log", c.Workers[0].TailGlob)
+	assert.Equal(t, "/mnt/funplus/logs/fp_rstory/history/cache_set_fail*", c.Workers[1].HistoryGlob)
+	assert.Equal(t, false, c.Workers[0].HasParser("NonExistParser"))
+	assert.Equal(t, true, c.Workers[0].HasParser("MemcacheFailParser"))
 
 	// parsers
-	p := c.Parsers[0]
+	p := c.Parsers["MemcacheFailParser"]
 	assert.Equal(t, "Line", p.Class)
 	assert.Equal(t, "MemcacheFailParser", p.Id)
 	assert.Equal(t, []string{"FgYellow"}, p.Colors)
 
 	// parser keys
-	assert.Equal(t, 2, len(p.Keys))
-	assert.Equal(t, "key", p.Keys[0].Name)
-	assert.Equal(t, "string", p.Keys[0].Type)
-	assert.Equal(t, "timeout", p.Keys[1].Name)
-	assert.Equal(t, "int", p.Keys[1].Type)
-	assert.Equal(t, "blah", p.Keys[1].Contain)
-	assert.Equal(t, []string{"digit", "token"}, p.Keys[0].Regex)
+	assert.Equal(t, 2, len(p.Fields))
+	assert.Equal(t, "key", p.Fields[0].Name)
+	assert.Equal(t, "string", p.Fields[0].Type)
+	assert.Equal(t, "timeout", p.Fields[1].Name)
+	assert.Equal(t, "int", p.Fields[1].Type)
+	assert.Equal(t, "blah", p.Fields[1].Contain)
+	assert.Equal(t, []string{"digit", "token"}, p.Fields[0].Regex)
 
 	// get parser by id
 	mp := c.ParserById("MemcacheFailParser")

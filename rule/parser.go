@@ -6,9 +6,9 @@ import (
 )
 
 type ConfParser struct {
-	Id           string
-	Class        string
-	Title        string
+	Id           string // required
+	Class        string // required
+	Title        string // optional, defaults to Id
 	MsgRegex     string
 	MsgRegexKeys []string
 	Fields       []Field  // besides area,ts
@@ -32,6 +32,16 @@ type ConfParser struct {
 	InsertStmt  string
 	StatsStmt   string
 	PersistDb   string // will never auto delete for manual analytics
+}
+
+func (this *ConfParser) validate() {
+	if this.Id == "" || this.Class == "" {
+		panic("parser Id/Class can't be empty")
+	}
+
+	if this.Title == "" {
+		this.Title = this.Id
+	}
 }
 
 func (this *ConfParser) StatsSql() string {
