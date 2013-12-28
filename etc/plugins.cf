@@ -1,0 +1,18 @@
+{
+    main: {
+    }
+
+    plugins: [
+        {
+            id: "x"
+            class: "LogfileInput"
+            logfile: "asf"
+        }
+        
+        {
+            id: "x"
+            class: "MysqlFlashLogInput"
+            logfile: "asf"
+        }
+    ]
+}

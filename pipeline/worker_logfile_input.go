@@ -8,23 +8,23 @@ import (
 	"sync"
 )
 
-type LogfileWorker struct {
+type LogfileInput struct {
 	Worker
 
 	tailConf tail.Config
 }
 
 func init() {
-	RegisterWorkerPlugin("file", func() interface{} {
-		return new(LogfileWorker)
+	RegisterWorkerPlugin("LogfileInput", func() interface{} {
+		return new(LogfileInput)
 	})
 }
 
-func (this *LogfileWorker) Init(config interface{}) error {
+func (this *LogfileInput) Init(config interface{}) error {
 
 }
 
-func (this *LogfileWorker) Run(runner pipeline.FilterRunner, helper pipeline.PluginHelper) (err error) {
+func (this *LogfileInput) Run(runner pipeline.InputRunner, helper pipeline.PluginHelper) (err error) {
 
 }
 

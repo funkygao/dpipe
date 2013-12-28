@@ -37,12 +37,12 @@ const (
 	LOG_OPTIONS       = log.Ldate | log.Ltime
 	LOG_OPTIONS_DEBUG = log.Ldate | log.Lshortfile | log.Ltime | log.Lmicroseconds
 
-	USAGE = `alser - FunPlus ALS(application logging system) Guard
+	USAGE = `funpipe
 
 Flags:
 `
 
-	LOCKFILE = "var/alser.lock"
+	LOCKFILE = "var/funpipe.lock"
 	TICKER   = 60 * 10 // default ticker, 10 minutes
 
 	FLASHLOG_DSN = "flashlog:flashlog@unix(/var/run/mysqld/mysqld.sock)/flashlog?charset=utf8"
