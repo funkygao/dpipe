@@ -20,6 +20,7 @@ TODO
 package rule
 
 import (
+	"encoding/json"
 	"fmt"
 	conf "github.com/daviddengcn/go-ljson-conf"
 )
@@ -155,4 +156,20 @@ func (this *RuleEngine) DiscardParsersExcept(pid string) {
 			delete(this.Parsers, id)
 		}
 	}
+}
+
+// Decode config contents section string to struct
+func (this *RuleEngine) DecodeSection(key string, val interface{}) error {
+	var def map[string]interface{}
+	obj := this.Object(key, def)
+	j, err := json.Marshal(obj)
+	if err != nil {
+		return err
+	}
+
+	if err := json.Unmarshal(j, &val); err != nil {
+		return err
+	}
+
+	return nil
 }

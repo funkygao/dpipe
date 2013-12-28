@@ -1,6 +1,7 @@
 package rule
 
 import (
+	"encoding/json"
 	"github.com/bmizerany/assert"
 	"testing"
 )
@@ -48,4 +49,35 @@ func TestLoadRuleEngine(t *testing.T) {
 		t.Error("expected nil, got ", np)
 	}
 
+}
+
+func TestDecodeEngineSection(t *testing.T) {
+	type X struct {
+		Tail    string   `json:"tail_glob"`
+		History string   `json:"history_glob"`
+		Parsers []string `json:"parsers"`
+	}
+	c, _ := LoadRuleEngine("fixture/alser.cf")
+	obj := c.Object("workers[0]", nil)
+	j, _ := json.Marshal(obj)
+	var x X
+	json.Unmarshal(j, &x)
+	assert.Equal(t, "/mnt/funplus/logs/fp_rstory/memcache_to.*.log", x.Tail)
+	assert.Equal(t, "/mnt/funplus/logs/fp_rstory/history/memcache_to*", x.History)
+
+	t.Logf("%#v\n%#v", obj, j)
+}
+
+func TestDecode(t *testing.T) {
+	c, _ := LoadRuleEngine("fixture/alser.cf")
+	type X struct {
+		Tail    string   `json:"tail_glob"`
+		History string   `json:"history_glob"`
+		Parsers []string `json:"parsers"`
+	}
+	var x X
+	assert.Equal(t, nil, c.DecodeSection("workers[0]", &x))
+
+	assert.Equal(t, "/mnt/funplus/logs/fp_rstory/memcache_to.*.log", x.Tail)
+	assert.Equal(t, "/mnt/funplus/logs/fp_rstory/history/memcache_to*", x.History)
 }
