@@ -42,3 +42,7 @@ func NewMessageRouter() (router *messageRouter) {
 	router.oMatchers = make([]*MatchRunner, 0, 10)
 	return router
 }
+
+func (this *messageRouter) InChan() chan *PipelinePack {
+	return this.inChan
+}

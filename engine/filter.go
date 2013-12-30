@@ -32,5 +32,5 @@ type FilterRunner interface {
 }
 
 type Filter interface {
-	Run(r FilterRunner, c PipelineConfig) (err error)
+	Run(r FilterRunner, c *PipelineConfig) (err error)
 }

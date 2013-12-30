@@ -1,12 +1,15 @@
 package engine
 
 import (
+	"encoding/json"
+	"fmt"
+	conf "github.com/daviddengcn/go-ljson-conf"
 	"github.com/funkygao/funpipe/rule"
 	"sync"
 )
 
 type PipelineConfig struct {
-	*rule.RuleEngine
+	*conf.Conf
 
 	InputRunners  map[string]InputRunner
 	inputWrappers map[string]*PluginWrapper
@@ -30,28 +33,51 @@ type PipelineConfig struct {
 	pid      int32
 }
 
-func NewPipelineConfig(ruleEngine *rule.RuleEngine) (config *PipelineConfig) {
-	config = new(PipelineConfig)
-	config.RuleEngine = ruleEngine
+func NewPipelineConfig(globals *GlobalConfigStruct) (this *PipelineConfig) {
+	this = new(PipelineConfig)
+	if globals == nil {
+		globals = DefaultGlobals()
+	}
 
-	config.InputRunners = make(map[string]InputRunner)
-	config.inputWrappers = make(map[string]*PluginWrapper)
-	config.FilterRunners = make(map[string]FilterRunner)
-	config.filterWrappers = make(map[string]*PluginWrapper)
-	config.OutputRunners = make(map[string]OutputRunner)
-	config.outputWrappers = make(map[string]*PluginWrapper)
+	Globals = func() *GlobalConfigStruct {
+		return globals
+	}
 
-	config.router = NewMessageRouter()
+	this.InputRunners = make(map[string]InputRunner)
+	this.inputWrappers = make(map[string]*PluginWrapper)
+	this.FilterRunners = make(map[string]FilterRunner)
+	this.filterWrappers = make(map[string]*PluginWrapper)
+	this.OutputRunners = make(map[string]OutputRunner)
+	this.outputWrappers = make(map[string]*PluginWrapper)
 
-	config.inputRecycleChan = make(chan *PipelinePack, 1024)
-	config.injectRecycleChan = make(chan *PipelinePack, 1024)
-	config.reportRecycleChan = make(chan *PipelinePack, 1)
+	this.router = NewMessageRouter()
 
-	config.logMsgs = make([]string, 0, 4)
-	config.hostname, _ = os.Hostname()
-	config.pid = int32(os.Getpid())
+	this.inputRecycleChan = make(chan *PipelinePack, 1024)
+	this.injectRecycleChan = make(chan *PipelinePack, 1024)
+	this.reportRecycleChan = make(chan *PipelinePack, 1)
+
+	this.logMsgs = make([]string, 0, 4)
+	this.hostname, _ = os.Hostname()
+	this.pid = int32(os.Getpid())
 
 	return config
+}
+
+func (this *PipelineConfig) LoadConfigFile(fn string) error {
+	cf, err := conf.Load(fn)
+	if err != nil {
+		return err
+	}
+
+	this.Conf = cf
+
+	projects := this.List("projects", nil)
+	for i := 0; i < len(projects); i++ {
+		keyPrefix := fmt.Sprintf("projects[%d].", i)
+		projectName := this.String(keyPrefix+"name", "")
+	}
+
+	return nil
 }
 
 // Callers should pass in the msgLoopCount value from any relevant Message
@@ -69,46 +95,6 @@ func (this *PipelineConfig) PipelinePack(msgLoopCount uint) *PipelinePack {
 	pack.RefCount = 1
 	pack.MsgLoopCount = msgLoopCount
 	return pack
-}
-
-func (this *PipelineConfig) OutputRunner(name string) (or OutputRunner, ok bool) {
-	or, ok = this.OutputRunners[name]
-	return
-}
-
-func (this *PipelineConfig) FilterRunner(name string) (fr FilterRunner, ok bool) {
-	fr, ok = this.FilterRunners[name]
-	return
-}
-
-// Starts the provided FilterRunner and adds it to the set of running Filters.
-func (this *PipelineConfig) AddFilterRunner(fr FilterRunner) error {
-	this.FilterRunners[fr.Name()] = fr
-	this.filtersWg.Add(1)
-	if err := fr.Start(this, &this.filtersWg); err != nil {
-		this.filtersWg.Done()
-		return fmt.Errorf("AddFilterRunner '%s' failed to start: %s",
-			fRunner.Name(), err)
-	} else {
-		this.router.AddFilterMatcher() <- fr.MatchRunner()
-	}
-
-	return nil
-}
-
-// Starts the provided InputRunner and adds it to the set of running Inputs.
-func (this *PipelineConfig) AddInputRunner(ir InputRunner, wrapper *PluginWrapper) error {
-	this.inputsLock.Lock()
-	defer this.inputsLock.Unlock()
-	this.inputWrappers[wrapper.name] = wrapper
-	this.InputRunners[ir.Name()] = ir
-	this.inputsWg.Add(1)
-	if err := ir.Start(this, &this.inputsWg); err != nil {
-		this.inputsWg.Done()
-		return fmt.Errorf("AddInputRunner '%s' failed to start: %s", iRunner.Name(), err)
-	}
-
-	return nil
 }
 
 func (this *PipelineConfig) ExecuteRuleEngine() {
@@ -134,12 +120,21 @@ func (this *PipelineConfig) ExecuteRuleEngine() {
 			panic("Type doesn't contain valid plugin name: " + w.Typ)
 		}
 		pluginCategory := pluginCats[1]
-		if pluginCategory == "Decoder" {
-
+		if pluginCategory == "Input" {
+			this.InputRunners[wrapper.name] = NewInputRunner(wrapper.name, plugin.(Input))
+			this.inputWrappers[wrapper.name] = wrapper
 		}
 
-		if pluginCategory == "Input" {
+		runner := NewFilterOutputRunner(wrapper.name, plugin.(Plugin))
+		runner.name = wrapper.name
+		runner.matcher = nil
 
+		switch pluginCategory {
+		case "Filter":
+			this.FilterRunners[runner.name] = runner
+		case "Output":
+			this.OutputRunners[runner.name] = runner
+			this.outputWrappers[runner.name] = wrapper
 		}
 
 		wrapper.Create()
