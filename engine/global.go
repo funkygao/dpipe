@@ -1,6 +1,7 @@
 package engine
 
 import (
+	"log"
 	"os"
 	"regexp"
 	"syscall"
@@ -8,19 +9,25 @@ import (
 )
 
 const (
+	// control channel event types
 	RELOAD = "reaload"
 	STOP   = "stop"
 )
 
 var (
-	AvailablePlugins = make(map[string]func() interface{})
-	PluginTypeRegex  = regexp.MustCompile("^.*(Filter|Input|Output)$")
+	availablePlugins = make(map[string]func() interface{})
+	pluginTypeRegex  = regexp.MustCompile("^.*(Filter|Input|Output)$")
+
+	Globals func() *GlobalConfigStruct
 )
 
 // Struct for holding global pipeline config values.
 type GlobalConfigStruct struct {
+	Debug                 bool
+	Verbose               bool
+	DryRun                bool
 	PoolSize              int
-	DecoderPoolSize       int
+	DecoderPoolSize       int //
 	PluginChanSize        int
 	MaxMsgLoops           uint
 	MaxMsgProcessInject   uint
@@ -29,7 +36,9 @@ type GlobalConfigStruct struct {
 	MaxPackIdle           time.Duration
 	Stopping              bool
 	BaseDir               string
-	sigChan               chan os.Signal
+
+	Logger  *log.Logger
+	sigChan chan os.Signal
 }
 
 func (this *GlobalConfigStruct) Shutdown() {
@@ -38,11 +47,12 @@ func (this *GlobalConfigStruct) Shutdown() {
 	}()
 }
 
-var Globals func() *GlobalConfigStruct
-
-func DefaultGlobals() (globals *GlobalConfigStruct) {
+func DefaultGlobals() *GlobalConfigStruct {
 	idle, _ := time.ParseDuration("2m")
 	return &GlobalConfigStruct{
+		Debug:                 false,
+		Verbose:               false,
+		DryRun:                false,
 		PoolSize:              100,
 		DecoderPoolSize:       2,
 		PluginChanSize:        50,
@@ -51,5 +61,6 @@ func DefaultGlobals() (globals *GlobalConfigStruct) {
 		MaxMsgProcessDuration: 1000000,
 		MaxMsgTimerInject:     10,
 		MaxPackIdle:           idle,
+		Logger:                log.New(os.Stdout, "", log.Ldate|log.Lshortfile|log.Ltime),
 	}
 }

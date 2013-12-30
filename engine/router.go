@@ -1,17 +1,12 @@
 package engine
 
-// Public interface exposed by the Heka message router. The message router
-// accepts packs on its input channel and then runs them through the
-// message_matcher for every running Filter and Output plugin. For plugins
-// with a positive match, the pack (and any relevant match group captures)
-// will be placed on the plugin's input channel.
 type MessageRouter interface {
-	// Input channel from which the router gets messages to test against the
-	// registered plugin message_matchers.
 	InChan() chan *PipelinePack
+
 	// Channel to facilitate adding a matcher to the router which starts the
 	// message flow to the associated filter.
 	AddFilterMatcher() chan *MatchRunner
+
 	// Channel to facilitate removing a Filter.  If the matcher exists it will
 	// be removed from the router, the matcher channel closed and drained, the
 	// filter channel closed and drained, and the filter exited.
@@ -45,4 +40,92 @@ func NewMessageRouter() (router *messageRouter) {
 
 func (this *messageRouter) InChan() chan *PipelinePack {
 	return this.inChan
+}
+
+func (this *messageRouter) Start() {
+	go this.mainloop()
+	Globals().Logger.Println("Router started...")
+}
+
+func (this *messageRouter) mainloop() {
+	var matcher *MatchRunner
+	var ok = true
+	var pack *PipelinePack
+
+	for ok {
+		runtime.Gosched()
+		select {
+		case matcher = <-self.addFilterMatcher:
+			exists := false
+			available := -1
+			for i, m := range self.fMatchers {
+				if m == nil {
+					available = i
+				}
+				if matcher == m {
+					exists = true
+					break
+				}
+			}
+			if !exists {
+				if available != -1 {
+					self.fMatchers[available] = matcher
+				} else {
+					self.fMatchers = append(self.fMatchers, matcher)
+				}
+			}
+
+		case matcher = <-self.removeFilterMatcher:
+			for i, m := range self.fMatchers {
+				if matcher == m {
+					close(m.inChan)
+					self.fMatchers[i] = nil
+					break
+				}
+			}
+
+		case matcher = <-self.removeOutputMatcher:
+			for i, m := range self.oMatchers {
+				if matcher == m {
+					close(m.inChan)
+					self.oMatchers[i] = nil
+					break
+				}
+			}
+
+		case pack, ok = <-self.inChan:
+			if !ok {
+				break
+			}
+
+			pack.diagnostics.Reset()
+			atomic.AddInt64(&self.processMessageCount, 1)
+			for _, matcher = range self.fMatchers {
+				if matcher != nil {
+					atomic.AddInt32(&pack.RefCount, 1)
+					pack.diagnostics.AddStamp(matcher.pluginRunner)
+					matcher.inChan <- pack
+				}
+			}
+			for _, matcher = range self.oMatchers {
+				if matcher != nil {
+					atomic.AddInt32(&pack.RefCount, 1)
+					pack.diagnostics.AddStamp(matcher.pluginRunner)
+					matcher.inChan <- pack
+				}
+			}
+			pack.Recycle()
+		}
+	}
+
+	for _, matcher = range self.fMatchers {
+		if matcher != nil {
+			close(matcher.inChan)
+		}
+	}
+	for _, matcher = range self.oMatchers {
+		close(matcher.inChan)
+	}
+
+	log.Println("MessageRouter stopped.")
 }

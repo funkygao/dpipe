@@ -6,6 +6,10 @@
 */
 package engine
 
+import (
+	"sync"
+)
+
 // Base interface for the  plugin runners.
 type PluginRunner interface {
 	Name() string
@@ -20,6 +24,8 @@ type PluginRunner interface {
 
 	// Returns the current leak count
 	LeakCount() int
+
+	Start(config *PipelineConfig, wg *sync.WaitGroup) (err error)
 }
 
 // Base struct for the specialized PluginRunners

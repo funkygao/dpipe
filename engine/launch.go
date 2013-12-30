@@ -1,37 +1,42 @@
 package engine
 
 import (
+	"github.com/funkygao/golib/observer"
+	"os"
 	"sync"
 )
 
+// Start all runners and listens for signals
 func LaunchEngine(config *PipelineConfig) {
-	log.Println("Starting hekad...")
+	var (
+		outputsWg = new(sync.WaitGroup)
+		filtersWg = new(sync.WaitGroup)
+		inputsWg  = new(sync.WaitGroup)
 
-	var outputsWg sync.WaitGroup
-	var err error
+		err error
+	)
 
 	globals := Globals()
-	sigChan := make(chan os.Signal)
-	globals.sigChan = sigChan
+	var log = globals.Logger
+	log.Println("Launching engine...")
+	globals.sigChan = make(chan os.Signal)
 
-	for name, output := range config.OutputRunners {
+	for name, runner := range config.OutputRunners {
 		outputsWg.Add(1)
-		if err = output.Start(config, &outputsWg); err != nil {
-			log.Printf("Output '%s' failed to start: %s", name, err)
-			outputsWg.Done()
-			continue
+		if err = runner.Start(config, outputsWg); err != nil {
+			panic(err)
 		}
-		log.Println("Output started: ", name)
+
+		log.Printf("Output[%s] started\n", name)
 	}
 
-	for name, filter := range config.FilterRunners {
-		config.filtersWg.Add(1)
-		if err = filter.Start(config, &config.filtersWg); err != nil {
-			log.Printf("Filter '%s' failed to start: %s", name, err)
-			config.filtersWg.Done()
-			continue
+	for name, runner := range config.FilterRunners {
+		filtersWg.Add(1)
+		if err = runner.Start(config, filtersWg); err != nil {
+			panic(err)
 		}
-		log.Println("Filter started: ", name)
+
+		log.Printf("Filter[%s] started", name)
 	}
 
 	// Setup the diagnostic trackers
@@ -56,31 +61,30 @@ func LaunchEngine(config *PipelineConfig) {
 	go injectTracker.Run()
 	config.router.Start()
 
-	for name, input := range config.InputRunners {
-		config.inputsWg.Add(1)
-		if err = input.Start(config, &config.inputsWg); err != nil {
-			log.Printf("Input '%s' failed to start: %s", name, err)
-			config.inputsWg.Done()
-			continue
+	for name, runner := range config.InputRunners {
+		inputsWg.Add(1)
+		if err = runner.Start(config, inputsWg); err != nil {
+			panic(err)
 		}
-		log.Printf("Input started: %s\n", name)
+
+		log.Printf("Input[%s] started\n", name)
 	}
 
 	// wait for sigint
-	signal.Notify(sigChan, syscall.SIGINT, syscall.SIGHUP, SIGUSR1)
+	signal.Notify(globals.sigChan, syscall.SIGINT, syscall.SIGHUP, syscall.SIGUSR1)
 
 	for !globals.Stopping {
 		select {
 		case sig := <-sigChan:
 			switch sig {
 			case syscall.SIGHUP:
-				log.Println("Reload initiated.")
-				if err := notify.Post(RELOAD, nil); err != nil {
-					log.Println("Error sending reload event: ", err)
-				}
+				log.Println("Reloading...")
+				observer.Publish(RELOAD, nil)
+
 			case syscall.SIGINT:
-				log.Println("Shutdown initiated.")
+				log.Println("Shutdown...")
 				globals.Stopping = true
+
 			case SIGUSR1:
 				log.Println("Queue report initiated.")
 				go config.allReportsStdout()
@@ -94,15 +98,7 @@ func LaunchEngine(config *PipelineConfig) {
 		log.Printf("Stop message sent to input '%s'", input.Name())
 	}
 	config.inputsLock.Unlock()
-	config.inputsWg.Wait()
-
-	log.Println("Waiting for decoders shutdown")
-	for _, decoder := range config.allDecoders {
-		close(decoder.InChan())
-		log.Printf("Stop message sent to decoder '%s'", decoder.Name())
-	}
-	config.decodersWg.Wait()
-	log.Println("Decoders shutdown complete")
+	inputsWg.Wait()
 
 	config.filtersLock.Lock()
 	for _, filter := range config.FilterRunners {
@@ -115,7 +111,7 @@ func LaunchEngine(config *PipelineConfig) {
 		log.Printf("Stop message sent to filter '%s'", filter.Name())
 	}
 	config.filtersLock.Unlock()
-	config.filtersWg.Wait()
+	filtersWg.Wait()
 
 	for _, output := range config.OutputRunners {
 		config.router.RemoveOutputMatcher() <- output.MatchRunner()

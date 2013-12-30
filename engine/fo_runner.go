@@ -30,9 +30,31 @@ func NewFORunner(name string, plugin Plugin) (r *foRunner) {
 func (this *foRunner) Start(c *PipelineConfig, wg *sync.WaitGroup) error {
 	this.c = c
 
-
 }
 
 func (this *foRunner) execute(c *PipelineConfig, wg *sync.WaitGroup) {
-	for 
+
+}
+
+func (this *foRunner) Inject(pack *PipelinePack) bool {
+	go func() {
+		this.c.router.InChan() <- pack
+	}()
+	return true
+}
+
+func (this *foRunner) InChan() chan *PipelinePack {
+	return this.inChan
+}
+
+func (this *foRunner) Output() Output {
+	return this.plugin.(Output)
+}
+
+func (this *foRunner) Filter() Filter {
+	return this.plugin.(Filter)
+}
+
+func (this *foRunner) MatchRunner() *MatchRunner {
+	return this.matcher
 }

@@ -10,13 +10,8 @@ type FilterRunner interface {
 	// Associated Filter plugin object.
 	Filter() Filter
 
-	// Starts the Filter (so it's listening on the input channel for messages
-	// to be processed) in a separate goroutine and returns. Should decrement
-	// the wait group when the Filter has stopped and the goroutine has
-	// completed.
 	Start(c *PipelineConfig, wg *sync.WaitGroup) (err error)
-	// Returns a ticker channel configured to send ticks at an interval
-	// specified by the plugin's ticker_interval config value, if provided.
+
 	Ticker() (ticker <-chan time.Time)
 	// Hands provided PipelinePack to the Heka Router for delivery to any
 	// Filter or Output plugins with a corresponding message_matcher. Returns
