@@ -6,14 +6,21 @@ import (
 	"github.com/funkygao/funpipe/engine"
 )
 
+type EsOutputConfig struct {
+	indexName string
+}
+
 type EsOutput struct {
-	indexName, typeName string
 }
 
-func (this *EsOutput) Init(config interface{}) error {
+func (this *EsOutput) Init(config interface{}) {
 
 }
 
-func (this *EsOutput) Run(r engine.OutputRunner, c *engine.PipelineConfig) error {
+func (this *EsOutput) Config() interface{} {
+
+}
+
+func (this *EsOutput) Run(r engine.OutputRunner, e *engine.EngineConfig) error {
 
 }
