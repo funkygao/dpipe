@@ -3,11 +3,13 @@ package engine
 import (
 	"github.com/funkygao/golib/observer"
 	"os"
+	"os/signal"
 	"sync"
+	"syscall"
 )
 
 // Start all runners and listens for signals
-func LaunchEngine(config *PipelineConfig) {
+func LaunchEngine(engine *EngineConfig) {
 	var (
 		outputsWg = new(sync.WaitGroup)
 		filtersWg = new(sync.WaitGroup)
@@ -21,18 +23,18 @@ func LaunchEngine(config *PipelineConfig) {
 	log.Println("Launching engine...")
 	globals.sigChan = make(chan os.Signal)
 
-	for name, runner := range config.OutputRunners {
+	for name, runner := range engine.OutputRunners {
 		outputsWg.Add(1)
-		if err = runner.Start(config, outputsWg); err != nil {
+		if err = runner.Start(engine, outputsWg); err != nil {
 			panic(err)
 		}
 
 		log.Printf("Output[%s] started\n", name)
 	}
 
-	for name, runner := range config.FilterRunners {
+	for name, runner := range engine.FilterRunners {
 		filtersWg.Add(1)
-		if err = runner.Start(config, filtersWg); err != nil {
+		if err = runner.Start(engine, filtersWg); err != nil {
 			panic(err)
 		}
 
@@ -44,26 +46,26 @@ func LaunchEngine(config *PipelineConfig) {
 	injectTracker := NewDiagnosticTracker("inject")
 
 	// Create the report pipeline pack
-	config.reportRecycleChan <- NewPipelinePack(config.reportRecycleChan)
+	engine.reportRecycleChan <- NewPipelinePack(engine.reportRecycleChan)
 
 	// Initialize all of the PipelinePacks that we'll need
-	for i := 0; i < Globals().PoolSize; i++ {
-		inputPack := NewPipelinePack(config.inputRecycleChan)
+	for i := 0; i < globals.PoolSize; i++ {
+		inputPack := NewPipelinePack(engine.inputRecycleChan)
 		inputTracker.AddPack(inputPack)
-		config.inputRecycleChan <- inputPack
+		engine.inputRecycleChan <- inputPack
 
-		injectPack := NewPipelinePack(config.injectRecycleChan)
+		injectPack := NewPipelinePack(engine.injectRecycleChan)
 		injectTracker.AddPack(injectPack)
-		config.injectRecycleChan <- injectPack
+		engine.injectRecycleChan <- injectPack
 	}
 
 	go inputTracker.Run()
 	go injectTracker.Run()
-	config.router.Start()
+	engine.router.Start()
 
-	for name, runner := range config.InputRunners {
+	for name, runner := range engine.InputRunners {
 		inputsWg.Add(1)
-		if err = runner.Start(config, inputsWg); err != nil {
+		if err = runner.Start(engine, inputsWg); err != nil {
 			panic(err)
 		}
 
@@ -75,7 +77,7 @@ func LaunchEngine(config *PipelineConfig) {
 
 	for !globals.Stopping {
 		select {
-		case sig := <-sigChan:
+		case sig := <-engine.sigChan:
 			switch sig {
 			case syscall.SIGHUP:
 				log.Println("Reloading...")
@@ -85,36 +87,36 @@ func LaunchEngine(config *PipelineConfig) {
 				log.Println("Shutdown...")
 				globals.Stopping = true
 
-			case SIGUSR1:
+			case syscall.SIGUSR1:
 				log.Println("Queue report initiated.")
-				go config.allReportsStdout()
+				go engine.allReportsStdout()
 			}
 		}
 	}
 
-	config.inputsLock.Lock()
-	for _, input := range config.InputRunners {
+	engine.inputsLock.Lock()
+	for _, input := range engine.InputRunners {
 		input.Input().Stop()
 		log.Printf("Stop message sent to input '%s'", input.Name())
 	}
-	config.inputsLock.Unlock()
+	engine.inputsLock.Unlock()
 	inputsWg.Wait()
 
-	config.filtersLock.Lock()
-	for _, filter := range config.FilterRunners {
+	engine.filtersLock.Lock()
+	for _, filter := range engine.FilterRunners {
 		// needed for a clean shutdown without deadlocking or orphaning messages
 		// 1. removes the matcher from the router
 		// 2. closes the matcher input channel and lets it drain
 		// 3. closes the filter input channel and lets it drain
 		// 4. exits the filter
-		config.router.RemoveFilterMatcher() <- filter.MatchRunner()
+		engine.router.RemoveFilterMatcher() <- filter.MatchRunner()
 		log.Printf("Stop message sent to filter '%s'", filter.Name())
 	}
-	config.filtersLock.Unlock()
+	engine.filtersLock.Unlock()
 	filtersWg.Wait()
 
-	for _, output := range config.OutputRunners {
-		config.router.RemoveOutputMatcher() <- output.MatchRunner()
+	for _, output := range engine.OutputRunners {
+		engine.router.RemoveOutputMatcher() <- output.MatchRunner()
 		log.Printf("Stop message sent to output '%s'", output.Name())
 	}
 	outputsWg.Wait()

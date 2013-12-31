@@ -18,14 +18,14 @@ type PipelinePack struct {
 	RefCount int32
 
 	// To avoid infinite message loops
-	MsgLoopCount uint
+	MsgLoopCount int
 }
 
 func NewPipelinePack(recycleChan chan *PipelinePack) (this *PipelinePack) {
 	this = &PipelinePack{
 		RecycleChan:  recycleChan,
 		RefCount:     int32(1),
-		MsgLoopCount: uint(0),
+		MsgLoopCount: 0,
 		Message:      als.NewAlsMessage(),
 	}
 
@@ -34,7 +34,7 @@ func NewPipelinePack(recycleChan chan *PipelinePack) (this *PipelinePack) {
 
 func (this *PipelinePack) Reset() {
 	this.RefCount = int32(1)
-	this.MsgLoopCount = uint(0)
+	this.MsgLoopCount = 0
 
 	this.Message.Reset()
 }

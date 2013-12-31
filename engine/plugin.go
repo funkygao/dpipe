@@ -5,13 +5,10 @@ import (
 )
 
 type Plugin interface {
-	Init(config interface{}) error
-}
+	Init(config interface{})
 
-// Indicates a plug-in has a specific-to-itself config struct that should be
-// passed in to its Init method.
-type HasConfigStruct interface {
-	ConfigStruct() interface{}
+	// Name/Typ is required attributes
+	Config() interface{}
 }
 
 // Indicates a plug-in can handle being restart should it exit before
@@ -23,32 +20,23 @@ type Restarting interface {
 	CleanupForRestart()
 }
 
-func RegisterPlugin(name string, factory func() interface{}) {
-	if _, present := AvailablePlugins[name]; present {
+func RegisterPlugin(name string, factory func() Plugin) {
+	if _, present := availablePlugins[name]; present {
 		panic(fmt.Sprintf("plugin: %s cannot register twice", name))
 	}
 
-	AvailablePlugins[name] = factory
+	availablePlugins[name] = factory
 }
 
 // A helper object to support delayed plugin creation.
 type PluginWrapper struct {
 	name          string
 	configCreator func() interface{}
-	pluginCreator func() interface{}
+	pluginCreator func() Plugin
 }
 
-// Create a new instance of the plugin and return it. Errors are ignored. Call
-// CreateWithError if an error is needed.
-func (this *PluginWrapper) Create() (plugin interface{}) {
-	plugin, _ = this.CreateWithError()
-	return
-}
-
-// Create a new instance of the plugin and return it, or nil and appropriate
-// error value if this isn't possible.
-func (this *PluginWrapper) CreateWithError() (plugin interface{}, err error) {
+func (this *PluginWrapper) Create() (plugin Plugin) {
 	plugin = this.pluginCreator()
-	err = plugin.(Plugin).Init(this.configCreator())
+	plugin.Init(this.configCreator())
 	return
 }

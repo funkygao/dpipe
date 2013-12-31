@@ -15,7 +15,7 @@ const (
 )
 
 var (
-	availablePlugins = make(map[string]func() interface{})
+	availablePlugins = make(map[string]func() Plugin)
 	pluginTypeRegex  = regexp.MustCompile("^.*(Filter|Input|Output)$")
 
 	Globals func() *GlobalConfigStruct
@@ -29,7 +29,7 @@ type GlobalConfigStruct struct {
 	PoolSize              int
 	DecoderPoolSize       int //
 	PluginChanSize        int
-	MaxMsgLoops           uint
+	MaxMsgLoops           int
 	MaxMsgProcessInject   uint
 	MaxMsgProcessDuration uint64
 	MaxMsgTimerInject     uint

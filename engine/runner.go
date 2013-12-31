@@ -6,10 +6,6 @@
 */
 package engine
 
-import (
-	"sync"
-)
-
 // Base interface for the  plugin runners.
 type PluginRunner interface {
 	Name() string
@@ -21,18 +17,14 @@ type PluginRunner interface {
 	// Sets the amount of currently 'leaked' packs that have gone through
 	// this plugin. The new value will overwrite prior ones.
 	SetLeakCount(count int)
-
-	// Returns the current leak count
 	LeakCount() int
-
-	Start(config *PipelineConfig, wg *sync.WaitGroup) (err error)
 }
 
 // Base struct for the specialized PluginRunners
 type pRunnerBase struct {
 	name      string
 	plugin    Plugin
-	c         *PipelineConfig
+	engine    *EngineConfig
 	leakCount int
 }
 

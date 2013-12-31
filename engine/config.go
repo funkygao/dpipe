@@ -4,13 +4,20 @@ import (
 	"encoding/json"
 	"fmt"
 	conf "github.com/daviddengcn/go-ljson-conf"
-	"github.com/funkygao/funpipe/rule"
-	"sync"
+	"github.com/kr/pretty"
+	"os"
 	"time"
 )
 
-type PipelineConfig struct {
+type ConfPluginDefault struct {
+	Typ  string `json:"type"`
+	Name string `json:"name"`
+}
+
+type EngineConfig struct {
 	*conf.Conf
+
+	projects map[string]ConfProject
 
 	InputRunners  map[string]InputRunner
 	inputWrappers map[string]*PluginWrapper
@@ -25,15 +32,14 @@ type PipelineConfig struct {
 
 	inputRecycleChan  chan *PipelinePack
 	injectRecycleChan chan *PipelinePack
-	reportRecycleChan chan *PipelinePack
 
 	hostname  string
-	pid       int32
+	pid       int
 	startedAt time.Time
 }
 
-func NewPipelineConfig(globals *GlobalConfigStruct) (this *PipelineConfig) {
-	this = new(PipelineConfig)
+func NewEngineConfig(globals *GlobalConfigStruct) (this *EngineConfig) {
+	this = new(EngineConfig)
 
 	if globals == nil {
 		globals = DefaultGlobals()
@@ -51,82 +57,124 @@ func NewPipelineConfig(globals *GlobalConfigStruct) (this *PipelineConfig) {
 
 	this.inputRecycleChan = make(chan *PipelinePack, globals.PoolSize)
 	this.injectRecycleChan = make(chan *PipelinePack, globals.PoolSize)
-	this.reportRecycleChan = make(chan *PipelinePack, 1)
+
+	this.projects = make(map[string]ConfProject)
 
 	this.router = NewMessageRouter()
 
 	this.hostname, _ = os.Hostname()
-	this.pid = int32(os.Getpid())
+	this.pid = os.Getpid()
 	this.startedAt = time.Now()
 
 	return this
 }
 
-func (this *PipelineConfig) LoadConfigFile(fn string) error {
+// For filter to generate new messages
+func (this *EngineConfig) PipelinePack(msgLoopCount int) *PipelinePack {
+	if msgLoopCount++; msgLoopCount > Globals().MaxMsgLoops {
+		return nil
+	}
+
+	pack := <-this.injectRecycleChan
+	pack.RefCount = 1
+	pack.MsgLoopCount = msgLoopCount
+	pack.Message.Reset()
+
+	return pack
+}
+
+func (this *EngineConfig) LoadConfigFile(fn string) {
 	cf, err := conf.Load(fn)
 	if err != nil {
-		return err
+		panic(err)
 	}
 
 	this.Conf = cf
+	if Globals().Debug {
+		pretty.Printf("%# v\n", *cf)
+	}
 
+	// 'projects' section
 	projects := this.List("projects", nil)
 	for i := 0; i < len(projects); i++ {
 		keyPrefix := fmt.Sprintf("projects[%d].", i)
 		projectName := this.String(keyPrefix+"name", "")
+		projectLogger := this.String(keyPrefix+"logger", "")
+		this.projects[projectName] = ConfProject{Name: projectName, Logger: projectLogger}
+	}
+
+	// 'plugins' section
+	plugins := this.List("plugins", nil)
+	for i := 0; i < len(plugins); i++ {
+		this.loadSection(fmt.Sprintf("plugins[%d]", i))
+	}
+}
+
+// Decode config contents section string to struct
+func (this *EngineConfig) decodeSection(key string, val interface{}) error {
+	var def map[string]interface{}
+	obj := this.Object(key, def)
+	j, err := json.Marshal(obj)
+	if err != nil {
+		return err
+	}
+
+	if err := json.Unmarshal(j, &val); err != nil {
+		return err
 	}
 
 	return nil
 }
 
-func (this *PipelineConfig) 
-
-func (this *PipelineConfig) ExecuteRuleEngine() {
+func (this *EngineConfig) loadSection(keyPrefix string) {
 	var ok bool
-	var pluginType string
-	for _, w := range ruleEngine.Workers {
-		wrapper := new(PluginWrapper)
-		wrapper.name = w.Scheme()
 
-		if wrapper.pluginCreator, ok = AvailablePlugins[wrapper.name]; !ok {
-			panic(fmt.Sprintf("no plugin[%s] found", wrapper.name))
-		}
-
-		plugin := wrapper.pluginCreator()
-		var config interface{}
-		hasConfigStruct, ok := plugin.(HasConfigStruct)
-		if !ok {
-
-		}
-		configStruct := hasConfigStruct.ConfigStruct()
-		wrapper.configCreator = func() interface{} { return configStruct }
-		if err := plugin.(Plugin).Init(w); err != nil {
-			panic(err)
-		}
-
-		// determine plugin type
-		pluginCats := PluginTypeRegex.FindStringSubmatch(w.Typ)
-		if len(pluginCats) < 2 {
-			panic("Type doesn't contain valid plugin name: " + w.Typ)
-		}
-		pluginCategory := pluginCats[1]
-		if pluginCategory == "Input" {
-			this.InputRunners[wrapper.name] = NewInputRunner(wrapper.name, plugin.(Input))
-			this.inputWrappers[wrapper.name] = wrapper
-		}
-
-		runner := NewFilterOutputRunner(wrapper.name, plugin.(Plugin))
-		runner.name = wrapper.name
-		runner.matcher = nil
-
-		switch pluginCategory {
-		case "Filter":
-			this.FilterRunners[runner.name] = runner
-		case "Output":
-			this.OutputRunners[runner.name] = runner
-			this.outputWrappers[runner.name] = wrapper
-		}
-
-		wrapper.Create()
+	if Globals().Debug {
+		pretty.Printf("loading section with key: %s\n", keyPrefix)
 	}
+
+	wrapper := new(PluginWrapper)
+	wrapper.name = this.String(keyPrefix+".name", "")
+	if wrapper.name == "" {
+		panic(keyPrefix + " must config 'name' attr")
+	}
+	pluginType := this.String(keyPrefix+".type", "")
+	if pluginType == "" {
+		pluginType = wrapper.name
+	}
+
+	if wrapper.pluginCreator, ok = availablePlugins[pluginType]; !ok {
+		panic("invalid plugin type: " + pluginType)
+	}
+
+	plugin := wrapper.pluginCreator()
+
+	var config = plugin.Config()
+	wrapper.configCreator = func() interface{} { return config }
+
+	plugin.(Plugin).Init(config)
+
+	pluginCats := pluginTypeRegex.FindStringSubmatch(pluginType)
+	if len(pluginCats) < 2 {
+		panic("invalid plugin type: " + pluginType)
+	}
+
+	pluginCategory := pluginCats[1]
+	if pluginCategory == "Input" {
+		this.InputRunners[wrapper.name] = NewInputRunner(wrapper.name, plugin.(Input))
+		this.inputWrappers[wrapper.name] = wrapper
+
+		return
+	}
+
+	runner := NewFORunner(wrapper.name, plugin)
+	switch pluginCategory {
+	case "Filter":
+		this.FilterRunners[runner.name] = runner
+		this.filterWrappers[runner.name] = wrapper
+	case "Output":
+		this.OutputRunners[runner.name] = runner
+		this.outputWrappers[runner.name] = wrapper
+	}
+
 }

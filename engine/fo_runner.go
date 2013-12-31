@@ -7,13 +7,9 @@ import (
 type foRunner struct {
 	pRunnerBase
 
-	matcher    *MatchRunner
-	tickLength time.Duration
-	ticker     <-chan time.Time
-	inChan     chan *PipelinePack
-	c          *PipelineConfig
-	retainPack *PipelinePack
-	leakCount  int
+	inChan    chan *PipelinePack
+	engine    *EngineConfig
+	leakCount int
 }
 
 func NewFORunner(name string, plugin Plugin) (r *foRunner) {
@@ -23,22 +19,61 @@ func NewFORunner(name string, plugin Plugin) (r *foRunner) {
 			plugin: plugin,
 		},
 	}
-	r.inChan = make(chan *PipelinePack, 10)
+
+	r.inChan = make(chan *PipelinePack, Globals().PluginChanSize)
 	return
 }
 
-func (this *foRunner) Start(c *PipelineConfig, wg *sync.WaitGroup) error {
-	this.c = c
-
+func (this *foRunner) Start(e *EngineConfig, wg *sync.WaitGroup) error {
+	this.engine = e
+	go this.run(e, wg)
+	return nil
 }
 
-func (this *foRunner) execute(c *PipelineConfig, wg *sync.WaitGroup) {
+func (this *foRunner) run(e *EngineConfig, wg *sync.WaitGroup) {
+	defer wg.Done()
+
+	var (
+		pluginType string
+		pw         *PluginWrapper
+	)
+
+	globals := Globals()
+	for !globals.Stopping {
+		if filter, ok := this.plugin.(Filter); ok {
+			pluginType = "filter"
+			filter.Run(this, e)
+		} else if output, ok := this.plugin.(Output); ok {
+			pluginType = "output"
+			output.Run(this, e)
+		} else {
+			panic("unkown plugin type")
+		}
+
+		if globals.Stopping {
+			return
+		}
+
+		//
+		if recon, ok := this.plugin.(Restarting); ok {
+			recon.CleanupForRestart()
+		}
+
+		// Re-initialize our plugin using its wrapper
+		if pluginType == "filter" {
+			pw = e.filterWrappers[this.name]
+		} else {
+			pw = e.outputWrappers[this.name]
+		}
+
+		this.plugin = pw.Create()
+	}
 
 }
 
 func (this *foRunner) Inject(pack *PipelinePack) bool {
 	go func() {
-		this.c.router.InChan() <- pack
+		this.engine.router.InChan() <- pack
 	}()
 	return true
 }
@@ -53,8 +88,4 @@ func (this *foRunner) Output() Output {
 
 func (this *foRunner) Filter() Filter {
 	return this.plugin.(Filter)
-}
-
-func (this *foRunner) MatchRunner() *MatchRunner {
-	return this.matcher
 }
