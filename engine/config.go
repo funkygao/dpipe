@@ -9,11 +9,6 @@ import (
 	"time"
 )
 
-type ConfPluginDefault struct {
-	Typ  string `json:"type"`
-	Name string `json:"name"`
-}
-
 type EngineConfig struct {
 	*conf.Conf
 
@@ -138,7 +133,7 @@ func (this *EngineConfig) loadSection(keyPrefix string) {
 	if wrapper.name == "" {
 		panic(keyPrefix + " must config 'name' attr")
 	}
-	pluginType := this.String(keyPrefix+".type", "")
+	pluginType := this.String(keyPrefix+".class", "")
 	if pluginType == "" {
 		pluginType = wrapper.name
 	}

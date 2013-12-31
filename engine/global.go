@@ -27,7 +27,6 @@ type GlobalConfigStruct struct {
 	Verbose               bool
 	DryRun                bool
 	PoolSize              int
-	DecoderPoolSize       int //
 	PluginChanSize        int
 	MaxMsgLoops           int
 	MaxMsgProcessInject   uint
@@ -54,13 +53,13 @@ func DefaultGlobals() *GlobalConfigStruct {
 		Verbose:               false,
 		DryRun:                false,
 		PoolSize:              100,
-		DecoderPoolSize:       2,
 		PluginChanSize:        50,
 		MaxMsgLoops:           4,
 		MaxMsgProcessInject:   1,
 		MaxMsgProcessDuration: 1000000,
 		MaxMsgTimerInject:     10,
 		MaxPackIdle:           idle,
+		BaseDir:               ".",
 		Logger:                log.New(os.Stdout, "", log.Ldate|log.Lshortfile|log.Ltime),
 	}
 }

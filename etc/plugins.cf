@@ -1,18 +1,13 @@
 {
-    main: {
-    }
-
     plugins: [
         {
-            id: "x"
+            name: "x"
             class: "LogfileInput"
-            logfile: "asf"
         }
         
         {
-            id: "x"
+            name: "x"
             class: "MysqlFlashLogInput"
-            logfile: "asf"
         }
     ]
 }
