@@ -5,45 +5,46 @@ import (
 	"sync/atomic"
 )
 
-// Main Heka pipeline data structure containing raw message data, a Message
-// object, and other Heka related message metadata.
 type PipelinePack struct {
-	// Used for storage of binary blob data that has yet to be decoded into a
-	// Message object.
+	// Raw data yet be decoded to AlsMessage obj TODO
 	MsgBytes []byte
 
+	// AlsMessage obj pointer
 	Message *als.AlsMessage
 
 	RecycleChan chan *PipelinePack
 
-	Decoded bool
-
+	// Recycle/reuse when zero
 	RefCount int32
 
+	// To avoid infinite message loops
 	MsgLoopCount uint
-	// Used internally to stamp diagnostic information onto a packet
-	diagnostics *PacketTracking
 }
 
-func NewPipelinePack(recycleChan chan *PipelinePack) (pack *PipelinePack) {
-	pack = &PipelinePack{
-		RefCount:     uint32(1),
-		MsgLoopCount: uint(0),
-		Decoded:      false,
+func NewPipelinePack(recycleChan chan *PipelinePack) (this *PipelinePack) {
+	this = &PipelinePack{
 		RecycleChan:  recycleChan,
+		RefCount:     int32(1),
+		MsgLoopCount: uint(0),
+		Message:      als.NewAlsMessage(),
 	}
 
+	return
 }
 
 func (this *PipelinePack) Reset() {
-	this.RefCount = 1
-	this.MsgLoopCount = 0
+	this.RefCount = int32(1)
+	this.MsgLoopCount = uint(0)
+
+	this.Message.Reset()
 }
 
 func (this *PipelinePack) Recycle() {
 	count := atomic.AddInt32(&this.RefCount, -1)
 	if count == 0 {
 		this.Reset()
+
+		// reuse this pack to avoid re-alloc
 		this.RecycleChan <- this
 	}
 }
