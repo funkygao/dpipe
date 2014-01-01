@@ -3,6 +3,7 @@ package plugins
 import (
 	"errors"
 	"github.com/funkygao/funpipe/engine"
+	"github.com/funkygao/tail"
 )
 
 type LogfileInputConfig struct {

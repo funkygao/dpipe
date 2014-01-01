@@ -3,7 +3,7 @@ package engine
 import (
 	"encoding/json"
 	"fmt"
-	conf "github.com/daviddengcn/go-ljson-conf"
+	conf "github.com/funkygao/jsconf"
 	"github.com/kr/pretty"
 	"os"
 	"time"
@@ -103,22 +103,6 @@ func (this *EngineConfig) LoadConfigFile(fn string) {
 	for i := 0; i < len(plugins); i++ {
 		this.loadSection(fmt.Sprintf("plugins[%d]", i))
 	}
-}
-
-// Decode config contents section string to struct
-func (this *EngineConfig) decodeSection(key string, val interface{}) error {
-	var def map[string]interface{}
-	obj := this.Object(key, def)
-	j, err := json.Marshal(obj)
-	if err != nil {
-		return err
-	}
-
-	if err := json.Unmarshal(j, &val); err != nil {
-		return err
-	}
-
-	return nil
 }
 
 func (this *EngineConfig) loadSection(keyPrefix string) {
