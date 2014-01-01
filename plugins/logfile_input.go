@@ -18,6 +18,7 @@ type LogfileInputConfig struct {
 
 type LogfileInput struct {
 	*LogfileInputConfig
+
 	stopChan chan bool
 }
 
@@ -117,4 +118,10 @@ func (this *LogfileInput) inputs() []string {
 	}
 
 	return logfiles
+}
+
+func init() {
+	engine.RegisterPlugin("LogfileInput", func() interface{} {
+		return new(LogfileInput)
+	})
 }
