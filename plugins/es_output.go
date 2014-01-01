@@ -62,7 +62,7 @@ func (this *EsOutput) Run(r engine.OutputRunner, e *engine.EngineConfig) error {
 	for ok {
 		select {
 		case <-this.stopChan:
-			ok = fase
+			ok = false
 
 		case <-time.After(this.FlushInterval * time.Second):
 			this.indexer.Flush()
