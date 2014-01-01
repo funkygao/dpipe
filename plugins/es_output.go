@@ -5,6 +5,7 @@ import (
 	"errors"
 	"github.com/funkygao/funpipe/engine"
 	"github.com/funkygao/golib"
+	"github.com/funkygao/als"
 	"github.com/mattbaird/elastigo/api"
 	"github.com/mattbaird/elastigo/core"
 	"time"
@@ -52,6 +53,10 @@ func (this *EsOutput) Config() interface{} {
 }
 
 func (this *EsOutput) Run(r engine.OutputRunner, e *engine.EngineConfig) error {
+	// load geoip db
+	als.LoadGeoDb(e.String("geodbfile", ""))
+
+	// start the bulk indexer
 	this.indexer.Run(this.stopChan)
 
 	var (
