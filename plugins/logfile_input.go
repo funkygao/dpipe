@@ -4,6 +4,7 @@ import (
 	"errors"
 	"github.com/funkygao/als"
 	"github.com/funkygao/funpipe/engine"
+	"github.com/funkygao/golib/observer"
 	"github.com/funkygao/tail"
 	"os"
 	"path/filepath"
@@ -45,8 +46,13 @@ func (this *LogfileInput) Run(r engine.InputRunner, e *engine.EngineConfig) erro
 		global.Logger.Printf("[%s] started\n", r.Name())
 	}
 
-	openedFiles := make(map[string]bool)
-	stopped := false
+	var (
+		reloadChan  = make(chan interface{})
+		openedFiles = make(map[string]bool)
+		stopped     = false
+	)
+
+	observer.Subscribe(engine.RELOAD, reloadChan)
 
 	for !stopped {
 		for _, fn := range this.inputs() {
@@ -62,6 +68,9 @@ func (this *LogfileInput) Run(r engine.InputRunner, e *engine.EngineConfig) erro
 		}
 
 		select {
+		case <-reloadChan:
+			// TODO
+
 		case <-time.After(this.DiscoverInterval * time.Second):
 
 		case <-this.stopChan:
@@ -94,13 +103,14 @@ func (this *LogfileInput) runSingleLogfileInput(fn string, r engine.InputRunner,
 	defer t.Stop()
 
 	var pack *engine.PipelinePack
+	inChan := r.InChan()
 	globals := engine.Globals()
 	for line := range t.Lines {
 		if globals.Debug {
 			globals.Logger.Printf("[%s] got line: %s\n", r.Name(), line)
 		}
 
-		pack = r.InChan()
+		pack = <-inChan
 		pack.Message.FromLine(line)
 		r.Inject(pack)
 	}
@@ -108,7 +118,6 @@ func (this *LogfileInput) runSingleLogfileInput(fn string, r engine.InputRunner,
 
 func (this *LogfileInput) Stop() {
 	close(this.stopChan)
-
 }
 
 func (this *LogfileInput) inputs() []string {

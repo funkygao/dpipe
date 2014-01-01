@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	conf "github.com/funkygao/jsconf"
-	"github.com/kr/pretty"
+	"github.com/funkygao/pretty"
 	"os"
 	"time"
 )
@@ -130,7 +130,7 @@ func (this *EngineConfig) loadSection(keyPrefix string) {
 
 	var config = plugin.Config()
 	// decode config to plugin specific struct
-	conf.Decode(keyPrefix, &config)
+	this.Decode(keyPrefix, &config)
 	wrapper.configCreator = func() interface{} { return config }
 
 	plugin.Init(config)
@@ -141,19 +141,18 @@ func (this *EngineConfig) loadSection(keyPrefix string) {
 	}
 
 	pluginCategory := pluginCats[1]
-	if pluginCategory == "Input" {
+	switch pluginCategory {
+	case "Input":
 		this.InputRunners[wrapper.name] = NewInputRunner(wrapper.name, plugin.(Input))
 		this.inputWrappers[wrapper.name] = wrapper
 
-		return
-	}
-
-	runner := NewFORunner(wrapper.name, plugin)
-	switch pluginCategory {
 	case "Filter":
+		runner := NewFORunner(wrapper.name, plugin)
 		this.FilterRunners[runner.name] = runner
 		this.filterWrappers[runner.name] = wrapper
+
 	case "Output":
+		runner := NewFORunner(wrapper.name, plugin)
 		this.OutputRunners[runner.name] = runner
 		this.outputWrappers[runner.name] = wrapper
 	}
