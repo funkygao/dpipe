@@ -129,9 +129,11 @@ func (this *EngineConfig) loadSection(keyPrefix string) {
 	plugin := wrapper.pluginCreator()
 
 	var config = plugin.Config()
+	// decode config to plugin specific struct
+	conf.Decode(keyPrefix, &config)
 	wrapper.configCreator = func() interface{} { return config }
 
-	plugin.(Plugin).Init(config)
+	plugin.Init(config)
 
 	pluginCats := pluginTypeRegex.FindStringSubmatch(pluginType)
 	if len(pluginCats) < 2 {
