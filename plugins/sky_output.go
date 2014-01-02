@@ -60,7 +60,7 @@ func (this *SkyOutput) Stop() {
 }
 
 func init() {
-	engine.RegisterPlugin("SkyOutput", func() interface{} {
+	engine.RegisterPlugin("SkyOutput", func() engine.Plugin {
 		return new(SkyOutput)
 	})
 }

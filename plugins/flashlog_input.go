@@ -43,7 +43,7 @@ func (this *FlashlogInput) Run(r engine.InputRunner, e *engine.EngineConfig) err
 }
 
 func init() {
-	engine.RegisterPlugin("FlashlogInput", func() interface{} {
+	engine.RegisterPlugin("FlashlogInput", func() engine.Plugin {
 		return new(FlashlogInput)
 	})
 }

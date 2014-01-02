@@ -105,7 +105,7 @@ func (this *EsOutput) Stop() {
 }
 
 func init() {
-	engine.RegisterPlugin("EsOutput", func() interface{} {
+	engine.RegisterPlugin("EsOutput", func() engine.Plugin {
 		return new(EsOutput)
 	})
 }

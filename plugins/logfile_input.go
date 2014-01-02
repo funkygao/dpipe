@@ -126,7 +126,7 @@ func (this *LogfileInput) inputs() []string {
 }
 
 func init() {
-	engine.RegisterPlugin("LogfileInput", func() interface{} {
+	engine.RegisterPlugin("LogfileInput", func() engine.Plugin {
 		return new(LogfileInput)
 	})
 }
