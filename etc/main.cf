@@ -6,6 +6,7 @@
         {
             name:   "rs"
             logger: "var/rs.log"
+            index_prefix: "rs"
         }
         {
             name:   "ffs"

@@ -66,6 +66,15 @@ func NewEngineConfig(globals *GlobalConfigStruct) (this *EngineConfig) {
 	return this
 }
 
+func (this *EngineConfig) Project(name string) *ConfProject {
+	p, present := this.projects[name]
+	if !present {
+		return nil
+	}
+
+	return &p
+}
+
 // For filter to generate new messages
 func (this *EngineConfig) PipelinePack(msgLoopCount int) *PipelinePack {
 	if msgLoopCount++; msgLoopCount > Globals().MaxMsgLoops {
@@ -94,17 +103,20 @@ func (this *EngineConfig) LoadConfigFile(fn string) {
 	}
 
 	// 'projects' section
-	projects := this.List("projects", nil)
-	for i := 0; i < len(projects); i++ {
+	for i := 0; i < len(this.List("projects", nil)); i++ {
 		keyPrefix := fmt.Sprintf("projects[%d].", i)
-		projectName := this.String(keyPrefix+"name", "")
-		projectLogger := this.String(keyPrefix+"logger", "")
-		this.projects[projectName] = ConfProject{Name: projectName, Logger: projectLogger}
+		section, err := this.Section(keyPrefix)
+		if err != nil {
+			panic(err)
+		}
+		project := ConfProject{}
+		project.FromConfig(section)
+
+		this.projects[project.Name] = project
 	}
 
 	// 'plugins' section
-	plugins := this.List("plugins", nil)
-	for i := 0; i < len(plugins); i++ {
+	for i := 0; i < len(this.List("plugins", nil)); i++ {
 		this.loadSection(fmt.Sprintf("plugins[%d]", i))
 	}
 
@@ -144,6 +156,7 @@ func (this *EngineConfig) loadSection(keyPrefix string) {
 	}
 	wrapper.configCreator = func() *conf.Conf { return config }
 
+	// plugin Init here
 	plugin.Init(config)
 
 	pluginCats := pluginTypeRegex.FindStringSubmatch(pluginType)

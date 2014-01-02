@@ -13,7 +13,6 @@ type MessageRouter interface {
 type messageRouter struct {
 	inChan              chan *PipelinePack
 	processMessageCount int64 // 16 BilionBillion
-
 }
 
 func NewMessageRouter() (router *messageRouter) {
@@ -33,7 +32,7 @@ func (this *messageRouter) InChan() chan *PipelinePack {
 
 func (this *messageRouter) Start() {
 	go this.mainloop()
-	Globals().Logger.Println("Router started...")
+	Globals().Println("Router started")
 }
 
 func (this *messageRouter) mainloop() {
