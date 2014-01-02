@@ -42,6 +42,10 @@ func NewEngineConfig(globals *GlobalConfigStruct) (this *EngineConfig) {
 		return globals
 	}
 
+	if globals.Debug {
+		pretty.Printf("[debug] %# v\n", *globals)
+	}
+
 	this.InputRunners = make(map[string]InputRunner)
 	this.inputWrappers = make(map[string]*PluginWrapper)
 	this.FilterRunners = make(map[string]FilterRunner)
@@ -108,7 +112,7 @@ func (this *EngineConfig) loadSection(keyPrefix string) {
 	var ok bool
 
 	if Globals().Debug {
-		pretty.Printf("loading section with key: %s\n", keyPrefix)
+		pretty.Printf("[debug] loading section with key: %s\n", keyPrefix)
 	}
 
 	wrapper := new(PluginWrapper)
@@ -129,12 +133,13 @@ func (this *EngineConfig) loadSection(keyPrefix string) {
 
 	var config = plugin.Config()
 	if Globals().Debug {
-		fmt.Printf("%#v\n", config)
+		fmt.Printf("[debug] %#v\n", config)
 	}
 	// decode config to plugin specific struct
-	this.Decode(keyPrefix, &config)
+	var defObj = make(map[string]interface{})
+	config = this.Object(keyPrefix, defObj)
 	if Globals().Debug {
-		pretty.Printf("%# v\n", config)
+		pretty.Printf("[debug] %# v\n", config)
 	}
 	wrapper.configCreator = func() interface{} { return config }
 
