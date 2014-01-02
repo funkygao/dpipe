@@ -87,8 +87,10 @@ func (this *EngineConfig) LoadConfigFile(fn string) {
 	}
 
 	this.Conf = cf
-	if Globals().Debug {
-		Globals().Printf("%#v\n", *cf)
+
+	globals := Globals()
+	if globals.Debug {
+		globals.Printf("%#v\n", *cf)
 	}
 
 	// 'projects' section
@@ -104,6 +106,10 @@ func (this *EngineConfig) LoadConfigFile(fn string) {
 	plugins := this.List("plugins", nil)
 	for i := 0; i < len(plugins); i++ {
 		this.loadSection(fmt.Sprintf("plugins[%d]", i))
+	}
+
+	if globals.Debug {
+		globals.Printf("%#v\n", *this)
 	}
 }
 
