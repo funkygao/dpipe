@@ -128,6 +128,9 @@ func (this *EngineConfig) loadSection(keyPrefix string) {
 	plugin := wrapper.pluginCreator()
 
 	var config = plugin.Config()
+	if Globals().Debug {
+		fmt.Printf("%#v\n", config)
+	}
 	// decode config to plugin specific struct
 	this.Decode(keyPrefix, &config)
 	if Globals().Debug {
