@@ -8,7 +8,6 @@ import (
 
 type MessageRouter interface {
 	InChan() chan *PipelinePack
-	AddRoute(from, to string) error
 }
 
 type messageRouter struct {
@@ -21,10 +20,6 @@ func NewMessageRouter() (router *messageRouter) {
 	router.inChan = make(chan *PipelinePack, Globals().PluginChanSize)
 
 	return router
-}
-
-func (this *messageRouter) AddRoute(from, to string) error {
-	return nil
 }
 
 func (this *messageRouter) InChan() chan *PipelinePack {
@@ -45,10 +40,8 @@ func (this *messageRouter) mainloop() {
 		ticker  *time.Ticker
 	)
 
-	if globals.TickerLength > 0 {
-		ticker = time.NewTicker(time.Second * time.Duration(globals.TickerLength))
-		defer ticker.Stop()
-	}
+	ticker = time.NewTicker(time.Second * time.Duration(globals.TickerLength))
+	defer ticker.Stop()
 
 	for ok {
 		runtime.Gosched()

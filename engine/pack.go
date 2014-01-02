@@ -5,6 +5,7 @@ import (
 	"sync/atomic"
 )
 
+// Main pipeline data structure containing a AlsMessage and other metadata
 type PipelinePack struct {
 	// Raw data yet be decoded to AlsMessage obj TODO
 	MsgBytes []byte
@@ -22,14 +23,12 @@ type PipelinePack struct {
 }
 
 func NewPipelinePack(recycleChan chan *PipelinePack) (this *PipelinePack) {
-	this = &PipelinePack{
+	return &PipelinePack{
 		RecycleChan:  recycleChan,
 		RefCount:     int32(1),
 		MsgLoopCount: 0,
 		Message:      als.NewAlsMessage(),
 	}
-
-	return
 }
 
 func (this *PipelinePack) Reset() {
