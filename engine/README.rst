@@ -12,34 +12,48 @@ engine pipeline architecture
 PipelinePack DataFlow
 =====================
 
+buffer size of PipelinePack
+
+- EngineConfig
+
+  PoolSize 
+
 - Input/InputRunner
+
+  PluginChanSize 
 
 - Output/OutputRunner
 
+  PluginChanSize
+
 - Filter/FilterRunner
+
+  PluginChanSize 
 
 - Router
 
+  PluginChanSize
+
 ::
 
-    EngineConfig.(PoolSize of PipelinePack)
+       EngineConfig.inputRecycleChan
             |
             | is
             |
-    InputRunner.InChan
+    InputRunner.inChan
             |
-            |     +--------------------------------------------------+
-    consume |     | Router.(PluginChanSize of PipelinePack)          |
-            |     +--------------------------------------------------+
-          Input         ^           |               |           ^
-            |           |           | put           | put       |
-            V           |           V               V           |
-            +-----------+       OutputRunner   FilterRunner     |
-              inject                |               |           |
-                                    | consume       | consume   | inject
-                                    V               V           |
-                                 Output           +----------------+
-                                                  |   Filter       |
-                                                  +----------------+
+            |     +--------------------------------------------------------+
+    consume |     |                     Router.inChan                      |
+            |     +--------------------------------------------------------+
+          Input         ^           |               |                   ^
+            |           |           | put           | put               |
+            V           |           V               V                   |
+            +-----------+  OutputRunner.inChan   FilterRunner.inChan    |
+              inject                |               |                   |
+                                    | consume       | consume           | inject
+                                    V               V                   |
+                                 Output           +------------------------+
+                                                  |         Filter         |
+                                                  +------------------------+
 
 
