@@ -35,7 +35,7 @@ PipelinePack DataFlow
             |           |           | put           | put       |
             V           |           V               V           |
             +-----------+       OutputRunner   FilterRunner     |
-              Inject                |               |           |
+              inject                |               |           |
                                     | consume       | consume   | inject
                                     V               V           |
                                  Output           +----------------+
