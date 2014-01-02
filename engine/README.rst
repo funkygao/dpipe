@@ -36,9 +36,13 @@ buffer size of PipelinePack
 
 ::
 
-       EngineConfig.inputRecycleChan
-            |
-            | is
+
+                        -------<--------+
+                        |               |
+                        V               | generate pool
+       EngineConfig.inputRecycleChan    | recycling
+            |           |               |
+            | is        +------->-------+
             |
     InputRunner.inChan
             |
