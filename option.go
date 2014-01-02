@@ -36,7 +36,7 @@ func showUsage() {
 }
 
 func showVersionAndExit() {
-	fmt.Fprintf(os.Stderr, "ALSer %s (build: %s)\n", VERSION, BuildID)
+	fmt.Fprintf(os.Stderr, "%s (build: %s)\n", VERSION, BuildID)
 	fmt.Fprintf(os.Stderr, "Built with %s %s for %s/%s\n",
 		runtime.Compiler, runtime.Version(), runtime.GOOS, runtime.GOARCH)
 	os.Exit(0)
