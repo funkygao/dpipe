@@ -104,7 +104,7 @@ func (this *EngineConfig) LoadConfigFile(fn string) {
 
 	// 'projects' section
 	for i := 0; i < len(this.List("projects", nil)); i++ {
-		keyPrefix := fmt.Sprintf("projects[%d].", i)
+		keyPrefix := fmt.Sprintf("projects[%d]", i)
 		section, err := this.Section(keyPrefix)
 		if err != nil {
 			panic(err)
