@@ -13,17 +13,43 @@ type MessageRouter interface {
 type messageRouter struct {
 	inChan              chan *PipelinePack
 	processMessageCount int64 // 16 BilionBillion
+
+	addFilterMatcher    chan *Matcher
+	removeFilterMatcher chan *Matcher
+	removeOutputMatcher chan *Matcher
+
+	fMatchers []*Matcher
+	oMatchers []*Matcher
 }
 
-func NewMessageRouter() (router *messageRouter) {
-	router = new(messageRouter)
-	router.inChan = make(chan *PipelinePack, Globals().PluginChanSize)
+func NewMessageRouter() (this *messageRouter) {
+	this = new(messageRouter)
+	this.inChan = make(chan *PipelinePack, Globals().PluginChanSize)
 
-	return router
+	this.addFilterMatcher = make(chan *Matcher)
+	this.removeFilterMatcher = make(chan *Matcher)
+	this.removeOutputMatcher = make(chan *Matcher)
+
+	this.fMatchers = make([]*Matcher, 0, 10)
+	this.oMatchers = make([]*Matcher, 0, 10)
+
+	return this
 }
 
 func (this *messageRouter) InChan() chan *PipelinePack {
 	return this.inChan
+}
+
+func (this *messageRouter) AddFilterMatcher() chan *Matcher {
+	return this.addFilterMatcher
+}
+
+func (this *messageRouter) RemoveFilterMatcher() chan *Matcher {
+	return this.removeFilterMatcher
+}
+
+func (this *messageRouter) RemoveOutputMatcher() chan *Matcher {
+	return this.removeOutputMatcher
 }
 
 func (this *messageRouter) Start() {
@@ -38,6 +64,7 @@ func (this *messageRouter) mainloop() {
 		ok      = true
 		pack    *PipelinePack
 		ticker  *time.Ticker
+		matcher *Matcher
 	)
 
 	ticker = time.NewTicker(time.Second * time.Duration(globals.TickerLength))
@@ -47,6 +74,50 @@ func (this *messageRouter) mainloop() {
 		runtime.Gosched()
 
 		select {
+		case matcher = <-this.addFilterMatcher:
+			if matcher != nil {
+				exists := false
+				available := -1
+				for i, m := range this.fMatchers {
+					if m == nil {
+						available = i
+					}
+					if matcher == m {
+						exists = true
+						break
+					}
+				}
+				if !exists {
+					if available != -1 {
+						this.fMatchers[available] = matcher
+					} else {
+						this.fMatchers = append(this.fMatchers, matcher)
+					}
+				}
+			}
+
+		case matcher = <-this.removeFilterMatcher:
+			if matcher != nil {
+				for i, m := range this.fMatchers {
+					if matcher == m {
+						close(m.inChan)
+						this.fMatchers[i] = nil
+						break
+					}
+				}
+			}
+
+		case matcher = <-this.removeOutputMatcher:
+			if matcher != nil {
+				for i, m := range this.oMatchers {
+					if matcher == m {
+						close(m.inChan)
+						this.oMatchers[i] = nil
+						break
+					}
+				}
+			}
+
 		case <-ticker.C:
 			globals.Printf("processed msg: %d\n", this.processMessageCount)
 
@@ -57,7 +128,17 @@ func (this *messageRouter) mainloop() {
 				break
 			}
 
+			// so as to audit messages count
 			atomic.AddInt64(&this.processMessageCount, 1)
+
+			for _, matcher = range this.fMatchers {
+				if matcher == nil {
+					// already removed
+					continue
+				}
+
+				atomic.AddInt32(&pack.RefCount, 1)
+			}
 			/*
 				for _, matcher = range this.fMatchers {
 					if matcher != nil {
