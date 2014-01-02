@@ -1,7 +1,6 @@
 package engine
 
 import (
-	"encoding/json"
 	"fmt"
 	conf "github.com/funkygao/jsconf"
 	"github.com/funkygao/pretty"

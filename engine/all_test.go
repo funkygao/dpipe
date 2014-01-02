@@ -6,7 +6,7 @@ import (
 )
 
 func TestDefaultGlobals(t *testing.T) {
-	e := NewEngineConfig(nil)
+	NewEngineConfig(nil)
 	globals := Globals()
 	assert.Equal(t, false, globals.Debug)
 	assert.Equal(t, 100, globals.PoolSize)

@@ -49,11 +49,9 @@ func Launch(e *EngineConfig) {
 	// Initialize all of the PipelinePack pools
 	for i := 0; i < globals.PoolSize; i++ {
 		inputPack := NewPipelinePack(e.inputRecycleChan)
-		inputTracker.AddPack(inputPack)
 		e.inputRecycleChan <- inputPack
 
 		injectPack := NewPipelinePack(e.injectRecycleChan)
-		injectTracker.AddPack(injectPack)
 		e.injectRecycleChan <- injectPack
 	}
 
@@ -75,7 +73,7 @@ func Launch(e *EngineConfig) {
 
 	for !globals.Stopping {
 		select {
-		case sig := <-e.sigChan:
+		case sig := <-globals.sigChan:
 			switch sig {
 			case syscall.SIGHUP:
 				log.Println("Reloading...")
@@ -90,6 +88,10 @@ func Launch(e *EngineConfig) {
 
 	// cleanup after shutdown
 
+	for _, project := range e.projects {
+		project.Stop()
+	}
+
 	for _, input := range e.InputRunners {
 		input.Input().Stop()
 		log.Printf("Stop message sent to input '%s'", input.Name())
@@ -102,13 +104,13 @@ func Launch(e *EngineConfig) {
 		// 2. closes the matcher input channel and lets it drain
 		// 3. closes the filter input channel and lets it drain
 		// 4. exits the filter
-		e.router.RemoveFilterMatcher() <- filter.MatchRunner()
+		//e.router.RemoveFilterMatcher() <- filter.MatchRunner()
 		log.Printf("Stop message sent to filter '%s'", filter.Name())
 	}
 	filtersWg.Wait()
 
 	for _, output := range e.OutputRunners {
-		e.router.RemoveOutputMatcher() <- output.MatchRunner()
+		//e.router.RemoveOutputMatcher() <- output.MatchRunner()
 		log.Printf("Stop message sent to output '%s'", output.Name())
 	}
 	outputsWg.Wait()
