@@ -3,6 +3,7 @@ package plugins
 import (
 	"github.com/funkygao/funpipe/engine"
 	"github.com/funkygao/golib/observer"
+	"github.com/funkygao/pretty"
 	"github.com/funkygao/tail"
 	"os"
 	"path/filepath"
@@ -22,6 +23,10 @@ type LogfileInput struct {
 }
 
 func (this *LogfileInput) Init(config interface{}) {
+	if globals.Debug {
+		pretty.Printf("%# v\n", config)
+	}
+
 	conf := config.(*LogfileInputConfig)
 	this.LogfileInputConfig = conf
 
