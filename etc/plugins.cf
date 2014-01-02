@@ -6,7 +6,11 @@
         }
         
         {
-            name: "FlashlogInput"
+            name:   "FlashlogInput"
+        }
+
+        {
+            name:   "AlarmOutput"
         }
     ]
 }
