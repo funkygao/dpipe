@@ -114,7 +114,7 @@ func (this *EngineConfig) loadSection(keyPrefix string) {
 	)
 
 	if globals.Debug {
-		globals.Logger.Printf("loading section[%s]\n", keyPrefix)
+		globals.Printf("loading section[%s]\n", keyPrefix)
 	}
 
 	wrapper := new(PluginWrapper)

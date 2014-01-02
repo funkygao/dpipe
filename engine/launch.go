@@ -21,8 +21,7 @@ func Launch(e *EngineConfig) {
 	)
 
 	globals := Globals()
-	log = globals.Logger
-	log.Println("Launching engine...")
+	globals.Println("Launching engine...")
 
 	globals.sigChan = make(chan os.Signal)
 

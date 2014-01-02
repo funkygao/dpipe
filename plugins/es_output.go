@@ -44,7 +44,7 @@ func (this *EsOutput) Init(config *conf.Conf) {
 func (this *EsOutput) Run(r engine.OutputRunner, e *engine.EngineConfig) error {
 	globals := engine.Globals()
 	if globals.Verbose {
-		globals.Logger.Printf("[%s] started\n", r.Name())
+		globals.Printf("[%s] started\n", r.Name())
 	}
 
 	// load geoip db

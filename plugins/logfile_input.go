@@ -32,7 +32,7 @@ func (this *LogfileInput) Stop() {
 func (this *LogfileInput) Run(r engine.InputRunner, e *engine.EngineConfig) error {
 	globals := engine.Globals()
 	if globals.Verbose {
-		globals.Logger.Printf("[%s] started\n", r.Name())
+		globals.Printf("[%s] started\n", r.Name())
 	}
 	/*
 
@@ -52,7 +52,7 @@ func (this *LogfileInput) Run(r engine.InputRunner, e *engine.EngineConfig) erro
 
 				openedFiles[fn] = true
 				if globals.Debug {
-					globals.Logger.Printf("[%s] found new file input: %v\n", fn)
+					globals.Printf("[%s] found new file input: %v\n", fn)
 				}
 				go this.runSingleLogfileInput(fn, r, e)
 			}
@@ -65,7 +65,7 @@ func (this *LogfileInput) Run(r engine.InputRunner, e *engine.EngineConfig) erro
 
 			case <-this.stopChan:
 				if globals.Verbose {
-					globals.Logger.Printf("[%s] stopped\n", r.Name())
+					globals.Printf("[%s] stopped\n", r.Name())
 				}
 				stopped = true
 			}
@@ -97,7 +97,7 @@ func (this *LogfileInput) runSingleLogfileInput(fn string, r engine.InputRunner,
 	globals := engine.Globals()
 	for line := range t.Lines {
 		if globals.Debug {
-			globals.Logger.Printf("[%s] got line: %s\n", r.Name(), line)
+			globals.Printf("[%s]got line: %s\n", r.Name(), line.Text)
 		}
 
 		pack = <-inChan

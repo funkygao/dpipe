@@ -12,7 +12,7 @@ func runTicker(ticker *time.Ticker) {
 	for _ = range ticker.C {
 		runtime.ReadMemStats(ms)
 
-		globals.Logger.Printf("ver:%s, goroutine:%d, mem:%s, elapsed:%s\n",
+		globals.Printf("ver:%s, goroutine:%d, mem:%s, elapsed:%s\n",
 			BuildID,
 			runtime.NumGoroutine(), gofmt.ByteSize(ms.Alloc),
 			time.Since(startTime))

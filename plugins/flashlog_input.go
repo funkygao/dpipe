@@ -36,7 +36,7 @@ func (this *FlashlogInput) Init(config *conf.Conf) {
 func (this *FlashlogInput) Run(r engine.InputRunner, e *engine.EngineConfig) error {
 	globals := engine.Globals()
 	if globals.Verbose {
-		globals.Logger.Printf("[%s] started\n", r.Name())
+		globals.Printf("[%s] started\n", r.Name())
 	}
 
 	return nil

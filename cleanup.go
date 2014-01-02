@@ -19,6 +19,6 @@ func cleanup() {
 func shutdown() {
 	cleanup()
 
-	globals.Logger.Println("terminated")
+	globals.Println("terminated")
 	os.Exit(0)
 }

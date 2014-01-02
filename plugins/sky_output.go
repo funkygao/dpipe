@@ -34,7 +34,7 @@ func (this *SkyOutput) Init(config *conf.Conf) {
 func (this *SkyOutput) Run(r engine.OutputRunner, c *engine.EngineConfig) error {
 	globals := engine.Globals()
 	if globals.Verbose {
-		globals.Logger.Printf("[%s] started\n", r.Name())
+		globals.Printf("[%s] started\n", r.Name())
 	}
 
 	var (
