@@ -130,6 +130,9 @@ func (this *EngineConfig) loadSection(keyPrefix string) {
 	var config = plugin.Config()
 	// decode config to plugin specific struct
 	this.Decode(keyPrefix, &config)
+	if Globals().Debug {
+		pretty.Printf("%# v\n", config)
+	}
 	wrapper.configCreator = func() interface{} { return config }
 
 	plugin.Init(config)
