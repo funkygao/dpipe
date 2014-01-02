@@ -1,13 +1,11 @@
 {
     plugins: [
         {
-            name: "x"
-            class: "LogfileInput"
+            name: "LogfileInput"
         }
         
         {
-            name: "x1"
-            class: "FlashlogInput"
+            name: "FlashlogInput"
         }
     ]
 }
