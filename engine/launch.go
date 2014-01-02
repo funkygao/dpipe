@@ -21,8 +21,9 @@ func Launch(e *EngineConfig) {
 	globals := Globals()
 	globals.Println("Launching engine...")
 
-	globals.sigChan = make(chan os.Signal)
-
+	if globals.Verbose {
+		globals.Println("Launching Output(s)")
+	}
 	for name, runner := range e.OutputRunners {
 		outputsWg.Add(1)
 		if err = runner.Start(e, outputsWg); err != nil {
@@ -30,10 +31,14 @@ func Launch(e *EngineConfig) {
 			panic(err)
 		}
 
-		globals.Printf("Output[%s] started\n", name)
+		if globals.Verbose {
+			globals.Printf("Output[%s] started\n", name)
+		}
 	}
-	globals.Println("all Output started")
 
+	if globals.Verbose {
+		globals.Println("Launching Filter(s)")
+	}
 	for name, runner := range e.FilterRunners {
 		filtersWg.Add(1)
 		if err = runner.Start(e, filtersWg); err != nil {
@@ -41,11 +46,14 @@ func Launch(e *EngineConfig) {
 			panic(err)
 		}
 
-		globals.Printf("Filter[%s] started", name)
+		if globals.Verbose {
+			globals.Printf("Filter[%s] started", name)
+		}
 	}
-	globals.Println("all Filter started")
 
-	// Initialize all of the PipelinePack pools
+	if globals.Verbose {
+		globals.Println("Initializing PipelinePack pools")
+	}
 	for i := 0; i < globals.PoolSize; i++ {
 		inputPack := NewPipelinePack(e.inputRecycleChan)
 		e.inputRecycleChan <- inputPack
@@ -57,6 +65,9 @@ func Launch(e *EngineConfig) {
 	// start the router
 	e.router.Start()
 
+	if globals.Verbose {
+		globals.Println("Launching Input(s)")
+	}
 	for name, runner := range e.InputRunners {
 		inputsWg.Add(1)
 		if err = runner.Start(e, inputsWg); err != nil {
@@ -64,13 +75,19 @@ func Launch(e *EngineConfig) {
 			panic(err)
 		}
 
-		globals.Printf("Input[%s] started\n", name)
+		if globals.Verbose {
+			globals.Printf("Input[%s] started\n", name)
+		}
 	}
-	globals.Println("all Input started")
+
+	globals.sigChan = make(chan os.Signal)
 
 	// now, we have started all runners. next, wait for sigint
 	signal.Notify(globals.sigChan, syscall.SIGINT, syscall.SIGHUP)
 
+	if globals.Verbose {
+		globals.Println("Waiting for os signals...")
+	}
 	for !globals.Stopping {
 		select {
 		case sig := <-globals.sigChan:
