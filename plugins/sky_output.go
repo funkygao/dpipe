@@ -1,7 +1,6 @@
 package plugins
 
 import (
-	"errors"
 	"fmt"
 	"github.com/funkygao/funpipe/engine"
 	sky "github.com/funkygao/skyapi"
@@ -14,19 +13,19 @@ type SkyOutputConfig struct {
 
 type SkyOutput struct {
 	*SkyOutputConfig
-	*sky.Client
 
+	client   *sky.Client
 	stopChan chan bool
 }
 
 func (this *SkyOutput) Init(config interface{}) {
-	conf := config.(SkyOutputConfig)
+	conf := config.(*SkyOutputConfig)
 	this.SkyOutputConfig = conf
 	this.stopChan = make(chan bool)
 
-	this.Client = sky.NewClient(this.Host)
-	this.Client.Port = this.Port
-	if !this.Ping() {
+	this.client = sky.NewClient(this.Host)
+	this.client.Port = this.Port
+	if !this.client.Ping() {
 		panic(fmt.Sprintf("sky server not running: %s:%d", this.Host, this.Port))
 	}
 }

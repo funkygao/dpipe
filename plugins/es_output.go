@@ -2,10 +2,9 @@
 package plugins
 
 import (
-	"errors"
+	"github.com/funkygao/als"
 	"github.com/funkygao/funpipe/engine"
 	"github.com/funkygao/golib"
-	"github.com/funkygao/als"
 	"github.com/mattbaird/elastigo/api"
 	"github.com/mattbaird/elastigo/core"
 	"time"
@@ -69,7 +68,7 @@ func (this *EsOutput) Run(r engine.OutputRunner, e *engine.EngineConfig) error {
 		case <-this.stopChan:
 			ok = false
 
-		case <-time.After(this.FlushInterval * time.Second):
+		case <-time.After(time.Duration(this.FlushInterval) * time.Second):
 			this.indexer.Flush()
 
 		case pack, ok = <-r.InChan():
@@ -89,18 +88,20 @@ func (this *EsOutput) Run(r engine.OutputRunner, e *engine.EngineConfig) error {
 
 	// let indexer stop
 	this.stopChan <- true
+
+	return nil
 }
 
 func (this *EsOutput) feedEs(pack *engine.PipelinePack) {
-	date := time.Unix(int64(pack.Message.timestamp), 0)
-	data := pack.Message.MarshalPayload()
+	date := time.Unix(int64(pack.Message.Timestamp), 0)
+	data, _ := pack.Message.MarshalPayload()
 	id, _ := golib.UUID()
-	this.indexer.Index(index, _type, id, "", &date, data) // ttl empty
+
+	this.indexer.Index("index", "_type", id, "", &date, data) // ttl empty
 }
 
 func (this *EsOutput) Stop() {
 	close(this.stopChan)
-	this.indexer.
 }
 
 func init() {

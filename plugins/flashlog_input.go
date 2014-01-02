@@ -15,7 +15,6 @@ flashlog is saved in mysql
 package plugins
 
 import (
-	"errors"
 	"github.com/funkygao/funpipe/engine"
 )
 
@@ -24,10 +23,12 @@ type FlashlogInputConfig struct {
 }
 
 type FlashlogInput struct {
+	*FlashlogInputConfig
 }
 
 func (this *FlashlogInput) Init(config interface{}) {
-	c := config.(FlashlogInputConfig)
+	c := config.(*FlashlogInputConfig)
+	this.FlashlogInputConfig = c
 
 }
 
@@ -38,7 +39,7 @@ func (this *FlashlogInput) Config() interface{} {
 }
 
 func (this *FlashlogInput) Run(r engine.InputRunner, e *engine.EngineConfig) error {
-
+	return nil
 }
 
 func init() {

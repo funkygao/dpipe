@@ -1,8 +1,6 @@
 package plugins
 
 import (
-	"errors"
-	"github.com/funkygao/als"
 	"github.com/funkygao/funpipe/engine"
 	"github.com/funkygao/golib/observer"
 	"github.com/funkygao/tail"
@@ -28,8 +26,6 @@ func (this *LogfileInput) Init(config interface{}) {
 	this.LogfileInputConfig = conf
 
 	this.stopChan = make(chan bool)
-
-	return nil
 }
 
 func (this *LogfileInput) Config() interface{} {
@@ -43,7 +39,7 @@ func (this *LogfileInput) Config() interface{} {
 func (this *LogfileInput) Run(r engine.InputRunner, e *engine.EngineConfig) error {
 	globals := engine.Globals()
 	if globals.Verbose {
-		global.Logger.Printf("[%s] started\n", r.Name())
+		globals.Logger.Printf("[%s] started\n", r.Name())
 	}
 
 	var (
@@ -71,7 +67,7 @@ func (this *LogfileInput) Run(r engine.InputRunner, e *engine.EngineConfig) erro
 		case <-reloadChan:
 			// TODO
 
-		case <-time.After(this.DiscoverInterval * time.Second):
+		case <-time.After(time.Duration(this.DiscoverInterval) * time.Second):
 
 		case <-this.stopChan:
 			if globals.Verbose {
@@ -111,7 +107,7 @@ func (this *LogfileInput) runSingleLogfileInput(fn string, r engine.InputRunner,
 		}
 
 		pack = <-inChan
-		pack.Message.FromLine(line)
+		pack.Message.FromLine(line.Text)
 		r.Inject(pack)
 	}
 }
