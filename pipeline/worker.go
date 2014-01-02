@@ -49,7 +49,7 @@ func (this *Worker) Done() {
 func loadWorker(ruleEngine *rule.RuleEngine) {
 	var ok bool
 	for _, w := range ruleEngine.Workers {
-		wrapper := new(WorkerPluginWrapper)
+		wrapper := new(PluginWrapper)
 		wrapper.scheme = w.Scheme()
 
 		if wrapper.pluginCreator, ok = AvailablePlugins[wrapper.scheme]; !ok {

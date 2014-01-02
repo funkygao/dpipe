@@ -63,3 +63,12 @@ type InputRunner interface {
 	// to all Filter and Output plugins with corresponding message_matchers.
 	Inject(pack *PipelinePack)
 }
+
+// Base struct for the specialized PluginRunners
+type pRunnerBase struct {
+	name          string
+	plugin        Plugin
+	pluginGlobals *PluginGlobals
+	h             PluginHelper
+	leakCount     int
+}

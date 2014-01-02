@@ -16,6 +16,20 @@ Performing "in-flight" processing of collected data, real time streaming analysi
     go get github.com/funkygao/funpipe
     funpipe -h # help
 
+### Core Problems
+
+*   acquire some generated data
+*   process/collate said data for audience consumption
+*   deliver processed data to appropriate destination
+
+### Features
+
+*   convert data from outside sources into a standard internal representation(area,ts,json)
+*   perform any required 'in flight' processing
+*   deliver collated data to intended destination(s)
+*   approximate quantiles over an unbounded data stream(such as MAU)
+*   sliding-window events alarming
+
 ### Architecture
 
 #### Overview
@@ -42,32 +56,17 @@ Performing "in-flight" processing of collected data, real time streaming analysi
                                     |
                                     | output target
                                     |
-                            +-------------------------------------------+
-                            |                   |           |           |
-                       realtime analysis     indexer     archive    BehaviorDB
-                            |                   |           |           |
-                   +-----------------+          |           |           |
-                   |    |     |      |   ElasticSearch    HDFS      LevelDB/sky
-                 beep email console etc         |
-                                                |
-                                                |
-                                             Kibana3
-                                                |
-                                                |
-                                               .-.
-                                              (e.e)
-                                               (m)
-                                             .-="=-.  W
-                                            // =T= \\,/
-                                           () ==|== ()
-                                            \  =V=
-                                             M(oVo)
-                                              // \\
-                                             //   \\
-                                            ()     ()
-                                             \\    ||
-                                          PM  \'   '|
-                                            =="     "==
+                            +-------------------------------------------------------+
+                            |                   |           |           |           |
+                       realtime analysis     indexer     archive    BehaviorDB      S3
+                            |                   |           |           |           |
+                   +-----------------+          |           |           |           |
+                   |    |     |      |   ElasticSearch    HDFS      LevelDB/sky   RedShift
+                 beep email console etc         |           |           |           |
+                   |    |     |      |          |           |           |           |
+                   +-----------------+       Kibana3        |           |        tableau
+                            |                   |           |           |           |
+                         dev/ops               PM                                  PM
 
 #### Parsers
 
@@ -75,6 +74,15 @@ Performing "in-flight" processing of collected data, real time streaming analysi
 *   data parsing
 *   data chaining
 *   data monitoring and alarming
+
+#### Data
+
+*   app performance metrics: statsd/graphite
+*   app biz metrics: analytics/MR/dashboard
+*   app error/traceback: arecibo/sentry
+*   security/anomalous activity events: CEF/CEP/arcsight
+*   log file messages: logstash/syslog
+*   system events: nagios/zenoss
 
 ### BI
 

@@ -23,3 +23,7 @@
 *   cardinality estimation(Hyper LogLog) for MAU/WAU distinct count over a large data set
 
 *   'ip' auto convert to ctry
+
+*   self-monitoring & reporting
+
+*   

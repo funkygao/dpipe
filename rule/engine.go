@@ -6,7 +6,7 @@ TODO
           |
      +---------+---------------+
      |         |               |
-  Project   Project     (rule shared across projects)
+  Projects  Plugins     (rule shared across projects)
                |
           +---------------+
           |               |
@@ -27,6 +27,8 @@ import (
 
 type RuleEngine struct {
 	*conf.Conf
+
+	Projects []Project
 
 	Workers []ConfWorker
 	Parsers map[string]*ConfParser

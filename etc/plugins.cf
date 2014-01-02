@@ -1,0 +1,13 @@
+{
+    plugins: [
+        {
+            name: "x"
+            class: "LogfileInput"
+        }
+        
+        {
+            name: "x"
+            class: "MysqlFlashLogInput"
+        }
+    ]
+}

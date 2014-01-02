@@ -49,7 +49,7 @@ func (this *LogfileWorker) Run() {
 	defer t.Stop()
 
 	if options.verbose {
-		logger.Printf("%s startedn", *this)
+		logger.Printf("%s started", *this)
 	}
 
 	for line := range t.Lines {
