@@ -25,9 +25,6 @@ var (
 )
 
 const (
-	LOG_OPTIONS       = log.Ldate | log.Ltime
-	LOG_OPTIONS_DEBUG = log.Ldate | log.Lshortfile | log.Ltime | log.Lmicroseconds
-
 	USAGE = `funpipe
 
 Flags:
