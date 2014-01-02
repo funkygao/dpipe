@@ -2,7 +2,6 @@ package engine
 
 import (
 	"github.com/funkygao/golib/observer"
-	"log"
 	"os"
 	"os/signal"
 	"sync"
@@ -15,7 +14,6 @@ func Launch(e *EngineConfig) {
 		outputsWg = new(sync.WaitGroup)
 		filtersWg = new(sync.WaitGroup)
 		inputsWg  = new(sync.WaitGroup)
-		log       *log.Logger
 
 		err error
 	)
@@ -32,7 +30,7 @@ func Launch(e *EngineConfig) {
 			panic(err)
 		}
 
-		log.Printf("Output[%s] started\n", name)
+		globals.Printf("Output[%s] started\n", name)
 	}
 
 	for name, runner := range e.FilterRunners {
@@ -42,7 +40,7 @@ func Launch(e *EngineConfig) {
 			panic(err)
 		}
 
-		log.Printf("Filter[%s] started", name)
+		globals.Printf("Filter[%s] started", name)
 	}
 
 	// Initialize all of the PipelinePack pools
@@ -64,7 +62,7 @@ func Launch(e *EngineConfig) {
 			panic(err)
 		}
 
-		log.Printf("Input[%s] started\n", name)
+		globals.Printf("Input[%s] started\n", name)
 	}
 
 	// now, we have started all runners. next, wait for sigint
@@ -75,11 +73,11 @@ func Launch(e *EngineConfig) {
 		case sig := <-globals.sigChan:
 			switch sig {
 			case syscall.SIGHUP:
-				log.Println("Reloading...")
+				globals.Println("Reloading...")
 				observer.Publish(RELOAD, nil)
 
 			case syscall.SIGINT:
-				log.Println("Shutdown...")
+				globals.Println("Shutdown...")
 				globals.Stopping = true
 			}
 		}
@@ -93,7 +91,7 @@ func Launch(e *EngineConfig) {
 
 	for _, input := range e.InputRunners {
 		input.Input().Stop()
-		log.Printf("Stop message sent to input '%s'", input.Name())
+		globals.Printf("Stop message sent to input '%s'", input.Name())
 	}
 	inputsWg.Wait() // wait for all inputs done
 
@@ -104,15 +102,15 @@ func Launch(e *EngineConfig) {
 		// 3. closes the filter input channel and lets it drain
 		// 4. exits the filter
 		//e.router.RemoveFilterMatcher() <- filter.MatchRunner()
-		log.Printf("Stop message sent to filter '%s'", filter.Name())
+		globals.Printf("Stop message sent to filter '%s'", filter.Name())
 	}
 	filtersWg.Wait()
 
 	for _, output := range e.OutputRunners {
 		//e.router.RemoveOutputMatcher() <- output.MatchRunner()
-		log.Printf("Stop message sent to output '%s'", output.Name())
+		globals.Printf("Stop message sent to output '%s'", output.Name())
 	}
 	outputsWg.Wait()
 
-	log.Println("Shutdown complete.")
+	globals.Println("Shutdown complete.")
 }
