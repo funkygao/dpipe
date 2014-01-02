@@ -25,6 +25,7 @@ var (
 type GlobalConfigStruct struct {
 	*log.Logger
 
+	StartedAt      time.Time
 	Debug          bool
 	Verbose        bool
 	DryRun         bool
@@ -61,6 +62,7 @@ func DefaultGlobals() *GlobalConfigStruct {
 		MaxMsgProcessDuration: 1000000,
 		MaxMsgTimerInject:     10,
 		MaxPackIdle:           idle,
+		StartedAt:             time.Now(),
 		Logger:                log.New(os.Stdout, "", log.Ldate|log.Lshortfile|log.Ltime),
 	}
 }

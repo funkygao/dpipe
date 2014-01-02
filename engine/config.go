@@ -30,9 +30,8 @@ type EngineConfig struct {
 	// deadlocks).
 	injectRecycleChan chan *PipelinePack
 
-	hostname  string
-	pid       int
-	startedAt time.Time
+	hostname string
+	pid      int
 }
 
 func NewEngineConfig(globals *GlobalConfigStruct) (this *EngineConfig) {
@@ -65,7 +64,6 @@ func NewEngineConfig(globals *GlobalConfigStruct) (this *EngineConfig) {
 
 	this.hostname, _ = os.Hostname()
 	this.pid = os.Getpid()
-	this.startedAt = time.Now()
 
 	return this
 }
@@ -77,10 +75,6 @@ func (this *EngineConfig) Project(name string) *ConfProject {
 	}
 
 	return &p
-}
-
-func (this *EngineConfig) StartedAt() time.Time {
-	return this.startedAt
 }
 
 // For Filter to generate new messages
