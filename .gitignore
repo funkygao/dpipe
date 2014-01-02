@@ -21,4 +21,5 @@ _testmain.go
 
 *.exe
 alser
+funpipe
 var/
