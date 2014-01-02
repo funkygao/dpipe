@@ -34,6 +34,7 @@ func init() {
 	globals.Verbose = options.verbose
 	globals.DryRun = options.dryrun
 	globals.Logger = newLogger()
+	globals.TickerLength = options.tick
 }
 
 func main() {
@@ -48,12 +49,9 @@ func main() {
 
 	setupMaxProcsAndProfiler()
 
-	if options.tick > 0 { // ticker for reporting workers progress
-		ticker := time.NewTicker(time.Second * time.Duration(options.tick))
-		defer ticker.Stop()
-
-		go runTicker(ticker)
-	}
+	ticker := time.NewTicker(time.Second * time.Duration(options.tick))
+	go runTicker(ticker)
+	defer ticker.Stop()
 
 	eng := engine.NewEngineConfig(globals)
 	eng.LoadConfigFile(options.configfile)

@@ -11,7 +11,6 @@ func TestDefaultGlobals(t *testing.T) {
 	assert.Equal(t, false, globals.Debug)
 	assert.Equal(t, 100, globals.PoolSize)
 	assert.Equal(t, 50, globals.PluginChanSize)
-	assert.Equal(t, ".", globals.BaseDir)
 }
 
 func TestDebugEngineConfig(t *testing.T) {

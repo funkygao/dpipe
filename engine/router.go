@@ -3,6 +3,7 @@ package engine
 import (
 	"runtime"
 	"sync/atomic"
+	"time"
 )
 
 type MessageRouter interface {
@@ -32,21 +33,34 @@ func (this *messageRouter) InChan() chan *PipelinePack {
 
 func (this *messageRouter) Start() {
 	go this.mainloop()
+
 	Globals().Println("Router started")
 }
 
 func (this *messageRouter) mainloop() {
 	var (
-		ok   = true
-		pack *PipelinePack
+		globals = Globals()
+		ok      = true
+		pack    *PipelinePack
+		ticker  *time.Ticker
 	)
+
+	if globals.TickerLength > 0 {
+		ticker = time.NewTicker(time.Second * time.Duration(globals.TickerLength))
+		defer ticker.Stop()
+	}
 
 	for ok {
 		runtime.Gosched()
+
 		select {
+		case <-ticker.C:
+			globals.Printf("processed msg: %d\n", this.processMessageCount)
+
 		case pack, ok = <-this.inChan:
 			if !ok {
-				// inChan closed
+				globals.Println("Router inChan closed")
+				globals.Stopping = true
 				break
 			}
 
@@ -80,5 +94,5 @@ func (this *messageRouter) mainloop() {
 			close(matcher.inChan)
 		}*/
 
-	//log.Println("MessageRouter stopped.")
+	globals.Println("MessageRouter stopped.")
 }

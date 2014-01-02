@@ -25,18 +25,19 @@ var (
 type GlobalConfigStruct struct {
 	*log.Logger
 
-	Debug                 bool
-	Verbose               bool
-	DryRun                bool
-	PoolSize              int
-	PluginChanSize        int
+	Debug          bool
+	Verbose        bool
+	DryRun         bool
+	PoolSize       int
+	PluginChanSize int
+	TickerLength   int
+
 	MaxMsgLoops           int
 	MaxMsgProcessInject   uint
 	MaxMsgProcessDuration uint64
 	MaxMsgTimerInject     uint
 	MaxPackIdle           time.Duration
 	Stopping              bool
-	BaseDir               string
 
 	sigChan chan os.Signal
 }
@@ -60,7 +61,6 @@ func DefaultGlobals() *GlobalConfigStruct {
 		MaxMsgProcessDuration: 1000000,
 		MaxMsgTimerInject:     10,
 		MaxPackIdle:           idle,
-		BaseDir:               ".",
 		Logger:                log.New(os.Stdout, "", log.Ldate|log.Lshortfile|log.Ltime),
 	}
 }

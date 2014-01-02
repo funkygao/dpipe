@@ -28,6 +28,10 @@ func parseFlags() {
 	if options.debug {
 		options.verbose = true
 	}
+
+	if options.tick <= 0 {
+		panic("tick must be possitive")
+	}
 }
 
 func showUsage() {
