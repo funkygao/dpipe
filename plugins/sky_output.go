@@ -3,41 +3,40 @@ package plugins
 import (
 	"fmt"
 	"github.com/funkygao/funpipe/engine"
+	conf "github.com/funkygao/jsconf"
 	sky "github.com/funkygao/skyapi"
 )
 
-type SkyOutputConfig struct {
-	Host string
-	Port int
-}
-
 type SkyOutput struct {
-	*SkyOutputConfig
-
 	client   *sky.Client
 	stopChan chan bool
 }
 
-func (this *SkyOutput) Init(config interface{}) {
-	conf := config.(*SkyOutputConfig)
-	this.SkyOutputConfig = conf
-	this.stopChan = make(chan bool)
-
-	this.client = sky.NewClient(this.Host)
-	this.client.Port = this.Port
-	if !this.client.Ping() {
-		panic(fmt.Sprintf("sky server not running: %s:%d", this.Host, this.Port))
+func (this *SkyOutput) Init(config *conf.Conf) {
+	globals := engine.Globals()
+	if globals.Debug {
+		globals.Printf("%#v\n", *config)
 	}
-}
 
-func (this *SkyOutput) Config() interface{} {
-	return SkyOutputConfig{
-		Host: "localhost",
-		Port: 8585,
+	this.stopChan = make(chan bool)
+	var (
+		host string = config.String("host", "localhost")
+		port int    = config.Int("port", 8585)
+	)
+	this.client = sky.NewClient(host)
+	this.client.Port = port
+
+	if !this.client.Ping() {
+		panic(fmt.Sprintf("sky server not running: %s:%d", host, port))
 	}
 }
 
 func (this *SkyOutput) Run(r engine.OutputRunner, c *engine.EngineConfig) error {
+	globals := engine.Globals()
+	if globals.Verbose {
+		globals.Logger.Printf("[%s] started\n", r.Name())
+	}
+
 	var (
 		ok = true
 	)

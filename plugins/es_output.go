@@ -5,14 +5,13 @@ import (
 	"github.com/funkygao/als"
 	"github.com/funkygao/funpipe/engine"
 	"github.com/funkygao/golib"
+	conf "github.com/funkygao/jsconf"
 	"github.com/mattbaird/elastigo/api"
 	"github.com/mattbaird/elastigo/core"
 	"time"
 )
 
 type EsOutputConfig struct {
-	Domain        string
-	Port          string
 	FlushInterval int `json:"flush_interval"`
 	BulkMaxConn   int `json:"bulk_max_conn"`
 	BulkMaxDocs   int `json:"bulk_max_docs"`
@@ -20,38 +19,34 @@ type EsOutputConfig struct {
 }
 
 type EsOutput struct {
-	*EsOutputConfig
-
-	stopChan chan bool
-	indexer  *core.BulkIndexer
+	flushInterval time.Duration
+	stopChan      chan bool
+	indexer       *core.BulkIndexer
 }
 
-func (this *EsOutput) Init(config interface{}) {
-	conf := config.(*EsOutputConfig)
-	this.EsOutputConfig = conf
-
-	api.Domain = conf.Domain
-	api.Port = conf.Port
-
-	this.stopChan = make(chan bool)
-	this.indexer = core.NewBulkIndexer(conf.BulkMaxConn)
-	this.indexer.BulkMaxDocs = conf.BulkMaxDocs
-	this.indexer.BulkMaxBuffer = conf.BulkMaxBuffer
-}
-
-func (this *EsOutput) Config() interface{} {
-	return EsOutputConfig{
-		Domain:        "localhost",
-		Port:          "9200",
-		FlushInterval: 30,
-		BulkMaxConn:   20,
-		BulkMaxDocs:   100,
-		BulkMaxBuffer: 10 << 20, // 10 MB
+func (this *EsOutput) Init(config *conf.Conf) {
+	globals := engine.Globals()
+	if globals.Debug {
+		globals.Printf("%#v\n", *config)
 	}
 
+	api.Domain = config.String("domain", "localhost")
+	api.Port = config.String("port", "9200")
+
+	this.flushInterval = time.Duration(config.Int("flush_interval", 30))
+
+	this.stopChan = make(chan bool)
+	this.indexer = core.NewBulkIndexer(config.Int("bulk_max_conn", 20))
+	this.indexer.BulkMaxDocs = config.Int("bulk_max_docs", 100)
+	this.indexer.BulkMaxBuffer = config.Int("bulk_max_buffer", 10<<20) // 10 MB
 }
 
 func (this *EsOutput) Run(r engine.OutputRunner, e *engine.EngineConfig) error {
+	globals := engine.Globals()
+	if globals.Verbose {
+		globals.Logger.Printf("[%s] started\n", r.Name())
+	}
+
 	// load geoip db
 	als.LoadGeoDb(e.String("geodbfile", ""))
 
@@ -68,7 +63,7 @@ func (this *EsOutput) Run(r engine.OutputRunner, e *engine.EngineConfig) error {
 		case <-this.stopChan:
 			ok = false
 
-		case <-time.After(time.Duration(this.FlushInterval) * time.Second):
+		case <-time.After(this.flushInterval * time.Second):
 			this.indexer.Flush()
 
 		case pack, ok = <-r.InChan():

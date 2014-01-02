@@ -16,29 +16,29 @@ package plugins
 
 import (
 	"github.com/funkygao/funpipe/engine"
+	conf "github.com/funkygao/jsconf"
 )
 
-type FlashlogInputConfig struct {
+type FlashlogInput struct {
 	dsn string
 }
 
-type FlashlogInput struct {
-	*FlashlogInputConfig
-}
-
-func (this *FlashlogInput) Init(config interface{}) {
-	c := config.(*FlashlogInputConfig)
-	this.FlashlogInputConfig = c
-
-}
-
-func (this *FlashlogInput) Config() interface{} {
-	return FlashlogInputConfig{
-		dsn: "flashlog:flashlog@unix(/var/run/mysqld/mysqld.sock)/flashlog?charset=utf8",
+func (this *FlashlogInput) Init(config *conf.Conf) {
+	globals := engine.Globals()
+	if globals.Debug {
+		globals.Printf("%#v\n", *config)
 	}
+
+	this.dsn = config.String("dsn",
+		"flashlog:flashlog@unix(/var/run/mysqld/mysqld.sock)/flashlog?charset=utf8")
 }
 
 func (this *FlashlogInput) Run(r engine.InputRunner, e *engine.EngineConfig) error {
+	globals := engine.Globals()
+	if globals.Verbose {
+		globals.Logger.Printf("[%s] started\n", r.Name())
+	}
+
 	return nil
 }
 

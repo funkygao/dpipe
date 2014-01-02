@@ -1,53 +1,32 @@
 package plugins
 
 import (
-	"encoding/json"
 	"github.com/funkygao/funpipe/engine"
-	"github.com/funkygao/golib/observer"
+	//"github.com/funkygao/golib/observer"
 	conf "github.com/funkygao/jsconf"
-	"github.com/funkygao/pretty"
 	"github.com/funkygao/tail"
 	"os"
 	"path/filepath"
 	"time"
 )
 
-type LogfileInputConfig struct {
-	DiscoverInterval int    `json:"discovery_interval"`
-	Tail             bool   `json:"tail"`
-	Glob             string `json:"glob"`
-	Name             string `json:"name"`
-	Class            string `json:"class"`
-}
-
 type LogfileInput struct {
-	*LogfileInputConfig
-
-	stopChan chan bool
+	discoverInterval time.Duration
+	stopChan         chan bool
 }
 
-func (this *LogfileInput) Init(config &conf.Conf) {
-	if engine.Globals().Debug {
-		pretty.Printf("%# v\n", config)
+func (this *LogfileInput) Init(config *conf.Conf) {
+	globals := engine.Globals()
+	if globals.Debug {
+		globals.Printf("%#v\n", *config)
 	}
 
-	var c LogfileInputConfig
-	x, _ := json.Marshal(config)
-	json.Unmarshal(x, &c)
-	pretty.Printf("%# v\n", c)
-
-	conf := config.(*LogfileInputConfig)
-	this.LogfileInputConfig = conf
-
+	this.discoverInterval = time.Duration(config.Int("discovery_interval", 5))
 	this.stopChan = make(chan bool)
 }
 
-func (this *LogfileInput) Config() interface{} {
-	return LogfileInputConfig{
-		DiscoverInterval: 5,
-		Tail:             true,
-	}
-
+func (this *LogfileInput) Stop() {
+	close(this.stopChan)
 }
 
 func (this *LogfileInput) Run(r engine.InputRunner, e *engine.EngineConfig) error {
@@ -55,48 +34,49 @@ func (this *LogfileInput) Run(r engine.InputRunner, e *engine.EngineConfig) erro
 	if globals.Verbose {
 		globals.Logger.Printf("[%s] started\n", r.Name())
 	}
+	/*
 
-	var (
-		reloadChan  = make(chan interface{})
-		openedFiles = make(map[string]bool)
-		stopped     = false
-	)
+		var (
+			reloadChan  = make(chan interface{})
+			openedFiles = make(map[string]bool)
+			stopped     = false
+		)
 
-	observer.Subscribe(engine.RELOAD, reloadChan)
+		observer.Subscribe(engine.RELOAD, reloadChan)
 
-	for !stopped {
-		for _, fn := range this.inputs() {
-			if _, present := openedFiles[fn]; present {
-				continue
+		for !stopped {
+			for _, fn := range this.inputs() {
+				if _, present := openedFiles[fn]; present {
+					continue
+				}
+
+				openedFiles[fn] = true
+				if globals.Debug {
+					globals.Logger.Printf("[%s] found new file input: %v\n", fn)
+				}
+				go this.runSingleLogfileInput(fn, r, e)
 			}
 
-			openedFiles[fn] = true
-			if globals.Debug {
-				globals.Logger.Printf("[%s] found new file input: %v\n", fn)
+			select {
+			case <-reloadChan:
+				// TODO
+
+			case <-time.After(this.discoverInterval * time.Second):
+
+			case <-this.stopChan:
+				if globals.Verbose {
+					globals.Logger.Printf("[%s] stopped\n", r.Name())
+				}
+				stopped = true
 			}
-			go this.runSingleLogfileInput(fn, r, e)
-		}
-
-		select {
-		case <-reloadChan:
-			// TODO
-
-		case <-time.After(time.Duration(this.DiscoverInterval) * time.Second):
-
-		case <-this.stopChan:
-			if globals.Verbose {
-				globals.Logger.Printf("[%s] stopped\n", r.Name())
-			}
-			stopped = true
-		}
-	}
+		}*/
 
 	return nil
 }
 
 func (this *LogfileInput) runSingleLogfileInput(fn string, r engine.InputRunner, e *engine.EngineConfig) {
 	var tailConf tail.Config
-	if this.Tail {
+	if true {
 		tailConf = tail.Config{
 			Follow:   true, // tail -f
 			ReOpen:   true, // tail -F
@@ -126,12 +106,8 @@ func (this *LogfileInput) runSingleLogfileInput(fn string, r engine.InputRunner,
 	}
 }
 
-func (this *LogfileInput) Stop() {
-	close(this.stopChan)
-}
-
 func (this *LogfileInput) inputs() []string {
-	logfiles, err := filepath.Glob(this.Glob)
+	logfiles, err := filepath.Glob("this.Glob")
 	if err != nil {
 		panic(err)
 	}
