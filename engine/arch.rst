@@ -9,9 +9,37 @@ engine pipeline architecture
 .. contents:: Table Of Contents
 .. section-numbering::
 
-overview
-========
+PipelinePack DataFlow
+=====================
+
+- Input/InputRunner
+
+- Output/OutputRunner
+
+- Filter/FilterRunner
+
+- Router
 
 ::
 
-        Input
+    EngineConfig.(PoolSize of PipelinePack)
+            |
+            | is
+            |
+    InputRunner.InChan
+            |
+            |     +--------------------------------------------------+
+    consume |     | Router.(PluginChanSize of PipelinePack)          |
+            |     +--------------------------------------------------+
+          Input         ^           |               |           ^
+            |           |           | put           | put       |
+            V           |           V               V           |
+            +-----------+       OutputRunner   FilterRunner     |
+              Inject                |               |           |
+                                    | consume       | consume   | inject
+                                    V               V           |
+                                 Output           +----------------+
+                                                  |   Filter       |
+                                                  +----------------+
+
+

@@ -94,5 +94,5 @@ func (this *messageRouter) mainloop() {
 			close(matcher.inChan)
 		}*/
 
-	globals.Println("MessageRouter stopped.")
+	globals.Println("MessageRouter stopped")
 }
