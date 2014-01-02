@@ -9,24 +9,19 @@ type Plugin interface {
 	Init(config *conf.Conf)
 }
 
-// Indicates a plug-in can handle being restart should it exit before
-// heka is shut-down.
 type Restarting interface {
-	// Is called anytime the plug-in returns during the main Run loop to
-	// clean up the plug-in state and determine whether the plugin should
-	// be restarted or not.
 	CleanupForRestart()
 }
 
 func RegisterPlugin(name string, factory func() Plugin) {
 	if _, present := availablePlugins[name]; present {
-		panic(fmt.Sprintf("plugin: %s cannot register twice", name))
+		panic(fmt.Sprintf("plugin[%s] cannot register twice", name))
 	}
 
 	availablePlugins[name] = factory
 }
 
-// A helper object to support delayed plugin creation.
+// A helper object to support delayed plugin creation
 type PluginWrapper struct {
 	name          string
 	configCreator func() *conf.Conf
