@@ -4,7 +4,6 @@ import (
 	"fmt"
 	conf "github.com/funkygao/jsconf"
 	"os"
-	"time"
 )
 
 type EngineConfig struct {
