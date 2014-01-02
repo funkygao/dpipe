@@ -29,6 +29,10 @@ func (this *LogfileInput) Stop() {
 	close(this.stopChan)
 }
 
+func (this *LogfileInput) CleanupForRestart() {
+
+}
+
 func (this *LogfileInput) Run(r engine.InputRunner, e *engine.EngineConfig) error {
 	globals := engine.Globals()
 	if globals.Verbose {
