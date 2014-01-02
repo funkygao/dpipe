@@ -21,7 +21,7 @@ func (this *SelfSysInput) Init(config *conf.Conf) {
 	this.interval = time.Duration(config.Int("interval", 10))
 }
 
-func (this *SelfSysInput) Run(r engine.OutputRunner, e *engine.EngineConfig) error {
+func (this *SelfSysInput) Run(r engine.InputRunner, e *engine.EngineConfig) error {
 	globals := engine.Globals()
 	if globals.Verbose {
 		globals.Printf("[%s] started\n", r.Name())
