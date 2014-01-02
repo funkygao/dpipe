@@ -5,6 +5,6 @@ type ConfProject struct {
 	Logger string
 }
 
-func (*this ConfProject) Stop() {
-	
+func (this *ConfProject) Stop() {
+
 }
