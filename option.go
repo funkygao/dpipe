@@ -14,7 +14,7 @@ func parseFlags() {
 	flag.BoolVar(&options.verbose, "v", false, "verbose")
 	flag.StringVar(&options.configfile, "c", "etc/main.cf", "main config file")
 	flag.StringVar(&options.logfile, "l", "", "alser log file name")
-	flag.BoolVar(&options.lockfile, "lockfile", "", "lockfile path so that only 1 instance can run")
+	flag.StringVar(&options.lockfile, "lockfile", "", "lockfile path")
 	flag.BoolVar(&options.showversion, "version", false, "show version")
 	flag.BoolVar(&options.debug, "debug", false, "debug mode")
 	flag.IntVar(&options.tick, "t", 60*10, "tick interval in seconds")
@@ -46,7 +46,7 @@ func setupMaxProcsAndProfiler() {
 	numCpu := runtime.NumCPU()
 	maxProcs := numCpu/2 + 1
 	runtime.GOMAXPROCS(numCpu)
-	logger.Printf("build[%s] starting with %d/%d CPUs...\n", BuildID, maxProcs, numCpu)
+	globals.Logger.Printf("build[%s] starting with %d/%d CPUs...\n", BuildID, maxProcs, numCpu)
 
 	if options.cpuprof != "" {
 		f, err := os.Create(options.cpuprof)
@@ -54,7 +54,7 @@ func setupMaxProcsAndProfiler() {
 			panic(err)
 		}
 
-		logger.Printf("CPU profiler %s enabled\n", options.cpuprof)
+		globals.Logger.Printf("CPU profiler %s enabled\n", options.cpuprof)
 		pprof.StartCPUProfile(f)
 	}
 
@@ -64,7 +64,7 @@ func setupMaxProcsAndProfiler() {
 			panic(err)
 		}
 
-		logger.Printf("CPU profiler %s enabled\n", options.cpuprof)
+		globals.Logger.Printf("CPU profiler %s enabled\n", options.cpuprof)
 		pprof.WriteHeapProfile(f)
 	}
 }

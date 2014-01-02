@@ -1,28 +1,24 @@
 package main
 
 import (
-	"github.com/funkygao/goserver"
+	"github.com/funkygao/golib/locking"
 	"os"
 	"runtime/pprof"
 )
 
 func cleanup() {
-	if options.lock {
-		goserver.UnlockInstance(LOCKFILE)
+	if options.lockfile != "" {
+		locking.UnlockInstance(options.lockfile)
 	}
 
 	if options.cpuprof != "" {
 		pprof.StopCPUProfile()
-	}
-
-	if ticker != nil {
-		ticker.Stop()
 	}
 }
 
 func shutdown() {
 	cleanup()
 
-	logger.Println("terminated")
+	globals.Logger.Println("terminated")
 	os.Exit(0)
 }

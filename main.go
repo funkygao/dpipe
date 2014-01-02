@@ -1,9 +1,11 @@
 package main
 
 import (
+	"fmt"
 	"github.com/funkygao/funpipe/engine"
 	"github.com/funkygao/golib/locking"
 	"os"
+	"runtime/debug"
 )
 
 func init() {
@@ -13,12 +15,12 @@ func init() {
 		showVersionAndExit()
 	}
 
-	if options.lock {
-		if locking.InstanceLocked(LOCKFILE) {
+	if options.lockfile != "" {
+		if locking.InstanceLocked(options.lockfile) {
 			fmt.Fprintf(os.Stderr, "Another instance is running, exit...\n")
 			os.Exit(1)
 		}
-		locking.LockInstance(LOCKFILE)
+		locking.LockInstance(options.lockfile)
 	}
 
 	globals = engine.DefaultGlobals()
