@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/funkygao/funpipe/engine"
-	_ "github.com/funkygao/funpipe/plugins"
+	_ "github.com/funkygao/funpipe/plugins" // trigger RegisterPlugin(s)
 	"github.com/funkygao/golib/locking"
 	"github.com/funkygao/golib/signal"
 	"os"
