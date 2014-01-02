@@ -20,5 +20,10 @@
         {
             name:   "AlarmOutput"
         }
+
+        {
+            name:   "SelfSysInput"
+            interval: 10
+        }
     ]
 }
