@@ -1,35 +1,26 @@
 package main
 
 import (
-	"log"
+	"github.com/funkygao/funpipe/engine"
 	"time"
 )
 
 var (
-	logger *log.Logger
+	globals *engine.GlobalConfigStruct
 
 	BuildID = "unknown" // git version id, passed in from shell
 
-	allWorkers map[string]bool // key is datasource name
-	ticker     *time.Ticker
-
 	options struct {
 		verbose     bool
-		config      string
+		configfile  string
 		showversion bool
 		logfile     string
 		debug       bool
-		test        bool
 		tick        int
-		tailmode    bool
 		dryrun      bool
 		cpuprof     string
 		memprof     string
-		parser      string
-		locale      string
-		lock        bool
-		daemon      bool
-		showparsers bool
+		lockfile    string
 	}
 )
 
@@ -41,9 +32,4 @@ const (
 
 Flags:
 `
-
-	LOCKFILE = "var/funpipe.lock"
-	TICKER   = 60 * 10 // default ticker, 10 minutes
-
-	FLASHLOG_DSN = "flashlog:flashlog@unix(/var/run/mysqld/mysqld.sock)/flashlog?charset=utf8"
 )

@@ -1,16 +1,15 @@
 package main
 
 import (
-	"github.com/funkygao/alser/parser"
-	"github.com/funkygao/golib"
+	"github.com/funkygao/golib/signal"
 	"os"
-	"os/signal"
 	"strings"
 	"sync"
 	"syscall"
 )
 
 func init() {
+	signal.RegisterSignalHandler(sig, handler)
 	golib.RegisterSignalHandler(syscall.SIGINT, handleInterrupt)
 	golib.RegisterSignalHandler(syscall.SIGTERM, handleInterrupt)
 	golib.RegisterSignalHandler(syscall.SIGUSR2, func(sig os.Signal) {
