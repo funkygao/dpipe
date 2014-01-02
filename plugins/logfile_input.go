@@ -1,6 +1,7 @@
 package plugins
 
 import (
+	"encoding/json"
 	"github.com/funkygao/funpipe/engine"
 	"github.com/funkygao/golib/observer"
 	"github.com/funkygao/pretty"
@@ -28,6 +29,11 @@ func (this *LogfileInput) Init(config interface{}) {
 	if engine.Globals().Debug {
 		pretty.Printf("%# v\n", config)
 	}
+
+	var c LogfileInputConfig
+	x, _ := json.Marshal(config)
+	json.Unmarshal(x, &c)
+	pretty.Printf("%# v\n", c)
 
 	conf := config.(*LogfileInputConfig)
 	this.LogfileInputConfig = conf
