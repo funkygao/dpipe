@@ -32,6 +32,7 @@ func Launch(e *EngineConfig) {
 
 		globals.Printf("Output[%s] started\n", name)
 	}
+	globals.Println("all Output started")
 
 	for name, runner := range e.FilterRunners {
 		filtersWg.Add(1)
@@ -42,6 +43,7 @@ func Launch(e *EngineConfig) {
 
 		globals.Printf("Filter[%s] started", name)
 	}
+	globals.Println("all Filter started")
 
 	// Initialize all of the PipelinePack pools
 	for i := 0; i < globals.PoolSize; i++ {
@@ -64,6 +66,7 @@ func Launch(e *EngineConfig) {
 
 		globals.Printf("Input[%s] started\n", name)
 	}
+	globals.Println("all Input started")
 
 	// now, we have started all runners. next, wait for sigint
 	signal.Notify(globals.sigChan, syscall.SIGINT, syscall.SIGHUP)
@@ -89,26 +92,26 @@ func Launch(e *EngineConfig) {
 		project.Stop()
 	}
 
-	for _, input := range e.InputRunners {
-		input.Input().Stop()
-		globals.Printf("Stop message sent to input '%s'", input.Name())
+	for _, runner := range e.InputRunners {
+		runner.Input().Stop()
+		globals.Printf("Stop message sent to input '%s'", runner.Name())
 	}
 	inputsWg.Wait() // wait for all inputs done
 
-	for _, filter := range e.FilterRunners {
+	for _, runner := range e.FilterRunners {
 		// needed for a clean shutdown without deadlocking or orphaning messages
 		// 1. removes the matcher from the router
 		// 2. closes the matcher input channel and lets it drain
 		// 3. closes the filter input channel and lets it drain
 		// 4. exits the filter
 		//e.router.RemoveFilterMatcher() <- filter.MatchRunner()
-		globals.Printf("Stop message sent to filter '%s'", filter.Name())
+		globals.Printf("Stop message sent to filter '%s'", runner.Name())
 	}
 	filtersWg.Wait()
 
-	for _, output := range e.OutputRunners {
+	for _, runner := range e.OutputRunners {
 		//e.router.RemoveOutputMatcher() <- output.MatchRunner()
-		globals.Printf("Stop message sent to output '%s'", output.Name())
+		globals.Printf("Stop message sent to output '%s'", runner.Name())
 	}
 	outputsWg.Wait()
 
