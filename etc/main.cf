@@ -5,8 +5,8 @@
     projects: [
         {
             name:   "rs"
-            logger: "var/rs.log"
-            index_prefix: "rs"
+            // logfile: "var/rs.log"     # default var/{name}.log
+            // index_prefix: "rs"       # default {name}
         }
         {
             name:   "ffs"

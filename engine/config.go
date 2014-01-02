@@ -79,6 +79,10 @@ func (this *EngineConfig) Project(name string) *ConfProject {
 	return &p
 }
 
+func (this *EngineConfig) StartedAt() time.Time {
+	return this.startedAt
+}
+
 // For Filter to generate new messages
 func (this *EngineConfig) PipelinePack(msgLoopCount int) *PipelinePack {
 	if msgLoopCount++; msgLoopCount > Globals().MaxMsgLoops {
