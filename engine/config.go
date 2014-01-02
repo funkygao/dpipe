@@ -3,7 +3,6 @@ package engine
 import (
 	"fmt"
 	conf "github.com/funkygao/jsconf"
-	"github.com/funkygao/pretty"
 	"os"
 	"time"
 )
@@ -43,7 +42,7 @@ func NewEngineConfig(globals *GlobalConfigStruct) (this *EngineConfig) {
 	}
 
 	if globals.Debug {
-		pretty.Printf("[debug] %# v\n", *globals)
+		globals.Printf("%#v\n", *globals)
 	}
 
 	this.InputRunners = make(map[string]InputRunner)
@@ -89,7 +88,7 @@ func (this *EngineConfig) LoadConfigFile(fn string) {
 
 	this.Conf = cf
 	if Globals().Debug {
-		pretty.Printf("%# v\n", *cf)
+		Globals().Printf("%#v\n", *cf)
 	}
 
 	// 'projects' section
@@ -109,10 +108,13 @@ func (this *EngineConfig) LoadConfigFile(fn string) {
 }
 
 func (this *EngineConfig) loadSection(keyPrefix string) {
-	var ok bool
+	var (
+		ok      bool
+		globals = Globals()
+	)
 
-	if Globals().Debug {
-		pretty.Printf("[debug] loading section with key: %s\n", keyPrefix)
+	if globals.Debug {
+		globals.Logger.Printf("loading section[%s]\n", keyPrefix)
 	}
 
 	wrapper := new(PluginWrapper)
@@ -130,18 +132,11 @@ func (this *EngineConfig) loadSection(keyPrefix string) {
 	}
 
 	plugin := wrapper.pluginCreator()
-
-	var config = plugin.Config()
-	if Globals().Debug {
-		fmt.Printf("[debug] %#v\n", config)
+	config, err := this.Section(keyPrefix)
+	if err != nil {
+		panic(err)
 	}
-	// decode config to plugin specific struct
-	var defObj = make(map[string]interface{})
-	config = this.Object(keyPrefix, defObj)
-	if Globals().Debug {
-		pretty.Printf("[debug] %# v\n", config)
-	}
-	wrapper.configCreator = func() interface{} { return config }
+	wrapper.configCreator = func() *conf.Conf { return config }
 
 	plugin.Init(config)
 

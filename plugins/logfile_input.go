@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"github.com/funkygao/funpipe/engine"
 	"github.com/funkygao/golib/observer"
+	conf "github.com/funkygao/jsconf"
 	"github.com/funkygao/pretty"
 	"github.com/funkygao/tail"
 	"os"
@@ -25,7 +26,7 @@ type LogfileInput struct {
 	stopChan chan bool
 }
 
-func (this *LogfileInput) Init(config interface{}) {
+func (this *LogfileInput) Init(config &conf.Conf) {
 	if engine.Globals().Debug {
 		pretty.Printf("%# v\n", config)
 	}

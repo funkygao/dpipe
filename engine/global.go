@@ -23,6 +23,8 @@ var (
 
 // Struct for holding global pipeline config values.
 type GlobalConfigStruct struct {
+	*log.Logger
+
 	Debug                 bool
 	Verbose               bool
 	DryRun                bool
@@ -36,7 +38,6 @@ type GlobalConfigStruct struct {
 	Stopping              bool
 	BaseDir               string
 
-	Logger  *log.Logger
 	sigChan chan os.Signal
 }
 

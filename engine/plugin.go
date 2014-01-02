@@ -2,13 +2,11 @@ package engine
 
 import (
 	"fmt"
+	conf "github.com/funkygao/jsconf"
 )
 
 type Plugin interface {
-	Init(config interface{})
-
-	// Name/Typ is required attributes
-	Config() interface{}
+	Init(config *conf.Conf)
 }
 
 // Indicates a plug-in can handle being restart should it exit before
@@ -31,7 +29,7 @@ func RegisterPlugin(name string, factory func() Plugin) {
 // A helper object to support delayed plugin creation.
 type PluginWrapper struct {
 	name          string
-	configCreator func() interface{}
+	configCreator func() *conf.Conf
 	pluginCreator func() Plugin
 }
 
