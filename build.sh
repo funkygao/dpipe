@@ -4,7 +4,7 @@
 # update
 #===========
 if [[ $1 = "-u" ]]; then
-    go get -u github.com/funkygao/alser
+    go get -u github.com/funkygao/funpipe
 fi
 
 #===========
@@ -12,9 +12,9 @@ fi
 #===========
 cd $(dirname $0)
 ID=$(git rev-parse HEAD | cut -c1-7)
-go build -v -ldflags "-X main.BuildID $ID"
+go build -ldflags "-X main.BuildID $ID"
 
 #===========
 # show ver
 #===========
-./alser -version
+./funpipe -version
