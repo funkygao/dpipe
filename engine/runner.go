@@ -74,6 +74,7 @@ func NewFORunner(name string, plugin Plugin) (r *foRunner) {
 
 func (this *foRunner) Start(e *EngineConfig, wg *sync.WaitGroup) error {
 	this.engine = e
+
 	go this.run(e, wg)
 	return nil
 }
@@ -120,6 +121,7 @@ func (this *foRunner) run(e *EngineConfig, wg *sync.WaitGroup) {
 }
 
 func (this *foRunner) Inject(pack *PipelinePack) bool {
+	// TODO go func may be too much overhead
 	go func() {
 		this.engine.router.InChan() <- pack
 	}()

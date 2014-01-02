@@ -54,8 +54,9 @@ func (this *EsOutput) Run(r engine.OutputRunner, e *engine.EngineConfig) error {
 	this.indexer.Run(this.stopChan)
 
 	var (
-		pack *engine.PipelinePack
-		ok   = true
+		pack   *engine.PipelinePack
+		ok     = true
+		inChan = r.InChan()
 	)
 
 	for ok {
@@ -66,7 +67,7 @@ func (this *EsOutput) Run(r engine.OutputRunner, e *engine.EngineConfig) error {
 		case <-time.After(this.flushInterval * time.Second):
 			this.indexer.Flush()
 
-		case pack, ok = <-r.InChan():
+		case pack, ok = <-inChan:
 			if !ok {
 				// inChan closed, shutdown
 				break

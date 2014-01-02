@@ -2,7 +2,7 @@ package plugins
 
 import (
 	"github.com/funkygao/funpipe/engine"
-	//"github.com/funkygao/golib/observer"
+	"github.com/funkygao/golib/observer"
 	conf "github.com/funkygao/jsconf"
 	"github.com/funkygao/tail"
 	"os"
@@ -38,47 +38,47 @@ func (this *LogfileInput) Run(r engine.InputRunner, e *engine.EngineConfig) erro
 	if globals.Verbose {
 		globals.Printf("[%s] started\n", r.Name())
 	}
-	/*
 
-		var (
-			reloadChan  = make(chan interface{})
-			openedFiles = make(map[string]bool)
-			stopped     = false
-		)
+	var (
+		reloadChan  = make(chan interface{})
+		openedFiles = make(map[string]bool)
+		stopped     = false
+	)
 
-		observer.Subscribe(engine.RELOAD, reloadChan)
+	observer.Subscribe(engine.RELOAD, reloadChan)
 
-		for !stopped {
-			for _, fn := range this.inputs() {
-				if _, present := openedFiles[fn]; present {
-					continue
-				}
-
-				openedFiles[fn] = true
-				if globals.Debug {
-					globals.Printf("[%s] found new file input: %v\n", fn)
-				}
-				go this.runSingleLogfileInput(fn, r, e)
+	for !stopped {
+		for _, fn := range this.inputs() {
+			if _, present := openedFiles[fn]; present {
+				continue
 			}
 
-			select {
-			case <-reloadChan:
-				// TODO
-
-			case <-time.After(this.discoverInterval * time.Second):
-
-			case <-this.stopChan:
-				if globals.Verbose {
-					globals.Printf("[%s] stopped\n", r.Name())
-				}
-				stopped = true
+			openedFiles[fn] = true
+			if globals.Debug {
+				globals.Printf("[%s] found new file input: %v\n", fn)
 			}
-		}*/
+			go this.runSingleLogfileInput(fn, r, e, &stopped)
+		}
+
+		select {
+		case <-reloadChan:
+			// TODO
+
+		case <-time.After(this.discoverInterval * time.Second):
+
+		case <-this.stopChan:
+			if globals.Verbose {
+				globals.Printf("[%s] stopped\n", r.Name())
+			}
+			stopped = true
+		}
+	}
 
 	return nil
 }
 
-func (this *LogfileInput) runSingleLogfileInput(fn string, r engine.InputRunner, e *engine.EngineConfig) {
+func (this *LogfileInput) runSingleLogfileInput(fn string, r engine.InputRunner,
+	e *engine.EngineConfig, stopped *bool) {
 	var tailConf tail.Config
 	if true {
 		tailConf = tail.Config{
@@ -96,12 +96,19 @@ func (this *LogfileInput) runSingleLogfileInput(fn string, r engine.InputRunner,
 	}
 	defer t.Stop()
 
-	var pack *engine.PipelinePack
-	inChan := r.InChan()
-	globals := engine.Globals()
+	var (
+		pack    *engine.PipelinePack
+		inChan  = r.InChan()
+		globals = engine.Globals()
+	)
+
 	for line := range t.Lines {
 		if globals.Debug {
 			globals.Printf("[%s]got line: %s\n", r.Name(), line.Text)
+		}
+
+		if *stopped {
+			break
 		}
 
 		pack = <-inChan

@@ -55,11 +55,8 @@ func Launch(e *EngineConfig) {
 		globals.Println("Initializing PipelinePack pools")
 	}
 	for i := 0; i < globals.PoolSize; i++ {
-		inputPack := NewPipelinePack(e.inputRecycleChan)
-		e.inputRecycleChan <- inputPack
-
-		injectPack := NewPipelinePack(e.injectRecycleChan)
-		e.injectRecycleChan <- injectPack
+		e.inputRecycleChan <- NewPipelinePack(e.inputRecycleChan)
+		e.injectRecycleChan <- NewPipelinePack(e.injectRecycleChan)
 	}
 
 	// start the router

@@ -23,7 +23,11 @@ type EngineConfig struct {
 
 	router *messageRouter
 
-	inputRecycleChan  chan *PipelinePack
+	// PipelinePack supply for Input plugins.
+	inputRecycleChan chan *PipelinePack
+
+	// PipelinePack supply for Filter plugins (separate pool prevents
+	// deadlocks).
 	injectRecycleChan chan *PipelinePack
 
 	hostname  string
@@ -75,7 +79,7 @@ func (this *EngineConfig) Project(name string) *ConfProject {
 	return &p
 }
 
-// For filter to generate new messages
+// For Filter to generate new messages
 func (this *EngineConfig) PipelinePack(msgLoopCount int) *PipelinePack {
 	if msgLoopCount++; msgLoopCount > Globals().MaxMsgLoops {
 		return nil

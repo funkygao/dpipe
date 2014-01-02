@@ -48,6 +48,10 @@ func (this *iRunner) Ticker() <-chan time.Time {
 	return this.ticker
 }
 
+func (this *iRunner) Inject(pack *PipelinePack) {
+	this.engine.router.InChan() <- pack
+}
+
 func (this *iRunner) InChan() chan *PipelinePack {
 	return this.inChan
 }
@@ -58,7 +62,7 @@ func (this *iRunner) Input() Input {
 
 func (this *iRunner) Start(e *EngineConfig, wg *sync.WaitGroup) error {
 	this.engine = e
-	this.inChan = e.injectRecycleChan
+	this.inChan = e.inputRecycleChan
 
 	if this.tickLength > 0 {
 		this.ticker = time.Tick(this.tickLength)
@@ -89,10 +93,6 @@ func (this *iRunner) run(e *EngineConfig, wg *sync.WaitGroup) {
 		iw := e.inputWrappers[this.name]
 		this.plugin = iw.Create()
 	}
-}
-
-func (this *iRunner) Inject(pack *PipelinePack) {
-	this.engine.router.InChan() <- pack
 }
 
 func NewInputRunner(name string, input Input) (r InputRunner) {

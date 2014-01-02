@@ -1,6 +1,6 @@
-=====================
-pipeline architecture
-=====================
+============================
+engine pipeline architecture
+============================
 
 :Author: Gao Peng <funky.gao@gmail.com>
 :Description: NA
@@ -9,8 +9,8 @@ pipeline architecture
 .. contents:: Table Of Contents
 .. section-numbering::
 
-diagram
-=======
+overview
+========
 
 ::
 
