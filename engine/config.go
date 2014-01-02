@@ -117,7 +117,7 @@ func (this *EngineConfig) LoadConfigFile(fn string) {
 
 	// 'plugins' section
 	for i := 0; i < len(this.List("plugins", nil)); i++ {
-		this.loadSection(fmt.Sprintf("plugins[%d]", i))
+		this.loadPluginSection(fmt.Sprintf("plugins[%d]", i))
 	}
 
 	if globals.Debug {
@@ -125,7 +125,7 @@ func (this *EngineConfig) LoadConfigFile(fn string) {
 	}
 }
 
-func (this *EngineConfig) loadSection(keyPrefix string) {
+func (this *EngineConfig) loadPluginSection(keyPrefix string) {
 	var (
 		ok      bool
 		globals = Globals()

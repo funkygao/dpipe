@@ -1,7 +1,8 @@
 {
     plugins: [
         {
-            name: "LogfileInput"
+            name:   "LogfileInput"
+            class:  "LogfileInput"
         }
         
         {

@@ -10,15 +10,12 @@
         }
         {
             name:   "ffs"
-            logger: "var/ffs.log"
         }
         {
             name:   "ff2"
-            logger: "var/ff2.log"
         }
         {
             name:   "ff"
-            logger: "var/ff.log"
         }
     ]
 
