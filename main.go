@@ -4,8 +4,10 @@ import (
 	"fmt"
 	"github.com/funkygao/funpipe/engine"
 	"github.com/funkygao/golib/locking"
+	"github.com/funkygao/golib/signal"
 	"os"
 	"runtime/debug"
+	"syscall"
 )
 
 func init() {
@@ -22,6 +24,8 @@ func init() {
 		}
 		locking.LockInstance(options.lockfile)
 	}
+
+	signal.IgnoreSignal(syscall.SIGHUP)
 
 	globals = engine.DefaultGlobals()
 	globals.Debug = options.debug

@@ -23,7 +23,7 @@ type LogfileInput struct {
 }
 
 func (this *LogfileInput) Init(config interface{}) {
-	if globals.Debug {
+	if engine.Globals().Debug {
 		pretty.Printf("%# v\n", config)
 	}
 
