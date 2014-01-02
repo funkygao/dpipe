@@ -14,6 +14,8 @@ type LogfileInputConfig struct {
 	DiscoverInterval int    `json:"discovery_interval"`
 	Tail             bool   `json:"tail"`
 	Glob             string `json:"glob"`
+	Name             string `json:"name"`
+	Class            string `json:"class"`
 }
 
 type LogfileInput struct {
