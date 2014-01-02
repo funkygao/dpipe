@@ -3,6 +3,7 @@ package plugins
 import (
 	"github.com/funkygao/funpipe/engine"
 	conf "github.com/funkygao/jsconf"
+	"time"
 )
 
 type SelfSysInput struct {
