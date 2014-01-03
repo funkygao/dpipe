@@ -2,26 +2,25 @@
 package plugins
 
 import (
+	"fmt"
 	"github.com/funkygao/als"
 	"github.com/funkygao/funpipe/engine"
 	"github.com/funkygao/golib"
 	conf "github.com/funkygao/jsconf"
 	"github.com/mattbaird/elastigo/api"
 	"github.com/mattbaird/elastigo/core"
+	"strings"
 	"time"
 )
 
-type EsOutputConfig struct {
-	FlushInterval int `json:"flush_interval"`
-	BulkMaxConn   int `json:"bulk_max_conn"`
-	BulkMaxDocs   int `json:"bulk_max_docs"`
-	BulkMaxBuffer int `json:"bulk_max_buffer"` // in Byte
-}
-
 type EsOutput struct {
 	flushInterval time.Duration
-	stopChan      chan bool
+	bulkMaxConn   int `json:"bulk_max_conn"`
+	bulkMaxDocs   int `json:"bulk_max_docs"`
+	bulkMaxBuffer int `json:"bulk_max_buffer"` // in Byte
 	indexer       *core.BulkIndexer
+	index         string
+	stopChan      chan bool
 }
 
 func (this *EsOutput) Init(config *conf.Conf) {
@@ -30,15 +29,14 @@ func (this *EsOutput) Init(config *conf.Conf) {
 		globals.Printf("%#v\n", *config)
 	}
 
+	this.stopChan = make(chan bool)
+	this.index = config.String("index", "")
 	api.Domain = config.String("domain", "localhost")
 	api.Port = config.String("port", "9200")
-
 	this.flushInterval = time.Duration(config.Int("flush_interval", 30))
-
-	this.stopChan = make(chan bool)
-	this.indexer = core.NewBulkIndexer(config.Int("bulk_max_conn", 20))
-	this.indexer.BulkMaxDocs = config.Int("bulk_max_docs", 100)
-	this.indexer.BulkMaxBuffer = config.Int("bulk_max_buffer", 10<<20) // 10 MB
+	this.bulkMaxConn = config.Int("bulk_max_conn", 20)
+	this.bulkMaxDocs = config.Int("bulk_max_docs", 100)
+	this.bulkMaxBuffer = config.Int("bulk_max_buffer", 10<<20) // 10 MB
 }
 
 func (this *EsOutput) Run(r engine.OutputRunner, e *engine.EngineConfig) error {
@@ -46,6 +44,10 @@ func (this *EsOutput) Run(r engine.OutputRunner, e *engine.EngineConfig) error {
 	if globals.Verbose {
 		globals.Printf("[%s] started\n", r.Name())
 	}
+
+	this.indexer = core.NewBulkIndexer(this.bulkMaxConn)
+	this.indexer.BulkMaxDocs = this.bulkMaxDocs
+	this.indexer.BulkMaxBuffer = this.bulkMaxBuffer
 
 	// load geoip db
 	als.LoadGeoDb(e.String("geodbfile", ""))
@@ -94,7 +96,28 @@ func (this *EsOutput) feedEs(pack *engine.PipelinePack) {
 	data, _ := pack.Message.MarshalPayload()
 	id, _ := golib.UUID()
 
-	this.indexer.Index("index", "_type", id, "", &date, data) // ttl empty
+	this.indexer.Index(this.indexName(pack.Project, &date),
+		pack.Logfile.BizName(), id, "", &date, data) // ttl empty
+}
+
+func (this *EsOutput) indexName(project string, date *time.Time) string {
+	const (
+		YM           = "@ym"
+		INDEX_PREFIX = "fun_"
+	)
+
+	if strings.HasSuffix(this.index, YM) {
+		prefix := project
+		fields := strings.SplitN(this.index, YM, 2)
+		if fields[0] != "" {
+			// e,g. rs@ym
+			prefix = fields[0]
+		}
+
+		return fmt.Sprintf("%s%s_%d_%d", INDEX_PREFIX, prefix, date.Year(), int(date.Month()))
+	}
+
+	return INDEX_PREFIX + this.index
 }
 
 func (this *EsOutput) Stop() {
