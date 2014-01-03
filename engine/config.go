@@ -4,6 +4,7 @@ import (
 	"fmt"
 	conf "github.com/funkygao/jsconf"
 	"os"
+	"time"
 )
 
 type EngineConfig struct {
@@ -170,6 +171,13 @@ func (this *EngineConfig) loadPluginSection(keyPrefix string) {
 	case "Input":
 		this.InputRunners[wrapper.name] = NewInputRunner(wrapper.name, plugin.(Input))
 		this.inputWrappers[wrapper.name] = wrapper
+
+		if tickerer, ok := plugin.(Tickerable); ok {
+			tickerLen := tickerer.TickerInterval()
+			if tickerLen > 0 {
+				this.InputRunners[wrapper.name].SetTickLength(time.Duration(tickerLen) * time.Second)
+			}
+		}
 
 	case "Filter":
 		runner := NewFORunner(wrapper.name, plugin)

@@ -7,11 +7,10 @@ import (
 	"github.com/funkygao/tail"
 	"os"
 	"path/filepath"
-	"time"
 )
 
 type LogfileInput struct {
-	discoverInterval time.Duration
+	discoverInterval int
 	stopChan         chan bool
 }
 
@@ -21,7 +20,7 @@ func (this *LogfileInput) Init(config *conf.Conf) {
 		globals.Printf("%#v\n", *config)
 	}
 
-	this.discoverInterval = time.Duration(config.Int("discovery_interval", 5))
+	this.discoverInterval = config.Int("discovery_interval", 5)
 	this.stopChan = make(chan bool)
 }
 
@@ -31,6 +30,10 @@ func (this *LogfileInput) Stop() {
 
 func (this *LogfileInput) CleanupForRestart() {
 
+}
+
+func (this *LogfileInput) TickerInterval() int {
+	return this.discoverInterval
 }
 
 func (this *LogfileInput) Run(r engine.InputRunner, e *engine.EngineConfig) error {
@@ -64,7 +67,7 @@ func (this *LogfileInput) Run(r engine.InputRunner, e *engine.EngineConfig) erro
 		case <-reloadChan:
 			// TODO
 
-		case <-time.After(this.discoverInterval * time.Second):
+		case <-r.Ticker():
 
 		case <-this.stopChan:
 			if globals.Verbose {

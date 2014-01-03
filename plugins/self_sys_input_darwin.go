@@ -3,12 +3,11 @@ package plugins
 import (
 	"github.com/funkygao/funpipe/engine"
 	conf "github.com/funkygao/jsconf"
-	"time"
 )
 
 type SelfSysInput struct {
 	stopChan chan bool
-	interval time.Duration
+	interval int
 }
 
 func (this *SelfSysInput) Init(config *conf.Conf) {
@@ -18,7 +17,11 @@ func (this *SelfSysInput) Init(config *conf.Conf) {
 	}
 
 	this.stopChan = make(chan bool)
-	this.interval = time.Duration(config.Int("interval", 10))
+	this.interval = config.Int("interval", 10)
+}
+
+func (this *SelfSysInput) TickerInterval() int {
+	return this.interval
 }
 
 func (this *SelfSysInput) Run(r engine.InputRunner, e *engine.EngineConfig) error {
@@ -36,7 +39,7 @@ func (this *SelfSysInput) Run(r engine.InputRunner, e *engine.EngineConfig) erro
 		case <-this.stopChan:
 			stopped = true
 
-		case <-time.After(this.interval * time.Second):
+		case <-r.Ticker():
 			// same effect as sleep
 		}
 	}
