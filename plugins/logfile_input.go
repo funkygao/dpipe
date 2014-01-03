@@ -148,6 +148,7 @@ func (this *LogfileInput) runSingleLogfileInput(fn string, r engine.InputRunner,
 		pack = <-inChan
 		pack.Message.FromLine(line.Text)
 		pack.Project = project
+		pack.Logfile.SetPath(fn)
 		pack.Nexts = nexts
 		r.Inject(pack)
 	}

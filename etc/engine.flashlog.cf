@@ -1,0 +1,44 @@
+{
+    projects: [
+        {
+            name:       "rs"
+            alarm_to:   "peng.gao@funplusgame.com,zhengkai@gmail.com,yan.zhang@funplusgame.com"
+            // logfile: "var/rs.log"    # default var/{name}.log
+            // index_prefix: "rs"       # default {name}
+        }
+    ]
+
+    plugins: [
+        {
+            name:   "FlashlogInput"
+            dsn:    "flashlog:flashlog@unix(/var/run/mysqld/mysqld.sock)/flashlog?charset=utf8"
+        }
+
+        {
+            name:   "DebugOutput"
+        }
+
+        {
+            name:   "EsOutput"
+            index:  "@ym"
+            domain: "localhost"
+            port: "9200"
+            flush_interval: 30
+            bulk_max_conn: 20
+            bulk_max_docs: 100
+        }
+
+        {
+            name:   "AlarmOutput"
+        }
+
+        {
+            name:   "SelfSysInput"
+            interval: 10
+            nexts:  [
+                "EsOutput",
+            ]
+        }
+    ]
+
+}
