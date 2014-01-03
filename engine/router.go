@@ -53,12 +53,12 @@ func (this *messageRouter) RemoveOutputMatcher() chan *Matcher {
 }
 
 func (this *messageRouter) Start() {
-	go this.mainloop()
+	go this.runMainloop()
 
 	Globals().Println("Router started")
 }
 
-func (this *messageRouter) mainloop() {
+func (this *messageRouter) runMainloop() {
 	var (
 		globals = Globals()
 		ok      = true
@@ -128,7 +128,7 @@ func (this *messageRouter) mainloop() {
 				break
 			}
 
-			// so as to audit messages count
+			// messages count auditting
 			atomic.AddInt64(&this.processMessageCount, 1)
 
 			for _, matcher = range this.fMatchers {

@@ -20,6 +20,7 @@ type PipelinePack struct {
 	Nexts []string
 	// Project name
 	Project string
+	DSN     string
 
 	// To avoid infinite message loops
 	MsgLoopCount int

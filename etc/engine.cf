@@ -2,7 +2,7 @@
     projects: [
         {
             name:       "rs"
-            mail_to:    "peng.gao@funplusgame.com,zhengkai@gmail.com,yan.zhang@funplusgame.com"
+            alarm_to:   "peng.gao@funplusgame.com,zhengkai@gmail.com,yan.zhang@funplusgame.com"
             // logfile: "var/rs.log"    # default var/{name}.log
             // index_prefix: "rs"       # default {name}
         }
@@ -44,6 +44,7 @@
 
         {
             name:   "EsOutput"
+            index:  "@ym"
         }
 
         {
