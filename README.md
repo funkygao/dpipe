@@ -99,9 +99,9 @@ Performing "in-flight" processing of collected data, real time streaming analysi
 
 ### Implementation
 
-#### PipelinePack DataFlow
+#### PipelinePack
 
-buffer size of PipelinePack
+##### buffer size of PipelinePack
 
 * EngineConfig
   - PoolSize
@@ -111,6 +111,7 @@ buffer size of PipelinePack
   - PluginChanSize
 
 
+##### data flow
 
                             -------<--------+
                             |               |
