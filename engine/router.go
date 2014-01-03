@@ -100,7 +100,7 @@ func (this *messageRouter) mainloop() {
 			if matcher != nil {
 				for i, m := range this.fMatchers {
 					if matcher == m {
-						close(m.inChan)
+						//close(m.inChan)
 						this.fMatchers[i] = nil
 						break
 					}
@@ -111,7 +111,7 @@ func (this *messageRouter) mainloop() {
 			if matcher != nil {
 				for i, m := range this.oMatchers {
 					if matcher == m {
-						close(m.inChan)
+						//close(m.inChan)
 						this.oMatchers[i] = nil
 						break
 					}
