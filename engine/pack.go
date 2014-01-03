@@ -18,6 +18,8 @@ type PipelinePack struct {
 
 	// Routing table
 	Nexts []string
+	// Project name
+	Project string
 
 	// To avoid infinite message loops
 	MsgLoopCount int
