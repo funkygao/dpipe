@@ -48,7 +48,7 @@ Performing "in-flight" processing of collected data, real time streaming analysi
                               realtime analysis     indexer     archive    BehaviorDB      S3
                                    |                   |           |           |           |
             +----------------------|                   |           |           |           |
-            |                      |                   |           |           |           |
+            |statistics            |alarming           |           |           |           |
        +----------+       +-----------------+          |           |           |           |
        |          |       |    |     |      |   ElasticSearch    HDFS      LevelDB/sky   RedShift
      quantile   hyper     |    |   color    |          |           |           |           |
@@ -63,7 +63,7 @@ Performing "in-flight" processing of collected data, real time streaming analysi
 #### Data
 
 *   app performance metrics: statsd/graphite
-*   app biz metrics: analytics/MR/dashboard
+*   app biz metrics: ES/analytics/MR/dashboard
 *   app error/traceback: arecibo/sentry
 *   security/anomalous activity events: CEF/CEP/arcsight
 *   log file messages: logstash/syslog
