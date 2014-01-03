@@ -34,7 +34,7 @@ Performing "in-flight" processing of collected data, real time streaming analysi
              -----------------------------------------------
                                     |
                                     | HTTP POST
-                                    |
+                                    V
                             +-----------------+
                             |   ALS Server    |
                             |-----------------| 
@@ -44,7 +44,7 @@ Performing "in-flight" processing of collected data, real time streaming analysi
                                         |<----------------------------------------------------------------------+
                                         |                                                                       |
                                         | input/decode/clean/filter/output                                      |
-                                        |                                                                       |
+                                        V                                                                       |
                                    +----------------------------------------------------------------+           |
                                    |                   |           |           |           |        |           |
                               realtime analysis     indexer     archive    BehaviorDB      S3   hierarchy       |
@@ -126,7 +126,7 @@ Performing "in-flight" processing of collected data, real time streaming analysi
                 |
                 |     +--------------------------------------------------------+
         consume |     |                     Router.inChan                      |
-                |     +--------------------------------------------------------+
+                V     +--------------------------------------------------------+
               Input         ^           |               |                   ^
                 |           |           | put           | put               |
                 |           |           V               V                   |
