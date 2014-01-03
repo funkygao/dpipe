@@ -20,7 +20,7 @@ type PipelinePack struct {
 	Nexts []string
 	// Project name
 	Project string
-	DSN     string
+	Logfile *als.AlsLogfile
 
 	// To avoid infinite message loops
 	MsgLoopCount int
@@ -32,6 +32,7 @@ func NewPipelinePack(recycleChan chan *PipelinePack) (this *PipelinePack) {
 		RefCount:     int32(1),
 		MsgLoopCount: 0,
 		Message:      als.NewAlsMessage(),
+		Logfile:      als.NewAlsLogfile(),
 	}
 }
 
