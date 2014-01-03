@@ -3,24 +3,12 @@ funpipe
 
 Performing "in-flight" processing of collected data, real time streaming analysis and alarming, and delivering the results to any number of destinations for further analysis.
 
-*   aimed to be swiss knife kind tool instead of a complex system.
-*   different from splunk which is basically a search engine.
-*   different from opentsdb which is metrics based while funpipe is event based.
-*   like logstash but can do more data manipulations and has feature of real time analysis.
-
-
 [![Build Status](https://travis-ci.org/funkygao/funpipe.png?branch=master)](https://travis-ci.org/funkygao/funpipe)
 
 ### Install
 
     go get github.com/funkygao/funpipe
     funpipe -h # help
-
-### Core Problems
-
-*   acquire some generated data
-*   process/collate said data for audience consumption
-*   deliver processed data to appropriate destination
 
 ### Features
 
@@ -29,6 +17,7 @@ Performing "in-flight" processing of collected data, real time streaming analysi
 *   deliver collated data to intended destination(s)
 *   approximate quantiles over an unbounded data stream(such as MAU)
 *   sliding-window events alarming
+*   distributed cluster ready
 
 ### Architecture
 
@@ -52,28 +41,24 @@ Performing "in-flight" processing of collected data, real time streaming analysi
                             | funpipe daemon  |
                             +-----------------+
                                     |
-                                    | clean/filter/parse/transform based on rule engine
+                                    | input/decode/clean/filter/output
                                     |
-                                    | output target
-                                    |
-                            +-------------------------------------------------------+
-                            |                   |           |           |           |
-                       realtime analysis     indexer     archive    BehaviorDB      S3
-                            |                   |           |           |           |
-                   +-----------------+          |           |           |           |
-                   |    |     |      |   ElasticSearch    HDFS      LevelDB/sky   RedShift
-                 beep email console etc         |           |           |           |
-                   |    |     |      |          |           |           |           |
-                   +-----------------+       Kibana3        |           |        tableau
-                            |                   |           |           |           |
-                         dev/ops               PM                                  PM
+                                   +-------------------------------------------------------+
+                                   |                   |           |           |           |
+                              realtime analysis     indexer     archive    BehaviorDB      S3
+                                   |                   |           |           |           |
+            +----------------------|                   |           |           |           |
+            |                      |                   |           |           |           |
+       +----------+       +-----------------+          |           |           |           |
+       |          |       |    |     |      |   ElasticSearch    HDFS      LevelDB/sky   RedShift
+     quantile   hyper     |    |   color    |          |           |           |           |
+    histogram  loglog   beep email console etc         |           |           |           |
+      topN        |       |    |     |      |          |           |           |           |
+       |          |       +-----------------+       Kibana3        |           |        tableau
+       +----------+                |                   |           |           |           |
+            |                      |                   |           |           |           |
+          PM/dev                dev/ops               PM          ops         PM          PM
 
-#### Parsers
-
-*   data filtering
-*   data parsing
-*   data chaining
-*   data monitoring and alarming
 
 #### Data
 
@@ -87,6 +72,7 @@ Performing "in-flight" processing of collected data, real time streaming analysi
 ### BI
 
 * T+1
+* T+0
 
 * RealTime/streaming
 
@@ -112,4 +98,43 @@ Performing "in-flight" processing of collected data, real time streaming analysi
         +-------+   +-------+   +-------+   +-------+       +-------------------------+
         |secure |   | debug |   |monitor|   |analyse|
         +-------+   +-------+   +-------+   +-------+
+
+### Implementation
+
+#### PipelinePack DataFlow
+
+buffer size of PipelinePack
+
+* EngineConfig
+  - PoolSize
+* Runner
+  - PluginChanSize
+* Router
+  - PluginChanSize
+
+
+
+                        -------<--------+
+                        |               |
+                        V               | generate pool
+       EngineConfig.inputRecycleChan    | recycling
+            |           |               |
+            | is        +------->-------+
+            |
+    InputRunner.inChan
+            |
+            |     +--------------------------------------------------------+
+    consume |     |                     Router.inChan                      |
+            |     +--------------------------------------------------------+
+          Input         ^           |               |                   ^
+            |           |           | put           | put               |
+            V           |           V               V                   |
+            +-----------+  OutputRunner.inChan   FilterRunner.inChan    |
+              inject                |               |                   |
+                                    | consume       | consume           | inject
+                                    V               V                   |
+                                 Output           +------------------------+
+                                                  |         Filter         |
+                                                  +------------------------+
+
 
