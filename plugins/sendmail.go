@@ -3,7 +3,7 @@ Use sendmail command instead of SMTP to send email.
 
 You have to install a MTA on localhost before using this pkg.
 */
-package parser
+package plugins
 
 import (
 	"bytes"
