@@ -41,19 +41,21 @@ Performing "in-flight" processing of collected data, real time streaming analysi
                             | funpipe daemon  |
                             +-----------------+
                                         |
-                                        | input/decode/clean/filter/output
-                                        |
-                                   +-------------------------------------------------------+
-                                   |                   |           |           |           |
-                              realtime analysis     indexer     archive    BehaviorDB      S3
-                                   |                   |           |           |           |
-            +----------------------|                   |           |           |           |
-            |statistics            |alarming           |           |           |           |
-       +----------+       +-----------------+          |           |           |           |
-       |          |       |    |     |      |   ElasticSearch    HDFS      LevelDB/sky   RedShift
-     quantile   hyper     |    |   color    |          |           |           |           |
-    histogram  loglog   beep email console etc         |           |           |           |
-      topN        |       |    |     |      |          |           |           |           |
+                                        |<----------------------------------------------------------------------+
+                                        |                                                                       |
+                                        | input/decode/clean/filter/output                                      |
+                                        |                                                                       |
+                                   +----------------------------------------------------------------+           |
+                                   |                   |           |           |           |        |           |
+                              realtime analysis     indexer     archive    BehaviorDB      S3   hierarchy       |
+                                   |                   |           |           |           |    deployment      |
+            +----------------------|                   |           |           |           |        |           |
+            |statistics            |alarming           |           |           |           |        |           |
+       +----------+       +-----------------+          |           |           |           |        |           |
+       |          |       |    |     |      |   ElasticSearch    HDFS      LevelDB/sky   RedShift  funpipe      |
+     quantile   hyper     |    |   color    |          |           |           |           |        |           |
+    histogram  loglog   beep email console etc         |           |           |           |        |           |
+      topN        |       |    |     |      |          |           |           |           |        +-----------+
        |          |       +-----------------+       Kibana3        |           |        tableau
        +----------+                |                   |           |           |           |
             |                      |                   |           |           |           |
