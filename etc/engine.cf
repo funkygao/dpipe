@@ -21,6 +21,16 @@
         {
             name:   "LogfileInput"
             class:  "LogfileInput"
+            discovery_interval: 5
+            sources: [
+                {
+                    glob:   "/mnt/funplus/logs/fp_ffseaside/bi_*"
+                    proj:   "ffs"
+                    nexts:  [
+                        "EsOutput",
+                    ]
+                }
+            ]
         }
         
         {
@@ -43,6 +53,9 @@
         {
             name:   "SelfSysInput"
             interval: 10
+            nexts:  [
+                "EsOutput",
+            ]
         }
     ]
 

@@ -14,9 +14,10 @@ type PipelinePack struct {
 	Message *als.AlsMessage
 
 	RecycleChan chan *PipelinePack
+	RefCount    int32
 
-	// Recycle/reuse when zero
-	RefCount int32
+	// Routing table
+	Nexts []string
 
 	// To avoid infinite message loops
 	MsgLoopCount int

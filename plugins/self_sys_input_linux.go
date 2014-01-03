@@ -18,6 +18,7 @@ import (
 type SelfSysInput struct {
 	stopChan chan bool
 	interval int
+	nexts    []string
 }
 
 func (this *SelfSysInput) Init(config *conf.Conf) {
@@ -28,6 +29,10 @@ func (this *SelfSysInput) Init(config *conf.Conf) {
 
 	this.stopChan = make(chan bool)
 	this.interval = config.Int("interval", 10)
+	this.nexts = config.StringList("nexts", nil)
+	if this.nexts == nil {
+		panic("SelfSysInput has nil nexts")
+	}
 }
 
 func (this *SelfSysInput) TickerInterval() int {
@@ -57,6 +62,7 @@ func (this *SelfSysInput) Run(r engine.InputRunner, e *engine.EngineConfig) erro
 		pack = <-inChan
 		pack.Message.FromLine(fmt.Sprintf("als,%d,%s",
 			time.Now().Unix(), jsonString))
+		pack.Nexts = this.nexts
 		r.Inject(pack)
 
 		select {

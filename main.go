@@ -33,8 +33,9 @@ func init() {
 	globals.Debug = options.debug
 	globals.Verbose = options.verbose
 	globals.DryRun = options.dryrun
-	globals.Logger = newLogger()
 	globals.TickerLength = options.tick
+	globals.Tail = options.tail
+	globals.Logger = newLogger()
 }
 
 func main() {

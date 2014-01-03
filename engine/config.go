@@ -71,7 +71,7 @@ func NewEngineConfig(globals *GlobalConfigStruct) (this *EngineConfig) {
 func (this *EngineConfig) Project(name string) *ConfProject {
 	p, present := this.projects[name]
 	if !present {
-		return nil
+		panic("invalid project: " + name)
 	}
 
 	return &p
