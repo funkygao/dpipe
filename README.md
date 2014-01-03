@@ -113,12 +113,12 @@ Performing "in-flight" processing of collected data, real time streaming analysi
 
 ##### data flow
 
-                            -------<--------+
+                            -------<-------- 
                             |               |
                             V               | generate pool
            EngineConfig.inputRecycleChan    | recycling
                 |           |               |
-                | is        +------->-------+
+                | is         ------->------- 
                 |
         InputRunner.inChan
                 |
@@ -127,8 +127,8 @@ Performing "in-flight" processing of collected data, real time streaming analysi
                 |     +--------------------------------------------------------+
               Input         ^           |               |                   ^
                 |           |           | put           | put               |
-                V           |           V               V                   |
-                +-----------+  OutputRunner.inChan   FilterRunner.inChan    |
+                |           |           V               V                   |
+                 ----->-----   OutputRunner.inChan   FilterRunner.inChan    |
                   inject                |               |                   |
                                         | consume       | consume           | inject
                                         V               V                   |
