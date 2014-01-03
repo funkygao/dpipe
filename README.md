@@ -40,9 +40,9 @@ Performing "in-flight" processing of collected data, real time streaming analysi
                             |-----------------| 
                             | funpipe daemon  |
                             +-----------------+
-                                    |
-                                    | input/decode/clean/filter/output
-                                    |
+                                        |
+                                        | input/decode/clean/filter/output
+                                        |
                                    +-------------------------------------------------------+
                                    |                   |           |           |           |
                               realtime analysis     indexer     archive    BehaviorDB      S3
