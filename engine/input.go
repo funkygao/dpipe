@@ -2,7 +2,6 @@ package engine
 
 import (
 	"sync"
-	"time"
 )
 
 type Input interface {
@@ -13,15 +12,11 @@ type Input interface {
 type InputRunner interface {
 	PluginRunner
 
-	// Input channel from which Inputs can get fresh PipelinePacks, ready to
-	// be populated.
+	// Input channel from which Inputs can get fresh PipelinePacks
 	InChan() chan *PipelinePack
 
 	// Associated Input plugin object.
 	Input() Input
-
-	SetTickLength(tickLength time.Duration)
-	Ticker() (ticker <-chan time.Time)
 
 	Start(e *EngineConfig, wg *sync.WaitGroup) (err error)
 
@@ -33,19 +28,7 @@ type InputRunner interface {
 type iRunner struct {
 	pRunnerBase
 
-	tickLength time.Duration
-	ticker     <-chan time.Time
-
-	input  Input
 	inChan chan *PipelinePack
-}
-
-func (this *iRunner) SetTickLength(tickLength time.Duration) {
-	this.tickLength = tickLength
-}
-
-func (this *iRunner) Ticker() <-chan time.Time {
-	return this.ticker
 }
 
 func (this *iRunner) Inject(pack *PipelinePack) {
@@ -62,17 +45,13 @@ func (this *iRunner) Input() Input {
 
 func (this *iRunner) Start(e *EngineConfig, wg *sync.WaitGroup) error {
 	this.engine = e
-	this.inChan = e.inputRecycleChan
+	this.inChan = e.inputRecycleChan // got the engine PipelinePack pool
 
-	if this.tickLength > 0 {
-		this.ticker = time.Tick(this.tickLength)
-	}
-
-	go this.run(e, wg)
+	go this.runMainloop(e, wg)
 	return nil
 }
 
-func (this *iRunner) run(e *EngineConfig, wg *sync.WaitGroup) {
+func (this *iRunner) runMainloop(e *EngineConfig, wg *sync.WaitGroup) {
 	defer wg.Done()
 
 	globals := Globals()
@@ -101,6 +80,5 @@ func NewInputRunner(name string, input Input) (r InputRunner) {
 			name:   name,
 			plugin: input.(Plugin),
 		},
-		input: input,
 	}
 }

@@ -25,6 +25,7 @@
         
         {
             name:   "FlashlogInput"
+            dsn:    "flashlog:flashlog@unix(/var/run/mysqld/mysqld.sock)/flashlog?charset=utf8"
         }
 
         {

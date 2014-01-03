@@ -60,26 +60,26 @@ func (this *pRunnerBase) LeakCount() int {
 	return this.leakCount
 }
 
-func NewFORunner(name string, plugin Plugin) (r *foRunner) {
-	r = &foRunner{
+func NewFORunner(name string, plugin Plugin) (this *foRunner) {
+	this = &foRunner{
 		pRunnerBase: pRunnerBase{
 			name:   name,
 			plugin: plugin,
 		},
 	}
 
-	r.inChan = make(chan *PipelinePack, Globals().PluginChanSize)
+	this.inChan = make(chan *PipelinePack, Globals().PluginChanSize)
 	return
 }
 
 func (this *foRunner) Start(e *EngineConfig, wg *sync.WaitGroup) error {
 	this.engine = e
 
-	go this.run(e, wg)
+	go this.runMainloop(e, wg)
 	return nil
 }
 
-func (this *foRunner) run(e *EngineConfig, wg *sync.WaitGroup) {
+func (this *foRunner) runMainloop(e *EngineConfig, wg *sync.WaitGroup) {
 	defer wg.Done()
 
 	var (
@@ -99,11 +99,12 @@ func (this *foRunner) run(e *EngineConfig, wg *sync.WaitGroup) {
 			panic("unkown plugin type")
 		}
 
+		// Plugin return from 'Run', they died? or we want to stop?
+
 		if globals.Stopping {
 			return
 		}
 
-		//
 		if recon, ok := this.plugin.(Restarting); ok {
 			recon.CleanupForRestart()
 		}
