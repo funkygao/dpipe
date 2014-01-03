@@ -74,8 +74,6 @@ Performing "in-flight" processing of collected data, real time streaming analysi
 * T+1
 * T+0
 
-* RealTime/streaming
-
         +-------+   +-------+   +-------+   +-------+
         | app   |   | app   |   | app   |   | app   |
         |-------|   |-------|   |-------|   |-------|
@@ -114,27 +112,27 @@ buffer size of PipelinePack
 
 
 
-                        -------<--------+
-                        |               |
-                        V               | generate pool
-       EngineConfig.inputRecycleChan    | recycling
-            |           |               |
-            | is        +------->-------+
-            |
-    InputRunner.inChan
-            |
-            |     +--------------------------------------------------------+
-    consume |     |                     Router.inChan                      |
-            |     +--------------------------------------------------------+
-          Input         ^           |               |                   ^
-            |           |           | put           | put               |
-            V           |           V               V                   |
-            +-----------+  OutputRunner.inChan   FilterRunner.inChan    |
-              inject                |               |                   |
-                                    | consume       | consume           | inject
-                                    V               V                   |
-                                 Output           +------------------------+
-                                                  |         Filter         |
-                                                  +------------------------+
-
-
+                            -------<--------+
+                            |               |
+                            V               | generate pool
+           EngineConfig.inputRecycleChan    | recycling
+                |           |               |
+                | is        +------->-------+
+                |
+        InputRunner.inChan
+                |
+                |     +--------------------------------------------------------+
+        consume |     |                     Router.inChan                      |
+                |     +--------------------------------------------------------+
+              Input         ^           |               |                   ^
+                |           |           | put           | put               |
+                V           |           V               V                   |
+                +-----------+  OutputRunner.inChan   FilterRunner.inChan    |
+                  inject                |               |                   |
+                                        | consume       | consume           | inject
+                                        V               V                   |
+                                     Output           +------------------------+
+                                                      |         Filter         |
+                                                      +------------------------+
+    
+    
