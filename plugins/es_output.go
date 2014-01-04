@@ -99,7 +99,7 @@ func (this *EsOutput) feedEs(pack *engine.PipelinePack) {
 	id, _ := golib.UUID()
 
 	this.indexer.Index(this.indexName(pack.Project, &date),
-		pack.Logfile.BizName(), id, "", &date, data) // ttl empty
+		pack.Logfile.CamalCaseName(), id, "", &date, data) // ttl empty
 }
 
 func (this *EsOutput) indexName(project string, date *time.Time) string {
