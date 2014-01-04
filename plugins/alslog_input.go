@@ -147,6 +147,7 @@ func (this *AlsLogInput) runSingleAlsLogInput(fn string, r engine.InputRunner,
 		pack = <-inChan
 		if err := pack.Message.FromLine(line.Text); err != nil {
 			e.Project(source.project).Printf("%v <= %s\n", err, line.Text)
+			pack.Recycle()
 			continue
 		}
 
