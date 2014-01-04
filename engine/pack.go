@@ -8,7 +8,7 @@ import (
 
 // Main pipeline data structure containing a AlsMessage and other metadata
 type PipelinePack struct {
-	// Raw data yet be decoded to AlsMessage obj TODO
+	// Raw data yet to be decoded
 	MsgBytes []byte
 
 	// AlsMessage obj pointer
@@ -42,7 +42,7 @@ func NewPipelinePack(recycleChan chan *PipelinePack) (this *PipelinePack) {
 }
 
 func (this *PipelinePack) IncRef() {
-	atomic.AddInt32(this.RefCount, 1)
+	atomic.AddInt32(&this.RefCount, 1)
 }
 
 func (this *PipelinePack) Reset() {
