@@ -62,7 +62,7 @@ type PacketTracking struct {
 	LastAccess time.Time
 
 	// Records the plugins the packet has been handed to
-	lastPlugins []PluginRunner
+	pluginRunners []PluginRunner
 }
 
 func NewPacketTracking() *PacketTracking {
@@ -70,18 +70,18 @@ func NewPacketTracking() *PacketTracking {
 }
 
 func (this *PacketTracking) AddStamp(pluginRunner PluginRunner) {
-	this.lastPlugins = append(this.lastPlugins, pluginRunner)
+	this.pluginRunners = append(this.pluginRunners, pluginRunner)
 	this.LastAccess = time.Now()
 }
 
 func (this *PacketTracking) Reset() {
-	this.lastPlugins = this.lastPlugins[:0] // a tip in golang to avoid re-alloc
+	this.pluginRunners = this.pluginRunners[:0] // a tip in golang to avoid re-alloc
 	this.LastAccess = time.Now()
 }
 
 func (this *PacketTracking) PluginNames() (names []string) {
 	names = make([]string, 0, 4)
-	for _, pr := range this.lastPlugins {
+	for _, pr := range this.pluginRunners {
 		names = append(names, pr.Name())
 	}
 
@@ -89,5 +89,5 @@ func (this *PacketTracking) PluginNames() (names []string) {
 }
 
 func (this *PacketTracking) Runners() []PluginRunner {
-	return this.lastPlugins
+	return this.pluginRunners
 }

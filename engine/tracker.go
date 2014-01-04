@@ -37,6 +37,7 @@ func (this *DiagnosticTracker) Run() {
 
 	for !globals.Stopping {
 		<-ticker.C
+
 		probablePacks = probablePacks[:0] // reset
 		pluginCounts = make(map[PluginRunner]int)
 
@@ -44,9 +45,10 @@ func (this *DiagnosticTracker) Run() {
 		// that are not recycled
 		earliestAccess = time.Now().Add(-idleMax)
 		for _, pack = range this.packs {
-			if len(pack.diagnostics.lastPlugins) == 0 {
+			if len(pack.diagnostics.pluginRunners) == 0 {
 				continue
 			}
+
 			if pack.diagnostics.LastAccess.Before(earliestAccess) {
 				probablePacks = append(probablePacks, pack)
 				for _, runner = range pack.diagnostics.Runners() {
@@ -58,10 +60,11 @@ func (this *DiagnosticTracker) Run() {
 		if len(probablePacks) > 0 {
 			globals.Printf("[%s]%d packs have been idle more than %d seconds\n",
 				this.PoolName, len(probablePacks), idleMax)
-			globals.Printf("(%s) Plugin names and quantities found on idle packs:",
+			globals.Printf("[%s]Plugin names and quantities on idle packs:",
 				this.PoolName)
 			for runner, count = range pluginCounts {
-				runner.SetLeakCount(count)
+				runner.SetLeakCount(count) // let runner know leak count
+
 				globals.Printf("\t%s: %d", runner.Name(), count)
 			}
 			globals.Println()
