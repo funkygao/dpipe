@@ -77,6 +77,8 @@ func (this *EsOutput) Run(r engine.OutputRunner, e *engine.EngineConfig) error {
 
 			// got pack from engine, pass to ES
 			this.feedEs(pack)
+
+			// never forget this! or system get stuck
 			pack.Recycle()
 		}
 

@@ -146,7 +146,11 @@ func (this *LogfileInput) runSingleLogfileInput(fn string, r engine.InputRunner,
 		}
 
 		pack = <-inChan
-		pack.Message.FromLine(line.Text)
+		if err := pack.Message.FromLine(line.Text); err != nil {
+			e.Project(project).Printf("%v <= %s\n", err, line.Text)
+			continue
+		}
+
 		pack.Project = project
 		pack.Logfile.SetPath(fn)
 		pack.Nexts = nexts
