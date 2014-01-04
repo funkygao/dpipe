@@ -51,15 +51,26 @@ func Launch(e *EngineConfig) {
 		}
 	}
 
+	// setup the diagnostic trackers
+	inputTracker := NewDiagnosticTracker("input")
+	injectTracker := NewDiagnosticTracker("inject")
+
 	if globals.Verbose {
 		globals.Println("Initializing PipelinePack pools")
 	}
 	for i := 0; i < globals.PoolSize; i++ {
-		e.inputRecycleChan <- NewPipelinePack(e.inputRecycleChan)
-		e.injectRecycleChan <- NewPipelinePack(e.injectRecycleChan)
+		inputPack := NewPipelinePack(e.inputRecycleChan)
+		inputTracker.AddPack(inputPack)
+		e.inputRecycleChan <- inputPack
+
+		injectPack := NewPipelinePack(e.injectRecycleChan)
+		injectTracker.AddPack(injectPack)
+		e.injectRecycleChan <- injectPack
 	}
 
-	// start the router
+	go inputTracker.Run()
+	go injectTracker.Run()
+
 	e.router.Start()
 
 	if globals.Verbose {

@@ -3,6 +3,7 @@ package engine
 import (
 	"github.com/funkygao/als"
 	"sync/atomic"
+	"time"
 )
 
 // Main pipeline data structure containing a AlsMessage and other metadata
@@ -24,6 +25,9 @@ type PipelinePack struct {
 
 	// To avoid infinite message loops
 	MsgLoopCount int
+
+	// Used internally to stamp diagnostic information
+	diagnostics *PacketTracking
 }
 
 func NewPipelinePack(recycleChan chan *PipelinePack) (this *PipelinePack) {
@@ -31,6 +35,7 @@ func NewPipelinePack(recycleChan chan *PipelinePack) (this *PipelinePack) {
 		RecycleChan:  recycleChan,
 		RefCount:     int32(1),
 		MsgLoopCount: 0,
+		diagnostics:  NewPacketTracking(),
 		Message:      als.NewAlsMessage(),
 		Logfile:      als.NewAlsLogfile(),
 	}
@@ -39,7 +44,7 @@ func NewPipelinePack(recycleChan chan *PipelinePack) (this *PipelinePack) {
 func (this *PipelinePack) Reset() {
 	this.RefCount = int32(1)
 	this.MsgLoopCount = 0
-
+	this.diagnostics.Reset()
 	this.Message.Reset()
 }
 
@@ -51,4 +56,38 @@ func (this *PipelinePack) Recycle() {
 		// reuse this pack to avoid re-alloc
 		this.RecycleChan <- this
 	}
+}
+
+type PacketTracking struct {
+	LastAccess time.Time
+
+	// Records the plugins the packet has been handed to
+	lastPlugins []PluginRunner
+}
+
+func NewPacketTracking() *PacketTracking {
+	return &PacketTracking{time.Now(), make([]PluginRunner, 0, 8)}
+}
+
+func (this *PacketTracking) AddStamp(pluginRunner PluginRunner) {
+	this.lastPlugins = append(this.lastPlugins, pluginRunner)
+	this.LastAccess = time.Now()
+}
+
+func (this *PacketTracking) Reset() {
+	this.lastPlugins = this.lastPlugins[:0] // a tip in golang to avoid re-alloc
+	this.LastAccess = time.Now()
+}
+
+func (this *PacketTracking) PluginNames() (names []string) {
+	names = make([]string, 0, 4)
+	for _, pr := range this.lastPlugins {
+		names = append(names, pr.Name())
+	}
+
+	return
+}
+
+func (this *PacketTracking) Runners() []PluginRunner {
+	return this.lastPlugins
 }

@@ -12,8 +12,6 @@ type PluginRunner interface {
 	// Underlying plugin object
 	Plugin() Plugin
 
-	// Sets the amount of currently 'leaked' packs that have gone through
-	// this plugin. The new value will overwrite prior ones.
 	SetLeakCount(count int)
 	LeakCount() int
 }

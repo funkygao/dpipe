@@ -128,6 +128,8 @@ func (this *messageRouter) runMainloop() {
 				break
 			}
 
+			pack.diagnostics.Reset()
+
 			// messages count auditting
 			atomic.AddInt64(&this.processMessageCount, 1)
 

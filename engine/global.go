@@ -26,6 +26,7 @@ type GlobalConfigStruct struct {
 	*log.Logger
 
 	StartedAt      time.Time
+	Stopping       bool
 	Debug          bool
 	Verbose        bool
 	DryRun         bool
@@ -39,7 +40,6 @@ type GlobalConfigStruct struct {
 	MaxMsgProcessDuration uint64
 	MaxMsgTimerInject     uint
 	MaxPackIdle           time.Duration
-	Stopping              bool
 
 	sigChan chan os.Signal
 }
