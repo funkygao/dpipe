@@ -99,6 +99,7 @@ func Launch(e *EngineConfig) {
 	for !globals.Stopping {
 		select {
 		case sig := <-globals.sigChan:
+			globals.Printf("Got signal %s\n", sig.String())
 			switch sig {
 			case syscall.SIGHUP:
 				globals.Println("Reloading...")
@@ -119,7 +120,7 @@ func Launch(e *EngineConfig) {
 
 	for _, runner := range e.InputRunners {
 		runner.Input().Stop()
-		globals.Printf("Stop message sent to input '%s'", runner.Name())
+		globals.Printf("Stop message sent to '%s'", runner.Name())
 	}
 	inputsWg.Wait() // wait for all inputs done
 
@@ -130,13 +131,13 @@ func Launch(e *EngineConfig) {
 		// 3. closes the filter input channel and lets it drain
 		// 4. exits the filter
 		//e.router.RemoveFilterMatcher() <- filter.MatchRunner()
-		globals.Printf("Stop message sent to filter '%s'", runner.Name())
+		globals.Printf("Stop message sent to '%s'", runner.Name())
 	}
 	filtersWg.Wait()
 
 	for _, runner := range e.OutputRunners {
 		//e.router.RemoveOutputMatcher() <- output.MatchRunner()
-		globals.Printf("Stop message sent to output '%s'", runner.Name())
+		globals.Printf("Stop message sent to '%s'", runner.Name())
 	}
 	outputsWg.Wait()
 
