@@ -51,7 +51,9 @@ func (this *GlobalConfigStruct) Shutdown() {
 }
 
 func (this *GlobalConfigStruct) Debugf(format string, a ...interface{}) {
-	this.Printf(format, a...)
+	if this.Debug {
+		this.Printf(format, a...)
+	}
 }
 
 func DefaultGlobals() *GlobalConfigStruct {
