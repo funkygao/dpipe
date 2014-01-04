@@ -95,11 +95,12 @@ func (this *iRunner) runMainloop(e *EngineConfig, wg *sync.WaitGroup) {
 	}
 }
 
-func NewInputRunner(name string, input Input) (r InputRunner) {
+func NewInputRunner(name string, input Input, pluginCommons *pluginCommons) (r InputRunner) {
 	return &iRunner{
 		pRunnerBase: pRunnerBase{
-			name:   name,
-			plugin: input.(Plugin),
+			name:          name,
+			plugin:        input.(Plugin),
+			pluginCommons: pluginCommons,
 		},
 	}
 }

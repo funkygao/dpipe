@@ -44,6 +44,8 @@
 
         {
             name:   "EsOutput"
+            matcher: {
+            }
             index:  "@ym"
             domain: "localhost"
             port: "9200"

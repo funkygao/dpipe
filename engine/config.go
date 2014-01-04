@@ -10,7 +10,7 @@ import (
 type EngineConfig struct {
 	*conf.Conf
 
-	projects map[string]ConfProject
+	projects map[string]*ConfProject
 
 	InputRunners  map[string]InputRunner
 	inputWrappers map[string]*PluginWrapper
@@ -58,7 +58,7 @@ func NewEngineConfig(globals *GlobalConfigStruct) (this *EngineConfig) {
 	this.inputRecycleChan = make(chan *PipelinePack, globals.PoolSize)
 	this.injectRecycleChan = make(chan *PipelinePack, globals.PoolSize)
 
-	this.projects = make(map[string]ConfProject)
+	this.projects = make(map[string]*ConfProject)
 
 	this.router = NewMessageRouter()
 
@@ -74,7 +74,7 @@ func (this *EngineConfig) Project(name string) *ConfProject {
 		panic("invalid project: " + name)
 	}
 
-	return &p
+	return p
 }
 
 // For Filter to generate new messages
@@ -106,20 +106,24 @@ func (this *EngineConfig) LoadConfigFile(fn string) {
 
 	// 'projects' section
 	for i := 0; i < len(this.List("projects", nil)); i++ {
-		keyPrefix := fmt.Sprintf("projects[%d]", i)
-		section, err := this.Section(keyPrefix)
+		section, err := this.Section(fmt.Sprintf("projects[%d]", i))
 		if err != nil {
 			panic(err)
 		}
-		project := ConfProject{}
-		project.FromConfig(section)
 
+		project := &ConfProject{}
+		project.FromConfig(section)
 		this.projects[project.Name] = project
 	}
 
 	// 'plugins' section
 	for i := 0; i < len(this.List("plugins", nil)); i++ {
-		this.loadPluginSection(fmt.Sprintf("plugins[%d]", i))
+		section, err := this.Section(fmt.Sprintf("plugins[%d]", i))
+		if err != nil {
+			panic(err)
+		}
+
+		this.loadPluginSection(section)
 	}
 
 	if globals.Debug {
@@ -127,39 +131,21 @@ func (this *EngineConfig) LoadConfigFile(fn string) {
 	}
 }
 
-func (this *EngineConfig) loadPluginSection(keyPrefix string) {
-	var (
-		ok      bool
-		globals = Globals()
-	)
-
-	if globals.Debug {
-		globals.Printf("loading section[%s]\n", keyPrefix)
-	}
+func (this *EngineConfig) loadPluginSection(section *conf.Conf) {
+	pluginCommons := new(pluginCommons)
+	pluginCommons.load(section)
+	pluginType := pluginCommons.class
 
 	wrapper := new(PluginWrapper)
-	wrapper.name = this.String(keyPrefix+".name", "")
-	if wrapper.name == "" {
-		panic(keyPrefix + " must config 'name' attr")
-	}
-	pluginType := this.String(keyPrefix+".class", "")
-	if pluginType == "" {
-		pluginType = wrapper.name
-	}
-
+	var ok bool
 	if wrapper.pluginCreator, ok = availablePlugins[pluginType]; !ok {
 		panic("invalid plugin type: " + pluginType)
 	}
+	wrapper.configCreator = func() *conf.Conf { return section }
+	wrapper.name = pluginCommons.name
 
 	plugin := wrapper.pluginCreator()
-	config, err := this.Section(keyPrefix)
-	if err != nil {
-		panic(err)
-	}
-	wrapper.configCreator = func() *conf.Conf { return config }
-
-	// plugin Init here
-	plugin.Init(config)
+	plugin.Init(section)
 
 	pluginCats := pluginTypeRegex.FindStringSubmatch(pluginType)
 	if len(pluginCats) < 2 {
@@ -169,7 +155,8 @@ func (this *EngineConfig) loadPluginSection(keyPrefix string) {
 	pluginCategory := pluginCats[1]
 	switch pluginCategory {
 	case "Input":
-		this.InputRunners[wrapper.name] = NewInputRunner(wrapper.name, plugin.(Input))
+		this.InputRunners[wrapper.name] = NewInputRunner(wrapper.name, plugin.(Input),
+			pluginCommons)
 		this.inputWrappers[wrapper.name] = wrapper
 
 		if tickerer, ok := plugin.(Tickerable); ok {
@@ -180,14 +167,34 @@ func (this *EngineConfig) loadPluginSection(keyPrefix string) {
 		}
 
 	case "Filter":
-		runner := NewFORunner(wrapper.name, plugin)
+		runner := NewFORunner(wrapper.name, plugin, pluginCommons)
 		this.FilterRunners[runner.name] = runner
 		this.filterWrappers[runner.name] = wrapper
 
 	case "Output":
-		runner := NewFORunner(wrapper.name, plugin)
+		runner := NewFORunner(wrapper.name, plugin, pluginCommons)
 		this.OutputRunners[runner.name] = runner
 		this.outputWrappers[runner.name] = wrapper
 	}
 
+}
+
+// common config directive for all plugins
+type pluginCommons struct {
+	name     string `json:"name"`
+	class    string `json:"class"`
+	poolSize int    `json:"pool_size"`
+}
+
+func (this *pluginCommons) load(section *conf.Conf) {
+	this.name = section.String("name", "")
+	if this.name == "" {
+		panic(fmt.Sprintf("invalid plugin config: %v", *section))
+	}
+
+	this.class = section.String("class", "")
+	if this.class == "" {
+		this.class = this.name
+	}
+	this.poolSize = section.Int("pool_size", Globals().PoolSize)
 }

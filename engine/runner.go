@@ -18,10 +18,11 @@ type PluginRunner interface {
 
 // Base struct for the specialized PluginRunners
 type pRunnerBase struct {
-	name      string
-	plugin    Plugin
-	engine    *EngineConfig
-	leakCount int
+	name          string
+	plugin        Plugin
+	engine        *EngineConfig
+	pluginCommons *pluginCommons
+	leakCount     int
 }
 
 type foRunner struct {
@@ -52,11 +53,12 @@ func (this *pRunnerBase) LeakCount() int {
 	return this.leakCount
 }
 
-func NewFORunner(name string, plugin Plugin) (this *foRunner) {
+func NewFORunner(name string, plugin Plugin, pluginCommons *pluginCommons) (this *foRunner) {
 	this = &foRunner{
 		pRunnerBase: pRunnerBase{
-			name:   name,
-			plugin: plugin,
+			name:          name,
+			plugin:        plugin,
+			pluginCommons: pluginCommons,
 		},
 	}
 

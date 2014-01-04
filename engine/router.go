@@ -123,7 +123,6 @@ func (this *messageRouter) runMainloop() {
 
 		case pack, ok = <-this.inChan:
 			if !ok {
-				globals.Println("Router inChan closed")
 				globals.Stopping = true
 				break
 			}
