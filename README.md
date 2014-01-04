@@ -129,9 +129,13 @@ Performing "in-flight" processing of collected data, real time streaming analysi
                 V     +--------------------------------------------------------+
               Input         ^           |               |                   ^
                 |           |           | put           | put               |
-                |           |           V               V                   |
-                 ----->-----   OutputRunner.inChan   FilterRunner.inChan    |
-                  inject                |               |                   |
+                |           |           |               |                   |
+                 ----->-----          Matcher         Matcher               |
+                   inject               |               |                   |
+                                        | put           | put               |
+                                        V               V                   |
+                               OutputRunner.inChan   FilterRunner.inChan    |
+                                        |               |                   |
                                         | consume       | consume           | inject
                                         V               V                   |
                                      Output           +------------------------+

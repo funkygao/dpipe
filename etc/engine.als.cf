@@ -19,35 +19,32 @@
 
     plugins: [
         {
-            name:   "LogfileInput"
-            class:  "LogfileInput"
-            ticker_interval: 5
+            name:   "SelfSysInput"
+            interval: 10
+            sink:   11
+        }
+
+        {
+            name:   "AlsLogInput"
+            class:  "AlsLogInput"
+            ticker_interval: 30
             sources: [
                 {
                     glob:   "/mnt/funplus/logs/fp_ffseaside/bi_*"
                     proj:   "ffs"
-                    nexts:  [
-                        "EsOutput",
-                    ]
+                    sink:   1
                 }
             ]
         }
         
         {
-            name:   "FlashlogInput"
-            dsn:    "flashlog:flashlog@unix(/var/run/mysqld/mysqld.sock)/flashlog?charset=utf8"
-        }
-
-        {
             name:   "DebugOutput"
-            match: {
-            }
+            match:  [1, ]
         }
 
         {
             name:   "EsOutput"
-            matcher: {
-            }
+            match:  [1, ]
             index:  "@ym"
             domain: "localhost"
             port: "9200"
@@ -58,14 +55,7 @@
 
         {
             name:   "AlarmOutput"
-        }
-
-        {
-            name:   "SelfSysInput"
-            interval: 10
-            nexts:  [
-                "EsOutput",
-            ]
+            match:  [2, ]
         }
     ]
 

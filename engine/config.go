@@ -3,6 +3,7 @@ package engine
 import (
 	"fmt"
 	conf "github.com/funkygao/jsconf"
+	"github.com/funkygao/pretty"
 	"os"
 	"time"
 )
@@ -139,7 +140,8 @@ func (this *EngineConfig) loadPluginSection(section *conf.Conf) {
 	wrapper := new(PluginWrapper)
 	var ok bool
 	if wrapper.pluginCreator, ok = availablePlugins[pluginType]; !ok {
-		panic("invalid plugin type: " + pluginType)
+		pretty.Printf("allPlugins: %# v\n", availablePlugins)
+		panic("unknown plugin type: " + pluginType)
 	}
 	wrapper.configCreator = func() *conf.Conf { return section }
 	wrapper.name = pluginCommons.name
@@ -165,11 +167,7 @@ func (this *EngineConfig) loadPluginSection(section *conf.Conf) {
 	}
 
 	runner := NewFORunner(wrapper.name, plugin, pluginCommons)
-	matchRule, err := section.Section("match")
-	if err != nil {
-		panic("output/filter must have 'match' configured")
-	}
-	matcher := NewMatchRunner(matchRule, runner)
+	matcher := NewMatchRunner(section.IntList("match", []int{}), runner)
 	runner.matcher = matcher
 
 	switch pluginCategory {
@@ -196,6 +194,7 @@ type pluginCommons struct {
 func (this *pluginCommons) load(section *conf.Conf) {
 	this.name = section.String("name", "")
 	if this.name == "" {
+		pretty.Printf("%# v\n", *section)
 		panic(fmt.Sprintf("invalid plugin config: %v", *section))
 	}
 

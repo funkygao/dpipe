@@ -6,6 +6,7 @@ import (
 	"github.com/funkygao/als"
 	"github.com/funkygao/funpipe/engine"
 	"github.com/funkygao/golib"
+	"github.com/funkygao/golib/observer"
 	conf "github.com/funkygao/jsconf"
 	"github.com/mattbaird/elastigo/api"
 	"github.com/mattbaird/elastigo/core"
@@ -56,15 +57,20 @@ func (this *EsOutput) Run(r engine.OutputRunner, e *engine.EngineConfig) error {
 	this.indexer.Run(this.stopChan)
 
 	var (
-		pack   *engine.PipelinePack
-		ok     = true
-		inChan = r.InChan()
+		pack       *engine.PipelinePack
+		reloadChan = make(chan interface{})
+		ok         = true
+		inChan     = r.InChan()
 	)
+
+	observer.Subscribe(engine.RELOAD, reloadChan)
 
 	for ok {
 		select {
 		case <-this.stopChan:
 			ok = false
+
+		case <-reloadChan:
 
 		case <-time.After(this.flushInterval * time.Second):
 			this.indexer.Flush()

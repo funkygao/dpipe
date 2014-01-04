@@ -14,21 +14,25 @@ type logfileSource struct {
 	glob    string
 	files   []string
 	project string
-	nexts   []string
+	sink    int16
 }
 
-func (this *logfileSource) validate() {
+func (this *logfileSource) load(config *conf.Conf) {
+	this.glob = config.String("glob", "")
 	if this.glob == "" {
-		panic("LogfileInput.sources.glob cannot be empty")
+		panic("AlsLogInput.sources.glob cannot be empty")
 	}
+
+	this.project = config.String("proj", "")
+	this.sink = int16(config.Int("sink", 0))
 }
 
-type LogfileInput struct {
+type AlsLogInput struct {
 	stopChan chan bool
 	sources  []logfileSource
 }
 
-func (this *LogfileInput) Init(config *conf.Conf) {
+func (this *AlsLogInput) Init(config *conf.Conf) {
 	globals := engine.Globals()
 	if globals.Debug {
 		globals.Printf("%#v\n", *config)
@@ -39,25 +43,26 @@ func (this *LogfileInput) Init(config *conf.Conf) {
 	// get the sources
 	this.sources = make([]logfileSource, 0, 200)
 	for i := 0; i < len(config.List("sources", nil)); i++ {
-		keyPrefix := fmt.Sprintf("sources[%d].", i)
+		section, err := config.Section(fmt.Sprintf("sources[%d].", i))
+		if err != nil {
+			panic(err)
+		}
+
 		source := logfileSource{}
-		source.glob = config.String(keyPrefix+"glob", "")
-		source.project = config.String(keyPrefix+"proj", "")
-		source.nexts = config.StringList(keyPrefix+"nexts", nil)
-		source.validate()
+		source.load(section)
 		this.sources = append(this.sources, source)
 	}
 }
 
-func (this *LogfileInput) Stop() {
+func (this *AlsLogInput) Stop() {
 	close(this.stopChan)
 }
 
-func (this *LogfileInput) CleanupForRestart() {
+func (this *AlsLogInput) CleanupForRestart() {
 
 }
 
-func (this *LogfileInput) Run(r engine.InputRunner, e *engine.EngineConfig) error {
+func (this *AlsLogInput) Run(r engine.InputRunner, e *engine.EngineConfig) error {
 	globals := engine.Globals()
 	if globals.Verbose {
 		globals.Printf("[%s] started\n", r.Name())
@@ -85,7 +90,7 @@ func (this *LogfileInput) Run(r engine.InputRunner, e *engine.EngineConfig) erro
 					globals.Printf("[%s] found new file input: %v\n", fn)
 				}
 
-				go this.runSingleLogfileInput(fn, r, e, &stopped, source.project, source.nexts)
+				go this.runSingleAlsLogInput(fn, r, e, source, &stopped)
 			}
 		}
 
@@ -106,8 +111,8 @@ func (this *LogfileInput) Run(r engine.InputRunner, e *engine.EngineConfig) erro
 	return nil
 }
 
-func (this *LogfileInput) runSingleLogfileInput(fn string, r engine.InputRunner,
-	e *engine.EngineConfig, stopped *bool, project string, nexts []string) {
+func (this *AlsLogInput) runSingleAlsLogInput(fn string, r engine.InputRunner,
+	e *engine.EngineConfig, source logfileSource, stopped *bool) {
 	var tailConf tail.Config
 	if engine.Globals().Tail {
 		tailConf = tail.Config{
@@ -141,18 +146,18 @@ func (this *LogfileInput) runSingleLogfileInput(fn string, r engine.InputRunner,
 
 		pack = <-inChan
 		if err := pack.Message.FromLine(line.Text); err != nil {
-			e.Project(project).Printf("%v <= %s\n", err, line.Text)
+			e.Project(source.project).Printf("%v <= %s\n", err, line.Text)
 			continue
 		}
 
-		pack.Project = project
+		pack.Project = source.project
 		pack.Logfile.SetPath(fn)
-		pack.Nexts = nexts
+		pack.Message.Sink = source.sink
 		r.Inject(pack)
 	}
 }
 
-func (this *LogfileInput) refreshSources() {
+func (this *AlsLogInput) refreshSources() {
 	var err error
 	for idx, source := range this.sources {
 		this.sources[idx].files, err = filepath.Glob(source.glob)
@@ -163,7 +168,7 @@ func (this *LogfileInput) refreshSources() {
 }
 
 func init() {
-	engine.RegisterPlugin("LogfileInput", func() engine.Plugin {
-		return new(LogfileInput)
+	engine.RegisterPlugin("AlsLogInput", func() engine.Plugin {
+		return new(AlsLogInput)
 	})
 }
