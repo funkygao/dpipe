@@ -1,9 +1,3 @@
-/*
-               PluginRunner
-          ---------------------------------
-         |             |                   |
-   InputRunner     FilterRunner        OutputRunner
-*/
 package engine
 
 import (

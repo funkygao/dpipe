@@ -10,7 +10,7 @@ import (
 
 const (
 	// control channel event types
-	RELOAD = "reaload"
+	RELOAD = "reload"
 	STOP   = "stop"
 )
 
