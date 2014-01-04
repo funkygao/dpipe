@@ -9,12 +9,10 @@ type NopeFilter struct {
 }
 
 func (this *NopeFilter) Init(config *conf.Conf) {
-	globals := engine.Globals()
-	globals.Debugf("%#v\n", *config)
+	engine.Globals().Debugf("%#v\n", *config)
 }
 
 func (this *NopeFilter) Run(r engine.OutputRunner, e *engine.EngineConfig) error {
-	engine.Globals().Debugf("%#v\n", *config)
 
 	return nil
 }
