@@ -41,6 +41,10 @@ func NewPipelinePack(recycleChan chan *PipelinePack) (this *PipelinePack) {
 	}
 }
 
+func (this *PipelinePack) IncRef() {
+	atomic.AddInt32(this.RefCount, 1)
+}
+
 func (this *PipelinePack) Reset() {
 	this.RefCount = int32(1)
 	this.MsgLoopCount = 0

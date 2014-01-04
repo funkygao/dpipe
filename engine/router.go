@@ -68,13 +68,13 @@ func (this *messageRouter) runMainloop() {
 			atomic.AddInt64(&this.processMessageCount, 1)
 
 			for _, matcher = range this.filterMatchers {
-				atomic.AddInt32(&pack.RefCount, 1)
 				pack.diagnostics.AddStamp(matcher.runner)
+				pack.IncRef()
 				matcher.inChan <- pack
 			}
 			for _, matcher = range this.outputMatchers {
-				atomic.AddInt32(&pack.RefCount, 1)
 				pack.diagnostics.AddStamp(matcher.runner)
+				pack.IncRef()
 				matcher.inChan <- pack
 			}
 
