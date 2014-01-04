@@ -43,7 +43,7 @@ func (this *AlsLogInput) Init(config *conf.Conf) {
 	// get the sources
 	this.sources = make([]logfileSource, 0, 200)
 	for i := 0; i < len(config.List("sources", nil)); i++ {
-		section, err := config.Section(fmt.Sprintf("sources[%d].", i))
+		section, err := config.Section(fmt.Sprintf("sources[%d]", i))
 		if err != nil {
 			panic(err)
 		}
