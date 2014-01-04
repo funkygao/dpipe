@@ -35,7 +35,7 @@ func (this *DiagnosticTracker) Run() {
 	ticker := time.NewTicker(time.Duration(30) * time.Second)
 	defer ticker.Stop()
 
-	for {
+	for !globals.Stopping {
 		<-ticker.C
 		probablePacks = probablePacks[:0] // reset
 		pluginCounts = make(map[PluginRunner]int)
