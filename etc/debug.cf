@@ -1,0 +1,32 @@
+{
+    // global conf shared by all projects
+    geodbfile: "/opt/local/share/GeoIP/GeoIP.dat"
+
+    projects: [
+        {
+            name:       "rs"
+            alarm_to:   "peng.gao@funplusgame.com"
+        }
+    ]
+
+    plugins: [
+        {
+            name:   "AlsLogInput"
+            class:  "AlsLogInput"
+            ticker_interval: 30
+            sources: [
+                {
+                    glob:   "/var/log/*.log"
+                    proj:   "rs"
+                    sink:   1
+                }
+            ]
+        }
+        
+        {
+            name:   "DebugOutput"
+            match:  [1, ]
+        }
+    ]
+
+}

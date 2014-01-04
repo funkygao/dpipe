@@ -3,6 +3,7 @@ package engine
 import (
 	"fmt"
 	conf "github.com/funkygao/jsconf"
+	"github.com/funkygao/pretty"
 	"os"
 	"time"
 )
@@ -139,7 +140,8 @@ func (this *EngineConfig) loadPluginSection(section *conf.Conf) {
 	wrapper := new(PluginWrapper)
 	var ok bool
 	if wrapper.pluginCreator, ok = availablePlugins[pluginType]; !ok {
-		panic("invalid plugin type: " + pluginType)
+		pretty.Printf("allPlugins: %# v\n", availablePlugins)
+		panic("unknown plugin type: " + pluginType)
 	}
 	wrapper.configCreator = func() *conf.Conf { return section }
 	wrapper.name = pluginCommons.name
@@ -192,6 +194,7 @@ type pluginCommons struct {
 func (this *pluginCommons) load(section *conf.Conf) {
 	this.name = section.String("name", "")
 	if this.name == "" {
+		pretty.Printf("%# v\n", *section)
 		panic(fmt.Sprintf("invalid plugin config: %v", *section))
 	}
 
