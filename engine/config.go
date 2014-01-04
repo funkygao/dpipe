@@ -165,11 +165,7 @@ func (this *EngineConfig) loadPluginSection(section *conf.Conf) {
 	}
 
 	runner := NewFORunner(wrapper.name, plugin, pluginCommons)
-	matchRule, err := section.Section("match")
-	if err != nil {
-		panic("output/filter must have 'match' configured")
-	}
-	matcher := NewMatchRunner(matchRule, runner)
+	matcher := NewMatchRunner(section.IntList("match", []int{}), runner)
 	runner.matcher = matcher
 
 	switch pluginCategory {

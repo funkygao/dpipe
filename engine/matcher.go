@@ -1,19 +1,18 @@
 package engine
 
 import (
-	conf "github.com/funkygao/jsconf"
 	"strings"
 )
 
 type MatchRunner struct {
-	inChan chan *PipelinePack
-	runner PluginRunner
-	rule   *conf.Conf
+	inChan   chan *PipelinePack
+	runner   PluginRunner
+	matchers []int
 }
 
-func NewMatchRunner(rule *conf.Conf, r PluginRunner) *MatchRunner {
+func NewMatchRunner(matchers []int, r PluginRunner) *MatchRunner {
 	this := new(MatchRunner)
-	this.rule = rule
+	this.matchers = matchers
 	this.runner = r
 	this.inChan = make(chan *PipelinePack, Globals().PluginChanSize)
 	return this
@@ -41,8 +40,13 @@ func (this *MatchRunner) Start(matchChan chan *PipelinePack) {
 		globals.Printf("MatchRunner for %s started", this.runner.Name())
 	}
 
+	matchAll := false
+	if len(this.matchers) == 0 {
+		matchAll = true
+	}
+
 	for pack := range this.inChan {
-		if this.match(pack) {
+		if matchAll || this.match(pack) {
 			matchChan <- pack
 		} else {
 			pack.Recycle()
@@ -53,5 +57,11 @@ func (this *MatchRunner) Start(matchChan chan *PipelinePack) {
 }
 
 func (this *MatchRunner) match(pack *PipelinePack) bool {
-	return true
+	for _, sink := range this.matchers {
+		if pack.Message.Sink == sink {
+			return true
+		}
+	}
+
+	return false
 }
