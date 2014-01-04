@@ -7,7 +7,6 @@ import (
 
 type SelfSysInput struct {
 	stopChan chan bool
-	interval int
 }
 
 func (this *SelfSysInput) Init(config *conf.Conf) {
@@ -17,11 +16,6 @@ func (this *SelfSysInput) Init(config *conf.Conf) {
 	}
 
 	this.stopChan = make(chan bool)
-	this.interval = config.Int("interval", 10)
-}
-
-func (this *SelfSysInput) TickerInterval() int {
-	return this.interval
 }
 
 func (this *SelfSysInput) Run(r engine.InputRunner, e *engine.EngineConfig) error {

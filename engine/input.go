@@ -27,7 +27,7 @@ type InputRunner interface {
 	// to all Filter and Output plugins with corresponding matcher.
 	Inject(pack *PipelinePack)
 
-	SetTickLength(tickLength time.Duration)
+	setTickLength(tickLength time.Duration)
 	Ticker() (ticker <-chan time.Time)
 }
 
@@ -51,7 +51,7 @@ func (this *iRunner) Input() Input {
 	return this.plugin.(Input)
 }
 
-func (this *iRunner) SetTickLength(tickLength time.Duration) {
+func (this *iRunner) setTickLength(tickLength time.Duration) {
 	this.tickLength = tickLength
 }
 
@@ -62,9 +62,7 @@ func (this *iRunner) Ticker() (t <-chan time.Time) {
 func (this *iRunner) Start(e *EngineConfig, wg *sync.WaitGroup) error {
 	this.engine = e
 	this.inChan = e.inputRecycleChan // got the engine PipelinePack pool
-
-	if this.tickLength != 0 {
-		// convenience wrapper for NewTicker providing access to the ticking channel only
+	if this.tickLength > 0 {
 		this.ticker = time.Tick(this.tickLength)
 	}
 

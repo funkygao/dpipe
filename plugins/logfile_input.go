@@ -24,9 +24,8 @@ func (this *logfileSource) validate() {
 }
 
 type LogfileInput struct {
-	discoverInterval int
-	stopChan         chan bool
-	sources          []logfileSource
+	stopChan chan bool
+	sources  []logfileSource
 }
 
 func (this *LogfileInput) Init(config *conf.Conf) {
@@ -35,7 +34,6 @@ func (this *LogfileInput) Init(config *conf.Conf) {
 		globals.Printf("%#v\n", *config)
 	}
 
-	this.discoverInterval = config.Int("discovery_interval", 5)
 	this.stopChan = make(chan bool)
 
 	// get the sources
@@ -57,10 +55,6 @@ func (this *LogfileInput) Stop() {
 
 func (this *LogfileInput) CleanupForRestart() {
 
-}
-
-func (this *LogfileInput) TickerInterval() int {
-	return this.discoverInterval
 }
 
 func (this *LogfileInput) Run(r engine.InputRunner, e *engine.EngineConfig) error {

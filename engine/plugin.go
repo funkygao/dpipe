@@ -6,7 +6,7 @@ import (
 )
 
 // Plugin must have Init method
-// Besides, it can have CleanupForRestart and TickerInterval
+// Besides, it can have CleanupForRestart
 type Plugin interface {
 	Init(config *conf.Conf)
 }
@@ -14,12 +14,6 @@ type Plugin interface {
 // If a Plugin implements CleanupForRestart, it will be called on restart
 type Restarting interface {
 	CleanupForRestart()
-}
-
-// If a Plugin implements TickerInterval, it will get ticker from runner
-// Workds only for Input plugin
-type Tickerable interface {
-	TickerInterval() int
 }
 
 func RegisterPlugin(name string, factory func() Plugin) {

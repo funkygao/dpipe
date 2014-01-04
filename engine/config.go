@@ -158,12 +158,8 @@ func (this *EngineConfig) loadPluginSection(section *conf.Conf) {
 		this.InputRunners[wrapper.name] = NewInputRunner(wrapper.name, plugin.(Input),
 			pluginCommons)
 		this.inputWrappers[wrapper.name] = wrapper
-
-		if tickerer, ok := plugin.(Tickerable); ok {
-			tickerLen := tickerer.TickerInterval()
-			if tickerLen > 0 {
-				this.InputRunners[wrapper.name].SetTickLength(time.Duration(tickerLen) * time.Second)
-			}
+		if pluginCommons.ticker > 0 {
+			this.InputRunners[wrapper.name].setTickLength(time.Duration(pluginCommons.ticker) * time.Second)
 		}
 
 	case "Filter":
@@ -184,6 +180,7 @@ type pluginCommons struct {
 	name     string `json:"name"`
 	class    string `json:"class"`
 	poolSize int    `json:"pool_size"`
+	ticker   int    `json:"ticker_interval"`
 }
 
 func (this *pluginCommons) load(section *conf.Conf) {
@@ -197,4 +194,5 @@ func (this *pluginCommons) load(section *conf.Conf) {
 		this.class = this.name
 	}
 	this.poolSize = section.Int("pool_size", Globals().PoolSize)
+	this.ticker = section.Int("ticker_interval", Globals().TickerLength)
 }
