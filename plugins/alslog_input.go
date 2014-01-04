@@ -85,7 +85,8 @@ func (this *AlsLogInput) Run(r engine.InputRunner, e *engine.EngineConfig) error
 					globals.Printf("[%s] found new file input: %v\n", fn)
 				}
 
-				go this.runSingleAlsLogInput(fn, r, e, &stopped, source.project, source.nexts)
+				go this.runSingleAlsLogInput(fn, r, e, &stopped,
+					source.project, source.nexts)
 			}
 		}
 
