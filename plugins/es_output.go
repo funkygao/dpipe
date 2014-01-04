@@ -25,10 +25,7 @@ type EsOutput struct {
 }
 
 func (this *EsOutput) Init(config *conf.Conf) {
-	globals := engine.Globals()
-	if globals.Debug {
-		globals.Printf("%#v\n", *config)
-	}
+	engine.Globals().Debugf("%#v\n", *config)
 
 	this.stopChan = make(chan bool)
 	this.index = config.String("index", "")

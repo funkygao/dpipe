@@ -10,10 +10,7 @@ type SelfSysInput struct {
 }
 
 func (this *SelfSysInput) Init(config *conf.Conf) {
-	globals := engine.Globals()
-	if globals.Debug {
-		globals.Printf("%#v\n", *config)
-	}
+	engine.Globals().Debugf("%#v\n", *config)
 
 	this.stopChan = make(chan bool)
 }

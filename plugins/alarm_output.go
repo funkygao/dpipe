@@ -9,10 +9,7 @@ type AlarmOutput struct {
 }
 
 func (this *AlarmOutput) Init(config *conf.Conf) {
-	globals := engine.Globals()
-	if globals.Debug {
-		globals.Printf("%#v\n", *config)
-	}
+	engine.Globals().Debugf("%#v\n", *config)
 }
 
 func (this *AlarmOutput) Run(r engine.OutputRunner, e *engine.EngineConfig) error {

@@ -10,16 +10,11 @@ type NopeFilter struct {
 
 func (this *NopeFilter) Init(config *conf.Conf) {
 	globals := engine.Globals()
-	if globals.Debug {
-		globals.Printf("%#v\n", *config)
-	}
+	globals.Debugf("%#v\n", *config)
 }
 
 func (this *NopeFilter) Run(r engine.OutputRunner, e *engine.EngineConfig) error {
-	globals := engine.Globals()
-	if globals.Verbose {
-		globals.Printf("[%s] started\n", r.Name())
-	}
+	engine.Globals().Debugf("%#v\n", *config)
 
 	return nil
 }

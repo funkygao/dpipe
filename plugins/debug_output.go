@@ -11,10 +11,7 @@ type DebugOutput struct {
 }
 
 func (this *DebugOutput) Init(config *conf.Conf) {
-	globals := engine.Globals()
-	if globals.Debug {
-		globals.Printf("%#v\n", *config)
-	}
+	engine.Globals().Debugf("%#v\n", *config)
 }
 
 func (this *DebugOutput) Run(r engine.OutputRunner, e *engine.EngineConfig) error {

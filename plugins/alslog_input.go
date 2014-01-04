@@ -33,10 +33,7 @@ type AlsLogInput struct {
 }
 
 func (this *AlsLogInput) Init(config *conf.Conf) {
-	globals := engine.Globals()
-	if globals.Debug {
-		globals.Printf("%#v\n", *config)
-	}
+	engine.Globals().Debugf("%#v\n", *config)
 
 	this.stopChan = make(chan bool)
 
@@ -85,11 +82,9 @@ func (this *AlsLogInput) Run(r engine.InputRunner, e *engine.EngineConfig) error
 					continue
 				}
 
-				openedFiles[fn] = true
-				if globals.Debug {
-					globals.Printf("found new file input: %v\n", fn)
-				}
+				globals.Debugf("found new file input: %v\n", fn)
 
+				openedFiles[fn] = true
 				go this.runSingleAlsLogInput(fn, r, e, source, &stopped)
 			}
 		}
@@ -136,9 +131,7 @@ func (this *AlsLogInput) runSingleAlsLogInput(fn string, r engine.InputRunner,
 	)
 
 	for line := range t.Lines {
-		if globals.Debug {
-			globals.Printf("[%s]got line: %s\n", fn, line.Text)
-		}
+		globals.Debugf("[%s]got line: %s\n", fn, line.Text)
 
 		if *stopped {
 			break
