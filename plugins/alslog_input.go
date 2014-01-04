@@ -14,13 +14,17 @@ type logfileSource struct {
 	glob    string
 	files   []string
 	project string
-	nexts   []string
+	sink    int16
 }
 
-func (this *logfileSource) validate() {
+func (this *logfileSource) load(config *conf.Conf) {
+	this.glob = config.String("glob", "")
 	if this.glob == "" {
 		panic("AlsLogInput.sources.glob cannot be empty")
 	}
+
+	this.project = config.String("proj", "")
+	this.sink = int16(config.Int("sink", 0))
 }
 
 type AlsLogInput struct {
@@ -39,12 +43,13 @@ func (this *AlsLogInput) Init(config *conf.Conf) {
 	// get the sources
 	this.sources = make([]logfileSource, 0, 200)
 	for i := 0; i < len(config.List("sources", nil)); i++ {
-		keyPrefix := fmt.Sprintf("sources[%d].", i)
+		section, err := config.Section(fmt.Sprintf("sources[%d].", i))
+		if err != nil {
+			panic(err)
+		}
+
 		source := logfileSource{}
-		source.glob = config.String(keyPrefix+"glob", "")
-		source.project = config.String(keyPrefix+"proj", "")
-		source.nexts = config.StringList(keyPrefix+"nexts", nil)
-		source.validate()
+		source.load(section)
 		this.sources = append(this.sources, source)
 	}
 }
@@ -85,8 +90,7 @@ func (this *AlsLogInput) Run(r engine.InputRunner, e *engine.EngineConfig) error
 					globals.Printf("[%s] found new file input: %v\n", fn)
 				}
 
-				go this.runSingleAlsLogInput(fn, r, e, &stopped,
-					source.project, source.nexts)
+				go this.runSingleAlsLogInput(fn, r, e, source, &stopped)
 			}
 		}
 
@@ -108,7 +112,7 @@ func (this *AlsLogInput) Run(r engine.InputRunner, e *engine.EngineConfig) error
 }
 
 func (this *AlsLogInput) runSingleAlsLogInput(fn string, r engine.InputRunner,
-	e *engine.EngineConfig, stopped *bool, project string, nexts []string) {
+	e *engine.EngineConfig, source logfileSource, stopped *bool) {
 	var tailConf tail.Config
 	if engine.Globals().Tail {
 		tailConf = tail.Config{
@@ -142,13 +146,13 @@ func (this *AlsLogInput) runSingleAlsLogInput(fn string, r engine.InputRunner,
 
 		pack = <-inChan
 		if err := pack.Message.FromLine(line.Text); err != nil {
-			e.Project(project).Printf("%v <= %s\n", err, line.Text)
+			e.Project(source.project).Printf("%v <= %s\n", err, line.Text)
 			continue
 		}
 
-		pack.Project = project
+		pack.Project = source.project
 		pack.Logfile.SetPath(fn)
-		pack.Nexts = nexts
+		pack.Message.Sink = source.sink
 		r.Inject(pack)
 	}
 }

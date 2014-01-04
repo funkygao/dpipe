@@ -26,9 +26,7 @@
                 {
                     glob:   "/mnt/funplus/logs/fp_ffseaside/bi_*"
                     proj:   "ffs"
-                    nexts:  [
-                        "EsOutput",
-                    ]
+                    sink:   1
                 }
             ]
         }
@@ -40,14 +38,13 @@
 
         {
             name:   "DebugOutput"
-            match: {
-            }
+            match:  [1, ]
+
         }
 
         {
             name:   "EsOutput"
-            matcher: {
-            }
+            match:  [1, ]
             index:  "@ym"
             domain: "localhost"
             port: "9200"
