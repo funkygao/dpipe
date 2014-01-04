@@ -14,7 +14,7 @@ type logfileSource struct {
 	glob    string
 	files   []string
 	project string
-	sink    int16
+	sink    int
 }
 
 func (this *logfileSource) load(config *conf.Conf) {
@@ -24,7 +24,7 @@ func (this *logfileSource) load(config *conf.Conf) {
 	}
 
 	this.project = config.String("proj", "")
-	this.sink = int16(config.Int("sink", 0))
+	this.sink = config.Int("sink", 0)
 }
 
 type AlsLogInput struct {
