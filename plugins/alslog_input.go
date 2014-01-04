@@ -20,7 +20,7 @@ type logfileSource struct {
 func (this *logfileSource) load(config *conf.Conf) {
 	this.glob = config.String("glob", "")
 	if this.glob == "" {
-		panic("AlsLogInput.sources.glob cannot be empty")
+		panic("glob cannot be empty")
 	}
 
 	this.project = config.String("proj", "")
@@ -87,7 +87,7 @@ func (this *AlsLogInput) Run(r engine.InputRunner, e *engine.EngineConfig) error
 
 				openedFiles[fn] = true
 				if globals.Debug {
-					globals.Printf("[%s] found new file input: %v\n", fn)
+					globals.Printf("found new file input: %v\n", fn)
 				}
 
 				go this.runSingleAlsLogInput(fn, r, e, source, &stopped)
@@ -137,7 +137,7 @@ func (this *AlsLogInput) runSingleAlsLogInput(fn string, r engine.InputRunner,
 
 	for line := range t.Lines {
 		if globals.Debug {
-			globals.Printf("[%s]got line: %s\n", r.Name(), line.Text)
+			globals.Printf("[%s]got line: %s\n", fn, line.Text)
 		}
 
 		if *stopped {
