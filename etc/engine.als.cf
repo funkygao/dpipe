@@ -40,6 +40,8 @@
 
         {
             name:   "DebugOutput"
+            match: {
+            }
         }
 
         {

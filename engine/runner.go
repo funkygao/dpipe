@@ -28,6 +28,7 @@ type pRunnerBase struct {
 type foRunner struct {
 	pRunnerBase
 
+	matcher   *MatchRunner
 	inChan    chan *PipelinePack
 	engine    *EngineConfig
 	leakCount int
@@ -69,6 +70,7 @@ func NewFORunner(name string, plugin Plugin, pluginCommons *pluginCommons) (this
 func (this *foRunner) Start(e *EngineConfig, wg *sync.WaitGroup) error {
 	this.engine = e
 
+	go this.matcher.Start(this.inChan)
 	go this.runMainloop(e, wg)
 	return nil
 }

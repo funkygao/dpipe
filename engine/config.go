@@ -153,8 +153,7 @@ func (this *EngineConfig) loadPluginSection(section *conf.Conf) {
 	}
 
 	pluginCategory := pluginCats[1]
-	switch pluginCategory {
-	case "Input":
+	if pluginCategory == "Input" {
 		this.InputRunners[wrapper.name] = NewInputRunner(wrapper.name, plugin.(Input),
 			pluginCommons)
 		this.inputWrappers[wrapper.name] = wrapper
@@ -162,20 +161,31 @@ func (this *EngineConfig) loadPluginSection(section *conf.Conf) {
 			this.InputRunners[wrapper.name].setTickLength(time.Duration(pluginCommons.ticker) * time.Second)
 		}
 
+		return
+	}
+
+	runner := NewFORunner(wrapper.name, plugin, pluginCommons)
+	matchRule, err := section.Section("match")
+	if err != nil {
+		panic("output/filter must have 'match' configured")
+	}
+	matcher := NewMatchRunner(matchRule, runner)
+	runner.matcher = matcher
+
+	switch pluginCategory {
 	case "Filter":
-		runner := NewFORunner(wrapper.name, plugin, pluginCommons)
+		this.router.filterMatchers = append(this.router.filterMatchers, matcher)
 		this.FilterRunners[runner.name] = runner
 		this.filterWrappers[runner.name] = wrapper
 
 	case "Output":
-		runner := NewFORunner(wrapper.name, plugin, pluginCommons)
+		this.router.outputMatchers = append(this.router.outputMatchers, matcher)
 		this.OutputRunners[runner.name] = runner
 		this.outputWrappers[runner.name] = wrapper
 	}
-
 }
 
-// common config directive for all plugins
+// common config directives for all plugins
 type pluginCommons struct {
 	name     string `json:"name"`
 	class    string `json:"class"`
