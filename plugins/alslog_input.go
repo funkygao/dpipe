@@ -19,16 +19,16 @@ type logfileSource struct {
 
 func (this *logfileSource) validate() {
 	if this.glob == "" {
-		panic("LogfileInput.sources.glob cannot be empty")
+		panic("AlsLogInput.sources.glob cannot be empty")
 	}
 }
 
-type LogfileInput struct {
+type AlsLogInput struct {
 	stopChan chan bool
 	sources  []logfileSource
 }
 
-func (this *LogfileInput) Init(config *conf.Conf) {
+func (this *AlsLogInput) Init(config *conf.Conf) {
 	globals := engine.Globals()
 	if globals.Debug {
 		globals.Printf("%#v\n", *config)
@@ -49,15 +49,15 @@ func (this *LogfileInput) Init(config *conf.Conf) {
 	}
 }
 
-func (this *LogfileInput) Stop() {
+func (this *AlsLogInput) Stop() {
 	close(this.stopChan)
 }
 
-func (this *LogfileInput) CleanupForRestart() {
+func (this *AlsLogInput) CleanupForRestart() {
 
 }
 
-func (this *LogfileInput) Run(r engine.InputRunner, e *engine.EngineConfig) error {
+func (this *AlsLogInput) Run(r engine.InputRunner, e *engine.EngineConfig) error {
 	globals := engine.Globals()
 	if globals.Verbose {
 		globals.Printf("[%s] started\n", r.Name())
@@ -85,7 +85,7 @@ func (this *LogfileInput) Run(r engine.InputRunner, e *engine.EngineConfig) erro
 					globals.Printf("[%s] found new file input: %v\n", fn)
 				}
 
-				go this.runSingleLogfileInput(fn, r, e, &stopped, source.project, source.nexts)
+				go this.runSingleAlsLogInput(fn, r, e, &stopped, source.project, source.nexts)
 			}
 		}
 
@@ -106,7 +106,7 @@ func (this *LogfileInput) Run(r engine.InputRunner, e *engine.EngineConfig) erro
 	return nil
 }
 
-func (this *LogfileInput) runSingleLogfileInput(fn string, r engine.InputRunner,
+func (this *AlsLogInput) runSingleAlsLogInput(fn string, r engine.InputRunner,
 	e *engine.EngineConfig, stopped *bool, project string, nexts []string) {
 	var tailConf tail.Config
 	if engine.Globals().Tail {
@@ -152,7 +152,7 @@ func (this *LogfileInput) runSingleLogfileInput(fn string, r engine.InputRunner,
 	}
 }
 
-func (this *LogfileInput) refreshSources() {
+func (this *AlsLogInput) refreshSources() {
 	var err error
 	for idx, source := range this.sources {
 		this.sources[idx].files, err = filepath.Glob(source.glob)
@@ -163,7 +163,7 @@ func (this *LogfileInput) refreshSources() {
 }
 
 func init() {
-	engine.RegisterPlugin("LogfileInput", func() engine.Plugin {
-		return new(LogfileInput)
+	engine.RegisterPlugin("AlsLogInput", func() engine.Plugin {
+		return new(AlsLogInput)
 	})
 }

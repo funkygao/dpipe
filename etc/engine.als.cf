@@ -19,9 +19,9 @@
 
     plugins: [
         {
-            name:   "LogfileInput"
-            class:  "LogfileInput"
-            ticker_interval: 5
+            name:   "AlsLogInput"
+            class:  "AlsLogInput"
+            ticker_interval: 30
             sources: [
                 {
                     glob:   "/mnt/funplus/logs/fp_ffseaside/bi_*"
