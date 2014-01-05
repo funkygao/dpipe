@@ -3,7 +3,6 @@ package plugins
 
 import (
 	"fmt"
-	"github.com/funkygao/als"
 	"github.com/funkygao/funpipe/engine"
 	"github.com/funkygao/golib"
 	"github.com/funkygao/golib/observer"
@@ -45,9 +44,6 @@ func (this *EsOutput) Run(r engine.OutputRunner, e *engine.EngineConfig) error {
 	this.indexer.BulkMaxDocs = this.bulkMaxDocs
 	this.indexer.BulkMaxBuffer = this.bulkMaxBuffer
 
-	// load geoip db
-	als.LoadGeoDb(e.String("geodbfile", ""))
-
 	// start the bulk indexer
 	this.indexer.Run(this.stopChan)
 
@@ -66,23 +62,19 @@ func (this *EsOutput) Run(r engine.OutputRunner, e *engine.EngineConfig) error {
 			ok = false
 
 		case <-reloadChan:
+			// TODO
 
 		case <-time.After(this.flushInterval * time.Second):
 			this.indexer.Flush()
 
 		case pack, ok = <-inChan:
 			if !ok {
-				// inChan closed, shutdown
 				break
 			}
 
-			// got pack from engine, pass to ES
 			this.feedEs(pack)
-
-			// never forget this! or system get stuck
 			pack.Recycle()
 		}
-
 	}
 
 	// before shutdown, flush again

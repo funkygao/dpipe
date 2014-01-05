@@ -43,8 +43,35 @@
         }
 
         {
-            name:   "EsOutput"
+            name:   "EsFilter"
             match:  [1, ]
+            sink:   2
+            converts: [
+                // act: ip|money|range|del
+                {
+                    key: "ip"
+                    act: "ip"
+                }
+                {
+                    key: "_log_info.ip"
+                    act: "ip"
+                }
+                {
+                    key: "data.amount"
+                    act: "money"
+                    cur: "data.currency"
+                }
+                {
+                    key: "level"
+                    act: "range"
+                    range: [1, 10]
+                }
+            ]
+        }
+
+        {
+            name:   "EsOutput"
+            match:  [2, ]
             index:  "@ym"
             domain: "localhost"
             port: "9200"
