@@ -127,23 +127,18 @@ func Launch(e *EngineConfig) {
 	globals.Println("All Inputs terminated")
 
 	for _, runner := range e.FilterRunners {
-		// needed for a clean shutdown without deadlocking or orphaning messages
-		// 1. removes the matcher from the router
-		// 2. closes the matcher input channel and lets it drain
-		// 3. closes the filter input channel and lets it drain
-		// 4. exits the filter
-		//e.router.RemoveFilterMatcher() <- filter.MatchRunner()
+		e.router.removeFilterMatcher <- runner.MatchRunner()
 		globals.Printf("Stop message sent to '%s'", runner.Name())
 	}
 	filtersWg.Wait()
 	globals.Println("All Filters terminated")
 
 	for _, runner := range e.OutputRunners {
-		//e.router.RemoveOutputMatcher() <- output.MatchRunner()
+		e.router.removeFilterMatcher <- runner.MatchRunner()
 		globals.Printf("Stop message sent to '%s'", runner.Name())
 	}
 	outputsWg.Wait()
 	globals.Println("All Outputs terminated")
 
-	globals.Println("Shutdown complete.")
+	globals.Println("Engine shutdown complete.")
 }

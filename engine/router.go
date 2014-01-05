@@ -14,6 +14,9 @@ type messageRouter struct {
 	inChan              chan *PipelinePack
 	processMessageCount int64 // 16 BilionBillion
 
+	removeFilterMatcher chan *MatchRunner
+	removeOutputMatcher chan *MatchRunner
+
 	filterMatchers []*MatchRunner
 	outputMatchers []*MatchRunner
 }
@@ -22,6 +25,8 @@ func NewMessageRouter() (this *messageRouter) {
 	this = new(messageRouter)
 	this.inChan = make(chan *PipelinePack, Globals().PluginChanSize)
 
+	this.removeFilterMatcher = make(chan *MatchRunner)
+	this.removeOutputMatcher = make(chan *MatchRunner)
 	this.filterMatchers = make([]*MatchRunner, 0, 10)
 	this.outputMatchers = make([]*MatchRunner, 0, 10)
 
@@ -36,6 +41,21 @@ func (this *messageRouter) Start() {
 	go this.runMainloop()
 
 	Globals().Println("Router started")
+}
+
+func (this *messageRouter) removeMatcher(matcher *MatchRunner,
+	matchers []*MatchRunner) {
+	if matcher == nil {
+		return
+	}
+
+	for idx, m := range matchers {
+		if m == matcher {
+			close(m.inChan)
+			matchers[idx] = nil
+			break
+		}
+	}
 }
 
 // Dispatch pack from Input to MatchRunners
@@ -55,6 +75,12 @@ func (this *messageRouter) runMainloop() {
 		runtime.Gosched()
 
 		select {
+		case matcher = <-this.removeOutputMatcher:
+			this.removeMatcher(matcher, this.outputMatchers)
+
+		case matcher = <-this.removeFilterMatcher:
+			this.removeMatcher(matcher, this.filterMatchers)
+
 		case <-ticker.C:
 			globals.Printf("processed msg: %v\n", this.processMessageCount)
 
@@ -68,11 +94,19 @@ func (this *messageRouter) runMainloop() {
 			atomic.AddInt64(&this.processMessageCount, 1)
 
 			for _, matcher = range this.filterMatchers {
+				if matcher == nil {
+					continue
+				}
+
 				pack.diagnostics.AddStamp(matcher.runner)
 				pack.IncRef()
 				matcher.inChan <- pack
 			}
 			for _, matcher = range this.outputMatchers {
+				if matcher == nil {
+					continue
+				}
+
 				pack.diagnostics.AddStamp(matcher.runner)
 				pack.IncRef()
 				matcher.inChan <- pack

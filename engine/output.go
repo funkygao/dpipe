@@ -14,6 +14,8 @@ type OutputRunner interface {
 	Output() Output
 
 	Start(e *EngineConfig, wg *sync.WaitGroup) (err error)
+
+	MatchRunner() *MatchRunner
 }
 
 type Output interface {

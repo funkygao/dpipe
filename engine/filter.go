@@ -21,6 +21,8 @@ type FilterRunner interface {
 	// false and doesn't perform message injection if the message would be
 	// caught by the sending Filter's message_matcher.
 	Inject(pack *PipelinePack) bool
+
+	MatchRunner() *MatchRunner
 }
 
 type Filter interface {

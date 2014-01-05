@@ -1,7 +1,6 @@
 package plugins
 
 import (
-	"fmt"
 	"github.com/funkygao/funpipe/engine"
 	conf "github.com/funkygao/jsconf"
 )

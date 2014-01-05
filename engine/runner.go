@@ -67,6 +67,10 @@ func NewFORunner(name string, plugin Plugin, pluginCommons *pluginCommons) (this
 	return
 }
 
+func (this *foRunner) MatchRunner() *MatchRunner {
+	return this.matcher
+}
+
 func (this *foRunner) Start(e *EngineConfig, wg *sync.WaitGroup) error {
 	this.engine = e
 
