@@ -38,6 +38,8 @@ func (this *DiagnosticTracker) Run() {
 	for !globals.Stopping {
 		<-ticker.C
 
+		globals.Debugf("%#v\n", *this)
+
 		probablePacks = probablePacks[:0] // reset
 		pluginCounts = make(map[PluginRunner]int)
 

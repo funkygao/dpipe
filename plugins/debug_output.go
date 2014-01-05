@@ -35,7 +35,7 @@ func (this *DebugOutput) Run(r engine.OutputRunner, e *engine.EngineConfig) erro
 
 			fmt.Printf("got msg: %s\n", pack.Message.RawLine())
 
-			//pack.Recycle()
+			pack.Recycle()
 		}
 	}
 
