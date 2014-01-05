@@ -1,7 +1,7 @@
 package engine
 
 import (
-	//"runtime"
+	"runtime"
 	"sync/atomic"
 	"time"
 )
@@ -52,11 +52,11 @@ func (this *messageRouter) runMainloop() {
 	defer ticker.Stop()
 
 	for ok {
-		//runtime.Gosched()
+		runtime.Gosched()
 
 		select {
 		case <-ticker.C:
-			globals.Printf("processed msg: %d\n", this.processMessageCount)
+			globals.Printf("processed msg: %v\n", this.processMessageCount)
 
 		case pack, ok = <-this.inChan:
 			if !ok {
