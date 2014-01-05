@@ -134,7 +134,7 @@ func Launch(e *EngineConfig) {
 	globals.Println("All Filters terminated")
 
 	for _, runner := range e.OutputRunners {
-		e.router.removeFilterMatcher <- runner.MatchRunner()
+		e.router.removeOutputMatcher <- runner.MatchRunner()
 		globals.Printf("Stop message sent to '%s'", runner.Name())
 	}
 	outputsWg.Wait()

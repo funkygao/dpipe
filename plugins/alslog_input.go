@@ -101,7 +101,7 @@ func (this *AlsLogInput) Run(r engine.InputRunner, e *engine.EngineConfig) error
 
 		case <-this.stopChan:
 			if globals.Verbose {
-				globals.Printf("[%s] stopped\n", r.Name())
+				globals.Printf("%s stopped\n", r.Name())
 			}
 			stopped = true
 		}
