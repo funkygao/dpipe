@@ -19,7 +19,7 @@ func Launch(e *EngineConfig) {
 	)
 
 	globals := Globals()
-	globals.Println("Launching engine...")
+	globals.Println("Launching Engine...")
 
 	if globals.Verbose {
 		globals.Println("Launching Output(s)")

@@ -13,8 +13,6 @@ type SkyOutput struct {
 }
 
 func (this *SkyOutput) Init(config *conf.Conf) {
-	engine.Globals().Debugf("%#v\n", *config)
-
 	this.stopChan = make(chan bool)
 	var (
 		host string = config.String("host", "localhost")

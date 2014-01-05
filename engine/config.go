@@ -45,7 +45,9 @@ func NewEngineConfig(globals *GlobalConfigStruct) (this *EngineConfig) {
 		return globals
 	}
 
-	globals.Debugf("globals: %#v\n", *globals)
+	if globals.Debug {
+		globals.Printf("globals: %#v\n", *globals)
+	}
 
 	this.InputRunners = make(map[string]InputRunner)
 	this.inputWrappers = make(map[string]*PluginWrapper)
@@ -99,7 +101,9 @@ func (this *EngineConfig) LoadConfigFile(fn string) {
 	this.Conf = cf
 
 	globals := Globals()
-	globals.Debugf("config: %#v\n", *cf)
+	if globals.Debug {
+		globals.Printf("config: %#v\n", *cf)
+	}
 
 	// 'projects' section
 	for i := 0; i < len(this.List("projects", nil)); i++ {
@@ -123,7 +127,9 @@ func (this *EngineConfig) LoadConfigFile(fn string) {
 		this.loadPluginSection(section)
 	}
 
-	globals.Debugf("engine: %#v\n", *this)
+	if globals.Debug {
+		globals.Printf("engine: %#v\n", *this)
+	}
 }
 
 func (this *EngineConfig) loadPluginSection(section *conf.Conf) {

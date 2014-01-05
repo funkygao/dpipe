@@ -11,7 +11,7 @@ type DebugOutput struct {
 }
 
 func (this *DebugOutput) Init(config *conf.Conf) {
-	engine.Globals().Debugf("%#v\n", *config)
+
 }
 
 func (this *DebugOutput) Run(r engine.OutputRunner, e *engine.EngineConfig) error {

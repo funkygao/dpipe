@@ -50,12 +50,6 @@ func (this *GlobalConfigStruct) Shutdown() {
 	}()
 }
 
-func (this *GlobalConfigStruct) Debugf(format string, a ...interface{}) {
-	if this.Debug {
-		this.Printf(format, a...)
-	}
-}
-
 func DefaultGlobals() *GlobalConfigStruct {
 	idle, _ := time.ParseDuration("2m")
 	return &GlobalConfigStruct{

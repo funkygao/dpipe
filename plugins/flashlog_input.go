@@ -24,8 +24,6 @@ type FlashlogInput struct {
 }
 
 func (this *FlashlogInput) Init(config *conf.Conf) {
-	engine.Globals().Debugf("%#v\n", *config)
-
 	this.dsn = config.String("dsn",
 		"flashlog:flashlog@unix(/var/run/mysqld/mysqld.sock)/flashlog?charset=utf8")
 }

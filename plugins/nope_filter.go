@@ -9,7 +9,6 @@ type NopeFilter struct {
 }
 
 func (this *NopeFilter) Init(config *conf.Conf) {
-	engine.Globals().Debugf("%#v\n", *config)
 }
 
 func (this *NopeFilter) Run(r engine.OutputRunner, e *engine.EngineConfig) error {
