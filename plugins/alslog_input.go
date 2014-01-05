@@ -84,7 +84,7 @@ func (this *AlsLogInput) Run(r engine.InputRunner, e *engine.EngineConfig) error
 					continue
 				}
 
-				if globals.Debug {
+				if globals.Verbose {
 					globals.Printf("found new file %s\n", fn)
 				}
 

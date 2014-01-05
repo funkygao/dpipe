@@ -40,7 +40,9 @@ func (this *messageRouter) InChan() chan *PipelinePack {
 func (this *messageRouter) Start() {
 	go this.runMainloop()
 
-	Globals().Println("Router started")
+	if Globals().Verbose {
+		Globals().Println("Router started")
+	}
 }
 
 func (this *messageRouter) removeMatcher(matcher *MatchRunner,

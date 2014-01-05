@@ -89,14 +89,11 @@ func Launch(e *EngineConfig) {
 
 	}
 
-	globals.sigChan = make(chan os.Signal)
+	globals.Println("Engine ready")
 
 	// now, we have started all runners. next, wait for sigint
+	globals.sigChan = make(chan os.Signal)
 	signal.Notify(globals.sigChan, syscall.SIGINT, syscall.SIGHUP)
-
-	if globals.Verbose {
-		globals.Println("Waiting for os signals...")
-	}
 	for !globals.Stopping {
 		select {
 		case sig := <-globals.sigChan:
@@ -107,7 +104,7 @@ func Launch(e *EngineConfig) {
 				observer.Publish(RELOAD, nil)
 
 			case syscall.SIGINT:
-				globals.Println("Shutdown...")
+				globals.Println("Engine shutdown...")
 				globals.Stopping = true
 			}
 		}
@@ -121,24 +118,39 @@ func Launch(e *EngineConfig) {
 
 	for _, runner := range e.InputRunners {
 		runner.Input().Stop()
-		globals.Printf("Stop sent to '%s'", runner.Name())
+
+		if globals.Verbose {
+			globals.Printf("Stop message sent to '%s'", runner.Name())
+		}
 	}
 	inputsWg.Wait() // wait for all inputs done
-	globals.Println("All Inputs terminated")
+	if globals.Verbose {
+		globals.Println("All Inputs terminated")
+	}
 
 	for _, runner := range e.FilterRunners {
 		e.router.removeFilterMatcher <- runner.MatchRunner()
-		globals.Printf("Stop message sent to '%s'", runner.Name())
+
+		if globals.Verbose {
+			globals.Printf("Stop message sent to '%s'", runner.Name())
+		}
 	}
 	filtersWg.Wait()
-	globals.Println("All Filters terminated")
+	if globals.Verbose {
+		globals.Println("All Filters terminated")
+	}
 
 	for _, runner := range e.OutputRunners {
 		e.router.removeOutputMatcher <- runner.MatchRunner()
-		globals.Printf("Stop message sent to '%s'", runner.Name())
+
+		if globals.Verbose {
+			globals.Printf("Stop message sent to '%s'", runner.Name())
+		}
 	}
 	outputsWg.Wait()
-	globals.Println("All Outputs terminated")
+	if globals.Verbose {
+		globals.Println("All Outputs terminated")
+	}
 
 	globals.Println("Engine shutdown complete.")
 }

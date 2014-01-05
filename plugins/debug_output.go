@@ -38,8 +38,6 @@ func (this *DebugOutput) Run(r engine.OutputRunner, e *engine.EngineConfig) erro
 		}
 	}
 
-	globals.Printf("%s terminated", r.Name())
-
 	return nil
 }
 
