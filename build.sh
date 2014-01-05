@@ -10,11 +10,11 @@ fi
 #===========
 # build
 #===========
-cd $(dirname $0)
+cd $(dirname $0)/cmd/fpiped
 ID=$(git rev-parse HEAD | cut -c1-7)
 go build -ldflags "-X main.BuildID $ID"
 
 #===========
 # show ver
 #===========
-./funpipe -version
+./fpiped -version
