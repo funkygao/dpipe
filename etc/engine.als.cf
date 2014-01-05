@@ -34,14 +34,14 @@
                     proj:   "ffs"
                     sink:   1
                 }
+                {
+                    glob:   "/mnt/funplus/logs/fp_rstory/bi_*"
+                    proj:   "rs"
+                    sink:   1
+                }
             ]
         }
         
-        {
-            name:   "DebugOutput"
-            match:  [1, ]
-        }
-
         {
             name:   "EsFilter"
             match:  [1, ]
@@ -83,6 +83,7 @@
         {
             name:   "AlarmOutput"
             match:  [2, ]
+            disabled: true
         }
     ]
 

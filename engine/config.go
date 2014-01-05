@@ -134,6 +134,14 @@ func (this *EngineConfig) LoadConfigFile(fn string) {
 func (this *EngineConfig) loadPluginSection(section *conf.Conf) {
 	pluginCommons := new(pluginCommons)
 	pluginCommons.load(section)
+	if pluginCommons.disabled {
+		globals := Globals()
+		if globals.Verbose {
+			globals.Printf("%s disabled\n", pluginCommons.name)
+		}
+
+		return
+	}
 	pluginType := pluginCommons.class
 
 	wrapper := new(PluginWrapper)
@@ -188,6 +196,7 @@ type pluginCommons struct {
 	class    string `json:"class"`
 	poolSize int    `json:"pool_size"`
 	ticker   int    `json:"ticker_interval"`
+	disabled bool   `json:"disabled"`
 }
 
 func (this *pluginCommons) load(section *conf.Conf) {
@@ -203,4 +212,5 @@ func (this *pluginCommons) load(section *conf.Conf) {
 	}
 	this.poolSize = section.Int("pool_size", Globals().PoolSize)
 	this.ticker = section.Int("ticker_interval", Globals().TickerLength)
+	this.disabled = section.Bool("disabled", false)
 }
