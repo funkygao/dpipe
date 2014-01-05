@@ -121,9 +121,10 @@ func Launch(e *EngineConfig) {
 
 	for _, runner := range e.InputRunners {
 		runner.Input().Stop()
-		globals.Printf("Stop message sent to '%s'", runner.Name())
+		globals.Printf("Stop sent to '%s'", runner.Name())
 	}
 	inputsWg.Wait() // wait for all inputs done
+	globals.Println("All Inputs terminated")
 
 	for _, runner := range e.FilterRunners {
 		// needed for a clean shutdown without deadlocking or orphaning messages
@@ -135,12 +136,14 @@ func Launch(e *EngineConfig) {
 		globals.Printf("Stop message sent to '%s'", runner.Name())
 	}
 	filtersWg.Wait()
+	globals.Println("All Filters terminated")
 
 	for _, runner := range e.OutputRunners {
 		//e.router.RemoveOutputMatcher() <- output.MatchRunner()
 		globals.Printf("Stop message sent to '%s'", runner.Name())
 	}
 	outputsWg.Wait()
+	globals.Println("All Outputs terminated")
 
 	globals.Println("Shutdown complete.")
 }
