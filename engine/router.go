@@ -52,7 +52,7 @@ func (this *messageRouter) runMainloop() {
 	defer ticker.Stop()
 
 	for ok {
-		runtime.Gosched()
+		//runtime.Gosched()
 
 		select {
 		case <-ticker.C:
