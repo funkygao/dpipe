@@ -59,7 +59,7 @@ func DefaultGlobals() *GlobalConfigStruct {
 		Tail:                  true,
 		PoolSize:              100,
 		PluginChanSize:        50,
-		TickerLength:          10,
+		TickerLength:          10*60,
 		MaxMsgLoops:           4,
 		MaxMsgProcessInject:   1,
 		MaxMsgProcessDuration: 1000000,

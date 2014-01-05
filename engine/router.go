@@ -39,10 +39,6 @@ func (this *messageRouter) InChan() chan *PipelinePack {
 
 func (this *messageRouter) Start() {
 	go this.runMainloop()
-
-	if Globals().Verbose {
-		Globals().Println("Router started")
-	}
 }
 
 func (this *messageRouter) removeMatcher(matcher *MatchRunner,
@@ -69,6 +65,10 @@ func (this *messageRouter) runMainloop() {
 		ticker  *time.Ticker
 		matcher *MatchRunner
 	)
+
+	if Globals().Verbose {
+		Globals().Printf("Router started with ticker %ds\n", globals.TickerLength)
+	}
 
 	ticker = time.NewTicker(time.Second * time.Duration(globals.TickerLength))
 	defer ticker.Stop()
