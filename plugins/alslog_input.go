@@ -12,10 +12,11 @@ import (
 
 type logfileSource struct {
 	glob    string
-	files   []string
 	excepts map[string]bool
 	project string
 	sink    int
+
+	_files []string
 }
 
 func (this *logfileSource) load(config *conf.Conf) {
@@ -30,6 +31,7 @@ func (this *logfileSource) load(config *conf.Conf) {
 		this.excepts[e] = true
 	}
 	this.sink = config.Int("sink", 0)
+	this._files = make([]string, 0, 200)
 }
 
 func (this *logfileSource) refresh() {
@@ -38,13 +40,13 @@ func (this *logfileSource) refresh() {
 		panic(err)
 	}
 
-	this.files = this.files[:0]
+	this._files = this._files[:0]
 	for _, f := range files {
 		if _, isExcept := this.excepts[f]; isExcept {
 			continue
 		}
 
-		this.files = append(this.files, f)
+		this._files = append(this._files, f)
 	}
 }
 
@@ -100,7 +102,7 @@ func (this *AlsLogInput) Run(r engine.InputRunner, e *engine.EngineConfig) error
 		this.refreshSources()
 
 		for _, source := range this.sources {
-			for _, fn := range source.files {
+			for _, fn := range source._files {
 				if _, present := openedFiles[fn]; present {
 					continue
 				}
