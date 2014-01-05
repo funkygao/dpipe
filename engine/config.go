@@ -27,8 +27,7 @@ type EngineConfig struct {
 	// PipelinePack supply for Input plugins.
 	inputRecycleChan chan *PipelinePack
 
-	// PipelinePack supply for Filter plugins (separate pool prevents
-	// deadlocks).
+	// PipelinePack supply for Filter plugins
 	injectRecycleChan chan *PipelinePack
 
 	hostname string

@@ -71,6 +71,23 @@ func (this *foRunner) MatchRunner() *MatchRunner {
 	return this.matcher
 }
 
+func (this *foRunner) Inject(pack *PipelinePack) bool {
+	this.engine.router.InChan() <- pack
+	return true
+}
+
+func (this *foRunner) InChan() chan *PipelinePack {
+	return this.inChan
+}
+
+func (this *foRunner) Output() Output {
+	return this.plugin.(Output)
+}
+
+func (this *foRunner) Filter() Filter {
+	return this.plugin.(Filter)
+}
+
 func (this *foRunner) Start(e *EngineConfig, wg *sync.WaitGroup) error {
 	this.engine = e
 
@@ -119,21 +136,4 @@ func (this *foRunner) runMainloop(e *EngineConfig, wg *sync.WaitGroup) {
 		this.plugin = pw.Create()
 	}
 
-}
-
-func (this *foRunner) Inject(pack *PipelinePack) bool {
-	this.engine.router.InChan() <- pack
-	return true
-}
-
-func (this *foRunner) InChan() chan *PipelinePack {
-	return this.inChan
-}
-
-func (this *foRunner) Output() Output {
-	return this.plugin.(Output)
-}
-
-func (this *foRunner) Filter() Filter {
-	return this.plugin.(Filter)
 }
