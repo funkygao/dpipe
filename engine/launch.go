@@ -22,32 +22,32 @@ func Launch(e *EngineConfig) {
 	globals.Println("Launching Engine...")
 
 	if globals.Verbose {
-		globals.Println("Launching Output(s)")
+		globals.Println("Launching Output(s)...")
 	}
 	for name, runner := range e.OutputRunners {
+		if globals.Verbose {
+			globals.Printf("Starting %s\n", name)
+		}
+
 		outputsWg.Add(1)
 		if err = runner.Start(e, outputsWg); err != nil {
 			outputsWg.Done()
 			panic(err)
 		}
-
-		if globals.Verbose {
-			globals.Printf("Output[%s] started\n", name)
-		}
 	}
 
 	if globals.Verbose {
-		globals.Println("Launching Filter(s)")
+		globals.Println("Launching Filter(s)...")
 	}
 	for name, runner := range e.FilterRunners {
+		if globals.Verbose {
+			globals.Printf("Starting %s\n", name)
+		}
+
 		filtersWg.Add(1)
 		if err = runner.Start(e, filtersWg); err != nil {
 			filtersWg.Done()
 			panic(err)
-		}
-
-		if globals.Verbose {
-			globals.Printf("Filter[%s] started", name)
 		}
 	}
 
@@ -56,7 +56,7 @@ func Launch(e *EngineConfig) {
 	injectTracker := NewDiagnosticTracker("inject")
 
 	if globals.Verbose {
-		globals.Println("Initializing PipelinePack pools")
+		globals.Printf("Initializing PipelinePack pools %d\n", globals.PoolSize)
 	}
 	for i := 0; i < globals.PoolSize; i++ {
 		inputPack := NewPipelinePack(e.inputRecycleChan)
@@ -74,18 +74,19 @@ func Launch(e *EngineConfig) {
 	e.router.Start()
 
 	if globals.Verbose {
-		globals.Println("Launching Input(s)")
+		globals.Println("Launching Input(s)...")
 	}
 	for name, runner := range e.InputRunners {
+		if globals.Verbose {
+			globals.Printf("Starting %s\n", name)
+		}
+
 		inputsWg.Add(1)
 		if err = runner.Start(e, inputsWg); err != nil {
 			inputsWg.Done()
 			panic(err)
 		}
 
-		if globals.Verbose {
-			globals.Printf("Input[%s] started\n", name)
-		}
 	}
 
 	globals.sigChan = make(chan os.Signal)
