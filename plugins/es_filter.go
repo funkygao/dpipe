@@ -36,6 +36,8 @@ func (this *EsFilter) Run(r engine.FilterRunner, e *engine.EngineConfig) error {
 		}
 
 	}
+
+	return nil
 }
 
 func init() {
