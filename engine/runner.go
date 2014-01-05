@@ -118,10 +118,7 @@ func (this *foRunner) runMainloop(e *EngineConfig, wg *sync.WaitGroup) {
 }
 
 func (this *foRunner) Inject(pack *PipelinePack) bool {
-	// TODO go func may be too much overhead
-	go func() {
-		this.engine.router.InChan() <- pack
-	}()
+	this.engine.router.InChan() <- pack
 	return true
 }
 

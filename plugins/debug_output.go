@@ -33,7 +33,7 @@ func (this *DebugOutput) Run(r engine.OutputRunner, e *engine.EngineConfig) erro
 				break
 			}
 
-			fmt.Printf("got msg: %s\n", pack.Message.RawLine())
+			globals.Printf("got msg: %s\n", pack.Message.RawLine())
 
 			pack.Recycle()
 		}
