@@ -16,7 +16,7 @@
             ticker_interval: 30
             sources: [
                 {
-                    glob:   "/var/log/au*.log"
+                    glob:   "/var/log/a*.log"
                     proj:   "rs"
                     sink:   1
                 }

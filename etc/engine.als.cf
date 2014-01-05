@@ -31,11 +31,15 @@
             sources: [
                 {
                     glob:   "/mnt/funplus/logs/fp_ffseaside/bi_*"
+                    except: [
+                    ]
                     proj:   "ffs"
                     sink:   1
                 }
                 {
                     glob:   "/mnt/funplus/logs/fp_rstory/bi_*"
+                    except: [
+                    ]
                     proj:   "rs"
                     sink:   1
                 }

@@ -13,6 +13,7 @@ import (
 type logfileSource struct {
 	glob    string
 	files   []string
+	excepts map[string]bool
 	project string
 	sink    int
 }
@@ -24,12 +25,32 @@ func (this *logfileSource) load(config *conf.Conf) {
 	}
 
 	this.project = config.String("proj", "")
+	excepts := config.StringList("except", nil)
+	for _, e := range excepts {
+		this.excepts[e] = true
+	}
 	this.sink = config.Int("sink", 0)
+}
+
+func (this *logfileSource) refresh() {
+	files, err := filepath.Glob(this.glob)
+	if err != nil {
+		panic(err)
+	}
+
+	this.files = this.files[:0]
+	for _, f := range files {
+		if _, isExcept := this.excepts[f]; isExcept {
+			continue
+		}
+
+		this.files = append(this.files, f)
+	}
 }
 
 type AlsLogInput struct {
 	stopChan chan bool
-	sources  []logfileSource
+	sources  []*logfileSource
 }
 
 func (this *AlsLogInput) Init(config *conf.Conf) {
@@ -40,14 +61,14 @@ func (this *AlsLogInput) Init(config *conf.Conf) {
 	this.stopChan = make(chan bool)
 
 	// get the sources
-	this.sources = make([]logfileSource, 0, 200)
+	this.sources = make([]*logfileSource, 0, 200)
 	for i := 0; i < len(config.List("sources", nil)); i++ {
 		section, err := config.Section(fmt.Sprintf("sources[%d]", i))
 		if err != nil {
 			panic(err)
 		}
 
-		source := logfileSource{}
+		source := new(logfileSource)
 		source.load(section)
 		this.sources = append(this.sources, source)
 	}
@@ -89,7 +110,7 @@ func (this *AlsLogInput) Run(r engine.InputRunner, e *engine.EngineConfig) error
 				}
 
 				openedFiles[fn] = true
-				go this.runSingleAlsLogInput(fn, r, e, source, &stopped)
+				go this.runSingleAlsLogInput(fn, r, e, *source, &stopped)
 			}
 		}
 
@@ -158,12 +179,8 @@ func (this *AlsLogInput) runSingleAlsLogInput(fn string, r engine.InputRunner,
 }
 
 func (this *AlsLogInput) refreshSources() {
-	var err error
-	for idx, source := range this.sources {
-		this.sources[idx].files, err = filepath.Glob(source.glob)
-		if err != nil {
-			panic(err)
-		}
+	for _, s := range this.sources {
+		s.refresh()
 	}
 }
 
