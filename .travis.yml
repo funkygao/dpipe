@@ -2,7 +2,7 @@ language: go
 go:
   - 1.1.2
 install:
-  - go get -u github.com/funkygao/alser
+  - go get -u github.com/funkygao/funpipe
 script:
   - pushd $TRAVIS_BUILD_DIR
   - mkdir -p var
