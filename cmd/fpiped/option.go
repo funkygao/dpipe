@@ -12,7 +12,7 @@ import (
 
 func parseFlags() {
 	flag.BoolVar(&options.verbose, "v", false, "verbose")
-	flag.StringVar(&options.configfile, "c", "etc/main.cf", "main config file")
+	flag.StringVar(&options.configfile, "c", "etc/engine.als.cf", "main config file")
 	flag.StringVar(&options.logfile, "l", "", "master log file name")
 	flag.StringVar(&options.lockfile, "lockfile", "", "lockfile path")
 	flag.BoolVar(&options.showversion, "version", false, "show version")

@@ -1,0 +1,64 @@
+{
+    // global conf shared by all projects
+    geodbfile: "/opt/local/share/GeoIP/GeoIP.dat"
+    
+    projects: [
+        {
+            name:    "rs"
+            logfile: "var/rs.log"    # default var/{name}.log
+        }
+    ]
+
+    plugins: [
+        {
+            name:   "BatchAlsLogInput"
+            class:  "BatchAlsLogInput"
+            root_dir: "/data2/als"
+            sink:   1
+            concurrent_num: 25
+            chkpntfile: "_.gob"
+            except: [
+                "post", "load_data", "newpay", "bigdata", "quest",
+            ]
+        }
+        
+        {
+            name:   "EsFilter"
+            match:  [1, ]
+            sink:   2
+            converts: [
+                // act: ip|money|range|del
+                {
+                    key: "ip"
+                    act: "ip"
+                }
+                {
+                    key: "_log_info.ip"
+                    act: "ip"
+                }
+                {
+                    key: "data.amount"
+                    act: "money"
+                    cur: "data.currency"
+                }
+                {
+                    key: "level"
+                    act: "range"
+                    range: [1, 10]
+                }
+            ]
+        }
+
+        {
+            name:   "EsOutput"
+            match:  [2, ]
+            index:  "@ym"
+            domain: "localhost"
+            port: "9200"
+            flush_interval: 30
+            bulk_max_conn: 20
+            bulk_max_docs: 100
+        }
+    ]
+
+}
