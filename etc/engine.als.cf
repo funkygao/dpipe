@@ -42,7 +42,7 @@
                 {
                     glob:   "/mnt/funplus/logs/fp_rstory/*.log"
                     except: [
-                        "post", "index", 
+                        "post", "index", "kernal", "phperror", "session", "load_data",
                     ]
                     proj:   "rs"
                     sink:   1
@@ -79,7 +79,7 @@
 
         {
             name:   "EsOutput"
-            match:  [2, ]
+            match:  [2, 11, ]
             index:  "@ym"
             domain: "localhost"
             port: "9200"
@@ -90,7 +90,7 @@
 
         {
             name:   "AlarmOutput"
-            match:  [2, ]
+            match:  [8, ]
             disabled: true
         }
     ]
