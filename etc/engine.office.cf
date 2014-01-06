@@ -16,7 +16,7 @@
             root_dir: "/data2/als"
             proj:   "rs"
             sink:   1
-            concurrent_num: 25
+            concurrent_num: 100
             chkpntfile: "_.gob"
             except: [
                 "post", "load_data", "newpay", "bigdata", "quest", "cheat_check", "index", 
