@@ -14,13 +14,11 @@ import (
 
 type BatchAlsLogInput struct {
 	runner      engine.InputRunner
-	e           *engine.EngineConfig
 	chkpnt      *als.FileCheckpoint
 	workerNChan chan int
 	rootDir     string
 	workersWg   *sync.WaitGroup
 	excepts     []string
-	project     string
 	sink        int
 }
 
@@ -29,7 +27,6 @@ func (this *BatchAlsLogInput) Init(config *conf.Conf) {
 	this.sink = config.Int("sink", 0)
 	this.workerNChan = make(chan int, config.Int("concurrent_num", 20))
 	this.chkpnt = als.NewFileCheckpoint(config.String("chkpntfile", ""))
-	this.project = config.String("proj", "rs")
 	this.excepts = config.StringList("except", nil)
 }
 
@@ -39,7 +36,6 @@ func (this *BatchAlsLogInput) CleanupForRestart() {
 
 func (this *BatchAlsLogInput) Run(r engine.InputRunner, e *engine.EngineConfig) error {
 	this.runner = r
-	this.e = e
 
 	this.chkpnt.Load()
 	ticker := time.NewTicker(time.Second * 10)
@@ -116,7 +112,6 @@ func (this *BatchAlsLogInput) doRunSingleLogfile(path string) {
 		inChan  = this.runner.InChan()
 		err     error
 		pack    *engine.PipelinePack
-		project = this.e.Project(this.project)
 		globals = engine.Globals()
 	)
 
@@ -127,12 +122,12 @@ LOOP:
 		case nil:
 			lineN += 1
 			if globals.Verbose {
-				project.Printf("running %s, lineNum: %d\n", path, lineN)
+				globals.Printf("running %s, lineNum: %d\n", path, lineN)
 			}
 
 			pack = <-inChan
 			if err = pack.Message.FromLine(string(line)); err != nil {
-				project.Printf("[%s]error line: %v <= %s\n", path, err, string(line))
+				globals.Printf("[%s]error line: %v <= %s\n", path, err, string(line))
 
 				pack.Recycle()
 				continue
