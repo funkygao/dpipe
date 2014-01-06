@@ -5,7 +5,7 @@
     projects: [
         {
             name:    "rs"
-            logfile: "var/rs.log"    # default var/{name}.log
+            logfile: "var/rs.log"
         }
     ]
 
