@@ -14,6 +14,7 @@
             name:   "BatchAlsLogInput"
             class:  "BatchAlsLogInput"
             root_dir: "/data2/als"
+            proj:   "rs"
             sink:   1
             concurrent_num: 25
             chkpntfile: "_.gob"

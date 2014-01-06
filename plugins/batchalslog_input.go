@@ -14,6 +14,8 @@ import (
 
 type BatchAlsLogInput struct {
 	runner      engine.InputRunner
+	project     string
+	e           *engine.EngineConfig
 	chkpnt      *als.FileCheckpoint
 	workerNChan chan int
 	rootDir     string
@@ -25,6 +27,7 @@ type BatchAlsLogInput struct {
 func (this *BatchAlsLogInput) Init(config *conf.Conf) {
 	this.rootDir = config.String("root_dir", "")
 	this.sink = config.Int("sink", 0)
+	this.project = config.String("proj", "rs")
 	this.workerNChan = make(chan int, config.Int("concurrent_num", 20))
 	this.chkpnt = als.NewFileCheckpoint(config.String("chkpntfile", ""))
 	this.excepts = config.StringList("except", nil)
@@ -36,6 +39,7 @@ func (this *BatchAlsLogInput) CleanupForRestart() {
 
 func (this *BatchAlsLogInput) Run(r engine.InputRunner, e *engine.EngineConfig) error {
 	this.runner = r
+	this.e = e
 
 	this.chkpnt.Load()
 	ticker := time.NewTicker(time.Second * 10)
@@ -111,6 +115,7 @@ func (this *BatchAlsLogInput) doRunSingleLogfile(path string) {
 		lineN   int
 		inChan  = this.runner.InChan()
 		err     error
+		project = this.e.Project(this.project)
 		pack    *engine.PipelinePack
 		globals = engine.Globals()
 	)
@@ -122,7 +127,7 @@ LOOP:
 		case nil:
 			lineN += 1
 			if globals.Verbose {
-				globals.Printf("running %s, lineNum: %d\n", path, lineN)
+				project.Printf("[%s]#%d\n", path, lineN)
 			}
 
 			pack = <-inChan
@@ -134,6 +139,8 @@ LOOP:
 			}
 
 			pack.Message.Sink = this.sink
+			pack.Project = this.project
+			pack.Logfile.SetPath(path)
 			this.runner.Inject(pack)
 
 		case io.EOF:
