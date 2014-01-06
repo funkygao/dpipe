@@ -84,7 +84,10 @@ func (this *messageRouter) runMainloop() {
 			this.removeMatcher(matcher, this.filterMatchers)
 
 		case <-ticker.C:
-			globals.Printf("processed msg: %v\n", this.processMessageCount)
+			elapsed := time.Since(globals.StartedAt)
+			globals.Printf("processed msg: %v, elapsed: %s, speed: %d/s\n",
+				this.processMessageCount, elapsed,
+				this.processMessageCount/int64(elapsed.Seconds()+1))
 
 		case pack, ok = <-this.inChan:
 			if !ok {
