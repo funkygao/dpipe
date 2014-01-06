@@ -105,8 +105,6 @@ func (this *BatchAlsLogInput) doRunSingleLogfile(path string) {
 
 	defer func() {
 		reader.Close()
-		this.chkpnt.Put(path)
-		this.chkpnt.Dump()
 		this.workersWg.Done()
 
 		<-this.workerNChan // release the lock
@@ -152,6 +150,9 @@ LOOP:
 			if globals.Verbose {
 				project.Printf("[%s]done, lines: %d\n", path, lineN)
 			}
+
+			this.chkpnt.Put(path)
+			this.chkpnt.Dump()
 
 			break LOOP
 		}
