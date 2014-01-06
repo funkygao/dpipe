@@ -149,6 +149,10 @@ LOOP:
 			this.runner.Inject(pack)
 
 		case io.EOF:
+			if globals.Verbose {
+				globals.Printf("[%s]done, lines: %d\n", path, lineN)
+			}
+
 			break LOOP
 		}
 	}
