@@ -126,13 +126,16 @@ LOOP:
 		switch err {
 		case nil:
 			lineN += 1
-			if globals.Verbose {
+			if globals.Verbose && lineN == 1 {
+				project.Printf("[%s]started\n", path)
+			}
+			if globals.Debug {
 				project.Printf("[%s]#%d\n", path, lineN)
 			}
 
 			pack = <-inChan
 			if err = pack.Message.FromLine(string(line)); err != nil {
-				globals.Printf("[%s]error line: %v <= %s\n", path, err, string(line))
+				project.Printf("[%s]error: %v <= %s\n", path, err, string(line))
 
 				pack.Recycle()
 				continue
@@ -140,7 +143,7 @@ LOOP:
 
 			pack.Message.Sink = this.sink
 			pack.Project = this.project
-			pack.Logfile.SetPath(path)
+			pack.Logfile.SetDatePath(path)
 			this.runner.Inject(pack)
 
 		case io.EOF:
