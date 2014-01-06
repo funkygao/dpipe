@@ -97,6 +97,9 @@ func (this *BatchAlsLogInput) doRunSingleLogfile(path string) {
 	this.workersWg.Add(1)
 
 	reader := als.NewAlsReader(path)
+	if e := reader.Open(); e != nil {
+		panic(e)
+	}
 
 	defer func() {
 		reader.Close()
