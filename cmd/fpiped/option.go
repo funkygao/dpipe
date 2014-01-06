@@ -63,15 +63,6 @@ func setupMaxProcsAndProfiler() {
 		pprof.StartCPUProfile(f)
 	}
 
-	if options.memprof != "" {
-		f, err := os.Create(options.cpuprof)
-		if err != nil {
-			panic(err)
-		}
-
-		globals.Printf("CPU profiler %s enabled\n", options.cpuprof)
-		pprof.WriteHeapProfile(f)
-	}
 }
 
 func newLogger() *log.Logger {
