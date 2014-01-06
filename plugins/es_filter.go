@@ -112,6 +112,10 @@ func (this *EsFilter) handlePack(pack *engine.PipelinePack) bool {
 			pack.Message.SetField("cntry", als.IpToCountry(ip.(string)))
 
 		case "range":
+			if len(conv.rang) < 2 {
+				continue
+			}
+
 			val, err := pack.Message.FieldValue(conv.key, als.KEY_TYPE_INT)
 			if err != nil {
 				continue
