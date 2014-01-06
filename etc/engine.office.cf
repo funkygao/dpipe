@@ -18,7 +18,7 @@
             concurrent_num: 25
             chkpntfile: "_.gob"
             except: [
-                "post", "load_data", "newpay", "bigdata", "quest",
+                "post", "load_data", "newpay", "bigdata", "quest", "cheat_check",
             ]
         }
         
