@@ -20,7 +20,7 @@
             chkpntfile: "_.gob"
             except: [
                 "post", "load_data", "newpay", "bigdata", "quest", "cheat_check", "index", 
-                "kernal", 
+                "kernal", "phperror",
             ]
         }
         
