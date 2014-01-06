@@ -5,8 +5,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/funkygao/alser/parser"
-	"github.com/funkygao/alser/rule"
 	"github.com/funkygao/funpipe/engine"
 	conf "github.com/funkygao/jsconf"
 	"sync"
