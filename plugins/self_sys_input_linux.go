@@ -14,15 +14,14 @@ import (
 // Stats from /proc/uptime, /proc/loadavg, /proc/meminfo, /proc/stat
 type SelfSysInput struct {
 	stopChan chan bool
-	nexts    []string
+	sink     int
+	interval time.Duration
 }
 
 func (this *SelfSysInput) Init(config *conf.Conf) {
 	this.stopChan = make(chan bool)
-	this.nexts = config.StringList("nexts", nil)
-	if this.nexts == nil {
-		panic("SelfSysInput has nil nexts")
-	}
+	this.sink = config.Int("sink", 0)
+	this.interval = time.Duration(config.Int("interval", 10)) * time.Second
 }
 
 func (this *SelfSysInput) Run(r engine.InputRunner, e *engine.EngineConfig) error {
@@ -35,6 +34,7 @@ func (this *SelfSysInput) Run(r engine.InputRunner, e *engine.EngineConfig) erro
 		stats   = newStats()
 		inChan  = r.InChan()
 		pack    *engine.PipelinePack
+		ticker  = time.NewTicker(this.interval)
 		stopped = false
 	)
 
@@ -55,10 +55,12 @@ func (this *SelfSysInput) Run(r engine.InputRunner, e *engine.EngineConfig) erro
 		case <-this.stopChan:
 			stopped = true
 
-		case <-r.Ticker():
+		case <-ticker.C:
 			// same effect as sleep
 		}
 	}
+
+	ticker.Stop()
 
 	return nil
 }
