@@ -91,8 +91,13 @@ func (this *EsOutput) feedEs(pack *engine.PipelinePack) {
 	data, _ := pack.Message.MarshalPayload()
 	id, _ := golib.UUID()
 
+	typ := pack.Typ
+	if typ == "" {
+		typ = pack.Logfile.CamalCaseName()
+	}
+
 	this.indexer.Index(this.indexName(pack.Project, &date),
-		pack.Logfile.CamalCaseName(), id, "", &date, data) // ttl empty
+		typ, id, "", &date, data) // ttl empty
 }
 
 func (this *EsOutput) indexName(project string, date *time.Time) string {

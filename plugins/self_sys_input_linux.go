@@ -31,24 +31,33 @@ func (this *SelfSysInput) Run(r engine.InputRunner, e *engine.EngineConfig) erro
 	}
 
 	var (
-		stats   = newStats()
-		inChan  = r.InChan()
-		pack    *engine.PipelinePack
-		ticker  = time.NewTicker(this.interval)
-		stopped = false
+		stats      = newStats()
+		inChan     = r.InChan()
+		pack       *engine.PipelinePack
+		ticker     = time.NewTicker(this.interval)
+		jsonString string
+		err        error
+		stopped    = false
 	)
 
 	for !stopped {
 		stats.gatherStats()
-		jsonString, err := stats.jsonString()
+		jsonString, err = stats.jsonString()
 		if err != nil {
 			continue
 		}
 
 		pack = <-inChan
-		pack.Message.FromLine(fmt.Sprintf("als,%d,%s",
-			time.Now().Unix(), jsonString))
-		pack.Nexts = this.nexts
+		if err = pack.Message.FromLine(fmt.Sprintf("als,%d,%s",
+			time.Now().Unix(), jsonString)); err != nil {
+			globals.Printf("invalid sys stat: %s\n", jsonString)
+			pack.Recycle()
+			continue
+		}
+
+		pack.Project = "als"
+		pack.Message.Sink = this.sink
+		pack.Typ = "sysstat"
 		r.Inject(pack)
 
 		select {
