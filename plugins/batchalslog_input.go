@@ -150,7 +150,7 @@ LOOP:
 
 		case io.EOF:
 			if globals.Verbose {
-				globals.Printf("[%s]done, lines: %d\n", path, lineN)
+				project.Printf("[%s]done, lines: %d\n", path, lineN)
 			}
 
 			break LOOP
