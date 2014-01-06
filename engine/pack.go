@@ -17,11 +17,12 @@ type PipelinePack struct {
 	RecycleChan chan *PipelinePack
 	RefCount    int32
 
-	// Routing table
-	Nexts []string
 	// Project name
 	Project string
 	Logfile *als.AlsLogfile
+
+	// used for ES _type
+	Typ string
 
 	// To avoid infinite message loops
 	MsgLoopCount int
@@ -48,6 +49,8 @@ func (this *PipelinePack) IncRef() {
 func (this *PipelinePack) Reset() {
 	this.RefCount = int32(1)
 	this.MsgLoopCount = 0
+	this.Project = ""
+	this.Typ = ""
 	this.diagnostics.Reset()
 	this.Message.Reset()
 }
