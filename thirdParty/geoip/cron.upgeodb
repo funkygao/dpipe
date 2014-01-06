@@ -1,0 +1,3 @@
+# cp this file to /etc/cron.d/
+#=============================
+0 3 * * 1 root  /home/funkygao/gopkg/src/github.com/abh/geoip/db/doupdate.sh > /dev/null
