@@ -8,11 +8,12 @@ import (
 	"github.com/funkygao/tail"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 type logfileSource struct {
 	glob    string
-	excepts map[string]bool
+	excepts []string
 	project string
 	sink    int
 
@@ -26,10 +27,7 @@ func (this *logfileSource) load(config *conf.Conf) {
 	}
 
 	this.project = config.String("proj", "")
-	excepts := config.StringList("except", nil)
-	for _, e := range excepts {
-		this.excepts[e] = true
-	}
+	this.excepts = config.StringList("except", nil)
 	this.sink = config.Int("sink", 0)
 	this._files = make([]string, 0, 200)
 }
@@ -41,12 +39,15 @@ func (this *logfileSource) refresh() {
 	}
 
 	this._files = this._files[:0]
-	for _, f := range files {
-		if _, isExcept := this.excepts[f]; isExcept {
-			continue
+	for _, fn := range files {
+		basename := filepath.Base(fn)
+		for _, except := range this.excepts {
+			if strings.HasPrefix(basename, except) {
+				continue
+			}
 		}
 
-		this._files = append(this._files, f)
+		this._files = append(this._files, fn)
 	}
 }
 

@@ -30,15 +30,16 @@
             ticker_interval: 30
             sources: [
                 {
-                    glob:   "/mnt/funplus/logs/fp_ffseaside/bi_*"
+                    glob:   "/mnt/funplus/logs/fp_ffseaside/bi_*.log"
                     except: [
                     ]
                     proj:   "ffs"
                     sink:   1
                 }
                 {
-                    glob:   "/mnt/funplus/logs/fp_rstory/bi_*"
+                    glob:   "/mnt/funplus/logs/fp_rstory/*.log"
                     except: [
+                        "post", "index", 
                     ]
                     proj:   "rs"
                     sink:   1
