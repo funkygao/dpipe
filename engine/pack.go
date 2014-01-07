@@ -11,18 +11,20 @@ type PipelinePack struct {
 	// Raw data yet to be decoded
 	MsgBytes []byte
 
-	// AlsMessage obj pointer
+	// Decoded msg
 	Message *als.AlsMessage
 
+	Logfile *als.AlsLogfile
+
+	// used for ES _type
+	Typ string
+
+	// Where to put back myself when reference count zeros
 	RecycleChan chan *PipelinePack
 	RefCount    int32
 
 	// Project name
 	Project string
-	Logfile *als.AlsLogfile
-
-	// used for ES _type
-	Typ string
 
 	// To avoid infinite message loops
 	MsgLoopCount int

@@ -93,7 +93,7 @@ func (this *EsOutput) feedEs(pack *engine.PipelinePack) {
 
 	typ := pack.Typ
 	if typ == "" {
-		typ = pack.Logfile.CamalCaseName()
+		typ = pack.Logfile.CamelCaseName()
 	}
 
 	this.indexer.Index(this.indexName(pack.Project, &date),
