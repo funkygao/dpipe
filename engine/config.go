@@ -84,9 +84,8 @@ func (this *EngineConfig) PipelinePack(msgLoopCount int) *PipelinePack {
 	}
 
 	pack := <-this.injectRecycleChan
-	pack.RefCount = 1
+	pack.Reset()
 	pack.MsgLoopCount = msgLoopCount
-	pack.Message.Reset()
 
 	return pack
 }
