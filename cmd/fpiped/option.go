@@ -80,8 +80,10 @@ func newLogger() *log.Logger {
 		logOptions |= log.Lmicroseconds
 	}
 
+	prefix := fmt.Sprintf("[%d]", os.Getpid())
 	log.SetOutput(logWriter)
 	log.SetFlags(logOptions)
+	log.SetPrefix(prefix)
 
-	return log.New(logWriter, fmt.Sprintf("[%d]", os.Getpid()), logOptions)
+	return log.New(logWriter, prefix, logOptions)
 }
