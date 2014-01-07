@@ -49,10 +49,6 @@ func (this *SkyOutput) Run(r engine.OutputRunner, c *engine.EngineConfig) error 
 	return nil
 }
 
-func (this *SkyOutput) Stop() {
-	close(this.stopChan)
-}
-
 func init() {
 	engine.RegisterPlugin("SkyOutput", func() engine.Plugin {
 		return new(SkyOutput)

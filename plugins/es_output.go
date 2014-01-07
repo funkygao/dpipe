@@ -95,10 +95,6 @@ func (this *EsOutput) feedEs(project *engine.ConfProject, pack *engine.PipelineP
 	this.indexer.Index(pack.EsIndex, pack.EsType, id, "", &date, data) // ttl empty
 }
 
-func (this *EsOutput) Stop() {
-	close(this.stopChan)
-}
-
 func init() {
 	engine.RegisterPlugin("EsOutput", func() engine.Plugin {
 		return new(EsOutput)
