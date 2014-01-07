@@ -47,9 +47,13 @@ type GlobalConfigStruct struct {
 }
 
 func (this *GlobalConfigStruct) Shutdown() {
-	go func() {
-		this.sigChan <- syscall.SIGINT
-	}()
+	this.Kill(syscall.SIGINT)
+}
+
+func (this *GlobalConfigStruct) Kill(sig os.Signal) {
+	go func(s os.Signal) {
+		this.sigChan <- s
+	}(sig)
 }
 
 func DefaultGlobals() *GlobalConfigStruct {
