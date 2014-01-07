@@ -5,10 +5,8 @@ import (
 	"github.com/funkygao/funpipe/engine"
 	_ "github.com/funkygao/funpipe/plugins" // trigger RegisterPlugin(s)
 	"github.com/funkygao/golib/locking"
-	"github.com/funkygao/golib/signal"
 	"os"
 	"runtime/debug"
-	"syscall"
 	"time"
 )
 
@@ -26,8 +24,6 @@ func init() {
 		}
 		locking.LockInstance(options.lockfile)
 	}
-
-	signal.IgnoreSignal(syscall.SIGHUP)
 
 	globals = engine.DefaultGlobals()
 	globals.Debug = options.debug
