@@ -3,27 +3,9 @@
 
 *   lua integration to parse complex log
 
-*   refactor ParseLine of jsoncollector/hostline/regexcollector
-
-*   rename LineKey to Field
-
 *   integration with behavior db
 *   keep user related dimension in mem, such as gender, paid, abtype
 
-*   project level email alarm
-
-*   plugin just like golang sql pkg
-
-*   guard parser adaptor with title@parserId
-
-*   range for money besides lv range
-
-*   pipleline for parsers of a guard: decorate, filter, without IO
-
-*   cardinality estimation(Hyper LogLog) for MAU/WAU distinct count over a large data set
-
-*   'ip' auto convert to ctry
-
-*   self-monitoring & reporting
-
 *   add {project} and more var in config file
+
+*   github.com/funkygao/cron, for CardinalityOutput
