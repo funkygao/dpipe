@@ -39,9 +39,15 @@
                 }
 
                 {
+                    glob:   "/mnt/funplus/logs/fp_rstory/dau*.log"
+                    proj:   "rs"
+                    sink:   3
+                }
+
+                {
                     glob:   "/mnt/funplus/logs/fp_rstory/*.log"
                     except: [
-                        "post", "index", "kernal", "phperror", "session", "load_data",
+                        "post", "index", "kernal", "phperror", "session", "load_data", "dau",
                     ]
                     proj:   "rs"
                     sink:   1
@@ -51,7 +57,7 @@
 
         {
             name:   "CardinalityFilter"
-            match:  [1, ]
+            match:  [3, ]
             disabled: false
             sink:   18
             converts: [
