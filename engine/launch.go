@@ -93,7 +93,8 @@ func Launch(e *EngineConfig) {
 
 	// now, we have started all runners. next, wait for sigint
 	globals.sigChan = make(chan os.Signal)
-	signal.Notify(globals.sigChan, syscall.SIGINT, syscall.SIGHUP)
+	signal.Notify(globals.sigChan, syscall.SIGINT, syscall.SIGHUP,
+		syscall.SIGUSR2, syscall.SIGUSR1)
 	for !globals.Stopping {
 		select {
 		case sig := <-globals.sigChan:
@@ -106,6 +107,12 @@ func Launch(e *EngineConfig) {
 			case syscall.SIGINT:
 				globals.Println("Engine shutdown...")
 				globals.Stopping = true
+
+			case syscall.SIGUSR1:
+				observer.Publish(SIGUSR1, nil)
+
+			case syscall.SIGUSR2:
+				observer.Publish(SIGUSR2, nil)
 			}
 		}
 	}

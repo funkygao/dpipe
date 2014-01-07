@@ -10,8 +10,10 @@ import (
 
 const (
 	// control channel event types
-	RELOAD = "reload"
-	STOP   = "stop"
+	RELOAD  = "reload"
+	STOP    = "stop"
+	SIGUSR1 = "user1"
+	SIGUSR2 = "user2"
 )
 
 var (
@@ -59,7 +61,7 @@ func DefaultGlobals() *GlobalConfigStruct {
 		Tail:                  true,
 		PoolSize:              100,
 		PluginChanSize:        50,
-		TickerLength:          10*60,
+		TickerLength:          10 * 60,
 		MaxMsgLoops:           4,
 		MaxMsgProcessInject:   1,
 		MaxMsgProcessDuration: 1000000,
