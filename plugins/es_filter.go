@@ -9,14 +9,14 @@ import (
 	"time"
 )
 
-type converter struct {
+type esConverter struct {
 	key    string // key name
 	action string // action
 	cur    string // currency
 	rang   []int  // range
 }
 
-func (this *converter) load(section *conf.Conf) {
+func (this *esConverter) load(section *conf.Conf) {
 	this.key = section.String("key", "")
 	this.action = section.String("act", "")
 	this.cur = section.String("cur", "")
@@ -26,12 +26,13 @@ func (this *converter) load(section *conf.Conf) {
 type EsFilter struct {
 	sink         int
 	indexPattern string
-	converters   []converter
+	converters   []esConverter
 }
 
 func (this *EsFilter) Init(config *conf.Conf) {
 	const CONV = "converts"
 	this.sink = config.Int("sink", 0)
+	this.converters = make([]esConverter, 0, 10)
 	this.indexPattern = config.String("index_pattern", "")
 	for i := 0; i < len(config.List(CONV, nil)); i++ {
 		section, err := config.Section(fmt.Sprintf("%s[%d]", CONV, i))
@@ -39,7 +40,7 @@ func (this *EsFilter) Init(config *conf.Conf) {
 			panic(err)
 		}
 
-		c := converter{}
+		c := esConverter{}
 		c.load(section)
 		this.converters = append(this.converters, c)
 	}
