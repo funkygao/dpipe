@@ -48,6 +48,33 @@
                 }
             ]
         }
+
+        {
+            name:   "CardinalityFilter"
+            match:  [1, ]
+            disabled: false
+            sink:   18
+            converts: [
+                {
+                    log_prefix: "dau"
+                    proj:    "rs"
+                    fields: [
+                        {
+                            key:   "uid"
+                            interval: [
+                                "week", "month",
+                            ]
+                        }
+                        {
+                            key:   "ip"
+                            interval: [
+                                "week", "month",
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
         
         {
             name:   "EsFilter"
@@ -85,6 +112,13 @@
             flush_interval: 30
             bulk_max_conn: 20
             bulk_max_docs: 100
+        }
+
+        {
+            name:   "CardinalityOutputRs"
+            class:  "CardinalityOutput"
+            "proj"  "rs"
+            match:  [18, ]
         }
 
         {

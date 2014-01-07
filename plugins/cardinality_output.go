@@ -8,13 +8,15 @@ import (
 )
 
 type CardinalityOutput struct {
-	counters *stats.CardinalityCounter
-	project  string
+	counters  *stats.CardinalityCounter
+	project   string
+	intervals map[string]string
 }
 
 func (this *CardinalityOutput) Init(config *conf.Conf) {
 	this.counters = stats.NewCardinalityCounter()
 	this.project = config.String("proj", "")
+	this.intervals = make(map[string]string)
 }
 
 func (this *CardinalityOutput) Run(r engine.OutputRunner, e *engine.EngineConfig) error {
@@ -48,6 +50,8 @@ func (this *CardinalityOutput) Run(r engine.OutputRunner, e *engine.EngineConfig
 			}
 
 			if pack.CardinalityKey != "" && pack.CardinalityData != nil {
+				this.intervals[pack.CardinalityKey] = pack.CardinalityInterval
+
 				this.counters.Add(pack.CardinalityKey, pack.CardinalityData)
 			}
 
