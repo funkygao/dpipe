@@ -8,6 +8,12 @@ import (
 
 // Main pipeline data structure containing a AlsMessage and other metadata
 type PipelinePack struct {
+	// Where to put back myself when reference count zeros
+	RecycleChan chan *PipelinePack
+
+	// Reference counter, internal GC
+	RefCount int32
+
 	// Raw data yet to be decoded
 	MsgBytes []byte
 
@@ -19,9 +25,8 @@ type PipelinePack struct {
 	EsType  string
 	EsIndex string
 
-	// Where to put back myself when reference count zeros
-	RecycleChan chan *PipelinePack
-	RefCount    int32
+	CardinalityKey  string
+	CardinalityData interface{}
 
 	// Project name
 	Project string
