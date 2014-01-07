@@ -16,8 +16,8 @@ type PipelinePack struct {
 
 	Logfile *als.AlsLogfile
 
-	// used for ES _type
-	Typ string
+	EsType  string
+	EsIndex string
 
 	// Where to put back myself when reference count zeros
 	RecycleChan chan *PipelinePack
@@ -52,7 +52,8 @@ func (this *PipelinePack) Reset() {
 	this.RefCount = int32(1)
 	this.MsgLoopCount = 0
 	this.Project = ""
-	this.Typ = ""
+	this.EsIndex = ""
+	this.EsType = ""
 	this.diagnostics.Reset()
 	this.Message.Reset()
 }
