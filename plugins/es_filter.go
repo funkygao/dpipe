@@ -48,8 +48,7 @@ func (this *EsFilter) Init(config *conf.Conf) {
 func (this *EsFilter) Run(r engine.FilterRunner, e *engine.EngineConfig) error {
 	globals := engine.Globals()
 	if globals.Verbose {
-		globals.Println("EsFilter started")
-
+		globals.Printf("[%s] started\n", r.Name())
 	}
 
 	geodbFile := e.String("geodbfile", "")

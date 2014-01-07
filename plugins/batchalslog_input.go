@@ -38,6 +38,11 @@ func (this *BatchAlsLogInput) CleanupForRestart() {
 }
 
 func (this *BatchAlsLogInput) Run(r engine.InputRunner, e *engine.EngineConfig) error {
+	globals := engine.Globals()
+	if globals.Verbose {
+		globals.Printf("[%s] started\n", r.Name())
+	}
+
 	this.runner = r
 	this.e = e
 
@@ -58,7 +63,6 @@ func (this *BatchAlsLogInput) Run(r engine.InputRunner, e *engine.EngineConfig) 
 	ticker.Stop()
 	this.chkpnt.Dump()
 
-	globals := engine.Globals()
 	globals.Printf("%s done, whole system is shutdown...", r.Name())
 	globals.Shutdown()
 
