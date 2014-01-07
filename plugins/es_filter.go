@@ -109,7 +109,7 @@ func (this *EsFilter) handlePack(pack *engine.PipelinePack) bool {
 	pack.Message.SetField("ts", pack.Message.Timestamp)
 	pack.Message.Sink = this.sink
 	if pack.EsType == "" {
-		pack.EsIndex = pack.Logfile.CamelCaseName()
+		pack.EsType = pack.Logfile.CamelCaseName()
 	}
 	pack.EsIndex = this.indexName(pack.Project,
 		time.Unix(int64(pack.Message.Timestamp), 0))
