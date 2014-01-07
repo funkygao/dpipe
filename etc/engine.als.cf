@@ -45,6 +45,12 @@
                 }
 
                 {
+                    glob:   "/mnt/funplus/logs/fp_rstory/w_*.log"
+                    proj:   "rs"
+                    sink:   7
+                }
+
+                {
                     glob:   "/mnt/funplus/logs/fp_rstory/*.log"
                     except: [
                         "post", "index", "kernal", "phperror", "session", "load_data", "dau",
@@ -129,7 +135,7 @@
 
         {
             name:   "AlarmOutput"
-            match:  [8, ]
+            match:  [7, ]
             disabled: true
         }
     ]
