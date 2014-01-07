@@ -28,9 +28,9 @@ func (this *ConfProject) FromConfig(c *conf.Conf) {
 		panic(err)
 	}
 
-	logOptions := log.Ldate | log.Ltime
+	logOptions := log.Ldate | log.Ltime | log.Lshortfile
 	if Globals().Debug {
-		logOptions |= log.Lshortfile | log.Lmicroseconds
+		logOptions |= log.Lmicroseconds
 	}
 
 	this.Logger = log.New(logWriter, fmt.Sprintf("[%d]", os.Getpid()), logOptions)

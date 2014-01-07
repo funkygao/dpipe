@@ -85,7 +85,7 @@ func (this *EsOutput) Run(r engine.OutputRunner, e *engine.EngineConfig) error {
 func (this *EsOutput) feedEs(project *engine.ConfProject, pack *engine.PipelinePack) {
 	if pack.EsIndex == "" || pack.EsType == "" {
 		if engine.Globals().Verbose {
-			project.Printf("invalid pack: %v\n", *pack)
+			project.Printf("invalid pack: %s\n", pack.Message.RawLine())
 		}
 
 		return
