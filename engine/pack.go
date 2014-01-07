@@ -59,6 +59,8 @@ func (this *PipelinePack) Reset() {
 	this.Project = ""
 	this.EsIndex = ""
 	this.EsType = ""
+	this.CardinalityKey = ""
+	this.CardinalityData = nil
 	this.diagnostics.Reset()
 	this.Message.Reset()
 }
