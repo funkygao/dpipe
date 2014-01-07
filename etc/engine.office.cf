@@ -27,6 +27,7 @@
         {
             name:   "EsFilter"
             match:  [1, ]
+            index_pattern:  "@ym"
             sink:   2
             converts: [
                 // act: ip|money|range|del
@@ -54,7 +55,6 @@
         {
             name:   "EsOutput"
             match:  [2, ]
-            index:  "@ym"
             domain: "localhost"
             port: "9200"
             flush_interval: 30

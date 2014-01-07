@@ -52,6 +52,7 @@
         
         {
             name:   "EsFilter"
+            index_pattern:  "@ym"
             match:  [1, ]
             sink:   2
             converts: [
@@ -80,7 +81,6 @@
         {
             name:   "EsOutput"
             match:  [2, 11, ]
-            index:  "@ym"
             domain: "localhost"
             port: "9200"
             flush_interval: 30

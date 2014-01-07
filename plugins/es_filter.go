@@ -5,6 +5,8 @@ import (
 	"github.com/funkygao/als"
 	"github.com/funkygao/funpipe/engine"
 	conf "github.com/funkygao/jsconf"
+	"strings"
+	"time"
 )
 
 type converter struct {
@@ -22,13 +24,15 @@ func (this *converter) load(section *conf.Conf) {
 }
 
 type EsFilter struct {
-	sink       int
-	converters []converter
+	sink         int
+	indexPattern string
+	converters   []converter
 }
 
 func (this *EsFilter) Init(config *conf.Conf) {
 	const CONV = "converts"
 	this.sink = config.Int("sink", 0)
+	this.indexPattern = config.String("index_pattern", "")
 	for i := 0; i < len(config.List(CONV, nil)); i++ {
 		section, err := config.Section(fmt.Sprintf("%s[%d]", CONV, i))
 		if err != nil {
@@ -80,10 +84,35 @@ func (this *EsFilter) Run(r engine.FilterRunner, e *engine.EngineConfig) error {
 	return nil
 }
 
+func (this *EsFilter) indexName(project string, date time.Time) string {
+	const (
+		YM           = "@ym"
+		INDEX_PREFIX = "fun_"
+	)
+
+	if strings.HasSuffix(this.indexPattern, YM) {
+		prefix := project
+		fields := strings.SplitN(this.indexPattern, YM, 2)
+		if fields[0] != "" {
+			// e,g. rs@ym
+			prefix = fields[0]
+		}
+
+		return fmt.Sprintf("%s%s_%d_%02d", INDEX_PREFIX, prefix, date.Year(), int(date.Month()))
+	}
+
+	return INDEX_PREFIX + this.indexPattern
+}
+
 func (this *EsFilter) handlePack(pack *engine.PipelinePack) bool {
 	pack.Message.SetField("area", pack.Message.Area)
 	pack.Message.SetField("ts", pack.Message.Timestamp)
 	pack.Message.Sink = this.sink
+	if pack.EsType == "" {
+		pack.EsIndex = pack.Logfile.CamelCaseName()
+	}
+	pack.EsIndex = this.indexName(pack.Project,
+		time.Unix(int64(pack.Message.Timestamp), 0))
 
 	for _, conv := range this.converters {
 		switch conv.action {

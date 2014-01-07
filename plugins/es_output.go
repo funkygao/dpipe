@@ -2,14 +2,12 @@
 package plugins
 
 import (
-	"fmt"
 	"github.com/funkygao/funpipe/engine"
 	"github.com/funkygao/golib"
 	"github.com/funkygao/golib/observer"
 	conf "github.com/funkygao/jsconf"
 	"github.com/mattbaird/elastigo/api"
 	"github.com/mattbaird/elastigo/core"
-	"strings"
 	"time"
 )
 
@@ -19,13 +17,11 @@ type EsOutput struct {
 	bulkMaxDocs   int `json:"bulk_max_docs"`
 	bulkMaxBuffer int `json:"bulk_max_buffer"` // in Byte
 	indexer       *core.BulkIndexer
-	index         string
 	stopChan      chan bool
 }
 
 func (this *EsOutput) Init(config *conf.Conf) {
 	this.stopChan = make(chan bool)
-	this.index = config.String("index", "")
 	api.Domain = config.String("domain", "localhost")
 	api.Port = config.String("port", "9200")
 	this.flushInterval = time.Duration(config.Int("flush_interval", 30))
@@ -72,7 +68,7 @@ func (this *EsOutput) Run(r engine.OutputRunner, e *engine.EngineConfig) error {
 				break
 			}
 
-			this.feedEs(pack)
+			this.feedEs(e.Project(pack.Project), pack)
 			pack.Recycle()
 		}
 	}
@@ -86,38 +82,19 @@ func (this *EsOutput) Run(r engine.OutputRunner, e *engine.EngineConfig) error {
 	return nil
 }
 
-func (this *EsOutput) feedEs(pack *engine.PipelinePack) {
+func (this *EsOutput) feedEs(project *engine.ConfProject, pack *engine.PipelinePack) {
+	if pack.EsIndex == "" || pack.EsType == "" {
+		if engine.Globals().Verbose {
+			project.Printf("invalid pack: %v\n", *pack)
+		}
+
+		return
+	}
+
 	date := time.Unix(int64(pack.Message.Timestamp), 0)
 	data, _ := pack.Message.MarshalPayload()
 	id, _ := golib.UUID()
-
-	typ := pack.Typ
-	if typ == "" {
-		typ = pack.Logfile.CamelCaseName()
-	}
-
-	this.indexer.Index(this.indexName(pack.Project, &date),
-		typ, id, "", &date, data) // ttl empty
-}
-
-func (this *EsOutput) indexName(project string, date *time.Time) string {
-	const (
-		YM           = "@ym"
-		INDEX_PREFIX = "fun_"
-	)
-
-	if strings.HasSuffix(this.index, YM) {
-		prefix := project
-		fields := strings.SplitN(this.index, YM, 2)
-		if fields[0] != "" {
-			// e,g. rs@ym
-			prefix = fields[0]
-		}
-
-		return fmt.Sprintf("%s%s_%d_%d", INDEX_PREFIX, prefix, date.Year(), int(date.Month()))
-	}
-
-	return INDEX_PREFIX + this.index
+	this.indexer.Index(pack.EsIndex, pack.EsType, id, "", &date, data) // ttl empty
 }
 
 func (this *EsOutput) Stop() {

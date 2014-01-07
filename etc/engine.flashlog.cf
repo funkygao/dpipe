@@ -18,20 +18,6 @@
         }
 
         {
-            name:   "DebugOutput"
-        }
-
-        {
-            name:   "EsOutput"
-            index:  "@ym"
-            domain: "localhost"
-            port: "9200"
-            flush_interval: 30
-            bulk_max_conn: 20
-            bulk_max_docs: 100
-        }
-
-        {
             name:   "AlarmOutput"
         }
 
