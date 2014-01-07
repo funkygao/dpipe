@@ -25,8 +25,9 @@ type PipelinePack struct {
 	EsType  string
 	EsIndex string
 
-	CardinalityKey  string
-	CardinalityData interface{}
+	CardinalityKey      string
+	CardinalityData     interface{}
+	CardinalityInterval string
 
 	// Project name
 	Project string
@@ -61,6 +62,7 @@ func (this *PipelinePack) Reset() {
 	this.EsType = ""
 	this.CardinalityKey = ""
 	this.CardinalityData = nil
+	this.CardinalityInterval = ""
 	this.diagnostics.Reset()
 	this.Message.Reset()
 }

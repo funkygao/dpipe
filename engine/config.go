@@ -77,7 +77,7 @@ func (this *EngineConfig) Project(name string) *ConfProject {
 	return p
 }
 
-// For Filter to generate new messages
+// For Filter to generate new pack
 func (this *EngineConfig) PipelinePack(msgLoopCount int) *PipelinePack {
 	if msgLoopCount++; msgLoopCount > Globals().MaxMsgLoops {
 		return nil
