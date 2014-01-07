@@ -39,15 +39,19 @@ func (this *logfileSource) refresh() {
 	}
 
 	this._files = this._files[:0]
+	var excluded bool
 	for _, fn := range files {
-		basename := filepath.Base(fn)
+		excluded = false
 		for _, except := range this.excepts {
-			if strings.HasPrefix(basename, except) {
-				continue
+			if strings.HasPrefix(filepath.Base(fn), except) {
+				excluded = true
+				break
 			}
 		}
 
-		this._files = append(this._files, fn)
+		if !excluded {
+			this._files = append(this._files, fn)
+		}
 	}
 }
 
