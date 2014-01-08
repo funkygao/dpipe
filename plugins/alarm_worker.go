@@ -21,6 +21,7 @@ import (
 
 var (
 	errIgnored = errors.New("message ignored")
+	errEmpty   = errors.New("empty")
 
 	normalizers = map[string]*regexp.Regexp{
 		"digit":       regexp.MustCompile(`\d+`),
@@ -32,6 +33,7 @@ type alarmWorkerConfigField struct {
 	name        string
 	typ         string
 	contains    string
+	isColumn    bool
 	normalizers []string
 	ignores     []string
 }
@@ -45,6 +47,7 @@ func (this *alarmWorkerConfigField) init(config *conf.Conf) {
 	this.typ = config.String("type", als.KEY_TYPE_STRING)
 	this.contains = config.String("contains", "")
 	this.ignores = config.StringList("ignores", nil)
+	this.isColumn = config.Bool("is_column", true)
 	this.normalizers = config.StringList("normalizers", nil)
 }
 
@@ -193,13 +196,14 @@ func (this *alarmWorker) run(e *engine.EngineConfig) {
 		return
 	}
 
+	// lazy assignment
 	this.project = e.Project(this.projName)
 
 	for !globals.Stopping {
 		time.Sleep(time.Second * this.conf.windowSize)
 
 		this.Lock()
-		windowHead, windowTail, err := this.getCheckpoint()
+		windowHead, windowTail, err := this.getWindowBorder()
 		if err != nil {
 			if globals.Verbose {
 				this.project.Println(err)
@@ -394,7 +398,7 @@ func (this *alarmWorker) delRecordsBefore(ts int) (affectedRows int64) {
 	return
 }
 
-func (this *alarmWorker) getCheckpoint(wheres ...string) (tsFrom, tsTo int, err error) {
+func (this *alarmWorker) getWindowBorder(wheres ...string) (head, tail int, err error) {
 	query := fmt.Sprintf("SELECT min(ts), max(ts) FROM %s", this.conf.dbName)
 	if len(wheres) > 0 {
 		query += " WHERE 1=1"
@@ -408,13 +412,14 @@ func (this *alarmWorker) getCheckpoint(wheres ...string) (tsFrom, tsTo int, err 
 	}
 
 	row := this.db.QueryRow(query)
-	err = row.Scan(&tsFrom, &tsTo)
-	if err == nil && tsTo == 0 {
-		err = errors.New("empty table")
+	err = row.Scan(&head, &tail)
+	if err == nil && tail == 0 {
+		err = errEmpty
+		return
 	}
 
 	if engine.Globals().Debug {
-		this.project.Println(tsFrom, tsTo, err)
+		this.project.Println(head, tail, err)
 	}
 
 	return
