@@ -57,6 +57,7 @@ func (this *SelfSysInput) Run(r engine.InputRunner, e *engine.EngineConfig) erro
 
 		pack.Project = "als"
 		pack.Message.Sink = this.sink
+		pack.EsIndex = "als"
 		pack.EsType = "sys"
 		r.Inject(pack)
 

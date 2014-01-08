@@ -31,13 +31,13 @@ func (this *cardinalityConverter) load(section *conf.Conf) {
 }
 
 type CardinalityFilter struct {
-	sink       int
+	sink       string
 	converters []cardinalityConverter
 }
 
 func (this *CardinalityFilter) Init(config *conf.Conf) {
 	const CONV = "converts"
-	this.sink = config.Int("sink", 0)
+	this.sink = config.String("sink", "")
 	for i := 0; i < len(config.List(CONV, nil)); i++ {
 		section, err := config.Section(fmt.Sprintf("%s[%d]", CONV, i))
 		if err != nil {

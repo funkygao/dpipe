@@ -173,7 +173,7 @@ func (this *EngineConfig) loadPluginSection(section *conf.Conf) {
 	}
 
 	runner := NewFORunner(wrapper.name, plugin, pluginCommons)
-	matcher := NewMatchRunner(section.IntList("match", []int{}), runner)
+	matcher := NewMatchRunner(section.StringList("match", []string{}), runner)
 	runner.matcher = matcher
 
 	switch pluginCategory {

@@ -21,12 +21,12 @@ type BatchAlsLogInput struct {
 	rootDir     string
 	workersWg   *sync.WaitGroup
 	excepts     []string
-	sink        int
+	sink        string
 }
 
 func (this *BatchAlsLogInput) Init(config *conf.Conf) {
 	this.rootDir = config.String("root_dir", "")
-	this.sink = config.Int("sink", 0)
+	this.sink = config.String("sink", "")
 	this.project = config.String("proj", "rs")
 	this.workerNChan = make(chan int, config.Int("concurrent_num", 20))
 	this.chkpnt = als.NewFileCheckpoint(config.String("chkpntfile", ""))

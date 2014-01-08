@@ -7,10 +7,10 @@ import (
 type MatchRunner struct {
 	inChan   chan *PipelinePack
 	runner   PluginRunner
-	matchers []int
+	matchers []string
 }
 
-func NewMatchRunner(matchers []int, r PluginRunner) *MatchRunner {
+func NewMatchRunner(matchers []string, r PluginRunner) *MatchRunner {
 	this := new(MatchRunner)
 	this.matchers = matchers
 	this.runner = r

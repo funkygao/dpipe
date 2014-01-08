@@ -17,7 +17,7 @@ type logfileSource struct {
 	glob    string
 	excepts []string
 	project string
-	sink    int
+	sink    string
 
 	_files []string
 }
@@ -30,7 +30,7 @@ func (this *logfileSource) load(config *conf.Conf) {
 
 	this.project = config.String("proj", "")
 	this.excepts = config.StringList("except", nil)
-	this.sink = config.Int("sink", 0)
+	this.sink = config.String("sink", "")
 	this._files = make([]string, 0, 200)
 }
 
