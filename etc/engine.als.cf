@@ -141,7 +141,7 @@
         {
             name:   "AlarmOutput"
             match:  ["rsLogs", ]
-            disabled: true
+            disabled: false
             projects: [
                 {
                     name:   "rs"
