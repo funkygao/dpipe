@@ -67,6 +67,7 @@ func (this *CardinalityOutput) Run(r engine.OutputRunner, e *engine.EngineConfig
 }
 
 func (this *CardinalityOutput) dumpCounters(project *engine.ConfProject) {
+	project.Println("Current cardinalities:")
 	for _, key := range this.counters.Categories() {
 		project.Printf("%25s[%v] %d\n", key,
 			this.counters.StartedAt(key), this.counters.Count(key))
