@@ -288,6 +288,8 @@ func (this *alarmWorker) inject(msg *als.AlsMessage) {
 func (this *alarmWorker) fieldValues(msg *als.AlsMessage) (values []interface{}, err error) {
 	var val interface{}
 	values = make([]interface{}, 0, 5)
+
+	engine.Globals().Printf("%#v\n", this.conf.fields)
 	for _, field := range this.conf.fields {
 		if !field.isColumn {
 			continue
