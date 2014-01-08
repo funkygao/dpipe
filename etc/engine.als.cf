@@ -4,7 +4,10 @@
     
     projects: [
         {
-            name:       "rs"
+            name:   "als"
+        }
+        {
+            name:   "rs"
             alarm_email: {
                 recipients:   "peng.gao@funplusgame.com,zhengkai@gmail.com,yan.zhang@funplusgame.com"
                 busy_line_threshold: 25
