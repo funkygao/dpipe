@@ -13,17 +13,27 @@ import (
 	"github.com/funkygao/gotime"
 	conf "github.com/funkygao/jsconf"
 	"os"
+	"regexp"
 	"strings"
-
 	"sync"
 	"time"
 )
 
+var (
+	errIgnored = errors.New("message ignored")
+
+	normalizers = map[string]*regexp.Regexp{
+		"digit":       regexp.MustCompile(`\d+`),
+		"batch_token": regexp.MustCompile(`pre: .*; current: .*`),
+	}
+)
+
 type alarmWorkerConfigField struct {
-	name    string
-	typ     string // float, string(default), int, money
-	contain string // only being validator instead of data
-	ignores []string
+	name        string
+	typ         string
+	contains    string
+	normalizers []string
+	ignores     []string
 }
 
 func (this *alarmWorkerConfigField) init(config *conf.Conf) {
@@ -33,12 +43,40 @@ func (this *alarmWorkerConfigField) init(config *conf.Conf) {
 	}
 
 	this.typ = config.String("type", als.KEY_TYPE_STRING)
-	this.contain = config.String("contain", "")
+	this.contains = config.String("contains", "")
 	this.ignores = config.StringList("ignores", nil)
+	this.normalizers = config.StringList("normalizers", nil)
 }
 
-func (this *alarmWorkerConfigField) valueOfKey(msg *als.AlsMessage) (value interface{}, err error) {
-	value, err = msg.FieldValue(this.name, this.typ)
+func (this *alarmWorkerConfigField) value(msg *als.AlsMessage) (val interface{}, err error) {
+	val, err = msg.FieldValue(this.name, this.typ)
+
+	// contains
+	if this.contains != "" {
+		if !strings.Contains(val.(string), this.contains) {
+			err = errIgnored
+			return
+		}
+	}
+
+	// normalization
+	if this.normalizers != nil {
+		for _, norm := range this.normalizers {
+			normed := normalizers[norm].ReplaceAll([]byte(val.(string)), []byte("?"))
+			msg.SetField(this.name, string(normed))
+		}
+	}
+
+	// ignores
+	if this.ignores != nil {
+		for _, ignore := range this.ignores {
+			if strings.Contains(val.(string), ignore) {
+				err = errIgnored
+				return
+			}
+		}
+	}
+
 	return
 }
 
@@ -49,8 +87,8 @@ type alarmWorkerConfig struct {
 	fields []alarmWorkerConfigField // besides area,ts
 
 	colors          []string // fg, effects, bg
-	printFormat     string   // printf
-	instantFormat   string   // instantf, echo for each occurence
+	printFormat     string
+	instantFormat   string
 	showSummary     bool
 	windowSize      time.Duration
 	beepThreshold   int
@@ -248,7 +286,7 @@ func (this *alarmWorker) extractPayloadByFields(msg *als.AlsMessage) (values []i
 	var val interface{}
 	values = make([]interface{}, 0, 5)
 	for _, field := range this.conf.fields {
-		val, err = field.valueOfKey(msg)
+		val, err = field.value(msg)
 		if err != nil {
 			return
 		}
