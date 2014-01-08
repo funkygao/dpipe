@@ -35,7 +35,7 @@
         {
             name:   "SelfSysInput"
             interval: 10
-            sink:   11
+            sink:   "alsSysStat"
         }
 
         {
@@ -46,13 +46,13 @@
                 {
                     glob:   "/mnt/funplus/logs/fp_ffseaside/bi_*.log"
                     proj:   "ffs"
-                    sink:   1
+                    sink:   "ffsBi"
                 }
 
                 {
                     glob:   "/mnt/funplus/logs/fp_rstory/dau*.log"
                     proj:   "rs"
-                    sink:   3
+                    sink:   "rsDau"
                 }
 
                 {
@@ -61,16 +61,16 @@
                         "post", "index", "kernal", "phperror", "session", "load_data", "dau",
                     ]
                     proj:   "rs"
-                    sink:   20
+                    sink:   "rsLogs"
                 }
             ]
         }
 
         {
             name:   "CardinalityFilter"
-            match:  [3, ]
+            match:  ["rsDau", ]
             disabled: false
-            sink:   18
+            sink:   "rsDauCardinal"
             converts: [
                 {
                     log_prefix: "dau"
@@ -94,10 +94,17 @@
         }
         
         {
+            name:   "CardinalityOutputRs"
+            class:  "CardinalityOutput"
+            proj:   "rs"
+            match:  ["rsDauCardinal", ]
+        }
+
+        {
             name:   "EsFilter"
             index_pattern:  "@ym"
-            match:  [1, 20, ]
-            sink:   2
+            match:  ["ffsBi", "rsDau", "rsLogs", ]
+            sink:   "esFiltered"
             converts: [
                 // act: ip|money|range|del
                 {
@@ -123,7 +130,7 @@
 
         {
             name:   "EsOutput"
-            match:  [2, 11, ]
+            match:  ["esFiltered", "alsSysStat"]
             domain: "localhost"
             port: "9200"
             flush_interval: 30
@@ -132,15 +139,8 @@
         }
 
         {
-            name:   "CardinalityOutputRs"
-            class:  "CardinalityOutput"
-            proj:   "rs"
-            match:  [18, ]
-        }
-
-        {
             name:   "AlarmOutput"
-            match:  [20, ]
+            match:  ["rsLogs", ]
             disabled: true
             projects: [
                 {

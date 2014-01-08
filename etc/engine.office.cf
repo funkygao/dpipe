@@ -15,7 +15,7 @@
             class:  "BatchAlsLogInput"
             root_dir: "/data2/als"
             proj:   "rs"
-            sink:   1
+            sink:   "allIn"
             concurrent_num: 50
             chkpntfile: "_.gob"
             except: [
@@ -26,9 +26,9 @@
         
         {
             name:   "EsFilter"
-            match:  [1, ]
+            match:  ["allIn", ]
             index_pattern:  "@ym"
-            sink:   2
+            sink:   "allFiltered"
             converts: [
                 // act: ip|money|range|del
                 {
@@ -54,7 +54,7 @@
 
         {
             name:   "EsOutput"
-            match:  [2, ]
+            match:  ["allFiltered", ]
             domain: "localhost"
             port: "9200"
             flush_interval: 30

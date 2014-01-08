@@ -17,14 +17,14 @@
                 {
                     glob:   "/var/log/a*.log"
                     proj:   "rs"
-                    sink:   1
+                    sink:   "alog"
                 }
             ]
         }
         
         {
             name:   "DebugOutput"
-            match:  [1, ]
+            match:  ["alog", ]
         }
     ]
 
