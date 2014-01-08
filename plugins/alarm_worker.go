@@ -97,7 +97,6 @@ type alarmWorkerConfig struct {
 
 	dbName    string
 	tableName string
-	persistDb string // will never auto delete for manual analytics
 
 	createTable string
 	insertStmt  string
@@ -124,7 +123,6 @@ func (this *alarmWorkerConfig) init(config *conf.Conf) {
 	this.abnormalPercent = config.Float("abnormal_percent", 1.5)
 	this.dbName = config.String("dbname", "")
 	this.tableName = this.dbName
-	this.persistDb = config.String("pdbname", "")
 	this.createTable = config.String("create_table", "")
 	this.insertStmt = config.String("insert_stmt", "")
 	this.statsStmt = config.String("stats_stmt", "")
@@ -156,11 +154,9 @@ type alarmWorker struct {
 
 	conf alarmWorkerConfig
 
-	db          *sqldb.SqlDb
-	pdb         *sqldb.SqlDb // persist db
-	insertStmt  *sql.Stmt
-	pinsertStmt *sql.Stmt // persist
-	statsStmt   *sql.Stmt
+	db         *sqldb.SqlDb
+	insertStmt *sql.Stmt
+	statsStmt  *sql.Stmt
 
 	history map[string]int64 // TODO LRU incase of OOM
 }
@@ -185,7 +181,6 @@ func (this *alarmWorker) stop() {
 		this.statsStmt.Close()
 	}
 	this.db.Close()
-	this.pdb.Close()
 }
 
 func (this *alarmWorker) run(e *engine.EngineConfig) {
@@ -352,25 +347,16 @@ func (this *alarmWorker) historyKey(printf string, values []interface{}) string 
 // for high TPS, each parser has a dedicated sqlite3 db file
 func (this *alarmWorker) createDBs() {
 	const (
-		DATA_BASEDIR          = "var"
+		DATA_BASEDIR          = "data"
 		SQLITE3_DBFILE_SUFFIX = "sqlite"
-		PERSIST_DBFILE_SUFFIX = "db"
 	)
+
 	dsn := fmt.Sprintf("file:%s?cache=shared&mode=rwc",
 		fmt.Sprintf("%s/%s-%d.%s", DATA_BASEDIR, this.conf.dbName, os.Getpid(),
 			SQLITE3_DBFILE_SUFFIX))
 	this.db = sqldb.NewSqlDb(sqldb.DRIVER_SQLITE3, dsn, this.project.Logger)
 	this.db.SetDebug(engine.Globals().Debug)
 	this.db.CreateDb(fmt.Sprintf(this.conf.createTable, this.conf.dbName))
-
-	if this.conf.persistDb != "" {
-		dsn = fmt.Sprintf("file:%s?cache=shared&mode=rwc",
-			fmt.Sprintf("%s/%s.%s", DATA_BASEDIR, this.conf.persistDb,
-				PERSIST_DBFILE_SUFFIX))
-		this.pdb = sqldb.NewSqlDb(sqldb.DRIVER_SQLITE3, dsn, this.project.Logger)
-		this.pdb.SetDebug(engine.Globals().Debug)
-		this.pdb.CreateDb(fmt.Sprintf(this.conf.createTable, this.conf.persistDb))
-	}
 }
 
 func (this *alarmWorker) prepareInsertStmts() {
@@ -379,10 +365,6 @@ func (this *alarmWorker) prepareInsertStmts() {
 	}
 
 	this.insertStmt = this.db.Prepare(fmt.Sprintf(this.conf.insertStmt, this.conf.dbName))
-	if this.pdb != nil {
-		this.pinsertStmt = this.pdb.Prepare(
-			fmt.Sprintf(this.conf.insertStmt, this.conf.persistDb))
-	}
 }
 
 func (this *alarmWorker) prepareStatsStmt() {
@@ -403,10 +385,6 @@ func (this *alarmWorker) insert(args ...interface{}) {
 	this.Lock()
 	this.insertStmt.Exec(args...)
 	this.Unlock()
-
-	if this.pinsertStmt != nil {
-		this.pinsertStmt.Exec(args...)
-	}
 }
 
 // caller is responsible for locking
