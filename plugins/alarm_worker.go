@@ -287,7 +287,6 @@ func (this *alarmWorker) fieldValues(msg *als.AlsMessage) (values []interface{},
 	var val interface{}
 	values = make([]interface{}, 0, 5)
 
-	engine.Globals().Printf("%#v\n", *this)
 	for _, field := range this.conf.fields {
 		if !field.isColumn {
 			continue
