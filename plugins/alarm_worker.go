@@ -12,6 +12,7 @@ import (
 	"github.com/funkygao/golib/stats"
 	"github.com/funkygao/gotime"
 	conf "github.com/funkygao/jsconf"
+	"math"
 	"os"
 	"regexp"
 	"strings"
@@ -231,6 +232,7 @@ func (this *alarmWorker) run(e *engine.EngineConfig) {
 
 			rows.Scan(valuePtrs...)
 
+			// 1st column always being aggregated quantile
 			var amount = values[0].(int64)
 			if amount == 0 {
 				break
@@ -264,14 +266,14 @@ func (this *alarmWorker) run(e *engine.EngineConfig) {
 		this.mutex.Unlock()
 		rows.Close()
 
-		this.delRecordsBefore(windowTail)
+		this.moveWindowForward(windowTail)
 		this.Unlock()
 	}
 
 }
 
 func (this *alarmWorker) inject(msg *als.AlsMessage) {
-	args, err := this.extractPayloadByFields(msg)
+	args, err := this.fieldValues(msg)
 	if err != nil {
 		return
 	}
@@ -281,10 +283,14 @@ func (this *alarmWorker) inject(msg *als.AlsMessage) {
 	this.insert(args...)
 }
 
-func (this *alarmWorker) extractPayloadByFields(msg *als.AlsMessage) (values []interface{}, err error) {
+func (this *alarmWorker) fieldValues(msg *als.AlsMessage) (values []interface{}, err error) {
 	var val interface{}
 	values = make([]interface{}, 0, 5)
 	for _, field := range this.conf.fields {
+		if !field.isColumn {
+			continue
+		}
+
 		val, err = field.value(msg)
 		if err != nil {
 			return
@@ -303,19 +309,15 @@ func (this *alarmWorker) isAbnormalChange(amount int64, key string) bool {
 			// each parser consumes 5M history data
 			// each history entry consumes 64bytes
 			this.history = make(map[string]int64)
-			this.project.Printf("[%s] history data cleared\n", this.conf.title)
+			this.project.Printf("[%s]history data cleared\n", this.conf.title)
 		}
 
 		this.history[key] = amount // refresh
 	}()
 
 	if lastAmount, present := this.history[key]; present {
-		delta := amount - lastAmount
-		if delta < 0 {
-			return false
-		}
-
-		if float64(delta)/float64(lastAmount) >= this.conf.abnormalPercent {
+		delta := math.Abs(float64(amount - lastAmount))
+		if delta/float64(lastAmount) >= this.conf.abnormalPercent {
 			return true
 		}
 	}
@@ -392,8 +394,8 @@ func (this *alarmWorker) insert(args ...interface{}) {
 }
 
 // caller is responsible for locking
-func (this *alarmWorker) delRecordsBefore(ts int) (affectedRows int64) {
-	affectedRows = this.db.ExecSql("DELETE FROM "+this.conf.dbName+"  WHERE ts<=?", ts)
+func (this *alarmWorker) moveWindowForward(tail int) (affectedRows int64) {
+	affectedRows = this.db.ExecSql("DELETE FROM "+this.conf.dbName+"  WHERE ts<=?", tail)
 
 	return
 }
