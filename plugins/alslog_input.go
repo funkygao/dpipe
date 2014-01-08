@@ -93,7 +93,7 @@ func (this *AlsLogInput) CleanupForRestart() {
 
 }
 
-func (this *AlsLogInput) Run(r engine.InputRunner, e *engine.EngineConfig) error {
+func (this *AlsLogInput) Run(r engine.InputRunner, h engine.PluginHelper) error {
 	globals := engine.Globals()
 	if globals.Verbose {
 		globals.Printf("[%s] started\n", r.Name())
@@ -121,7 +121,7 @@ func (this *AlsLogInput) Run(r engine.InputRunner, e *engine.EngineConfig) error
 				}
 
 				openedFiles[fn] = true
-				go this.runSingleAlsLogInput(fn, r, e, *source, &stopped)
+				go this.runSingleAlsLogInput(fn, r, h, *source, &stopped)
 			}
 		}
 
@@ -143,7 +143,7 @@ func (this *AlsLogInput) Run(r engine.InputRunner, e *engine.EngineConfig) error
 }
 
 func (this *AlsLogInput) runSingleAlsLogInput(fn string, r engine.InputRunner,
-	e *engine.EngineConfig, source logfileSource, stopped *bool) {
+	h engine.PluginHelper, source logfileSource, stopped *bool) {
 	var tailConf tail.Config
 	if engine.Globals().Tail {
 		tailConf = tail.Config{
@@ -178,7 +178,7 @@ func (this *AlsLogInput) runSingleAlsLogInput(fn string, r engine.InputRunner,
 		pack = <-inChan
 		if err := pack.Message.FromLine(line.Text); err != nil {
 			if err != als.ErrEmptyLine {
-				e.Project(source.project).Printf("[%s]%v: %s\n", fn, err, line.Text)
+				h.Project(source.project).Printf("[%s]%v: %s\n", fn, err, line.Text)
 			}
 
 			pack.Recycle()

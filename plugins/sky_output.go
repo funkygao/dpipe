@@ -26,7 +26,7 @@ func (this *SkyOutput) Init(config *conf.Conf) {
 	}
 }
 
-func (this *SkyOutput) Run(r engine.OutputRunner, c *engine.EngineConfig) error {
+func (this *SkyOutput) Run(r engine.OutputRunner, h engine.PluginHelper) error {
 	globals := engine.Globals()
 	if globals.Verbose {
 		globals.Printf("[%s] started\n", r.Name())

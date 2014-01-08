@@ -46,7 +46,7 @@ func (this *AlarmOutput) Init(config *conf.Conf) {
 
 }
 
-func (this *AlarmOutput) Run(r engine.OutputRunner, e *engine.EngineConfig) error {
+func (this *AlarmOutput) Run(r engine.OutputRunner, h engine.PluginHelper) error {
 	var (
 		pack       *engine.PipelinePack
 		reloadChan = make(chan interface{})
@@ -62,7 +62,7 @@ func (this *AlarmOutput) Run(r engine.OutputRunner, e *engine.EngineConfig) erro
 	// start all the workers
 	for _, projectWorkers := range this.workers {
 		for _, w := range projectWorkers {
-			go w.run(e)
+			go w.run(h)
 		}
 	}
 
@@ -82,7 +82,7 @@ func (this *AlarmOutput) Run(r engine.OutputRunner, e *engine.EngineConfig) erro
 				break
 			}
 
-			this.handlePack(r, e, pack)
+			this.handlePack(pack)
 			pack.Recycle()
 		}
 	}
@@ -172,10 +172,8 @@ func (this *AlarmOutput) runSendAlarmsWatchdog(project *engine.ConfProject,
 
 }
 
-func (this *AlarmOutput) handlePack(r engine.OutputRunner, e *engine.EngineConfig,
-	pack *engine.PipelinePack) {
-	worker := this.workers[pack.Project][pack.Logfile.CamelCaseName()]
-	if worker != nil {
+func (this *AlarmOutput) handlePack(pack *engine.PipelinePack) {
+	if worker, present := this.workers[pack.Project][pack.Logfile.CamelCaseName()]; present {
 		worker.inject(pack.Message)
 	}
 }

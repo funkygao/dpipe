@@ -21,5 +21,5 @@ type FilterRunner interface {
 type Filter interface {
 	Plugin
 
-	Run(r FilterRunner, e *EngineConfig) (err error)
+	Run(r FilterRunner, h PluginHelper) (err error)
 }

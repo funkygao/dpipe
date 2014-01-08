@@ -46,13 +46,13 @@ func (this *EsFilter) Init(config *conf.Conf) {
 	}
 }
 
-func (this *EsFilter) Run(r engine.FilterRunner, e *engine.EngineConfig) error {
+func (this *EsFilter) Run(r engine.FilterRunner, h engine.PluginHelper) error {
 	globals := engine.Globals()
 	if globals.Verbose {
 		globals.Printf("[%s] started\n", r.Name())
 	}
 
-	geodbFile := e.String("geodbfile", "")
+	geodbFile := h.EngineConfig.String("geodbfile", "")
 	if err := als.LoadGeoDb(geodbFile); err != nil {
 		panic(err)
 	}

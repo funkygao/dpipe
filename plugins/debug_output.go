@@ -13,7 +13,7 @@ func (this *DebugOutput) Init(config *conf.Conf) {
 
 }
 
-func (this *DebugOutput) Run(r engine.OutputRunner, e *engine.EngineConfig) error {
+func (this *DebugOutput) Run(r engine.OutputRunner, h engine.PluginHelper) error {
 	globals := engine.Globals()
 	if globals.Verbose {
 		globals.Printf("[%s] started\n", r.Name())

@@ -13,7 +13,7 @@ func (this *SelfSysInput) Init(config *conf.Conf) {
 	this.stopChan = make(chan bool)
 }
 
-func (this *SelfSysInput) Run(r engine.InputRunner, e *engine.EngineConfig) error {
+func (this *SelfSysInput) Run(r engine.InputRunner, h engine.PluginHelper) error {
 	globals := engine.Globals()
 	if globals.Verbose {
 		globals.Printf("[%s] started\n", r.Name())

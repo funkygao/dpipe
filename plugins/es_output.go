@@ -30,7 +30,7 @@ func (this *EsOutput) Init(config *conf.Conf) {
 	this.bulkMaxBuffer = config.Int("bulk_max_buffer", 10<<20) // 10 MB
 }
 
-func (this *EsOutput) Run(r engine.OutputRunner, e *engine.EngineConfig) error {
+func (this *EsOutput) Run(r engine.OutputRunner, h engine.PluginHelper) error {
 	globals := engine.Globals()
 	if globals.Verbose {
 		globals.Printf("[%s] started\n", r.Name())
@@ -68,7 +68,7 @@ func (this *EsOutput) Run(r engine.OutputRunner, e *engine.EngineConfig) error {
 				break
 			}
 
-			this.feedEs(e.Project(pack.Project), pack)
+			this.feedEs(h.Project(pack.Project), pack)
 			pack.Recycle()
 		}
 	}

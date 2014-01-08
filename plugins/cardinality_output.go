@@ -19,7 +19,7 @@ func (this *CardinalityOutput) Init(config *conf.Conf) {
 	this.intervals = make(map[string]string)
 }
 
-func (this *CardinalityOutput) Run(r engine.OutputRunner, e *engine.EngineConfig) error {
+func (this *CardinalityOutput) Run(r engine.OutputRunner, h engine.PluginHelper) error {
 	globals := engine.Globals()
 	if globals.Verbose {
 		globals.Printf("[%s] started\n", r.Name())
@@ -30,7 +30,7 @@ func (this *CardinalityOutput) Run(r engine.OutputRunner, e *engine.EngineConfig
 		resetChan = make(chan interface{})
 		dumpChan  = make(chan interface{})
 		ok        = true
-		project   = e.Project(this.project)
+		project   = h.Project(this.project)
 		inChan    = r.InChan()
 	)
 

@@ -21,5 +21,5 @@ type OutputRunner interface {
 type Output interface {
 	Plugin
 
-	Run(r OutputRunner, e *EngineConfig) (err error)
+	Run(r OutputRunner, h PluginHelper) (err error)
 }

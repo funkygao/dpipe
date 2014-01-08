@@ -15,7 +15,7 @@ import (
 type BatchAlsLogInput struct {
 	runner      engine.InputRunner
 	project     string
-	e           *engine.EngineConfig
+	h           engine.PluginHelper
 	chkpnt      *als.FileCheckpoint
 	workerNChan chan int
 	rootDir     string
@@ -37,14 +37,14 @@ func (this *BatchAlsLogInput) CleanupForRestart() {
 	this.chkpnt.Dump()
 }
 
-func (this *BatchAlsLogInput) Run(r engine.InputRunner, e *engine.EngineConfig) error {
+func (this *BatchAlsLogInput) Run(r engine.InputRunner, h engine.PluginHelper) error {
 	globals := engine.Globals()
 	if globals.Verbose {
 		globals.Printf("[%s] started\n", r.Name())
 	}
 
 	this.runner = r
-	this.e = e
+	this.h = h
 
 	this.chkpnt.Load()
 	ticker := time.NewTicker(time.Second * 10)
@@ -119,7 +119,7 @@ func (this *BatchAlsLogInput) doRunSingleLogfile(path string) {
 		lineN   int
 		inChan  = this.runner.InChan()
 		err     error
-		project = this.e.Project(this.project)
+		project = this.h.Project(this.project)
 		pack    *engine.PipelinePack
 		globals = engine.Globals()
 	)

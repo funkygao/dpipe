@@ -8,7 +8,7 @@ import (
 type Input interface {
 	Plugin
 
-	Run(r InputRunner, e *EngineConfig) (err error)
+	Run(r InputRunner, h PluginHelper) (err error)
 	Stop()
 }
 

@@ -183,7 +183,7 @@ func (this *alarmWorker) stop() {
 	this.db.Close()
 }
 
-func (this *alarmWorker) run(e *engine.EngineConfig) {
+func (this *alarmWorker) run(h engine.PluginHelper) {
 	var (
 		globals = engine.Globals()
 		summary = stats.Summary{}
@@ -194,7 +194,7 @@ func (this *alarmWorker) run(e *engine.EngineConfig) {
 	}
 
 	// lazy assignment
-	this.project = e.Project(this.projName)
+	this.project = h.Project(this.projName)
 
 	this.createDB()
 	this.prepareInsertStmt()

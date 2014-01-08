@@ -50,7 +50,7 @@ func (this *CardinalityFilter) Init(config *conf.Conf) {
 	}
 }
 
-func (this *CardinalityFilter) Run(r engine.FilterRunner, e *engine.EngineConfig) error {
+func (this *CardinalityFilter) Run(r engine.FilterRunner, h engine.PluginHelper) error {
 	globals := engine.Globals()
 	if globals.Verbose {
 		globals.Printf("[%s] started\n", r.Name())
@@ -69,7 +69,7 @@ func (this *CardinalityFilter) Run(r engine.FilterRunner, e *engine.EngineConfig
 				break
 			}
 
-			this.handlePack(r, e, pack)
+			this.handlePack(r, h, pack)
 		}
 	}
 
@@ -79,7 +79,7 @@ func (this *CardinalityFilter) Run(r engine.FilterRunner, e *engine.EngineConfig
 // for each inbound pack, this filter will generate several new pack
 // the original pack will be recycled immediately
 func (this *CardinalityFilter) handlePack(r engine.FilterRunner,
-	e *engine.EngineConfig, pack *engine.PipelinePack) {
+	h engine.PluginHelper, pack *engine.PipelinePack) {
 	globals := engine.Globals()
 	for _, c := range this.converters {
 		if !pack.Logfile.MatchPrefix(c.logPrefix) || pack.Project != c.project {
@@ -98,7 +98,7 @@ func (this *CardinalityFilter) handlePack(r engine.FilterRunner,
 
 			for _, interval := range f.interval {
 				// generate new pack
-				p := e.PipelinePack(0)
+				p := h.PipelinePack(0)
 				p.CardinalityKey = fmt.Sprintf("%s.%s.%s", pack.Project, f.key, interval)
 				p.CardinalityData = val
 				p.CardinalityInterval = interval
