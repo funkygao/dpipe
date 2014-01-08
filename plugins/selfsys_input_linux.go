@@ -14,13 +14,13 @@ import (
 // Stats from /proc/uptime, /proc/loadavg, /proc/meminfo, /proc/stat
 type SelfSysInput struct {
 	stopChan chan bool
-	sink     int
+	sink     string
 	interval time.Duration
 }
 
 func (this *SelfSysInput) Init(config *conf.Conf) {
 	this.stopChan = make(chan bool)
-	this.sink = config.Int("sink", 0)
+	this.sink = config.String("sink", "")
 	this.interval = time.Duration(config.Int("interval", 10)) * time.Second
 }
 
