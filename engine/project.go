@@ -9,7 +9,7 @@ import (
 
 type projectEmailConf struct {
 	Recipients                                string
-	BackoffThreshold                          int
+	BusyLineThreshold                         int
 	SleepStart, SleepStep, SleepMax, SleepMin int
 	LineThreshold                             int
 }
@@ -33,7 +33,7 @@ func (this *ConfProject) FromConfig(c *conf.Conf) {
 	this.MailConf = projectEmailConf{}
 	this.MailConf.Recipients = mailSection.String("recipients", "")
 	this.MailConf.LineThreshold = mailSection.Int("line_threshold", 10)
-	this.MailConf.BackoffThreshold = mailSection.Int("backoff_threshold", 15)
+	this.MailConf.BusyLineThreshold = mailSection.Int("busy_line_threshold", 25)
 	this.MailConf.SleepStart = mailSection.Int("sleep_start", 600)
 	this.MailConf.SleepMin = mailSection.Int("sleep_min", 240)
 	this.MailConf.SleepMax = mailSection.Int("sleep_max", 1600)
