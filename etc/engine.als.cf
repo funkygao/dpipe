@@ -5,7 +5,15 @@
     projects: [
         {
             name:       "rs"
-            alarm_to:   "peng.gao@funplusgame.com,zhengkai@gmail.com,yan.zhang@funplusgame.com"
+            alarm_email: {
+                recipients:   "peng.gao@funplusgame.com,zhengkai@gmail.com,yan.zhang@funplusgame.com"
+                busy_line_threshold: 25
+                line_threshold: 10
+                sleep_start:    600
+                sleep_step:     60
+                sleep_max:      1600
+                sleep_min:      250
+            }
             // logfile: "var/rs.log"    # default var/{name}.log
             // index_prefix: "rs"       # default {name}
         }
@@ -137,6 +145,18 @@
             name:   "AlarmOutput"
             match:  [7, ]
             disabled: true
+            projects: [
+                {
+                    name:   "rs"
+                    workers: [
+                        {
+                            camel_name: "dau"
+                            fields: [
+                            ]
+                        }
+                    ]
+                }
+            ]
         }
     ]
 
