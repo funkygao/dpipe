@@ -171,10 +171,6 @@ func (this *alarmWorker) init(config *conf.Conf) {
 
 	this.conf = alarmWorkerConfig{}
 	this.conf.init(config)
-
-	this.createDB()
-	this.prepareInsertStmt()
-	this.prepareStatsStmt()
 }
 
 func (this *alarmWorker) stop() {
@@ -199,6 +195,10 @@ func (this *alarmWorker) run(e *engine.EngineConfig) {
 
 	// lazy assignment
 	this.project = e.Project(this.projName)
+
+	this.createDB()
+	this.prepareInsertStmt()
+	this.prepareStatsStmt()
 
 	for !globals.Stopping {
 		time.Sleep(time.Second * this.conf.windowSize)
