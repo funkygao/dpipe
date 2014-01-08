@@ -14,7 +14,7 @@
                 sleep_max:      1600
                 sleep_min:      250
             }
-            // logfile: "var/rs.log"    # default var/{name}.log
+            // logfile: "log/rs.log"    # default log/{name}.log
             // index_prefix: "rs"       # default {name}
         }
         {

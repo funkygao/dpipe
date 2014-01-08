@@ -27,19 +27,18 @@ func (this *ConfProject) FromConfig(c *conf.Conf) {
 	this.Name = c.String("name", "")
 	this.IndexPrefix = c.String("index_prefix", this.Name)
 	mailSection, err := c.Section("alarm_email")
-	if err != nil {
-		panic(err)
+	if err == nil {
+		this.MailConf = projectEmailConf{}
+		this.MailConf.Recipients = mailSection.String("recipients", "")
+		this.MailConf.LineThreshold = mailSection.Int("line_threshold", 10)
+		this.MailConf.BusyLineThreshold = mailSection.Int("busy_line_threshold", 25)
+		this.MailConf.SleepStart = mailSection.Int("sleep_start", 600)
+		this.MailConf.SleepMin = mailSection.Int("sleep_min", 240)
+		this.MailConf.SleepMax = mailSection.Int("sleep_max", 1600)
+		this.MailConf.SleepStep = mailSection.Int("sleep_step", 60)
 	}
-	this.MailConf = projectEmailConf{}
-	this.MailConf.Recipients = mailSection.String("recipients", "")
-	this.MailConf.LineThreshold = mailSection.Int("line_threshold", 10)
-	this.MailConf.BusyLineThreshold = mailSection.Int("busy_line_threshold", 25)
-	this.MailConf.SleepStart = mailSection.Int("sleep_start", 600)
-	this.MailConf.SleepMin = mailSection.Int("sleep_min", 240)
-	this.MailConf.SleepMax = mailSection.Int("sleep_max", 1600)
-	this.MailConf.SleepStep = mailSection.Int("sleep_step", 60)
 
-	logfile := c.String("logfile", "var/"+this.Name+".log")
+	logfile := c.String("logfile", "log/"+this.Name+".log")
 	logWriter, err := os.OpenFile(logfile, os.O_APPEND|os.O_CREATE|os.O_RDWR, 0644)
 	if err != nil {
 		panic(err)

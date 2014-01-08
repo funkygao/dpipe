@@ -5,7 +5,6 @@
     projects: [
         {
             name:       "rs"
-            alarm_to:   "peng.gao@funplusgame.com"
         }
     ]
 
