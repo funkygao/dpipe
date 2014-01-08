@@ -31,7 +31,7 @@ func (this *SelfSysInput) Run(r engine.InputRunner, e *engine.EngineConfig) erro
 	}
 
 	var (
-		stats      = newStats()
+		stats      = newSysStat()
 		inChan     = r.InChan()
 		pack       *engine.PipelinePack
 		ticker     = time.NewTicker(this.interval)
@@ -78,7 +78,7 @@ func (this *SelfSysInput) Stop() {
 	close(this.stopChan)
 }
 
-type stats struct {
+type sysStat struct {
 	startTime time.Time
 
 	// stats this process
@@ -101,11 +101,11 @@ type stats struct {
 	sysCPUSampled  bool
 }
 
-func newStats() *stats {
-	return &stats{startTime: time.Now()}
+func newSysStat() *sysStat {
+	return &sysStat{startTime: time.Now()}
 }
 
-func (s *stats) gatherStats() {
+func (s *sysStat) gatherStats() {
 	s.SysUptime = systemstat.GetUptime()
 	s.ProcUptime = time.Since(s.startTime).Seconds()
 
@@ -131,7 +131,7 @@ func (s *stats) gatherStats() {
 	s.procCPUSampled = true
 }
 
-func (s *stats) jsonString() (string, error) {
+func (s *sysStat) jsonString() (string, error) {
 	b, err := json.Marshal(s)
 	if err != nil {
 		return "", err
