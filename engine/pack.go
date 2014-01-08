@@ -15,11 +15,13 @@ type PipelinePack struct {
 	RefCount int32
 
 	// Raw data yet to be decoded
+	// TODO raw blob mainly for TCP stream
 	MsgBytes []byte
 
 	// Decoded msg
 	Message *als.AlsMessage
 
+	// AlsMessage only knows a line, we need data source for routing
 	Logfile *als.AlsLogfile
 
 	EsType  string
@@ -28,6 +30,8 @@ type PipelinePack struct {
 	CardinalityKey      string
 	CardinalityData     interface{}
 	CardinalityInterval string
+
+	Tag string
 
 	// Project name
 	Project string
@@ -63,6 +67,7 @@ func (this *PipelinePack) Reset() {
 	this.CardinalityKey = ""
 	this.CardinalityData = nil
 	this.CardinalityInterval = ""
+	this.Tag = ""
 	this.diagnostics.Reset()
 	this.Message.Reset()
 }
