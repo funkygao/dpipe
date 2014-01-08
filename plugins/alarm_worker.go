@@ -142,8 +142,6 @@ func (this *alarmWorkerConfig) init(config *conf.Conf) {
 		field.init(section)
 		this.fields = append(this.fields, field)
 	}
-
-	engine.Globals().Printf("%#v\n", *this)
 }
 
 func (this *alarmWorkerConfig) statsSql() string {
@@ -289,7 +287,7 @@ func (this *alarmWorker) fieldValues(msg *als.AlsMessage) (values []interface{},
 	var val interface{}
 	values = make([]interface{}, 0, 5)
 
-	engine.Globals().Printf("%#v\n", this.conf.fields)
+	engine.Globals().Printf("%#v\n", this.conf)
 	for _, field := range this.conf.fields {
 		if !field.isColumn {
 			continue
