@@ -147,7 +147,7 @@ LOOP:
 
 			pack.Message.Sink = this.sink
 			pack.Project = this.project
-			pack.Logfile.SetDatePath(path)
+			pack.Logfile.SetPath(path)
 			this.runner.Inject(pack)
 
 		case io.EOF:
