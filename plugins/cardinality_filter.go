@@ -99,6 +99,11 @@ func (this *CardinalityFilter) handlePack(r engine.FilterRunner,
 			for _, interval := range f.interval {
 				// generate new pack
 				p := h.PipelinePack(0)
+				if p == nil {
+					globals.Println("can't get pack in filter")
+					continue
+				}
+
 				p.CardinalityKey = fmt.Sprintf("%s.%s.%s", pack.Project, f.key, interval)
 				p.CardinalityData = val
 				p.CardinalityInterval = interval
@@ -108,6 +113,7 @@ func (this *CardinalityFilter) handlePack(r engine.FilterRunner,
 		}
 	}
 
+	// recycle the original pack
 	pack.Recycle()
 }
 
