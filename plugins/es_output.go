@@ -86,6 +86,7 @@ func (this *EsOutput) feedEs(project *engine.ConfProject, pack *engine.PipelineP
 	if pack.EsIndex == "" || pack.EsType == "" {
 		project.Printf("invalid pack: %s, %#v, msg: %s\n", pack.Logfile.Base(), *pack,
 			pack.Message.RawLine())
+		project.Println(pack.EsIndex, pack.EsType)
 
 		return
 	}
