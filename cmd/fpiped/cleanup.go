@@ -1,9 +1,11 @@
 package main
 
 import (
+	"github.com/funkygao/funpipe/engine"
 	"github.com/funkygao/golib/locking"
 	"os"
 	"runtime/pprof"
+	"time"
 )
 
 func cleanup() {
@@ -30,6 +32,6 @@ func cleanup() {
 func shutdown() {
 	cleanup()
 
-	globals.Println("Terminated.")
+	globals.Printf("Terminated after %s.\n", time.Since(engine.Globals().StartedAt))
 	os.Exit(0)
 }
