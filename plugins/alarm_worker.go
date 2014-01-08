@@ -142,6 +142,8 @@ func (this *alarmWorkerConfig) init(config *conf.Conf) {
 		field.init(section)
 		this.fields = append(this.fields, field)
 	}
+
+	engine.Globals().Printf("%#v\n", *this)
 }
 
 func (this *alarmWorkerConfig) statsSql() string {
