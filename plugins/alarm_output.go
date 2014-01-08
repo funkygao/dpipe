@@ -28,9 +28,10 @@ func (this *AlarmOutput) Init(config *conf.Conf) {
 		proj := config.String(keyPrefix+"name", "")
 		this.emailChans[proj] = make(chan string, 20)
 		this.workers[proj] = make(map[string]*alarmWorker)
+
 		workersMutex := new(sync.Mutex)
 
-		for j := 0; j < len(config.List(keyPrefix+"workers", nil)); i++ {
+		for j := 0; j < len(config.List(keyPrefix+"workers", nil)); j++ {
 			section, err := config.Section(fmt.Sprintf("%sworkers[%d]", keyPrefix, j))
 			if err != nil {
 				panic(err)
@@ -39,28 +40,28 @@ func (this *AlarmOutput) Init(config *conf.Conf) {
 			worker := &alarmWorker{projName: proj, emailChan: this.emailChans[proj],
 				mutex: workersMutex}
 			worker.init(section)
-			this.workers[proj][section.String("camel_name", "")] = worker
+			this.workers[proj][worker.conf.camelName] = worker
 		}
 	}
 
 }
 
 func (this *AlarmOutput) Run(r engine.OutputRunner, e *engine.EngineConfig) error {
-	globals := engine.Globals()
-	if globals.Verbose {
-		globals.Printf("[%s] started\n", r.Name())
-	}
-
 	var (
 		pack       *engine.PipelinePack
 		reloadChan = make(chan interface{})
 		ok         = true
+		globals    = engine.Globals()
 		inChan     = r.InChan()
 	)
 
+	if globals.Verbose {
+		globals.Printf("[%s] started\n", r.Name())
+	}
+
 	// start all the workers
-	for _, workers := range this.workers {
-		for _, w := range workers {
+	for _, projectWorkers := range this.workers {
+		for _, w := range projectWorkers {
 			go w.run(e)
 		}
 	}
@@ -71,7 +72,7 @@ func (this *AlarmOutput) Run(r engine.OutputRunner, e *engine.EngineConfig) erro
 
 	observer.Subscribe(engine.RELOAD, reloadChan)
 
-	for ok {
+	for ok && !globals.Stopping {
 		select {
 		case <-reloadChan:
 			// TODO
@@ -86,20 +87,30 @@ func (this *AlarmOutput) Run(r engine.OutputRunner, e *engine.EngineConfig) erro
 		}
 	}
 
-	// start all the workers
+	this.stop()
+
+	return nil
+}
+
+func (this *AlarmOutput) stop() {
+	// stop all the workers
 	for _, workers := range this.workers {
 		for _, w := range workers {
 			w.stop()
 		}
 	}
 
-	return nil
+	// close alarm email channels
+	for _, ch := range this.emailChans {
+		close(ch)
+	}
 }
 
 func (this *AlarmOutput) sendAlarmMailsLoop(project *engine.ConfProject,
 	mailBody *bytes.Buffer, bodyLines *int) {
 	const mailTitlePrefix = "ALS Alarm"
 	var (
+		globals           = engine.Globals()
 		mailConf          = project.MailConf
 		mailSleep         = mailConf.SleepStart
 		busyLineThreshold = mailConf.BusyLineThreshold
@@ -109,12 +120,12 @@ func (this *AlarmOutput) sendAlarmMailsLoop(project *engine.ConfProject,
 		sleepStep         = mailConf.SleepStep
 	)
 
-	for {
+	for !globals.Stopping {
 		select {
 		case <-time.After(time.Second * time.Duration(mailSleep)):
 			if *bodyLines >= bodyLineThreshold {
 				go Sendmail(mailConf.Recipients,
-					fmt.Sprintf("%s - %d events", mailTitlePrefix, *bodyLines),
+					fmt.Sprintf("%s - %d alarms", mailTitlePrefix, *bodyLines),
 					mailBody.String())
 				project.Printf("alarm sent=> %s, sleep=%d\n", mailConf.Recipients, mailSleep)
 
@@ -143,11 +154,11 @@ func (this *AlarmOutput) runSendAlarmsWatchdog(project *engine.ConfProject,
 	emailChan chan string) {
 	var (
 		globals   = engine.Globals()
-		bodyLines int
+		mailLines int
 		mailBody  bytes.Buffer
 	)
 
-	go this.sendAlarmMailsLoop(project, &mailBody, &bodyLines)
+	go this.sendAlarmMailsLoop(project, &mailBody, &mailLines)
 
 	for line := range emailChan {
 		if globals.Debug {
@@ -156,7 +167,7 @@ func (this *AlarmOutput) runSendAlarmsWatchdog(project *engine.ConfProject,
 
 		mailBody.WriteString(fmt.Sprintf("%s %s\n",
 			gotime.TsToString(int(time.Now().UTC().Unix())), line))
-		bodyLines += 1
+		mailLines += 1
 	}
 
 }
