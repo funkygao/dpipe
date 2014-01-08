@@ -150,8 +150,54 @@
                     name:   "rs"
                     workers: [
                         {
-                            camel_name: "dau"
+                            camel_name: "error"
+                            colors: [ "FgCyan", "Bright", "BgRed", ]
+                            dbname:         "mongoError"
+                            window_size:    15
+                            beep_threshold: 1
+                            abnormal_base:  10
+                            abnormal_percent: 0.5
+                            create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, msg VARCHAR(200));"
+                            insert_stmt:    "INSERT INTO %s(area, ts, msg) VALUES(?,?,?)"
+                            stats_stmt:     "SELECT COUNT(*) AS c, area, msg FROM %s where ts<=? GROUP BY area, msg ORDER BY c DESC"
+                            printf:         "%5d %3s %s"
+                            iprintf:        "MongoError %3s %s"
                             fields: [
+                                {
+                                    name: "class"
+                                    contains: "MongoException"
+                                    is_column: false
+                                }
+                                {
+                                    name: "message"
+                                }
+                            ]
+                        }
+
+                        {
+                            camel_name: "error"
+                            colors: [ "FgRed", ]
+                            dbname:         "error"
+                            window_size:    587
+                            beep_threshold: 120
+                            abnormal_base:  10
+                            abnormal_percent: 0.8
+                            create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, cls VARCHAR(50), msg VARCHAR(200));"
+                            insert_stmt:    "INSERT INTO %s(area, ts, cls, msg) VALUES(?,?,?,?)"
+                            stats_stmt:     "SELECT COUNT(*) AS c, area, cls, msg FROM %s where ts<=? GROUP BY area, cls, msg ORDER BY c DESC"
+                            printf:         "%5d %3s %20s %s"
+                            fields: [
+                                {
+                                    name: "class"
+                                    ignores: ["MongoException", ]
+                                }
+                                {
+                                    name: "message"
+                                    normalizers: ["digit", "batch_token", ]
+                                    ignores: [
+                                        "Energy Error, Client: ?, Server: ?, info:batch",
+                                    ]
+                                }
                             ]
                         }
                     ]

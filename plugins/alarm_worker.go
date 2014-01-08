@@ -172,8 +172,8 @@ func (this *alarmWorker) init(config *conf.Conf) {
 	this.conf = alarmWorkerConfig{}
 	this.conf.init(config)
 
-	this.createDBs()
-	this.prepareInsertStmts()
+	this.createDB()
+	this.prepareInsertStmt()
 	this.prepareStatsStmt()
 }
 
@@ -330,7 +330,7 @@ func (this *alarmWorker) beep() {
 }
 
 func (this *alarmWorker) alarmMail(format string, args ...interface{}) {
-	msg := fmt.Sprintf("%s", fmt.Sprintf(format, args...))
+	msg := fmt.Sprintf(format, args...)
 	if !strings.HasPrefix(msg, this.conf.title) {
 		msg = fmt.Sprintf("%10s %s", this.conf.title, msg)
 	}
@@ -351,7 +351,7 @@ func (this *alarmWorker) historyKey(printf string, values []interface{}) string 
 
 // create table schema
 // for high TPS, each parser has a dedicated sqlite3 db file
-func (this *alarmWorker) createDBs() {
+func (this *alarmWorker) createDB() {
 	const (
 		DATA_BASEDIR          = "data"
 		SQLITE3_DBFILE_SUFFIX = "sqlite"
@@ -365,7 +365,7 @@ func (this *alarmWorker) createDBs() {
 	this.db.CreateDb(fmt.Sprintf(this.conf.createTable, this.conf.dbName))
 }
 
-func (this *alarmWorker) prepareInsertStmts() {
+func (this *alarmWorker) prepareInsertStmt() {
 	if this.conf.insertStmt == "" {
 		panic("insert_stmt not configured")
 	}
@@ -382,7 +382,6 @@ func (this *alarmWorker) prepareStatsStmt() {
 	this.statsStmt = this.db.Prepare(statsSql)
 }
 
-// auto lock/unlock
 func (this *alarmWorker) insert(args ...interface{}) {
 	if engine.Globals().Debug {
 		this.project.Printf("%s %+v\n", this.conf.title, args)
