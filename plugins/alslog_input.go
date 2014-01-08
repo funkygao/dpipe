@@ -10,6 +10,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"sync"
 )
 
 type logfileSource struct {
@@ -33,7 +34,9 @@ func (this *logfileSource) load(config *conf.Conf) {
 	this._files = make([]string, 0, 200)
 }
 
-func (this *logfileSource) refresh() {
+func (this *logfileSource) refresh(wg *sync.WaitGroup) {
+	defer wg.Done()
+
 	files, err := filepath.Glob(this.glob)
 	if err != nil {
 		panic(err)
@@ -190,9 +193,13 @@ func (this *AlsLogInput) runSingleAlsLogInput(fn string, r engine.InputRunner,
 }
 
 func (this *AlsLogInput) refreshSources() {
+	wg := new(sync.WaitGroup)
 	for _, s := range this.sources {
-		s.refresh()
+		wg.Add(1)
+		s.refresh(wg)
 	}
+
+	wg.Wait()
 }
 
 func init() {
