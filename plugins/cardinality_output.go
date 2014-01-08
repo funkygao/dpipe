@@ -30,6 +30,7 @@ func (this *CardinalityOutput) Run(r engine.OutputRunner, e *engine.EngineConfig
 		resetChan = make(chan interface{})
 		dumpChan  = make(chan interface{})
 		ok        = true
+		project   = e.Project(this.project)
 		inChan    = r.InChan()
 	)
 
@@ -39,7 +40,7 @@ func (this *CardinalityOutput) Run(r engine.OutputRunner, e *engine.EngineConfig
 	for ok {
 		select {
 		case <-dumpChan:
-			this.dumpCounters(e.Project(this.project))
+			this.dumpCounters(project)
 
 		case <-resetChan:
 			this.resetCounters()
@@ -58,6 +59,9 @@ func (this *CardinalityOutput) Run(r engine.OutputRunner, e *engine.EngineConfig
 			pack.Recycle()
 		}
 	}
+
+	// before we quit, dump counters
+	this.dumpCounters(project)
 
 	return nil
 }
