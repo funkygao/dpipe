@@ -37,11 +37,8 @@ type GlobalConfigStruct struct {
 	PluginChanSize int
 	TickerLength   int
 
-	MaxMsgLoops           int
-	MaxMsgProcessInject   uint
-	MaxMsgProcessDuration uint64
-	MaxMsgTimerInject     uint
-	MaxPackIdle           time.Duration
+	MaxMsgLoops int
+	MaxPackIdle time.Duration
 
 	sigChan chan os.Signal
 }
@@ -59,19 +56,16 @@ func (this *GlobalConfigStruct) Kill(sig os.Signal) {
 func DefaultGlobals() *GlobalConfigStruct {
 	idle, _ := time.ParseDuration("2m")
 	return &GlobalConfigStruct{
-		Debug:                 false,
-		Verbose:               false,
-		DryRun:                false,
-		Tail:                  true,
-		PoolSize:              100,
-		PluginChanSize:        50,
-		TickerLength:          10 * 60,
-		MaxMsgLoops:           4,
-		MaxMsgProcessInject:   1,
-		MaxMsgProcessDuration: 1000000,
-		MaxMsgTimerInject:     10,
-		MaxPackIdle:           idle,
-		StartedAt:             time.Now(),
-		Logger:                log.New(os.Stdout, "", log.Ldate|log.Lshortfile|log.Ltime),
+		Debug:          false,
+		Verbose:        false,
+		DryRun:         false,
+		Tail:           true,
+		PoolSize:       100,
+		PluginChanSize: 50,
+		TickerLength:   10 * 60,
+		MaxMsgLoops:    4,
+		MaxPackIdle:    idle,
+		StartedAt:      time.Now(),
+		Logger:         log.New(os.Stdout, "", log.Ldate|log.Lshortfile|log.Ltime),
 	}
 }
