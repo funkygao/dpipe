@@ -38,7 +38,7 @@
         {
             name:   "AlsLogInput"
             class:  "AlsLogInput"
-            ticker_interval: 30
+            ticker_interval: 20
             sources: [
                 {
                     glob:   "/mnt/funplus/logs/fp_ffseaside/bi_*.log"
@@ -53,18 +53,12 @@
                 }
 
                 {
-                    glob:   "/mnt/funplus/logs/fp_rstory/w_*.log"
-                    proj:   "rs"
-                    sink:   7
-                }
-
-                {
                     glob:   "/mnt/funplus/logs/fp_rstory/*.log"
                     except: [
                         "post", "index", "kernal", "phperror", "session", "load_data", "dau",
                     ]
                     proj:   "rs"
-                    sink:   1
+                    sink:   20
                 }
             ]
         }
@@ -99,7 +93,7 @@
         {
             name:   "EsFilter"
             index_pattern:  "@ym"
-            match:  [1, ]
+            match:  [1, 20, ]
             sink:   2
             converts: [
                 // act: ip|money|range|del
@@ -137,13 +131,13 @@
         {
             name:   "CardinalityOutputRs"
             class:  "CardinalityOutput"
-            "proj"  "rs"
+            proj:   "rs"
             match:  [18, ]
         }
 
         {
             name:   "AlarmOutput"
-            match:  [7, ]
+            match:  [20, ]
             disabled: true
             projects: [
                 {
