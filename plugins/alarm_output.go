@@ -174,7 +174,10 @@ func (this *AlarmOutput) runSendAlarmsWatchdog(project *engine.ConfProject,
 
 func (this *AlarmOutput) handlePack(r engine.OutputRunner, e *engine.EngineConfig,
 	pack *engine.PipelinePack) {
-	this.workers[pack.Project][pack.Logfile.CamelCaseName()].inject(pack.Message)
+	worker := this.workers[pack.Project][pack.Logfile.CamelCaseName()]
+	if worker != nil {
+		worker.inject(pack.Message)
+	}
 }
 
 func init() {
