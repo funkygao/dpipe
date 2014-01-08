@@ -223,7 +223,7 @@ func (this *alarmWorker) run(e *engine.EngineConfig) {
 		values := make([]interface{}, colsN)
 		valuePtrs := make([]interface{}, colsN)
 		this.mutex.Lock()
-		this.echoCheckpoint(windowHead, windowTail, this.conf.title)
+		this.printWindowTitle(windowHead, windowTail, this.conf.title)
 		for rows.Next() {
 			for i, _ := range cols {
 				valuePtrs[i] = &values[i]
@@ -425,10 +425,10 @@ func (this *alarmWorker) getWindowBorder(wheres ...string) (head, tail int, err 
 	return
 }
 
-func (this *alarmWorker) echoCheckpoint(tsFrom, tsTo int, title string) {
+func (this *alarmWorker) printWindowTitle(head, tail int, title string) {
 	this.project.Println() // seperator
-	this.colorPrintfLn("(%s  ~  %s) %s", gotime.TsToString(tsFrom),
-		gotime.TsToString(tsTo), title)
+	this.colorPrintfLn("(%s  ~  %s) %s", gotime.TsToString(head),
+		gotime.TsToString(tail), title)
 }
 
 func (this *alarmWorker) blinkColorPrintfLn(format string, args ...interface{}) {
