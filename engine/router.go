@@ -89,7 +89,7 @@ func (this *messageRouter) runMainloop() {
 			elapsed := time.Since(globals.StartedAt)
 			globals.Printf("processed msg: %v, elapsed: %s, speed: %d/s\n",
 				this.totalProcessedMsgN, elapsed,
-				this.periodProcessMsgN/int64(elapsed.Seconds()+1))
+				this.periodProcessMsgN/int32(elapsed.Seconds()+1))
 			this.periodProcessMsgN = int32(0)
 
 		case pack, ok = <-this.inChan:
