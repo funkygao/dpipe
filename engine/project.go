@@ -38,7 +38,7 @@ func (this *ConfProject) FromConfig(c *conf.Conf) {
 		this.MailConf.SleepStep = mailSection.Int("sleep_step", 60)
 	}
 
-	logfile := c.String("logfile", "log/"+this.Name+".log")
+	logfile := c.String("logfile", "var/"+this.Name+".log")
 	logWriter, err := os.OpenFile(logfile, os.O_APPEND|os.O_CREATE|os.O_RDWR, 0644)
 	if err != nil {
 		panic(err)
