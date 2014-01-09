@@ -7,10 +7,11 @@ import (
 
 // Debug only, will print every recved raw msg
 type DebugOutput struct {
+	blackhole bool
 }
 
 func (this *DebugOutput) Init(config *conf.Conf) {
-
+	this.blackhole = config.Bool("blackhole", false)
 }
 
 func (this *DebugOutput) Run(r engine.OutputRunner, h engine.PluginHelper) error {
@@ -32,7 +33,9 @@ func (this *DebugOutput) Run(r engine.OutputRunner, h engine.PluginHelper) error
 				break
 			}
 
-			globals.Printf("got msg: %s\n", pack.Message.RawLine())
+			if !this.blackhole {
+				globals.Printf("got msg: %s\n", pack.Message.RawLine())
+			}
 
 			pack.Recycle()
 		}
