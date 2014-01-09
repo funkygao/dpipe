@@ -52,7 +52,7 @@ func (this *EsFilter) Run(r engine.FilterRunner, h engine.PluginHelper) error {
 		globals.Printf("[%s] started\n", r.Name())
 	}
 
-	geodbFile := h.EngineConfig.String("geodbfile", "")
+	geodbFile := h.EngineConfig().String("geodbfile", "")
 	if err := als.LoadGeoDb(geodbFile); err != nil {
 		panic(err)
 	}

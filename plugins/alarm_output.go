@@ -67,7 +67,7 @@ func (this *AlarmOutput) Run(r engine.OutputRunner, h engine.PluginHelper) error
 	}
 
 	for projName, emailChan := range this.emailChans {
-		go this.runSendAlarmsWatchdog(e.Project(projName), emailChan)
+		go this.runSendAlarmsWatchdog(h.Project(projName), emailChan)
 	}
 
 	observer.Subscribe(engine.RELOAD, reloadChan)
