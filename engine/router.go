@@ -95,7 +95,7 @@ func (this *messageRouter) runMainloop() {
 				break
 			}
 
-			pack.diagnostics.Reset()
+			//pack.diagnostics.Reset()
 			atomic.AddInt64(&this.processMessageCount, 1)
 
 			for _, matcher = range this.filterMatchers {
@@ -103,7 +103,7 @@ func (this *messageRouter) runMainloop() {
 					continue
 				}
 
-				pack.diagnostics.AddStamp(matcher.runner)
+				//pack.diagnostics.AddStamp(matcher.runner)
 				pack.IncRef()
 				matcher.inChan <- pack
 			}
@@ -112,7 +112,7 @@ func (this *messageRouter) runMainloop() {
 					continue
 				}
 
-				pack.diagnostics.AddStamp(matcher.runner)
+				//pack.diagnostics.AddStamp(matcher.runner)
 				pack.IncRef()
 				matcher.inChan <- pack
 			}
