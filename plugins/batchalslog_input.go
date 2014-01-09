@@ -145,7 +145,7 @@ LOOP:
 				continue
 			}
 
-			pack.Message.Sink = this.sink
+			pack.Sink = this.sink
 			pack.Project = this.project
 			pack.Logfile.SetPath(path)
 			this.runner.Inject(pack)

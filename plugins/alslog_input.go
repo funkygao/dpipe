@@ -187,7 +187,7 @@ func (this *AlsLogInput) runSingleAlsLogInput(fn string, r engine.InputRunner,
 
 		pack.Project = source.project
 		pack.Logfile.SetPath(fn)
-		pack.Message.Sink = source.sink
+		pack.Sink = source.sink
 		r.Inject(pack)
 	}
 }

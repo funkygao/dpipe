@@ -107,7 +107,7 @@ func (this *EsFilter) indexName(project string, date time.Time) string {
 func (this *EsFilter) handlePack(pack *engine.PipelinePack) bool {
 	pack.Message.SetField("area", pack.Message.Area)
 	pack.Message.SetField("ts", pack.Message.Timestamp)
-	pack.Message.Sink = this.sink
+	pack.Sink = this.sink
 	if pack.EsType == "" {
 		pack.EsType = pack.Logfile.CamelCaseName()
 	}
