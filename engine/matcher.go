@@ -45,6 +45,7 @@ func (this *MatchRunner) Start(matchChan chan *PipelinePack) {
 		matchAll = true
 	}
 
+	// the mainloop
 	for pack := range this.inChan {
 		if matchAll || this.match(pack) {
 			matchChan <- pack

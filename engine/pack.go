@@ -69,6 +69,7 @@ func (this *PipelinePack) Reset() {
 	this.CardinalityKey = ""
 	this.CardinalityData = nil
 	this.CardinalityInterval = ""
+	this.Sink = ""
 	this.Tag = ""
 	this.diagnostics.Reset()
 	this.Message.Reset()

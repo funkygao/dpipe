@@ -126,13 +126,16 @@ func (this *foRunner) runMainloop(e *EngineConfig, wg *sync.WaitGroup) {
 			recon.CleanupForRestart()
 		}
 
+		if globals.Verbose {
+			globals.Printf("Restarting %s\n", this.Name())
+		}
+
 		// Re-initialize our plugin using its wrapper
 		if pluginType == "filter" {
 			pw = e.filterWrappers[this.name]
 		} else {
 			pw = e.outputWrappers[this.name]
 		}
-
 		this.plugin = pw.Create()
 	}
 

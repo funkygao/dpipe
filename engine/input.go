@@ -87,6 +87,10 @@ func (this *iRunner) runMainloop(e *EngineConfig, wg *sync.WaitGroup) {
 			restart.CleanupForRestart()
 		}
 
+		if globals.Verbose {
+			globals.Printf("Restarting %s\n", this.Name())
+		}
+
 		// Re-initialize our plugin with its wrapper
 		iw := e.inputWrappers[this.name]
 		this.plugin = iw.Create()
