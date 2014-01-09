@@ -74,7 +74,7 @@ func (this *messageRouter) runMainloop() {
 	defer ticker.Stop()
 
 	for ok {
-		runtime.Gosched()
+		//runtime.Gosched()
 
 		select {
 		case matcher = <-this.removeOutputMatcher:
