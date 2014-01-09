@@ -109,14 +109,23 @@ func (this *EsFilter) indexName(project string, date time.Time) string {
 }
 
 func (this *EsFilter) handlePack(pack *engine.PipelinePack) bool {
-	pack.Message.SetField("area", pack.Message.Area)
-	pack.Message.SetField("ts", pack.Message.Timestamp)
 	pack.Sink = this.sink
 	if pack.EsType == "" {
 		pack.EsType = pack.Logfile.CamelCaseName()
 	}
 	pack.EsIndex = this.indexName(pack.Project,
 		time.Unix(int64(pack.Message.Timestamp), 0))
+	if pack.EsType == "" {
+		engine.Globals().Printf("%s %v\n", pack.EsType, *pack)
+		return false
+	}
+	if pack.EsIndex == "" {
+		engine.Globals().Printf("%s %v\n", pack.EsIndex, *pack)
+		return false
+	}
+
+	pack.Message.SetField("area", pack.Message.Area)
+	pack.Message.SetField("ts", pack.Message.Timestamp)
 
 	for _, conv := range this.converters {
 		switch conv.action {
