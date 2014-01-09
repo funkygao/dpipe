@@ -13,7 +13,7 @@ type MessageRouter interface {
 type messageRouter struct {
 	inChan chan *PipelinePack
 
-	periodProcessMsgN  int
+	periodProcessMsgN  int32
 	totalProcessedMsgN int64 // 16 BilionBillion
 
 	removeFilterMatcher chan *MatchRunner
@@ -90,7 +90,7 @@ func (this *messageRouter) runMainloop() {
 			globals.Printf("processed msg: %v, elapsed: %s, speed: %d/s\n",
 				this.totalProcessedMsgN, elapsed,
 				this.periodProcessMsgN/int64(elapsed.Seconds()+1))
-			this.periodProcessMsgN = 0
+			this.periodProcessMsgN = int32(0)
 
 		case pack, ok = <-this.inChan:
 			if !ok {
