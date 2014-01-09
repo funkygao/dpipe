@@ -72,6 +72,10 @@ func (this *SelfSysInput) Run(r engine.InputRunner, h engine.PluginHelper) error
 
 	ticker.Stop()
 
+	if globals.Verbose {
+		globals.Printf("%s stopped\n", r.Name())
+	}
+
 	return nil
 }
 

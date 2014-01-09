@@ -46,6 +46,10 @@ func (this *SkyOutput) Run(r engine.OutputRunner, h engine.PluginHelper) error {
 
 	}
 
+	if globals.Verbose {
+		globals.Printf("%s stopped\n", r.Name())
+	}
+
 	return nil
 }
 

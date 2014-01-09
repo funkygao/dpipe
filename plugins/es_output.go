@@ -79,6 +79,10 @@ func (this *EsOutput) Run(r engine.OutputRunner, h engine.PluginHelper) error {
 	// let indexer stop
 	this.stopChan <- true
 
+	if globals.Verbose {
+		globals.Printf("%s stopped\n", r.Name())
+	}
+
 	return nil
 }
 
