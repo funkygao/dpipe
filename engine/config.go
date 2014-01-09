@@ -74,6 +74,10 @@ func NewEngineConfig(globals *GlobalConfigStruct) (this *EngineConfig) {
 	return this
 }
 
+func (this *EngineConfig) EngineConfig() *EngineConfig {
+	return this
+}
+
 func (this *EngineConfig) Project(name string) *ConfProject {
 	p, present := this.projects[name]
 	if !present {
