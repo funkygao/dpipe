@@ -83,11 +83,16 @@ func (this *EsOutput) Run(r engine.OutputRunner, h engine.PluginHelper) error {
 }
 
 func (this *EsOutput) feedEs(project *engine.ConfProject, pack *engine.PipelinePack) {
-	index, typ := pack.EsIndex, pack.EsType
-	if index == "" || typ == "" {
-		project.Printf("invalid pack: %s, %#v, msg: %s\n", pack.Logfile.Base(), *pack,
+	if pack.EsIndex == "" {
+		project.Printf("invalid esindex: %s, %#v, msg: %s\n", pack.Logfile.Base(), *pack,
 			pack.Message.RawLine())
-		project.Println(index, typ)
+
+		return
+	}
+	if pack.EsType == "" {
+		project.Println(pack.EsType)
+		project.Printf("invalid estype: %s, %#v, msg: %s\n", pack.Logfile.Base(), *pack,
+			pack.Message.RawLine())
 
 		return
 	}
