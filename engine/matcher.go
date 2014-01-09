@@ -58,7 +58,7 @@ func (this *MatchRunner) Start(matchChan chan *PipelinePack) {
 
 func (this *MatchRunner) match(pack *PipelinePack) bool {
 	for _, sink := range this.matchers {
-		if pack.Message.Sink == sink {
+		if pack.Sink == sink {
 			return true
 		}
 	}

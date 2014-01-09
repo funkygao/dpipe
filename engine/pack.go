@@ -24,14 +24,9 @@ type PipelinePack struct {
 	// AlsMessage only knows a line, we need data source for routing
 	Logfile *als.AlsLogfile
 
-	EsType  string
-	EsIndex string
-
-	CardinalityKey      string
-	CardinalityData     interface{}
-	CardinalityInterval string
-
-	Tag string
+	// For routing
+	Sink string
+	Tag  string
 
 	// Project name
 	Project string
@@ -41,6 +36,13 @@ type PipelinePack struct {
 
 	// Used internally to stamp diagnostic information
 	diagnostics *PacketTracking
+
+	EsType  string
+	EsIndex string
+
+	CardinalityKey      string
+	CardinalityData     interface{}
+	CardinalityInterval string
 }
 
 func NewPipelinePack(recycleChan chan *PipelinePack) (this *PipelinePack) {
