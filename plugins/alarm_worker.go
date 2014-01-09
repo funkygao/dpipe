@@ -67,6 +67,7 @@ func (this *alarmWorkerConfigField) value(msg *als.AlsMessage) (val interface{},
 	if this.normalizers != nil {
 		for _, norm := range this.normalizers {
 			normed := normalizers[norm].ReplaceAll([]byte(val.(string)), []byte("?"))
+			println(this.name, string(normed))
 			msg.SetField(this.name, string(normed))
 		}
 	}
