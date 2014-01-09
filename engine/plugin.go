@@ -36,3 +36,9 @@ func (this *PluginWrapper) Create() (plugin Plugin) {
 	plugin.Init(this.configCreator())
 	return
 }
+
+type PluginHelper interface {
+	EngineConfig() *EngineConfig
+	PipelinePack(msgLoopCount int) *PipelinePack
+	Project(name string) *ConfProject
+}

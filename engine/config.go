@@ -8,12 +8,6 @@ import (
 	"time"
 )
 
-type PluginHelper interface {
-	EngineConfig() *EngineConfig
-	PipelinePack(msgLoopCount int) *PipelinePack
-	Project(name string) *ConfProject
-}
-
 type EngineConfig struct {
 	*conf.Conf
 
