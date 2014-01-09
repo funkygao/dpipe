@@ -11,8 +11,10 @@ type MessageRouter interface {
 }
 
 type messageRouter struct {
-	inChan              chan *PipelinePack
-	processMessageCount int64 // 16 BilionBillion
+	inChan chan *PipelinePack
+
+	periodProcessMsgN  int
+	totalProcessedMsgN int64 // 16 BilionBillion
 
 	removeFilterMatcher chan *MatchRunner
 	removeOutputMatcher chan *MatchRunner
@@ -86,8 +88,9 @@ func (this *messageRouter) runMainloop() {
 		case <-ticker.C:
 			elapsed := time.Since(globals.StartedAt)
 			globals.Printf("processed msg: %v, elapsed: %s, speed: %d/s\n",
-				this.processMessageCount, elapsed,
-				this.processMessageCount/int64(elapsed.Seconds()+1))
+				this.totalProcessedMsgN, elapsed,
+				this.periodProcessMsgN/int64(elapsed.Seconds()+1))
+			this.periodProcessMsgN = 0
 
 		case pack, ok = <-this.inChan:
 			if !ok {
@@ -96,7 +99,8 @@ func (this *messageRouter) runMainloop() {
 			}
 
 			//pack.diagnostics.Reset()
-			atomic.AddInt64(&this.processMessageCount, 1)
+			atomic.AddInt32(&this.periodProcessMsgN, 1)
+			atomic.AddInt64(&this.totalProcessedMsgN, 1)
 
 			for _, matcher = range this.filterMatchers {
 				if matcher == nil {
