@@ -116,6 +116,9 @@ func (this *EngineConfig) LoadConfigFile(fn string) {
 
 		project := &ConfProject{}
 		project.FromConfig(section)
+		if _, present := this.projects[project.Name]; present {
+			panic("dup project: " + project.Name)
+		}
 		this.projects[project.Name] = project
 	}
 
@@ -145,13 +148,12 @@ func (this *EngineConfig) loadPluginSection(section *conf.Conf) {
 
 		return
 	}
-	pluginType := pluginCommons.class
 
 	wrapper := new(PluginWrapper)
 	var ok bool
-	if wrapper.pluginCreator, ok = availablePlugins[pluginType]; !ok {
+	if wrapper.pluginCreator, ok = availablePlugins[pluginCommons.class]; !ok {
 		pretty.Printf("allPlugins: %# v\n", availablePlugins)
-		panic("unknown plugin type: " + pluginType)
+		panic("unknown plugin type: " + pluginCommons.class)
 	}
 	wrapper.configCreator = func() *conf.Conf { return section }
 	wrapper.name = pluginCommons.name
@@ -159,9 +161,9 @@ func (this *EngineConfig) loadPluginSection(section *conf.Conf) {
 	plugin := wrapper.pluginCreator()
 	plugin.Init(section)
 
-	pluginCats := pluginTypeRegex.FindStringSubmatch(pluginType)
+	pluginCats := pluginTypeRegex.FindStringSubmatch(pluginCommons.class)
 	if len(pluginCats) < 2 {
-		panic("invalid plugin type: " + pluginType)
+		panic("invalid plugin type: " + pluginCommons.class)
 	}
 
 	pluginCategory := pluginCats[1]
