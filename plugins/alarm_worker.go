@@ -8,9 +8,9 @@ import (
 	"fmt"
 	"github.com/funkygao/als"
 	"github.com/funkygao/funpipe/engine"
+	"github.com/funkygao/golib/bjtime"
 	sqldb "github.com/funkygao/golib/db"
 	"github.com/funkygao/golib/stats"
-	"github.com/funkygao/gotime"
 	conf "github.com/funkygao/jsconf"
 	"math"
 	"os"
@@ -429,8 +429,8 @@ func (this *alarmWorker) getWindowBorder(wheres ...string) (head, tail int, err 
 
 func (this *alarmWorker) printWindowTitle(head, tail int, title string) {
 	this.project.Println() // seperator
-	this.colorPrintfLn("(%s  ~  %s) %s", gotime.TsToString(head),
-		gotime.TsToString(tail), title)
+	this.colorPrintfLn("(%s  ~  %s) %s", bjtime.TsToString(head),
+		bjtime.TsToString(tail), title)
 }
 
 func (this *alarmWorker) blinkColorPrintfLn(format string, args ...interface{}) {

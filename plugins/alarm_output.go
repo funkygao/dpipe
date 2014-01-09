@@ -4,8 +4,8 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/funkygao/funpipe/engine"
+	"github.com/funkygao/golib/bjtime"
 	"github.com/funkygao/golib/observer"
-	"github.com/funkygao/gotime"
 	conf "github.com/funkygao/jsconf"
 	"sync"
 	"time"
@@ -166,7 +166,7 @@ func (this *AlarmOutput) runSendAlarmsWatchdog(project *engine.ConfProject,
 		}
 
 		mailBody.WriteString(fmt.Sprintf("%s %s\n",
-			gotime.TsToString(int(time.Now().UTC().Unix())), line))
+			bjtime.TsToString(int(time.Now().UTC().Unix())), line))
 		mailLines += 1
 	}
 
