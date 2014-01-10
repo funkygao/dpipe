@@ -1,7 +1,6 @@
 package engine
 
 import (
-	"fmt"
 	conf "github.com/funkygao/jsconf"
 	"log"
 	"os"
