@@ -108,7 +108,6 @@ func (this *AlarmOutput) stop() {
 
 func (this *AlarmOutput) sendAlarmMailsLoop(project *engine.ConfProject,
 	mailBody *bytes.Buffer, bodyLines *int) {
-	const mailTitlePrefix = "ALS Alarm"
 	var (
 		globals           = engine.Globals()
 		mailConf          = project.MailConf
@@ -125,7 +124,7 @@ func (this *AlarmOutput) sendAlarmMailsLoop(project *engine.ConfProject,
 		case <-time.After(time.Second * time.Duration(mailSleep)):
 			if *bodyLines >= bodyLineThreshold {
 				go Sendmail(mailConf.Recipients,
-					fmt.Sprintf("%s - %d alarms", mailTitlePrefix, *bodyLines),
+					fmt.Sprintf("ALS[%s] - %d alarms", project.Name, *bodyLines),
 					mailBody.String())
 				project.Printf("alarm sent=> %s, sleep=%d\n", mailConf.Recipients, mailSleep)
 
