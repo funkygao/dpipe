@@ -7,7 +7,7 @@
             name:   "als"
         }
         {
-            name:   "rs"
+            name:   "RS"
             alarm_email: {
                 recipients:   "peng.gao@funplusgame.com,zhengkai@gmail.com,yan.zhang@funplusgame.com"
                 busy_line_threshold: 25
@@ -17,17 +17,23 @@
                 sleep_max:      1600
                 sleep_min:      250
             }
-            // logfile: "log/rs.log"    # default log/{name}.log
-            // index_prefix: "rs"       # default {name}
+            logfile: "log/rs.log"    # default log/{name}.log
+            index_prefix: "rs"       # default {name}
         }
         {
-            name:   "ffs"
+            name:   "FFS"
+            logfile: "log/ffs.log"    # default log/{name}.log
+            index_prefix: "ffs"       # default {name}
         }
         {
-            name:   "ff2"
+            name:   "FF2"
+            logfile: "log/ff2.log"    # default log/{name}.log
+            index_prefix: "ff2"       # default {name}
         }
         {
-            name:   "ff"
+            name:   "FF"
+            logfile: "log/ff.log"    # default log/{name}.log
+            index_prefix: "ff"       # default {name}
         }
     ]
 
@@ -51,7 +57,7 @@
 
                 {
                     glob:   "/mnt/funplus/logs/fp_rstory/dau*.log"
-                    proj:   "rs"
+                    proj:   "RS"
                     sink:   "rsDau"
                 }
 
@@ -60,7 +66,7 @@
                     except: [
                         "post", "index", "kernal", "phperror", "session", "load_data", "dau",
                     ]
-                    proj:   "rs"
+                    proj:   "RS"
                     sink:   "rsLogs"
                 }
             ]
@@ -74,7 +80,7 @@
             converts: [
                 {
                     log_prefix: "dau"
-                    proj:    "rs"
+                    proj:    "RS"
                     fields: [
                         {
                             key:   "uid"
@@ -96,7 +102,7 @@
         {
             name:   "CardinalityOutputRs"
             class:  "CardinalityOutput"
-            proj:   "rs"
+            proj:   "RS"
             match:  ["rsDauCardinal", ]
         }
 
