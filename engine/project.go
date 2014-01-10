@@ -49,7 +49,7 @@ func (this *ConfProject) FromConfig(c *conf.Conf) {
 		logOptions |= log.Lmicroseconds
 	}
 
-	this.Logger = log.New(logWriter, fmt.Sprintf("[%d]", os.Getpid()), logOptions)
+	this.Logger = log.New(logWriter, "", logOptions)
 }
 
 func (this *ConfProject) Stop() {
