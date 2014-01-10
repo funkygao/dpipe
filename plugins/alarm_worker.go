@@ -245,10 +245,10 @@ func (this *alarmWorker) run(h engine.PluginHelper) {
 				summary.Add(float64(amount))
 			}
 
-			// beep and alarmMail
+			// beep and feed alarmMail
 			if this.conf.beepThreshold > 0 && int(amount) >= this.conf.beepThreshold {
 				this.beep()
-				this.alarmMail(this.conf.printFormat, values...)
+				this.feedAlarmMail(this.conf.printFormat, values...)
 			}
 
 			// abnormal blink
@@ -333,7 +333,7 @@ func (this *alarmWorker) beep() {
 	this.project.Print("\a")
 }
 
-func (this *alarmWorker) alarmMail(format string, args ...interface{}) {
+func (this *alarmWorker) feedAlarmMail(format string, args ...interface{}) {
 	msg := fmt.Sprintf(format, args...)
 	if !strings.HasPrefix(msg, this.conf.title) {
 		msg = fmt.Sprintf("%10s %s", this.conf.title, msg)
