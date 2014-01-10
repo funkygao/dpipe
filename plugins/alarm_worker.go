@@ -190,6 +190,7 @@ func (this *alarmWorker) run(h engine.PluginHelper) {
 	var (
 		globals = engine.Globals()
 		summary = stats.Summary{}
+		beep    bool
 	)
 
 	if globals.DryRun {
@@ -229,6 +230,7 @@ func (this *alarmWorker) run(h engine.PluginHelper) {
 		this.mutex.Lock()
 		this.printWindowTitle(windowHead, windowTail, this.conf.title)
 		for rows.Next() {
+			beep = false
 			for i, _ := range cols {
 				valuePtrs[i] = &values[i]
 			}
@@ -247,23 +249,22 @@ func (this *alarmWorker) run(h engine.PluginHelper) {
 
 			// beep and feed alarmMail
 			if this.conf.beepThreshold > 0 && int(amount) >= this.conf.beepThreshold {
-				this.beep()
+				beep = true
 				this.feedAlarmMail(this.conf.printFormat, values...)
 			}
 
 			// abnormal blink
 			if amount >= int64(this.conf.abnormalBase) &&
 				this.isAbnormalChange(amount, this.historyKey(this.conf.printFormat, values)) {
-				this.beep()
 				this.blinkColorPrintfLn(this.conf.printFormat, values...)
 			}
 
-			this.colorPrintfLn(this.conf.printFormat, values...)
+			this.colorPrintfLn(beep, this.conf.printFormat, values...)
 		}
 
 		// show summary
 		if this.conf.showSummary && summary.N > 0 {
-			this.colorPrintfLn("Total: %.1f, Mean: %.1f", summary.Sum, summary.Mean)
+			this.colorPrintfLn(false, "Total: %.1f, Mean: %.1f", summary.Sum, summary.Mean)
 		}
 
 		this.mutex.Unlock()
@@ -327,10 +328,6 @@ func (this *alarmWorker) isAbnormalChange(amount int64, key string) bool {
 	}
 
 	return false
-}
-
-func (this *alarmWorker) beep() {
-	this.project.Print("\a")
 }
 
 func (this *alarmWorker) feedAlarmMail(format string, args ...interface{}) {
@@ -432,17 +429,20 @@ func (this *alarmWorker) getWindowBorder(wheres ...string) (head, tail int, err 
 
 func (this *alarmWorker) printWindowTitle(head, tail int, title string) {
 	this.project.Println() // seperator
-	this.colorPrintfLn("(%s  ~  %s) %s", bjtime.TsToString(head),
+	this.colorPrintfLn(false, "(%s  ~  %s) %s", bjtime.TsToString(head),
 		bjtime.TsToString(tail), title)
 }
 
 func (this *alarmWorker) blinkColorPrintfLn(format string, args ...interface{}) {
-	msg := fmt.Sprintf(format, args...)
+	msg := fmt.Sprintf(format, args...) + "\a"
 	this.project.Println(als.Colorize(append(this.conf.colors, "Blink"), msg))
 }
 
-func (this *alarmWorker) colorPrintfLn(format string, args ...interface{}) {
+func (this *alarmWorker) colorPrintfLn(beep bool, format string, args ...interface{}) {
 	msg := fmt.Sprintf(format, args...)
+	if beep {
+		msg += "\a"
+	}
 	this.project.Println(als.Colorize(this.conf.colors, msg))
 
 }
