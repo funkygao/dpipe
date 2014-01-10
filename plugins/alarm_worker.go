@@ -54,6 +54,9 @@ func (this *alarmWorkerConfigField) init(config *conf.Conf) {
 
 func (this *alarmWorkerConfigField) value(msg *als.AlsMessage) (val interface{}, err error) {
 	val, err = msg.FieldValue(this.name, this.typ)
+	if err != nil {
+		return
+	}
 
 	// contains
 	if this.contains != "" {
@@ -67,7 +70,7 @@ func (this *alarmWorkerConfigField) value(msg *als.AlsMessage) (val interface{},
 	if this.normalizers != nil {
 		for _, norm := range this.normalizers {
 			normed := normalizers[norm].ReplaceAll([]byte(val.(string)), []byte("?"))
-			msg.SetField(this.name, string(normed))
+			val = string(normed)
 		}
 	}
 

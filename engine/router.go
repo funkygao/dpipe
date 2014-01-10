@@ -1,7 +1,7 @@
 package engine
 
 import (
-	//"runtime"
+	"runtime"
 	"sync/atomic"
 	"time"
 )
@@ -76,7 +76,7 @@ func (this *messageRouter) runMainloop() {
 	defer ticker.Stop()
 
 	for ok {
-		//runtime.Gosched()
+		runtime.Gosched()
 
 		select {
 		case matcher = <-this.removeOutputMatcher:
@@ -89,7 +89,7 @@ func (this *messageRouter) runMainloop() {
 			elapsed := time.Since(globals.StartedAt)
 			globals.Printf("processed msg: %v, elapsed: %s, speed: %d/s\n",
 				this.totalProcessedMsgN, elapsed,
-				this.periodProcessMsgN/int32(elapsed.Seconds()+1))
+				this.periodProcessMsgN/int32(globals.TickerLength))
 			this.periodProcessMsgN = int32(0)
 
 		case pack, ok = <-this.inChan:
@@ -98,7 +98,7 @@ func (this *messageRouter) runMainloop() {
 				break
 			}
 
-			//pack.diagnostics.Reset()
+			pack.diagnostics.Reset()
 			atomic.AddInt32(&this.periodProcessMsgN, 1)
 			atomic.AddInt64(&this.totalProcessedMsgN, 1)
 
@@ -107,7 +107,7 @@ func (this *messageRouter) runMainloop() {
 					continue
 				}
 
-				//pack.diagnostics.AddStamp(matcher.runner)
+				pack.diagnostics.AddStamp(matcher.runner)
 				pack.IncRef()
 				matcher.inChan <- pack
 			}
@@ -116,7 +116,7 @@ func (this *messageRouter) runMainloop() {
 					continue
 				}
 
-				//pack.diagnostics.AddStamp(matcher.runner)
+				pack.diagnostics.AddStamp(matcher.runner)
 				pack.IncRef()
 				matcher.inChan <- pack
 			}

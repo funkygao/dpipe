@@ -72,7 +72,7 @@ func (this *AlsLogInput) Init(config *conf.Conf) {
 	this.stopChan = make(chan bool)
 
 	// get the sources
-	this.sources = make([]*logfileSource, 0, 200)
+	this.sources = make([]*logfileSource, 0, 300)
 	for i := 0; i < len(config.List("sources", nil)); i++ {
 		section, err := config.Section(fmt.Sprintf("sources[%d]", i))
 		if err != nil {
