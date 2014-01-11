@@ -72,12 +72,12 @@ Performing "in-flight" processing of collected data, real time streaming analysi
 
 
                                              -- predict ----
-                                            |               |
+                   (slide win)              |               |
     Input -> Filter(transform) -> Output -> |-- store ------| -> visualization
-                                            |               | 
-                                            |-- explore ----|
-                                            |               |
-                                             -- alarm ------
+                   (cleaness)               |               | 
+                   (decorator)              |-- explore ----|
+                   (buffering)              |               |
+                   (streaming)               -- alarm ------
 
 
 #### PipelinePack
