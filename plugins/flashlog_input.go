@@ -39,6 +39,10 @@ func (this *FlashlogInput) Run(r engine.InputRunner, h engine.PluginHelper) erro
 		globals.Printf("[%s] started\n", r.Name())
 	}
 
+	if globals.Verbose {
+		globals.Printf("[%s] stopped", r.Name())
+	}
+
 	return nil
 }
 

@@ -80,7 +80,7 @@ func (this *EsOutput) Run(r engine.OutputRunner, h engine.PluginHelper) error {
 	this.stopChan <- true
 
 	if globals.Verbose {
-		globals.Printf("%s stopped\n", r.Name())
+		globals.Printf("[%s] stopped", r.Name())
 	}
 
 	return nil

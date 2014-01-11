@@ -89,6 +89,10 @@ func (this *AlarmOutput) Run(r engine.OutputRunner, h engine.PluginHelper) error
 
 	this.stop()
 
+	if globals.Verbose {
+		globals.Printf("[%s] stopped", r.Name())
+	}
+
 	return nil
 }
 

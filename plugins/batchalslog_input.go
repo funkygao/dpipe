@@ -66,7 +66,7 @@ func (this *BatchAlsLogInput) Run(r engine.InputRunner, h engine.PluginHelper) e
 	ticker.Stop()
 	this.chkpnt.Dump()
 
-	globals.Printf("%s done, whole system is shutdown...", r.Name())
+	globals.Printf("[%s] done, whole system is shutdown...", r.Name())
 	globals.Shutdown()
 
 	return nil

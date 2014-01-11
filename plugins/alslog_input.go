@@ -137,11 +137,12 @@ func (this *AlsLogInput) Run(r engine.InputRunner, h engine.PluginHelper) error 
 		case <-r.Ticker():
 
 		case <-this.stopChan:
-			if globals.Verbose {
-				globals.Printf("%s stopped", r.Name())
-			}
 			stopped = true
 		}
+	}
+
+	if globals.Verbose {
+		globals.Printf("[%s] stopped", r.Name())
 	}
 
 	return nil

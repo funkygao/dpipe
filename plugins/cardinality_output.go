@@ -69,7 +69,7 @@ func (this *CardinalityOutput) Run(r engine.OutputRunner, h engine.PluginHelper)
 	this.dumpCounters(project)
 
 	if globals.Verbose {
-		globals.Printf("%s stopped\n", r.Name())
+		globals.Printf("[%s] stopped", r.Name())
 	}
 
 	return nil
