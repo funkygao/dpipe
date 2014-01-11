@@ -15,13 +15,14 @@ import (
 type SelfSysInput struct {
 	stopChan chan bool
 	sink     string
-	interval time.Duration
 }
 
 func (this *SelfSysInput) Init(config *conf.Conf) {
 	this.stopChan = make(chan bool)
 	this.sink = config.String("sink", "")
-	this.interval = time.Duration(config.Int("interval", 10)) * time.Second
+	if this.sink == "" {
+		panic("empty sink")
+	}
 }
 
 func (this *SelfSysInput) Run(r engine.InputRunner, h engine.PluginHelper) error {
@@ -34,7 +35,6 @@ func (this *SelfSysInput) Run(r engine.InputRunner, h engine.PluginHelper) error
 		stats      = newSysStat()
 		inChan     = r.InChan()
 		pack       *engine.PipelinePack
-		ticker     = time.NewTicker(this.interval)
 		jsonString string
 		err        error
 		stopped    = false
@@ -65,12 +65,10 @@ func (this *SelfSysInput) Run(r engine.InputRunner, h engine.PluginHelper) error
 		case <-this.stopChan:
 			stopped = true
 
-		case <-ticker.C:
+		case <-r.Ticker():
 			// same effect as sleep
 		}
 	}
-
-	ticker.Stop()
 
 	if globals.Verbose {
 		globals.Printf("%s stopped\n", r.Name())
