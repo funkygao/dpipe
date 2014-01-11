@@ -51,10 +51,6 @@ func (this *EsFilter) Init(config *conf.Conf) {
 
 func (this *EsFilter) Run(r engine.FilterRunner, h engine.PluginHelper) error {
 	globals := engine.Globals()
-	if globals.Verbose {
-		globals.Printf("[%s] started\n", r.Name())
-	}
-
 	geodbFile := h.EngineConfig().String("geodbfile", "")
 	if err := als.LoadGeoDb(geodbFile); err != nil {
 		panic(err)
@@ -82,10 +78,6 @@ func (this *EsFilter) Run(r engine.FilterRunner, h engine.PluginHelper) error {
 				pack.Recycle()
 			}
 		}
-	}
-
-	if globals.Verbose {
-		globals.Printf("[%s] stopped", r.Name())
 	}
 
 	return nil

@@ -55,10 +55,6 @@ func (this *AlarmOutput) Run(r engine.OutputRunner, h engine.PluginHelper) error
 		inChan     = r.InChan()
 	)
 
-	if globals.Verbose {
-		globals.Printf("[%s] started\n", r.Name())
-	}
-
 	// start all the workers
 	for _, projectWorkers := range this.workers {
 		for _, w := range projectWorkers {
@@ -88,10 +84,6 @@ func (this *AlarmOutput) Run(r engine.OutputRunner, h engine.PluginHelper) error
 	}
 
 	this.stop()
-
-	if globals.Verbose {
-		globals.Printf("[%s] stopped", r.Name())
-	}
 
 	return nil
 }

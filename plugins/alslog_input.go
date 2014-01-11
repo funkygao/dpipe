@@ -99,12 +99,8 @@ func (this *AlsLogInput) CleanupForRestart() {
 }
 
 func (this *AlsLogInput) Run(r engine.InputRunner, h engine.PluginHelper) error {
-	globals := engine.Globals()
-	if globals.Verbose {
-		globals.Printf("[%s] started", r.Name())
-	}
-
 	var (
+		globals     = engine.Globals()
 		reloadChan  = make(chan interface{})
 		openedFiles = make(map[string]bool)
 		stopped     = false
@@ -139,10 +135,6 @@ func (this *AlsLogInput) Run(r engine.InputRunner, h engine.PluginHelper) error 
 		case <-this.stopChan:
 			stopped = true
 		}
-	}
-
-	if globals.Verbose {
-		globals.Printf("[%s] stopped", r.Name())
 	}
 
 	return nil

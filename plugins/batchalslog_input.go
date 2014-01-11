@@ -41,18 +41,12 @@ func (this *BatchAlsLogInput) CleanupForRestart() {
 }
 
 func (this *BatchAlsLogInput) Run(r engine.InputRunner, h engine.PluginHelper) error {
-	globals := engine.Globals()
-	if globals.Verbose {
-		globals.Printf("[%s] started\n", r.Name())
-	}
-
 	this.runner = r
 	this.h = h
 
 	this.chkpnt.Load()
-	ticker := time.NewTicker(time.Second * 10)
 	go func() {
-		for _ = range ticker.C {
+		for _ = range r.Ticker() {
 			this.chkpnt.Dump()
 		}
 	}()
@@ -63,11 +57,9 @@ func (this *BatchAlsLogInput) Run(r engine.InputRunner, h engine.PluginHelper) e
 
 	// wait for all workers done
 	this.workersWg.Wait()
-	ticker.Stop()
 	this.chkpnt.Dump()
 
-	globals.Printf("[%s] done, whole system is shutdown...", r.Name())
-	globals.Shutdown()
+	engine.Globals().Shutdown()
 
 	return nil
 }

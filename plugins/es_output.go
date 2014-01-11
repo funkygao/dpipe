@@ -31,11 +31,6 @@ func (this *EsOutput) Init(config *conf.Conf) {
 }
 
 func (this *EsOutput) Run(r engine.OutputRunner, h engine.PluginHelper) error {
-	globals := engine.Globals()
-	if globals.Verbose {
-		globals.Printf("[%s] started\n", r.Name())
-	}
-
 	this.indexer = core.NewBulkIndexer(this.bulkMaxConn)
 	this.indexer.BulkMaxDocs = this.bulkMaxDocs
 	this.indexer.BulkMaxBuffer = this.bulkMaxBuffer
@@ -78,10 +73,6 @@ func (this *EsOutput) Run(r engine.OutputRunner, h engine.PluginHelper) error {
 
 	// let indexer stop
 	this.stopChan <- true
-
-	if globals.Verbose {
-		globals.Printf("[%s] stopped", r.Name())
-	}
 
 	return nil
 }

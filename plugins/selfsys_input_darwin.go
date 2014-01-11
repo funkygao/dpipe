@@ -19,11 +19,6 @@ func (this *SelfSysInput) Init(config *conf.Conf) {
 }
 
 func (this *SelfSysInput) Run(r engine.InputRunner, h engine.PluginHelper) error {
-	globals := engine.Globals()
-	if globals.Verbose {
-		globals.Printf("[%s] started\n", r.Name())
-	}
-
 	var (
 		stopped = false
 	)
@@ -36,10 +31,6 @@ func (this *SelfSysInput) Run(r engine.InputRunner, h engine.PluginHelper) error
 		case <-r.Ticker():
 			// same effect as sleep
 		}
-	}
-
-	if globals.Verbose {
-		globals.Printf("[%s] stopped", r.Name())
 	}
 
 	return nil

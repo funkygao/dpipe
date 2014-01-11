@@ -13,6 +13,7 @@
         {
             name:   "BatchAlsLogInput"
             class:  "BatchAlsLogInput"
+            ticker_interval: 10
             root_dir: "/data2/als"
             proj:   "rs"
             sink:   "allIn"

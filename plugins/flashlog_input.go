@@ -34,14 +34,6 @@ func (this *FlashlogInput) Init(config *conf.Conf) {
 }
 
 func (this *FlashlogInput) Run(r engine.InputRunner, h engine.PluginHelper) error {
-	globals := engine.Globals()
-	if globals.Verbose {
-		globals.Printf("[%s] started\n", r.Name())
-	}
-
-	if globals.Verbose {
-		globals.Printf("[%s] stopped", r.Name())
-	}
 
 	return nil
 }

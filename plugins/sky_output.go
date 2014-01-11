@@ -27,11 +27,6 @@ func (this *SkyOutput) Init(config *conf.Conf) {
 }
 
 func (this *SkyOutput) Run(r engine.OutputRunner, h engine.PluginHelper) error {
-	globals := engine.Globals()
-	if globals.Verbose {
-		globals.Printf("[%s] started\n", r.Name())
-	}
-
 	var (
 		ok = true
 	)
@@ -43,10 +38,6 @@ func (this *SkyOutput) Run(r engine.OutputRunner, h engine.PluginHelper) error {
 
 		}
 
-	}
-
-	if globals.Verbose {
-		globals.Printf("[%s] stopped", r.Name())
 	}
 
 	return nil
