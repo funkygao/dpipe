@@ -198,7 +198,7 @@ func (this *AlsLogInput) refreshSources() {
 	wg := new(sync.WaitGroup)
 	for _, s := range this.sources {
 		wg.Add(1)
-		s.refresh(wg)
+		go s.refresh(wg)
 	}
 
 	wg.Wait()
