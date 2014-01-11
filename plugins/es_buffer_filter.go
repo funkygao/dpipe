@@ -18,18 +18,13 @@ func (this *EsBufferFilter) Init(config *conf.Conf) {
 }
 
 func (this *EsBufferFilter) Run(r engine.FilterRunner, h engine.PluginHelper) error {
-	globals := engine.Globals()
-	if globals.Verbose {
-		globals.Printf("[%s] started\n", r.Name())
-	}
-
 	var (
 		pack   *engine.PipelinePack
 		ok     = true
 		inChan = r.InChan()
 	)
 
-	for ok && !globals.Stopping {
+	for ok {
 		select {
 		case pack, ok = <-inChan:
 			if !ok {
@@ -39,10 +34,6 @@ func (this *EsBufferFilter) Run(r engine.FilterRunner, h engine.PluginHelper) er
 			this.handlePack(pack)
 			pack.Recycle()
 		}
-	}
-
-	if globals.Verbose {
-		globals.Printf("[%s] stopped", r.Name())
 	}
 
 	return nil
