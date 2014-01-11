@@ -19,7 +19,7 @@ type cardinalityConverter struct {
 
 func (this *cardinalityConverter) load(section *conf.Conf) {
 	this.logPrefix = section.String("log_prefix", "")
-	this.project = section.String("proj", "")
+	this.project = section.String("project", "")
 	this.fields = make([]cardinalityField, 0, 5)
 	for i := 0; i < len(section.List("fields", nil)); i++ {
 		keyPrefix := fmt.Sprintf("fields[%d].", i)

@@ -15,7 +15,7 @@ type CardinalityOutput struct {
 
 func (this *CardinalityOutput) Init(config *conf.Conf) {
 	this.counters = stats.NewCardinalityCounter()
-	this.project = config.String("proj", "")
+	this.project = config.String("project", "")
 	this.intervals = make(map[string]string)
 }
 

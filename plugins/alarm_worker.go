@@ -113,7 +113,7 @@ type alarmWorkerConfig struct {
 func (this *alarmWorkerConfig) init(config *conf.Conf) {
 	this.camelName = config.String("camel_name", "")
 	if this.camelName == "" {
-		panic("empty camel_name in alarmWorkerConfig")
+		panic("empty camel_name")
 	}
 
 	this.title = config.String("title", "")

@@ -30,7 +30,7 @@ func (this *BatchAlsLogInput) Init(config *conf.Conf) {
 	if this.sink == "" {
 		panic("empty sink")
 	}
-	this.project = config.String("proj", "rs")
+	this.project = config.String("project", "rs")
 	this.workerNChan = make(chan int, config.Int("concurrent_num", 20))
 	this.chkpnt = als.NewFileCheckpoint(config.String("chkpntfile", ""))
 	this.excepts = config.StringList("except", nil)

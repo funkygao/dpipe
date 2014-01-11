@@ -29,7 +29,7 @@ func (this *logfileSource) load(config *conf.Conf) {
 		panic("glob cannot be empty")
 	}
 
-	this.project = config.String("proj", "")
+	this.project = config.String("project", "")
 	this.tail = config.Bool("tail", true)
 	this.excepts = config.StringList("except", nil)
 	this.sink = config.String("sink", "")

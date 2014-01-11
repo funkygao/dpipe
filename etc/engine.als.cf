@@ -52,14 +52,14 @@
             sources: [
                 {
                     glob:   "/mnt/funplus/logs/fp_ffseaside/bi_*.log"
-                    proj:   "ffs"
+                    project:   "FFS"
                     tail:   true
                     sink:   "ffsBi"
                 }
 
                 {
                     glob:   "/mnt/funplus/logs/fp_rstory/dau*.log"
-                    proj:   "RS"
+                    project:   "RS"
                     sink:   "rsDau"
                 }
 
@@ -68,7 +68,7 @@
                     except: [
                         "post", "index", "kernal", "phperror", "session", "load_data", "dau",
                     ]
-                    proj:   "RS"
+                    project:   "RS"
                     sink:   "rsLogs"
                 }
             ]
@@ -82,7 +82,7 @@
             converts: [
                 {
                     log_prefix: "dau"
-                    proj:    "RS"
+                    project:    "RS"
                     fields: [
                         {
                             key:   "uid"
@@ -104,8 +104,36 @@
         {
             name:   "CardinalityOutputRs"
             class:  "CardinalityOutput"
-            proj:   "RS"
+            project:   "RS"
             match:  ["rsDauCardinal", ]
+        }
+
+        {
+            name:   "EsBufferFilter"
+            sink:   "esBuffer"
+            workers: [
+                {
+                    camel_name: "dau"
+                    project:    "RS"
+                    expression: "count"
+                    interval:   60
+                }
+
+                {
+                    camel_name: "pv"
+                    project:    "RS"
+                    field_name: "_log_info.elapsed"
+                    field_type: "float"
+                    expression: "mean"
+                    interval:   120
+                }
+                {
+                    camel_name: "pv"
+                    project:    "RS"
+                    expression: "count"
+                    interval:   120
+                }
+            ]
         }
 
         {
@@ -152,7 +180,7 @@
             disabled: false
             projects: [
                 {
-                    name:   "rs"
+                    name:   "RS"
                     workers: [
                         {
                             title:  "MongoError"
@@ -314,6 +342,7 @@
 
                     ]
                 }
+
             ]
         }
     ]

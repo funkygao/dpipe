@@ -16,7 +16,7 @@
             sources: [
                 {
                     glob:   "/var/log/a*.log"
-                    proj:   "rs"
+                    project:   "rs"
                     sink:   "alog"
                 }
             ]
