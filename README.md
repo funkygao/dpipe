@@ -63,46 +63,10 @@ Performing "in-flight" processing of collected data, real time streaming analysi
           PM/dev                dev/ops               PM          ops         PM          PM
 
 
-#### Data
-
-*   app performance metrics: statsd/graphite
-*   app biz metrics: ES/analytics/MR/dashboard
-*   app error/traceback: arecibo/sentry
-*   security/anomalous activity events: CEF/CEP/arcsight
-*   log file messages: logstash/syslog
-*   system events: nagios/zenoss
-
-### BI
-
-* T+1
-* T+0
-
-        +-------+   +-------+   +-------+   +-------+
-        | app   |   | app   |   | app   |   | app   |
-        |-------|   |-------|   |-------|   |-------|
-        | agent |   | agent |   | agent |   | agent |
-        +-------+   +-------+   +-------+   +-------+
-            |           |           |           |
-             -----------------------------------
-                                |
-                    +-----------------------+
-                    | load balance cluster  |
-                    | collector distributor |
-                    +-----------------------+
-                                | routing
-                                |
-                                |                            persist
-                                |-----------------------------------
-             RealTimeAnalysis   |                                   |
-             -----------------------------------            +-------------------------+
-            |           |           |           |           | central logfile cluster |
-        +-------+   +-------+   +-------+   +-------+       +-------------------------+
-        |secure |   | debug |   |monitor|   |analyse|
-        +-------+   +-------+   +-------+   +-------+
 
 ### Implementation
 
-#### Diagram
+#### Overview
 
 
 
