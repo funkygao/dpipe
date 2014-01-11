@@ -5,6 +5,7 @@
     projects: [
         {
             name:   "als"
+            comment:"als server monitor"
         }
         {
             name:   "RS"

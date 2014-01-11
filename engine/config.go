@@ -202,6 +202,7 @@ type pluginCommons struct {
 	poolSize int    `json:"pool_size"`
 	ticker   int    `json:"ticker_interval"`
 	disabled bool   `json:"disabled"`
+	comment  string `json:"comment"`
 }
 
 func (this *pluginCommons) load(section *conf.Conf) {
@@ -215,6 +216,7 @@ func (this *pluginCommons) load(section *conf.Conf) {
 	if this.class == "" {
 		this.class = this.name
 	}
+	this.comment = section.String("comment", "")
 	this.poolSize = section.Int("pool_size", Globals().PoolSize)
 	this.ticker = section.Int("ticker_interval", Globals().TickerLength)
 	this.disabled = section.Bool("disabled", false)
