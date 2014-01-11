@@ -23,7 +23,6 @@ func cleanup() {
 			panic(err)
 		}
 
-		globals.Printf("MEM profiler %s enabled\n", options.memprof)
 		pprof.WriteHeapProfile(f)
 		f.Close()
 	}
