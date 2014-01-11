@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/funkygao/gofmt"
+	"github.com/funkygao/golib/gofmt"
 	"runtime"
 	"time"
 )
