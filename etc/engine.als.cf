@@ -153,6 +153,7 @@
                     name:   "rs"
                     workers: [
                         {
+                            title:  "MongoError"
                             camel_name: "error"
                             colors: [ "FgCyan", "Bright", "BgRed", ]
                             dbname:         "mongoError"
@@ -178,6 +179,7 @@
                         }
 
                         {
+                            title:  "BizError"
                             camel_name: "error"
                             colors: [ "FgRed", ]
                             dbname:         "error"
@@ -203,6 +205,111 @@
                                 }
                             ]
                         }
+
+                        {
+                            title:  "PhpError"
+                            camel_name: "phperror"
+                            colors: [ "FgYellow", "Bright", ]
+                            dbname:         "phperror"
+                            window_size:    99
+                            beep_threshold: 1
+                            abnormal_base:  5
+                            abnormal_percent: 0.8
+                            create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, host VARCHAR(50), msg VARCHAR(200));"
+                            insert_stmt:    "INSERT INTO %s(area, ts, host, msg) VALUES(?,?,?,?)"
+                            stats_stmt:     "SELECT COUNT(*) AS c, area, host, msg FROM %s where ts<=? GROUP BY area, host, msg ORDER BY c DESC"
+                            printf:         "%5d %3s %20s %s"
+                            iprintf:        "%3s %20s %s"
+                            fields: [
+                                {name: "host"}
+                                {name: "msg"}
+                            ]
+                        }
+
+                        {
+                            title: "Kernal"
+                            camel_name: "kernal"
+                            colors: ["FgWhite", "Reverse", ]
+                            dbname:         "kernal"
+                            window_size:    1715
+                            beep_threshold: 10
+                            abnormal_base:  5
+                            abnormal_percent: 0.8
+                            create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, host VARCHAR(50), msg VARCHAR(200));"
+                            insert_stmt:    "INSERT INTO %s(area, ts, host, msg) VALUES(?,?,?,?)"
+                            stats_stmt:     "SELECT COUNT(*) AS c, area, host, msg FROM %s where ts<=? GROUP BY area, host, msg ORDER BY c DESC"
+                            printf:         "%5d %3s %20s %s"
+                            iprintf:        "%3s %20s %s"
+                            fields: [
+                                {name: "host"}
+                                {name: "msg"}
+                            ]
+                        }
+
+                        {
+                            title: "MongoSlow"
+                            camel_name: "mongoSlow"
+                            colors: [ "FgYellow", "Reverse", ]
+                            dbname:         "mongoSlow"
+                            window_size:    393
+                            beep_threshold: 10
+                            abnormal_base:  5
+                            abnormal_percent: 0.8
+                            create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, tbl VARCHAR(50), method VARCHAR(30), t FLOAT, host CHAR(30), server CHAR(60));"
+                            insert_stmt:    "INSERT INTO %s(area, ts, tbl, method, t, host, server) VALUES(?,?,?,?,?,?,?)"
+                            stats_stmt:     "SELECT COUNT(*) AS c, area, method, tbl, server FROM %s WHERE ts<=? GROUP BY area, tbl, method, server ORDER BY c DESC"
+                            printf:         "%5d %3s %12s %20s %s"
+                            iprintf:        "MongoSlow %3s %15s %8s %8.4f %15s %s"
+                            fields: [
+                                { name: "table" }
+                                { name: "method" }
+                                {
+                                    name: "ts"
+                                    type: "float"
+                                }
+                                { name: "_log_info.host" }
+                                { name: "server" }
+                            ]
+                        }
+
+                        {
+                            title: "MemcacheSlow"
+                            camel_name: "memcacheTo"
+                            colors: [ "FgYellow", ]
+                            dbname:         "cacheslow"
+                            window_size:    0
+                            iprintf:        "CacheSlow %3s %32s %8.4f %15s"
+                            fields: [
+                                {
+                                    name: "key"
+                                    normalizers: ["digit", ]
+                                }
+                                {
+                                    name: "ts"
+                                    type: "float"
+                                }
+                                { name: "_log_info.host"}
+                            ]
+                        }
+
+                        {
+                            title: "SlowResponse"
+                            camel_name: "slowresponse"
+                            colors: [ "FgMagenta", "Bright", ]
+                            dbname:         "slowresp"
+                            window_size:    523
+                            beep_threshold: 10
+                            abnormal_base:  10
+                            abnormal_percent: 0.6
+                            create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, uri VARCHAR(200));"
+                            insert_stmt:    "INSERT INTO %s(area, ts, uri) VALUES(?,?,?,?)"
+                            stats_stmt:     "SELECT COUNT(*) AS c, area, uri FROM %s where ts<=? GROUP BY area, uri ORDER BY c DESC"
+                            printf:         "%5d %3s %s"
+                            fields: [
+                                {name: "_log_info.uri"}
+                            ]
+                        }
+
                     ]
                 }
             ]
