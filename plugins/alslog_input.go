@@ -33,7 +33,7 @@ func (this *logfileSource) load(config *conf.Conf) {
 	this.tail = config.Bool("tail", true)
 	this.excepts = config.StringList("except", nil)
 	this.sink = config.String("sink", "")
-	this._files = make([]string, 0, 200)
+	this._files = make([]string, 0, 100)
 }
 
 func (this *logfileSource) refresh(wg *sync.WaitGroup) {
