@@ -55,12 +55,13 @@ Performing "in-flight" processing of collected data, real time streaming analysi
        |          |       |    |     |      |   ElasticSearch    HDFS      LevelDB/sky   RedShift  funpipe      |
      quantile   hyper     |    |   color    |          |           |           |           |        |           |
     histogram  loglog   beep email console etc         |           |           |           |        |           |
-      topN        |       |    |     |      |          |           |           |           |        +-----------+
-       |          |       +-----------------+       Kibana3        |           |        tableau
+      topN        |       |    |     |      |          |           |      Dimensional      |        +-----------+
+       |          |       +-----------------+       Kibana3        |    FunnelAnalysis   tableau
        +----------+                |                   |           |           |           |
             |                      |                   |           |           |           |
           PM/dev                dev/ops               PM          ops         PM          PM
 
+FunnelAnalysis
 
 #### Data
 
