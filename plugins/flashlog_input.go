@@ -20,12 +20,17 @@ import (
 )
 
 type FlashlogInput struct {
-	dsn string
+	dsn  string
+	sink string
 }
 
 func (this *FlashlogInput) Init(config *conf.Conf) {
 	this.dsn = config.String("dsn",
 		"flashlog:flashlog@unix(/var/run/mysqld/mysqld.sock)/flashlog?charset=utf8")
+	this.sink = config.String("sink", "")
+	if this.sink == "" {
+		panic("empty sink")
+	}
 }
 
 func (this *FlashlogInput) Run(r engine.InputRunner, h engine.PluginHelper) error {

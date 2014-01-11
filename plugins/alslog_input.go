@@ -33,6 +33,9 @@ func (this *logfileSource) load(config *conf.Conf) {
 	this.tail = config.Bool("tail", true)
 	this.excepts = config.StringList("except", nil)
 	this.sink = config.String("sink", "")
+	if this.sink == "" {
+		panic("empty sink")
+	}
 	this._files = make([]string, 0, 100)
 }
 

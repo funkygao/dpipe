@@ -7,10 +7,15 @@ import (
 
 type SelfSysInput struct {
 	stopChan chan bool
+	sink     string
 }
 
 func (this *SelfSysInput) Init(config *conf.Conf) {
 	this.stopChan = make(chan bool)
+	this.sink = config.String("sink", "")
+	if this.sink == "" {
+		panic("empty sink")
+	}
 }
 
 func (this *SelfSysInput) Run(r engine.InputRunner, h engine.PluginHelper) error {

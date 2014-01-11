@@ -32,6 +32,9 @@ type EsFilter struct {
 func (this *EsFilter) Init(config *conf.Conf) {
 	const CONV = "converts"
 	this.sink = config.String("sink", "")
+	if this.sink == "" {
+		panic("empty sink")
+	}
 	this.converters = make([]esConverter, 0, 10)
 	this.indexPattern = config.String("index_pattern", "")
 	for i := 0; i < len(config.List(CONV, nil)); i++ {

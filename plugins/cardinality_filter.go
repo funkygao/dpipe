@@ -38,6 +38,9 @@ type CardinalityFilter struct {
 func (this *CardinalityFilter) Init(config *conf.Conf) {
 	const CONV = "converts"
 	this.sink = config.String("sink", "")
+	if this.sink == "" {
+		panic("empty sink")
+	}
 	for i := 0; i < len(config.List(CONV, nil)); i++ {
 		section, err := config.Section(fmt.Sprintf("%s[%d]", CONV, i))
 		if err != nil {

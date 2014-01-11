@@ -27,6 +27,9 @@ type BatchAlsLogInput struct {
 func (this *BatchAlsLogInput) Init(config *conf.Conf) {
 	this.rootDir = config.String("root_dir", "")
 	this.sink = config.String("sink", "")
+	if this.sink == "" {
+		panic("empty sink")
+	}
 	this.project = config.String("proj", "rs")
 	this.workerNChan = make(chan int, config.Int("concurrent_num", 20))
 	this.chkpnt = als.NewFileCheckpoint(config.String("chkpntfile", ""))

@@ -7,11 +7,14 @@ import (
 
 // pv, pv latency and the alike statistics before feeding ES
 type StatsFilter struct {
-	blackhole bool
+	sink string
 }
 
 func (this *StatsFilter) Init(config *conf.Conf) {
-	this.blackhole = config.Bool("blackhole", false)
+	this.sink = config.String("sink", "")
+	if this.sink == "" {
+		panic("empty sink")
+	}
 }
 
 func (this *StatsFilter) Run(r engine.FilterRunner, h engine.PluginHelper) error {
@@ -31,10 +34,6 @@ func (this *StatsFilter) Run(r engine.FilterRunner, h engine.PluginHelper) error
 		case pack, ok = <-inChan:
 			if !ok {
 				break
-			}
-
-			if !this.blackhole {
-				globals.Printf("got msg: %s\n", pack.Message.RawLine())
 			}
 
 			pack.Recycle()
