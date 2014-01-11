@@ -98,7 +98,7 @@ func (this *AlsLogInput) CleanupForRestart() {
 func (this *AlsLogInput) Run(r engine.InputRunner, h engine.PluginHelper) error {
 	globals := engine.Globals()
 	if globals.Verbose {
-		globals.Printf("[%s] started\n", r.Name())
+		globals.Printf("[%s] started", r.Name())
 	}
 
 	var (
@@ -119,7 +119,7 @@ func (this *AlsLogInput) Run(r engine.InputRunner, h engine.PluginHelper) error 
 				}
 
 				if globals.Verbose {
-					globals.Printf("found new file %s\n", fn)
+					globals.Printf("[%s]found new file %s", source.project, fn)
 				}
 
 				openedFiles[fn] = true
@@ -135,7 +135,7 @@ func (this *AlsLogInput) Run(r engine.InputRunner, h engine.PluginHelper) error 
 
 		case <-this.stopChan:
 			if globals.Verbose {
-				globals.Printf("%s stopped\n", r.Name())
+				globals.Printf("%s stopped", r.Name())
 			}
 			stopped = true
 		}
