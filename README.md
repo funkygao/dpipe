@@ -62,7 +62,6 @@ Performing "in-flight" processing of collected data, real time streaming analysi
             |                      |                   |           |           |           |
           PM/dev                dev/ops               PM          ops         PM          PM
 
-FunnelAnalysis
 
 #### Data
 
