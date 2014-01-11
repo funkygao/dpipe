@@ -41,7 +41,7 @@
     plugins: [
         {
             name:   "SelfSysInput"
-            interval: 10
+            ticker_interval: 10
             sink:   "alsSysStat"
         }
 
