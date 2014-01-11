@@ -101,7 +101,22 @@ Performing "in-flight" processing of collected data, real time streaming analysi
 
 ### Implementation
 
+#### Diagram
+
+
+
+                                             -- predict ----
+                                            |               |
+    Input -> Filter(transform) -> Output -> |-- store ------| -> visualization
+                                            |               | 
+                                            |-- explore ----|
+                                            |               |
+                                             -- alarm ------
+
+
 #### PipelinePack
+
+Main pipeline data structure containing a AlsMessage and other metadata
 
 ##### buffer size of PipelinePack
 
