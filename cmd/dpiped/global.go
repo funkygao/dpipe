@@ -20,7 +20,6 @@ var (
 		cpuprof     string
 		memprof     string
 		lockfile    string
-		tail        bool
 	}
 )
 

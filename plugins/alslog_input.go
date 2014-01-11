@@ -18,6 +18,7 @@ type logfileSource struct {
 	excepts []string
 	project string
 	sink    string
+	tail    bool
 
 	_files []string
 }
@@ -29,6 +30,7 @@ func (this *logfileSource) load(config *conf.Conf) {
 	}
 
 	this.project = config.String("proj", "")
+	this.tail = config.Bool("tail", true)
 	this.excepts = config.StringList("except", nil)
 	this.sink = config.String("sink", "")
 	this._files = make([]string, 0, 200)
@@ -145,7 +147,7 @@ func (this *AlsLogInput) Run(r engine.InputRunner, h engine.PluginHelper) error 
 func (this *AlsLogInput) runSingleAlsLogInput(fn string, r engine.InputRunner,
 	h engine.PluginHelper, source logfileSource, stopped *bool) {
 	var tailConf tail.Config
-	if engine.Globals().Tail {
+	if source.tail {
 		tailConf = tail.Config{
 			Follow: true, // tail -f
 			ReOpen: true, // tail -F

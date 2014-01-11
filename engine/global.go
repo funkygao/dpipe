@@ -32,7 +32,6 @@ type GlobalConfigStruct struct {
 	Debug          bool
 	Verbose        bool
 	DryRun         bool
-	Tail           bool
 	PoolSize       int
 	PluginChanSize int
 	TickerLength   int
@@ -59,7 +58,6 @@ func DefaultGlobals() *GlobalConfigStruct {
 		Debug:          false,
 		Verbose:        false,
 		DryRun:         false,
-		Tail:           true,
 		PoolSize:       100,
 		PluginChanSize: 50,
 		TickerLength:   10 * 60,

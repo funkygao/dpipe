@@ -53,6 +53,7 @@
                 {
                     glob:   "/mnt/funplus/logs/fp_ffseaside/bi_*.log"
                     proj:   "ffs"
+                    tail:   true
                     sink:   "ffsBi"
                 }
 

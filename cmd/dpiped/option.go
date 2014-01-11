@@ -21,7 +21,6 @@ func parseFlags() {
 	flag.BoolVar(&options.dryrun, "dryrun", false, "dry run")
 	flag.StringVar(&options.cpuprof, "cpuprof", "", "cpu profiling file")
 	flag.StringVar(&options.memprof, "memprof", "", "memory profiling file")
-	flag.BoolVar(&options.tail, "tail", true, "tail mode instead of full scan")
 	flag.Usage = showUsage
 
 	flag.Parse()
