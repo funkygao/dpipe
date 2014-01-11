@@ -21,7 +21,6 @@
             chkpntfile: "_.gob"
             except: [
                 "post", "load_data", "newpay", "bigdata", "quest", "cheat_check", "index", 
-                "kernal", "phperror",
             ]
         }
         
@@ -48,7 +47,7 @@
                 {
                     key: "level"
                     act: "range"
-                    range: [1, 10]
+                    range: [1, 14, 19, 23, 27, 31, 36, 41, 46, 51, 57, 63, 69, 75, 101]
                 }
             ]
         }
