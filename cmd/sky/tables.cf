@@ -1,7 +1,7 @@
 {
     tables: [
         {
-            name: "user"
+            name: "rs_user"
             props: [
                 {
                     name:   "uid"
