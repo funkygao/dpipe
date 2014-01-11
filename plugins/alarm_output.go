@@ -3,7 +3,7 @@ package plugins
 import (
 	"bytes"
 	"fmt"
-	"github.com/funkygao/funpipe/engine"
+	"github.com/funkygao/dpipe/engine"
 	"github.com/funkygao/golib/bjtime"
 	"github.com/funkygao/golib/observer"
 	conf "github.com/funkygao/jsconf"

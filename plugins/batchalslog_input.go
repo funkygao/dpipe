@@ -2,7 +2,7 @@ package plugins
 
 import (
 	"github.com/funkygao/als"
-	"github.com/funkygao/funpipe/engine"
+	"github.com/funkygao/dpipe/engine"
 	conf "github.com/funkygao/jsconf"
 	"io"
 	"os"

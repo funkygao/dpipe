@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"github.com/funkygao/funpipe/engine"
-	_ "github.com/funkygao/funpipe/plugins" // trigger RegisterPlugin(s)
+	"github.com/funkygao/dpipe/engine"
+	_ "github.com/funkygao/dpipe/plugins" // trigger RegisterPlugin(s)
 	"github.com/funkygao/golib/locking"
 	"os"
 	"runtime/debug"

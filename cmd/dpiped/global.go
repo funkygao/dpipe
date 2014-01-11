@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/funkygao/funpipe/engine"
+	"github.com/funkygao/dpipe/engine"
 )
 
 var (
@@ -25,7 +25,7 @@ var (
 )
 
 const (
-	USAGE = `funpipe
+	USAGE = `dpiped
 
 Flags:
 `

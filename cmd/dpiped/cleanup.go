@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/funkygao/funpipe/engine"
+	"github.com/funkygao/dpipe/engine"
 	"github.com/funkygao/golib/locking"
 	"os"
 	"runtime/pprof"

@@ -22,7 +22,7 @@ func Sendmail(to string, subject string, body string) error {
 		To, Subject, Body string
 	}
 
-	const mailLetter = `From: funpipe <noreply@funplusgame.com>
+	const mailLetter = `From: dpipe <noreply@funplusgame.com>
 To: {{.To}}
 Subject: {{.Subject}}
 Importance: High
@@ -31,7 +31,7 @@ X-MSMail-Priority: High
 ——————————————————————
 {{.Body}}
 ======
-funpipe
+dpiped
 `
 
 	data := letterVar{to, subject, body}

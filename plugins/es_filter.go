@@ -3,7 +3,7 @@ package plugins
 import (
 	"fmt"
 	"github.com/funkygao/als"
-	"github.com/funkygao/funpipe/engine"
+	"github.com/funkygao/dpipe/engine"
 	conf "github.com/funkygao/jsconf"
 	"strings"
 	"time"

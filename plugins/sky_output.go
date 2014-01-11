@@ -2,7 +2,7 @@ package plugins
 
 import (
 	"fmt"
-	"github.com/funkygao/funpipe/engine"
+	"github.com/funkygao/dpipe/engine"
 	conf "github.com/funkygao/jsconf"
 	sky "github.com/funkygao/skyapi"
 )

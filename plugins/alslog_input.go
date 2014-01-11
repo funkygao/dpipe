@@ -3,7 +3,7 @@ package plugins
 import (
 	"fmt"
 	"github.com/funkygao/als"
-	"github.com/funkygao/funpipe/engine"
+	"github.com/funkygao/dpipe/engine"
 	"github.com/funkygao/golib/observer"
 	conf "github.com/funkygao/jsconf"
 	"github.com/funkygao/tail"

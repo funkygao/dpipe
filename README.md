@@ -1,14 +1,15 @@
-funpipe
-=======
+dpipe
+=====
+
+Distributed Data Pipeline
 
 Performing "in-flight" processing of collected data, real time streaming analysis and alarming, and delivering the results to any number of destinations for further analysis.
 
-[![Build Status](https://travis-ci.org/funkygao/funpipe.png?branch=master)](https://travis-ci.org/funkygao/funpipe)
+[![Build Status](https://travis-ci.org/funkygao/dpipe.png?branch=master)](https://travis-ci.org/funkygao/dpipe)
 
 ### Install
 
-    go get github.com/funkygao/funpipe
-    funpipe -h # help
+    go get github.com/funkygao/dpipe
 
 ### Features
 
@@ -38,7 +39,7 @@ Performing "in-flight" processing of collected data, real time streaming analysi
                             +-----------------+
                             |   ALS Server    |
                             |-----------------| 
-                            | funpipe daemon  |
+                            |     dpiped      |
                             +-----------------+
                                         |
                                         |<----------------------------------------------------------------------+
@@ -52,7 +53,7 @@ Performing "in-flight" processing of collected data, real time streaming analysi
             +----------------------|                   |           |           |           |        |           |
             |statistics            |alarming           |           |           |           |        |           |
        +----------+       +-----------------+          |           |           |           |        |           |
-       |          |       |    |     |      |   ElasticSearch    HDFS      LevelDB/sky   RedShift  funpipe      |
+       |          |       |    |     |      |   ElasticSearch    HDFS      LevelDB/sky   RedShift  dpipe        |
      quantile   hyper     |    |   color    |          |           |           |           |        |           |
     histogram  loglog   beep email console etc         |           |           |           |        |           |
       topN        |       |    |     |      |          |           |      Dimensional      |        +-----------+

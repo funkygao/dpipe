@@ -7,7 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/funkygao/als"
-	"github.com/funkygao/funpipe/engine"
+	"github.com/funkygao/dpipe/engine"
 	"github.com/funkygao/golib/bjtime"
 	sqldb "github.com/funkygao/golib/db"
 	"github.com/funkygao/golib/stats"

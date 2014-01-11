@@ -15,7 +15,7 @@ flashlog is saved in mysql
 package plugins
 
 import (
-	"github.com/funkygao/funpipe/engine"
+	"github.com/funkygao/dpipe/engine"
 	conf "github.com/funkygao/jsconf"
 )
 

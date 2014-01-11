@@ -2,7 +2,7 @@
 package plugins
 
 import (
-	"github.com/funkygao/funpipe/engine"
+	"github.com/funkygao/dpipe/engine"
 	"github.com/funkygao/golib"
 	"github.com/funkygao/golib/observer"
 	conf "github.com/funkygao/jsconf"
