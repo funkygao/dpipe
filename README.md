@@ -61,7 +61,7 @@ Performing "in-flight" processing of collected data, real time streaming analysi
        |          |       +-----------------+       Kibana3        |    FunnelAnalysis   tableau
        +----------+                |                   |           |           |           |
             |                      |                   |           |           |           |
-          PM/dev                dev/ops               PM          ops         PM          PM
+          PM/dev                dev/ops               PM          ops         dev         PM
 
 
 
