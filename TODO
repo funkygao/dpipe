@@ -3,17 +3,13 @@
 
 *   lua integration to parse complex log
 
-*   integration with behavior db
+*   integration with behavior db, still action not added
 *   keep user related dimension in mem, such as gender, paid, abtype
-
-*   add {project} and more var in config file
 
 *   github.com/funkygao/cron, for CardinalityOutput
 
 *   matchine learning, https://github.com/jbrukh/bayesian.git
 
 *   send alarm emails according to msg priority
-
-*   rename to fbus | butler
 
 *   from benchmark, the bottleneck is JSON marshal/unmarshal 20000ns/op, that's 50K msg/s
