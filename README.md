@@ -45,7 +45,7 @@ Performing "in-flight" processing of collected data, real time streaming analysi
                                         |
                                         |<----------------------------------------------------------------------+
                                         |                                                                       |
-                                        | Input-Decode-Filter(transform/clean/decorate)-Output                  |
+                                        | Input-Decode-Filter-Output                                            |
                                         V                                                                       |
                                    +----------------------------------------------------------------+           |
                                    |                   |           |           |           |        |           |
