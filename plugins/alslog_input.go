@@ -147,10 +147,10 @@ func (this *AlsLogInput) runSingleAlsLogInput(fn string, r engine.InputRunner,
 	var tailConf tail.Config
 	if engine.Globals().Tail {
 		tailConf = tail.Config{
-			Follow:   true, // tail -f
-			ReOpen:   true, // tail -F
-			Poll:     true, // Poll for file changes instead of using inotify
-			Location: &tail.SeekInfo{Offset: int64(0), Whence: os.SEEK_END},
+			Follow: true, // tail -f
+			ReOpen: true, // tail -F
+			Poll:   true, // Poll for file changes instead of using inotify
+			//Location: &tail.SeekInfo{Offset: int64(0), Whence: os.SEEK_END},
 		}
 	}
 
