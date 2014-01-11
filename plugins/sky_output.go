@@ -41,7 +41,6 @@ func (this *SkyOutput) Run(r engine.OutputRunner, h engine.PluginHelper) error {
 		case <-this.stopChan:
 			ok = false
 
-		default:
 		}
 
 	}
