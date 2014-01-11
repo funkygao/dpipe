@@ -13,3 +13,5 @@
 *   send alarm emails according to msg priority
 
 *   from benchmark, the bottleneck is JSON marshal/unmarshal 20000ns/op, that's 50K msg/s
+
+*   engine has http interface to check out its internal state
