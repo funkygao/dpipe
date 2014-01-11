@@ -2,6 +2,7 @@ package engine
 
 import (
 	"github.com/funkygao/golib/observer"
+	"net/http"
 	"os"
 	"os/signal"
 	"sync"
@@ -20,6 +21,9 @@ func Launch(e *EngineConfig) {
 
 	globals := Globals()
 	globals.Println("Launching Engine...")
+
+	globals.Println("Launching HTTP server")
+	e.launchHttpServer()
 
 	if globals.Verbose {
 		globals.Println("Launching Output(s)...")
