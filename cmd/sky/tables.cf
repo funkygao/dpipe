@@ -1,0 +1,35 @@
+{
+    tables: [
+        {
+            name: "user"
+            props: [
+                {
+                    name:   "uid"
+                    type:   "int"
+                    transient: false
+                }
+
+                {
+                    name:   "action"
+                    type:   "factor"
+                }
+
+                {
+                    name:   "area"
+                    type:   "factor"
+                }
+
+                {
+                    name:   "host"
+                    type:   "string"
+                }
+
+                {
+                    name:   "gendar"
+                    type:   "factor"
+                }
+                
+            ]
+        }
+    ]
+}
