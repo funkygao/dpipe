@@ -2,8 +2,6 @@
 <?php
 
 /*
- * Web collector.
- *
  * Continuously append php errorlog and kernal log to ALS
  *
  */
@@ -56,7 +54,7 @@ echo time(), " started ", $locale, ", ", $localIp, ", $tail\n";
 
 $handle = popen($tail, 'r');
 while(!feof($handle)) {
-    $line = fgets($handle);
+    $line = trim(fgets($handle));
     if (!$line || skipLine($skippedMsgs, $line)) {
         continue;
     }
@@ -72,12 +70,21 @@ while(!feof($handle)) {
         $category = 'kernal';
     }
 
-    $msg = sprintf(":%s,%s,%d,%s,%s\n",
+    $content = array(
+        "host" => $localIp,
+        "msg" => $line,
+    );
+    if (version_compare(PHP_VERSION, '5.4.0', '<')) {
+        $jsonContent = json_encode($content);
+    } else {
+        $jsonContent = json_encode($content, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+    }
+
+    $msg = sprintf(":%s,%s,%d,%s\n",
         $category,
         $locale,
         time(),
-        trim($line),
-        $localIp
+        $jsonContent
     );
     fwrite($alsSocket, $msg);
 }
