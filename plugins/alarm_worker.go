@@ -95,7 +95,7 @@ type alarmWorkerConfig struct {
 
 	colors          []string // fg, effects, bg
 	printFormat     string
-	instantFormat   string
+	instantFormat   string // 'area' is always 1st col
 	showSummary     bool
 	windowSize      time.Duration
 	beepThreshold   int
@@ -123,7 +123,7 @@ func (this *alarmWorkerConfig) init(config *conf.Conf) {
 	this.colors = config.StringList("colors", nil)
 	this.printFormat = config.String("printf", "")
 	this.instantFormat = config.String("iprintf", "")
-	this.windowSize = time.Duration(config.Int("window_size", 10))
+	this.windowSize = time.Duration(config.Int("window_size", 0))
 	this.showSummary = config.Bool("show_summary", false)
 	this.beepThreshold = config.Int("beep_threshold", 0)
 	this.abnormalBase = config.Int("abnormal_base", 10)
@@ -166,6 +166,8 @@ type alarmWorker struct {
 	statsStmt  *sql.Stmt
 
 	history map[string]int64 // TODO LRU incase of OOM
+
+	instantAlarmOnly bool
 }
 
 func (this *alarmWorker) init(config *conf.Conf) {
@@ -174,6 +176,9 @@ func (this *alarmWorker) init(config *conf.Conf) {
 
 	this.conf = alarmWorkerConfig{}
 	this.conf.init(config)
+	if this.conf.windowSize.Seconds() < 1.0 {
+		this.instantAlarmOnly = true
+	}
 }
 
 func (this *alarmWorker) stop() {
@@ -193,12 +198,12 @@ func (this *alarmWorker) run(h engine.PluginHelper) {
 		beep    bool
 	)
 
-	if globals.DryRun {
-		return
-	}
-
 	// lazy assignment
 	this.project = h.Project(this.projName)
+
+	if globals.DryRun || this.instantAlarmOnly {
+		return
+	}
 
 	this.createDB()
 	this.prepareInsertStmt()
@@ -280,6 +285,14 @@ func (this *alarmWorker) inject(msg *als.AlsMessage) {
 	args, err := this.fieldValues(msg)
 	if err != nil {
 		return
+	}
+
+	if this.conf.instantFormat != "" {
+		iargs := append([]interface{}{area}, args...) // 'area' is always 1st col
+		this.colorPrintfLn(true, this.conf.instantFormat, iargs...)
+		if this.instantAlarmOnly {
+			return
+		}
 	}
 
 	// insert_stmt must be like INSERT INTO (area, ts, ...)
