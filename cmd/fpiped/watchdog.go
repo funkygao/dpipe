@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-func runTicker(ticker *time.Ticker) {
+func runWatchdog(ticker *time.Ticker) {
 	startTime := time.Now()
 	ms := new(runtime.MemStats)
 	for _ = range ticker.C {

@@ -47,7 +47,7 @@ func main() {
 	setupMaxProcsAndProfiler()
 
 	ticker := time.NewTicker(time.Second * time.Duration(options.tick))
-	go runTicker(ticker)
+	go runWatchdog(ticker)
 	defer ticker.Stop()
 
 	eng := engine.NewEngineConfig(globals)

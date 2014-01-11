@@ -14,7 +14,7 @@ func parseFlags() {
 	flag.BoolVar(&options.verbose, "v", false, "verbose")
 	flag.StringVar(&options.configfile, "c", "etc/engine.als.cf", "main config file")
 	flag.StringVar(&options.logfile, "l", "", "master log file name")
-	flag.StringVar(&options.lockfile, "lockfile", "", "lockfile path")
+	flag.StringVar(&options.lockfile, "lockfile", "var/fpiped.lock", "lockfile path")
 	flag.BoolVar(&options.showversion, "version", false, "show version")
 	flag.BoolVar(&options.debug, "debug", false, "debug mode")
 	flag.IntVar(&options.tick, "t", 60*10, "tick interval in seconds")
