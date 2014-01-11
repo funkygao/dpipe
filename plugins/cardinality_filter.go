@@ -102,7 +102,7 @@ func (this *CardinalityFilter) handlePack(r engine.FilterRunner,
 
 			for _, interval := range f.interval {
 				// generate new pack
-				p := h.PipelinePack(0)
+				p := h.PipelinePack(pack.MsgLoopCount)
 				if p == nil {
 					globals.Println("can't get pack in filter")
 					continue
