@@ -176,8 +176,37 @@ func (this *alarmWorker) init(config *conf.Conf) {
 
 	this.conf = alarmWorkerConfig{}
 	this.conf.init(config)
+	globals := engine.Globals()
 	if this.conf.windowSize.Seconds() < 1.0 {
 		this.instantAlarmOnly = true
+
+		if this.conf.beepThreshold > 0 {
+			globals.Printf("[%s]instant only alarm needn't set 'beep_threshold'", this.conf.camelName)
+		}
+		if this.conf.abnormalBase > 0 {
+			globals.Printf("[%s]instant only alarm needn't set 'abnormal_base'", this.conf.camelName)
+		}
+		if this.conf.abnormalPercent > 0. {
+			globals.Printf("[%s]instant only alarm needn't set 'abnormal_percent'", this.conf.camelName)
+		}
+		if this.conf.showSummary {
+			globals.Printf("[%s]instant only alarm needn't set 'show_summary'", this.conf.camelName)
+		}
+		if this.conf.createTable != "" {
+			globals.Printf("[%s]instant only alarm needn't set 'create_table'", this.conf.camelName)
+		}
+		if this.conf.statsStmt != "" {
+			globals.Printf("[%s]instant only alarm needn't set 'stats_stmt'", this.conf.camelName)
+		}
+		if this.conf.insertStmt != "" {
+			globals.Printf("[%s]instant only alarm needn't set 'insert_stmt'", this.conf.camelName)
+		}
+		if this.conf.printFormat != "" {
+			globals.Printf("[%s]instant only alarm needn't set 'printf'", this.conf.camelName)
+		}
+		if this.conf.dbName != "" {
+			globals.Printf("[%s]instant only alarm needn't set 'dbname'", this.conf.camelName)
+		}
 	}
 }
 
