@@ -123,7 +123,7 @@ func (this *alarmWorkerConfig) init(config *conf.Conf) {
 	this.colors = config.StringList("colors", nil)
 	this.printFormat = config.String("printf", "")
 	this.instantFormat = config.String("iprintf", "")
-	this.windowSize = time.Duration(config.Int("window_size", 0))
+	this.windowSize = time.Duration(config.Int("window_size", 0)) * time.Second
 	this.showSummary = config.Bool("show_summary", false)
 	this.beepThreshold = config.Int("beep_threshold", 0)
 	this.abnormalBase = config.Int("abnormal_base", 10)
@@ -239,7 +239,7 @@ func (this *alarmWorker) run(h engine.PluginHelper) {
 	this.prepareStatsStmt()
 
 	for !globals.Stopping {
-		time.Sleep(time.Second * this.conf.windowSize)
+		time.Sleep(this.conf.windowSize)
 
 		this.Lock()
 		windowHead, windowTail, err := this.getWindowBorder()

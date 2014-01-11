@@ -58,6 +58,12 @@
                 }
 
                 {
+                    glob:   "/mnt/funplus/logs/fp_rstory/pv*.log"
+                    project:   "RS"
+                    sink:   "rsPv"
+                }
+
+                {
                     glob:   "/mnt/funplus/logs/fp_rstory/dau*.log"
                     project:   "RS"
                     sink:   "rsDau"
@@ -66,7 +72,7 @@
                 {
                     glob:   "/mnt/funplus/logs/fp_rstory/*.log"
                     except: [
-                        "post", "index", "kernal", "phperror", "session", "load_data", "dau",
+                        "post", "index", "kernal", "phperror", "session", "load_data", "dau", "pv",
                     ]
                     project:   "RS"
                     sink:   "rsLogs"
@@ -110,7 +116,9 @@
 
         {
             name:   "EsBufferFilter"
+            match:  ["rsDau", "rsPv", ]
             sink:   "esBuffer"
+            disabled: false
             workers: [
                 {
                     camel_name: "dau"
@@ -118,7 +126,6 @@
                     expression: "count"
                     interval:   60
                 }
-
                 {
                     camel_name: "pv"
                     project:    "RS"
@@ -139,7 +146,7 @@
         {
             name:   "EsFilter"
             index_pattern:  "@ym"
-            match:  ["ffsBi", "rsDau", "rsLogs", ]
+            match:  ["ffsBi", "rsDau", "rsLogs", "esBuffer", ]
             sink:   "esFiltered"
             converts: [
                 // act: ip|money|range|del

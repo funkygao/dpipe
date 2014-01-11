@@ -24,7 +24,7 @@ func (this *EsOutput) Init(config *conf.Conf) {
 	this.stopChan = make(chan bool)
 	api.Domain = config.String("domain", "localhost")
 	api.Port = config.String("port", "9200")
-	this.flushInterval = time.Duration(config.Int("flush_interval", 30))
+	this.flushInterval = time.Duration(config.Int("flush_interval", 30)) * time.Second
 	this.bulkMaxConn = config.Int("bulk_max_conn", 20)
 	this.bulkMaxDocs = config.Int("bulk_max_docs", 100)
 	this.bulkMaxBuffer = config.Int("bulk_max_buffer", 10<<20) // 10 MB
@@ -55,7 +55,7 @@ func (this *EsOutput) Run(r engine.OutputRunner, h engine.PluginHelper) error {
 		case <-reloadChan:
 			// TODO
 
-		case <-time.After(this.flushInterval * time.Second):
+		case <-time.After(this.flushInterval):
 			this.indexer.Flush()
 
 		case pack, ok = <-inChan:
