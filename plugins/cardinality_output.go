@@ -50,6 +50,11 @@ func (this *CardinalityOutput) Run(r engine.OutputRunner, h engine.PluginHelper)
 				break
 			}
 
+			if globals.Debug {
+				project.Printf("key:%s interval:%s data:%v", pack.CardinalityKey,
+					pack.CardinalityInterval, pack.CardinalityData)
+			}
+
 			if pack.CardinalityKey != "" && pack.CardinalityData != nil {
 				this.intervals[pack.CardinalityKey] = pack.CardinalityInterval
 
