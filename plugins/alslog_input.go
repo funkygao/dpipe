@@ -170,7 +170,7 @@ func (this *AlsLogInput) runSingleAlsLogInput(fn string, r engine.InputRunner,
 
 	for line := range t.Lines {
 		if globals.Debug {
-			globals.Printf("[%s]got line: %s\n", fn, line.Text)
+			globals.Printf("[%s]got line: %s\n", filepath.Base(fn), line.Text)
 		}
 
 		if *stopped {
@@ -180,7 +180,7 @@ func (this *AlsLogInput) runSingleAlsLogInput(fn string, r engine.InputRunner,
 		pack = <-inChan
 		if err := pack.Message.FromLine(line.Text); err != nil {
 			if err != als.ErrEmptyLine {
-				h.Project(source.project).Printf("[%s]%v: %s\n", fn, err, line.Text)
+				h.Project(source.project).Printf("[%s]%v: %s", fn, err, line.Text)
 			}
 
 			pack.Recycle()
