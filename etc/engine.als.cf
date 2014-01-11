@@ -46,6 +46,19 @@
         }
 
         {
+            name:   "rsSkyOutput"
+            match:  []
+            disabled: true
+            table:  "rs_user"
+            fields: [
+                {
+                    name:   ""
+                    type:   ""
+                }
+            ]
+        }
+
+        {
             name:   "AlsLogInput"
             class:  "AlsLogInput"
             ticker_interval: 20
