@@ -35,7 +35,7 @@ func (this *EngineConfig) handleHttpQuery(w http.ResponseWriter, req *http.Reque
 	case "projects":
 		output["projects"] = this.projects
 	case "inputs":
-		output["inputs"] = this, InputRunners
+		output["inputs"] = this.InputRunners
 	case "router":
 		output["router"] = this.router
 	}
