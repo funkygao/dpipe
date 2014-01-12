@@ -2,7 +2,6 @@ package engine
 
 import (
 	"github.com/funkygao/golib/observer"
-	"net/http"
 	"os"
 	"os/signal"
 	"sync"

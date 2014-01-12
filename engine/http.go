@@ -18,7 +18,7 @@ func (this *EngineConfig) handleHttpQuery(w http.ResponseWriter, r *http.Request
 		globals.Println(r.Form)
 	}
 
-	cmd := r.Form["cmd"]
+	cmd := r.Form["cmd"][0]
 	switch cmd {
 	case "runners":
 		fmt.Fprintf(w, "filter: %v\noutput: %v", this.FilterRunners, this.OutputRunners)
