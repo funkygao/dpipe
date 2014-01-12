@@ -67,7 +67,7 @@ func (this *EngineConfig) httpApiHandleFunc(path string,
 		}
 
 		w.Header().Set("Content-Type", "application/json")
-		var status
+		var status int
 		if err == nil {
 			status = http.StatusOK
 		} else {
