@@ -1,6 +1,7 @@
 package plugins
 
 import (
+	"fmt"
 	"github.com/funkygao/als"
 	"github.com/funkygao/dpipe/engine"
 	"github.com/funkygao/golib/stats"
@@ -145,7 +146,7 @@ func (this *EsBufferFilter) Run(r engine.FilterRunner, h engine.PluginHelper) er
 	)
 
 	for _, worker := range this.wokers {
-		worker.run(h)
+		worker.run(r, h)
 	}
 
 	for ok {
@@ -165,7 +166,7 @@ func (this *EsBufferFilter) Run(r engine.FilterRunner, h engine.PluginHelper) er
 
 func (this *EsBufferFilter) handlePack(pack *engine.PipelinePack) {
 	for _, worker := range this.wokers {
-		if worker.camelName == pack.Logfile.CamelCaseName {
+		if worker.camelName == pack.Logfile.CamelCaseName() {
 			worker.inject(pack)
 		}
 	}

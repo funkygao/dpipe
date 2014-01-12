@@ -317,7 +317,7 @@ func (this *alarmWorker) inject(msg *als.AlsMessage) {
 	}
 
 	if this.conf.instantFormat != "" {
-		iargs := append([]interface{}{area}, args...) // 'area' is always 1st col
+		iargs := append([]interface{}{msg.Area}, args...) // 'area' is always 1st col
 		this.colorPrintfLn(true, this.conf.instantFormat, iargs...)
 		if this.instantAlarmOnly {
 			return
