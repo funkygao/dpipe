@@ -21,8 +21,7 @@ func Launch(e *EngineConfig) {
 	globals := Globals()
 	globals.Println("Launching Engine...")
 
-	globals.Println("Launching HTTP server")
-	e.launchHttpServer()
+	e.launchHttpServ()
 
 	if globals.Verbose {
 		globals.Println("Launching Output(s)...")
@@ -121,6 +120,8 @@ func Launch(e *EngineConfig) {
 	}
 
 	// cleanup after shutdown
+
+	e.stopHttpServ()
 
 	for _, project := range e.projects {
 		project.Stop()

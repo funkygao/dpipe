@@ -5,7 +5,7 @@ import (
 	"net/http"
 )
 
-func (this *EngineConfig) launchHttpServer() {
+func (this *EngineConfig) launchHttpServ() {
 	http.HandleFunc("/", this.handleHttpQuery)
 	http.ListenAndServe(this.String("http_addr", ":9876"), nil)
 }
@@ -31,4 +31,8 @@ func (this *EngineConfig) handleHttpQuery(w http.ResponseWriter, r *http.Request
 	default:
 		fmt.Fprintf(w, "invalid cmd")
 	}
+}
+
+func (this *EngineConfig) stopHttpServ() {
+
 }
