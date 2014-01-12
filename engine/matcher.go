@@ -5,14 +5,14 @@ import (
 )
 
 type MatchRunner struct {
-	inChan   chan *PipelinePack
-	runner   PluginRunner
-	matchers []string
+	inChan  chan *PipelinePack
+	runner  PluginRunner
+	matches []string
 }
 
-func NewMatchRunner(matchers []string, r PluginRunner) *MatchRunner {
+func NewMatchRunner(matches []string, r PluginRunner) *MatchRunner {
 	this := new(MatchRunner)
-	this.matchers = matchers
+	this.matches = matches
 	this.runner = r
 	this.inChan = make(chan *PipelinePack, Globals().PluginChanSize)
 	return this
@@ -41,7 +41,7 @@ func (this *MatchRunner) Start(matchChan chan *PipelinePack) {
 	}
 
 	matchAll := false
-	if len(this.matchers) == 0 {
+	if len(this.matches) == 0 {
 		matchAll = true
 	}
 
@@ -58,8 +58,8 @@ func (this *MatchRunner) Start(matchChan chan *PipelinePack) {
 }
 
 func (this *MatchRunner) match(pack *PipelinePack) bool {
-	for _, sink := range this.matchers {
-		if pack.Sink == sink {
+	for _, match := range this.matches {
+		if pack.Sink == match {
 			return true
 		}
 	}
