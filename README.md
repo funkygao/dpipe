@@ -21,6 +21,17 @@ Performing "in-flight" processing of collected data, real time streaming analysi
 *   sliding-window events alarming
 *   distributed cluster ready
 
+### Plugins
+
+*   slide window based streaming biz alarm
+*   cardinality statistics(for MAU alike counters who has too much data to fit in db)
+*   write events to ElasticSearch 
+*   ElasticSearch buffering(lessen uneccessary load of ES, e,g. dau, pv, hits)
+*   behaviour db, dimensional funnel analysis(user based action series)
+*   batch processing of historical logs
+*   self monitoring
+*   to be more...
+
 ### Architecture
 
 #### Overview
