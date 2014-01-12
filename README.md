@@ -14,7 +14,8 @@ Performing "in-flight" processing of collected data, real time streaming analysi
 ### Plugins
 
 *   slide window based streaming biz alarm
-*   cardinality statistics(for MAU alike counters who has too much data to fit in db)
+*   cardinality statistics(for MAU alike counters where storing the data for statistics is prohibitive)
+    In fact, if the data is stored only for the purpose of statistical calculations, incremental updates make storage unnecessary.
 *   write events to ElasticSearch 
 *   ElasticSearch buffering(lessen uneccessary load of ES, e,g. dau, pv, hits)
 *   behaviour db, dimensional funnel analysis(user based action series)
