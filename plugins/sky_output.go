@@ -110,6 +110,7 @@ func (this *SkyOutput) feedSky(pack *engine.PipelinePack) {
 		event.Data[f.name] = val
 	}
 
+	// objectId is uid string
 	this.table.AddEvent(strconv.Itoa(uid.(int)), event, sky.Merge)
 }
 
