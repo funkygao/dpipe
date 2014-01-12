@@ -1,38 +1,104 @@
 package engine
 
 import (
+	"encoding/json"
 	"fmt"
+	"github.com/gorilla/mux"
+	"io"
+	"net"
 	"net/http"
 )
 
 func (this *EngineConfig) launchHttpServ() {
-	http.HandleFunc("/", this.handleHttpQuery)
-	http.ListenAndServe(this.String("http_addr", ":9876"), nil)
+	this.httpRouter = mux.NewRouter()
+	this.httpServer = &http.Server{Addr: this.String("http_addr", ":9876"), Handler: this.httpRouter}
+	this.addHttpHandlers()
+
+	var err error
+	this.listener, err = net.Listen("tcp", this.httpServer.Addr)
+	if err != nil {
+		panic(err)
+	}
+	go this.httpServer.Serve(this.listener)
+
+	Globals().Printf("Listening on http://%s", this.httpServer.Addr)
 }
 
-func (this *EngineConfig) handleHttpQuery(w http.ResponseWriter, r *http.Request) {
-	globals := Globals()
-
-	r.ParseForm()
-	if globals.Verbose {
-		globals.Println(r.Form)
-	}
-
-	cmd := r.Form["cmd"][0]
+func (this *EngineConfig) handleHttpQuery(w http.ResponseWriter, req *http.Request,
+	params map[string]interface{}) (interface{}, error) {
+	vars := mux.Vars(req)
+	cmd := vars["cmd"]
+	output := make(map[string]interface{})
 	switch cmd {
 	case "runners":
-		fmt.Fprintf(w, "filter: %v\noutput: %v", this.FilterRunners, this.OutputRunners)
+		output["filters"] = this.FilterRunners
+		output["outputs"] = this.OutputRunners
 	case "projects":
-		fmt.Fprintf(w, "%v", this.projects)
+		output["projects"] = this.projects
 	case "inputs":
-		fmt.Fprintf(w, "%v", this.InputRunners)
+		output["inputs"] = this, InputRunners
 	case "router":
-		fmt.Fprintf(w, "output: %v\nfilter: %v", this.router.outputMatchers, this.router.filterMatchers)
-	default:
-		fmt.Fprintf(w, "invalid cmd")
+		output["router"] = this.router
 	}
+
+	return output, nil
+}
+
+func (this *EngineConfig) addHttpHandlers() {
+	this.httpApiHandleFunc("/q/{cmd}",
+		func(w http.ResponseWriter, req *http.Request,
+			params map[string]interface{}) (interface{}, error) {
+			return this.handleHttpQuery(w, req, params)
+		}).Methods("GET")
+}
+
+func (this *EngineConfig) httpApiHandleFunc(path string,
+	handlerFunc func(http.ResponseWriter,
+		*http.Request, map[string]interface{}) (interface{}, error)) *mux.Route {
+	wrappedFunc := func(w http.ResponseWriter, req *http.Request) {
+		var ret interface{}
+		params, err := this.decodeHttpParams(w, req)
+		if err == nil {
+			ret, err = handlerFunc(w, req, params)
+		}
+
+		if err != nil {
+			ret = map[string]interface{}{"error": err.Error()}
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		var status
+		if err == nil {
+			status = http.StatusOK
+		} else {
+			status = http.StatusInternalServerError
+		}
+		w.WriteHeader(status)
+
+		if ret != nil {
+			// write json result
+			encoder := json.NewEncoder(w)
+			encoder.Encode(ret)
+		}
+	}
+
+	return this.httpRouter.HandleFunc(path, wrappedFunc)
+}
+
+func (this *EngineConfig) decodeHttpParams(w http.ResponseWriter, req *http.Request) (map[string]interface{},
+	error) {
+	params := make(map[string]interface{})
+	decoder := json.NewDecoder(req.Body)
+	err := decoder.Decode(&params)
+	if err != nil && err != io.EOF {
+		return nil, err
+	}
+
+	return params, nil
 }
 
 func (this *EngineConfig) stopHttpServ() {
-
+	if this.listener != nil {
+		this.listener.Close()
+	}
 }

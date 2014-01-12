@@ -4,12 +4,18 @@ import (
 	"fmt"
 	conf "github.com/funkygao/jsconf"
 	"github.com/funkygao/pretty"
+	"github.com/gorilla/mux"
+	"net/http"
 	"os"
 	"time"
 )
 
 type EngineConfig struct {
 	*conf.Conf
+
+	listener   net.Listener
+	httpServer *http.Server
+	httpRouter *mux.Router
 
 	projects map[string]*ConfProject
 
