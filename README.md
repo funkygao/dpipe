@@ -11,16 +11,6 @@ Performing "in-flight" processing of collected data, real time streaming analysi
 
     go get github.com/funkygao/dpipe
 
-### Features
-
-*   easy for extention
-*   convert data from outside sources into a standard internal representation(area,ts,json)
-*   perform any required 'in flight' processing
-*   deliver collated data to intended destination(s)
-*   approximate quantiles over an unbounded data stream(such as MAU)
-*   sliding-window events alarming
-*   distributed cluster ready
-
 ### Plugins
 
 *   slide window based streaming biz alarm
