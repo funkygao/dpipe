@@ -246,7 +246,7 @@ func (this *alarmWorker) run(h engine.PluginHelper, dbReady chan bool) {
 		windowHead, windowTail, err := this.getWindowBorder()
 		if err != nil {
 			if globals.Verbose {
-				this.project.Println(err, this.conf.dbName)
+				this.project.Println(this.conf.dbName, err)
 			}
 
 			this.Unlock()

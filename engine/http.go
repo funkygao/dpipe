@@ -27,6 +27,11 @@ func (this *EngineConfig) handleHttpQuery(w http.ResponseWriter, req *http.Reque
 	params map[string]interface{}) (interface{}, error) {
 	vars := mux.Vars(req)
 	cmd := vars["cmd"]
+	globals := Globals()
+	if globals.Verbose {
+		globals.Println(req.Method, cmd)
+	}
+
 	output := make(map[string]interface{})
 	switch cmd {
 	case "runners":
