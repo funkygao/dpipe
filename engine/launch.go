@@ -88,7 +88,6 @@ func Launch(e *EngineConfig) {
 			inputsWg.Done()
 			panic(err)
 		}
-
 	}
 
 	globals.Println("Engine ready")

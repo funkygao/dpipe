@@ -1,7 +1,7 @@
 package engine
 
 import (
-	//"runtime"
+	"runtime"
 	"sync/atomic"
 	"time"
 )
@@ -68,15 +68,15 @@ func (this *messageRouter) runMainloop() {
 		matcher *MatchRunner
 	)
 
-	if Globals().Verbose {
-		Globals().Printf("Router started with ticker %ds\n", globals.TickerLength)
+	if globals.Verbose {
+		globals.Printf("Router started with ticker %ds\n", globals.TickerLength)
 	}
 
 	ticker = time.NewTicker(time.Second * time.Duration(globals.TickerLength))
 	defer ticker.Stop()
 
 	for ok {
-		//runtime.Gosched()
+		runtime.Gosched()
 
 		select {
 		case matcher = <-this.removeOutputMatcher:
@@ -86,12 +86,9 @@ func (this *messageRouter) runMainloop() {
 			this.removeMatcher(matcher, this.filterMatchers)
 
 		case <-ticker.C:
-			println("haha")
-			elapsed := time.Since(globals.StartedAt)
-			pn := atomic.LoadInt32(&this.periodProcessMsgN)
 			globals.Printf("processed msg: %v, elapsed: %s, speed: %d/s\n",
 				this.totalProcessedMsgN, elapsed,
-				pn/int32(globals.TickerLength))
+				this.periodProcessMsgN/int32(globals.TickerLength))
 			this.periodProcessMsgN = int32(0)
 
 		case pack, ok = <-this.inChan:

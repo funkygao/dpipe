@@ -327,7 +327,6 @@
                             title: "MemcacheSlow"
                             camel_name: "memcacheTo"
                             colors: [ "FgYellow", ]
-                            dbname:         "cacheslow"
                             window_size:    0
                             iprintf:        "CacheSlow %3s %32s %8.4f %15s"
                             fields: [

@@ -183,10 +183,10 @@ func (this *alarmWorker) init(config *conf.Conf) {
 		if this.conf.beepThreshold > 0 {
 			globals.Printf("[%s]instant only alarm needn't set 'beep_threshold'", this.conf.camelName)
 		}
-		if this.conf.abnormalBase > 0 {
+		if this.conf.abnormalBase != 10 {
 			globals.Printf("[%s]instant only alarm needn't set 'abnormal_base'", this.conf.camelName)
 		}
-		if this.conf.abnormalPercent > 0. {
+		if this.conf.abnormalPercent != 1.5 {
 			globals.Printf("[%s]instant only alarm needn't set 'abnormal_percent'", this.conf.camelName)
 		}
 		if this.conf.showSummary {
