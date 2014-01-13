@@ -1,7 +1,7 @@
 package engine
 
 import (
-	"runtime"
+	//"runtime"
 	"sync/atomic"
 	"time"
 )
@@ -76,7 +76,7 @@ func (this *messageRouter) runMainloop() {
 	defer ticker.Stop()
 
 	for ok {
-		runtime.Gosched()
+		//runtime.Gosched()
 
 		select {
 		case matcher = <-this.removeOutputMatcher:
