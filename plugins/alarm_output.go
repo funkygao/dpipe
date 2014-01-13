@@ -55,15 +55,17 @@ func (this *AlarmOutput) Run(r engine.OutputRunner, h engine.PluginHelper) error
 		inChan     = r.InChan()
 	)
 
-	// start all the workers
-	for _, projectWorkers := range this.workers {
-		for _, w := range projectWorkers {
-			go w.run(h)
-		}
-	}
-
 	for projName, emailChan := range this.emailChans {
 		go this.runSendAlarmsWatchdog(h.Project(projName), emailChan)
+	}
+
+	// start all the workers
+	dbReady := make(chan bool)
+	for _, projectWorkers := range this.workers {
+		for _, w := range projectWorkers {
+			go w.run(h, dbReady)
+			<-dbReady // in case of race condition with worker.inject
+		}
 	}
 
 	observer.Subscribe(engine.RELOAD, reloadChan)

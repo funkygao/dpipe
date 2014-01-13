@@ -220,7 +220,7 @@ func (this *alarmWorker) stop() {
 	this.db.Close()
 }
 
-func (this *alarmWorker) run(h engine.PluginHelper) {
+func (this *alarmWorker) run(h engine.PluginHelper, dbReady chan bool) {
 	var (
 		globals = engine.Globals()
 		summary = stats.Summary{}
@@ -237,6 +237,7 @@ func (this *alarmWorker) run(h engine.PluginHelper) {
 	this.createDB()
 	this.prepareInsertStmt()
 	this.prepareStatsStmt()
+	dbReady <- true
 
 	for !globals.Stopping {
 		time.Sleep(this.conf.windowSize)
