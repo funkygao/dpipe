@@ -132,5 +132,8 @@ func (this *messageRouter) runMainloop() {
 		close(matcher.inChan)
 	}
 
-	globals.Println("MessageRouter stopped")
+	if globals.Verbose {
+		globals.Println("Router stopped")
+	}
+
 }
