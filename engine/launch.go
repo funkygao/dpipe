@@ -54,8 +54,8 @@ func Launch(e *EngineConfig) {
 	}
 
 	// setup the diagnostic trackers
-	inputTracker := NewDiagnosticTracker("input")
-	injectTracker := NewDiagnosticTracker("inject")
+	inputTracker := NewDiagnosticTracker("inputTracker")
+	injectTracker := NewDiagnosticTracker("injectTracker")
 
 	if globals.Verbose {
 		globals.Printf("Initializing PipelinePack pools %d\n", globals.PoolSize)
