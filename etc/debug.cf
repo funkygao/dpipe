@@ -17,6 +17,7 @@
                 {
                     glob:   "/var/log/a*.log"
                     project:   "rs"
+                    tail: false
                     sink:   "alog"
                 }
             ]

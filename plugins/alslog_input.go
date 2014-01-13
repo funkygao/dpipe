@@ -187,6 +187,11 @@ func (this *AlsLogInput) runSingleAlsLogInput(fn string, r engine.InputRunner,
 		pack.Sink = source.sink
 		r.Inject(pack)
 	}
+
+	if globals.Verbose {
+		globals.Printf("[%s]%s stopped", source.project, fn)
+	}
+
 }
 
 func (this *AlsLogInput) refreshSources() {

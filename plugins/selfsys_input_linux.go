@@ -66,14 +66,12 @@ func (this *SelfSysInput) Run(r engine.InputRunner, h engine.PluginHelper) error
 		pack.EsIndex = "als"
 		pack.EsType = "sys"
 		r.Inject(pack)
-
 	}
 
 	return nil
 }
 
 func (this *SelfSysInput) Stop() {
-	engine.Globals().Println("got stop")
 	close(this.stopChan)
 }
 
