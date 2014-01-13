@@ -209,7 +209,7 @@
                             colors: [ "FgCyan", "Bright", "BgRed", ]
                             dbname:         "mongoError"
                             window_size:    15
-                            beep_threshold: 1
+                            beep_threshold: 10
                             abnormal_base:  10
                             abnormal_percent: 0.5
                             create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, msg VARCHAR(200));"
