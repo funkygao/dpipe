@@ -86,6 +86,7 @@ func (this *messageRouter) runMainloop() {
 			this.removeMatcher(matcher, this.filterMatchers)
 
 		case <-ticker.C:
+			println("haha")
 			elapsed := time.Since(globals.StartedAt)
 			pn := atomic.LoadInt32(&this.periodProcessMsgN)
 			globals.Printf("processed msg: %v, elapsed: %s, speed: %d/s\n",

@@ -62,7 +62,7 @@ func (this *DiagnosticTracker) Run() {
 		}
 
 		if len(probablePacks) > 0 {
-			globals.Printf("[%s]%d packs have been idle more than %.0f seconds\n",
+			globals.Printf("[%s]%d packs have been idle more than %.0f seconds",
 				this.PoolName, len(probablePacks), idleMax.Seconds())
 			globals.Printf("[%s]Plugin names and quantities on idle packs:",
 				this.PoolName)
