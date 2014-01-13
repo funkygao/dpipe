@@ -19,8 +19,8 @@
                 sleep_max:      1600
                 sleep_min:      250
             }
-            logfile: "log/rs.log"    # default log/{name}.log
-            index_prefix: "rs"       # default {name}
+            logfile: "log/rs.log"    
+            index_prefix: "rs"      
         }
         {
             name:   "FFS"
