@@ -37,9 +37,18 @@ func (this *SelfSysInput) Run(r engine.InputRunner, h engine.PluginHelper) error
 	)
 
 	for !stopped {
+		select {
+		case <-this.stopChan:
+			stopped = true
+
+		case <-r.Ticker():
+			// same effect as sleep
+		}
+
 		stats.gatherStats()
 		jsonString, err = stats.jsonString()
 		if err != nil {
+			globals.Println(err)
 			continue
 		}
 
@@ -47,6 +56,7 @@ func (this *SelfSysInput) Run(r engine.InputRunner, h engine.PluginHelper) error
 		if err = pack.Message.FromLine(fmt.Sprintf("als,%d,%s",
 			time.Now().Unix(), jsonString)); err != nil {
 			globals.Printf("invalid sys stat: %s\n", jsonString)
+
 			pack.Recycle()
 			continue
 		}
@@ -57,19 +67,13 @@ func (this *SelfSysInput) Run(r engine.InputRunner, h engine.PluginHelper) error
 		pack.EsType = "sys"
 		r.Inject(pack)
 
-		select {
-		case <-this.stopChan:
-			stopped = true
-
-		case <-r.Ticker():
-			// same effect as sleep
-		}
 	}
 
 	return nil
 }
 
 func (this *SelfSysInput) Stop() {
+	engine.Globals().Println("got stop")
 	close(this.stopChan)
 }
 
