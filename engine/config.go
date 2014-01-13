@@ -105,11 +105,6 @@ func (this *EngineConfig) LoadConfigFile(fn string) {
 
 	this.Conf = cf
 
-	globals := Globals()
-	if globals.Debug {
-		globals.Printf("config: %#v\n", *cf)
-	}
-
 	// 'projects' section
 	for i := 0; i < len(this.List("projects", nil)); i++ {
 		section, err := this.Section(fmt.Sprintf("projects[%d]", i))
