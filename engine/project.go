@@ -43,7 +43,10 @@ func (this *ConfProject) FromConfig(c *conf.Conf) {
 		panic(err)
 	}
 
-	logOptions := log.Ldate | log.Ltime | log.Lshortfile
+	logOptions := log.Ldate | log.Ltime
+	if Globals().Verbose {
+		logOptions |= log.Lshortfile
+	}
 	if Globals().Debug {
 		logOptions |= log.Lmicroseconds
 	}
