@@ -87,7 +87,7 @@ func (this *messageRouter) runMainloop() {
 
 		case <-ticker.C:
 			globals.Printf("processed msg: %v, elapsed: %s, speed: %d/s\n",
-				this.totalProcessedMsgN, elapsed,
+				this.totalProcessedMsgN, time.Since(globals.StartedAt),
 				this.periodProcessMsgN/int32(globals.TickerLength))
 			this.periodProcessMsgN = int32(0)
 
