@@ -19,22 +19,22 @@
                 sleep_max:      1600
                 sleep_min:      250
             }
-            logfile: "log/rs.log"    
+            logfile: "var/rs.log"    
             index_prefix: "rs"      
         }
         {
             name:   "FFS"
-            logfile: "log/ffs.log" 
+            logfile: "var/ffs.log" 
             index_prefix: "ffs"   
         }
         {
             name:   "FF2"
-            logfile: "log/ff2.log" 
+            logfile: "var/ff2.log" 
             index_prefix: "ff2"   
         }
         {
             name:   "FF"
-            logfile: "log/ff.log" 
+            logfile: "var/ff.log" 
             index_prefix: "ff"   
         }
     ]
