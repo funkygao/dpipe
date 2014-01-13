@@ -74,9 +74,9 @@ func newLogger() *log.Logger {
 		}
 	}
 
-	logOptions := log.Ldate | log.Ltime | log.Lshortfile
-	if options.debug {
-		logOptions |= log.Lmicroseconds
+	logOptions := log.Ldate | log.Ltime
+	if options.verbose {
+		logOptions |= log.Lshortfile
 	}
 
 	prefix := fmt.Sprintf("[%d]", os.Getpid())
