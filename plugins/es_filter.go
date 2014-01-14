@@ -72,7 +72,7 @@ func (this *EsFilter) Run(r engine.FilterRunner, h engine.PluginHelper) error {
 				break
 			}
 
-			if this.handlePack(pack) {
+			if this.handlePack(pack, h.Project(pack.Project)) {
 				r.Inject(pack)
 			} else {
 				pack.Recycle()
@@ -83,14 +83,14 @@ func (this *EsFilter) Run(r engine.FilterRunner, h engine.PluginHelper) error {
 	return nil
 }
 
-func (this *EsFilter) indexName(project string, date time.Time) string {
+func (this *EsFilter) indexName(project *engine.ConfProject, date time.Time) string {
 	const (
 		YM           = "@ym"
 		INDEX_PREFIX = "fun_"
 	)
 
 	if strings.HasSuffix(this.indexPattern, YM) {
-		prefix := project
+		prefix := project.IndexPrefix
 		fields := strings.SplitN(this.indexPattern, YM, 2)
 		if fields[0] != "" {
 			// e,g. rs@ym
@@ -103,12 +103,12 @@ func (this *EsFilter) indexName(project string, date time.Time) string {
 	return INDEX_PREFIX + this.indexPattern
 }
 
-func (this *EsFilter) handlePack(pack *engine.PipelinePack) bool {
+func (this *EsFilter) handlePack(pack *engine.PipelinePack, project *engine.ConfProject) bool {
 	pack.Sink = this.sink
 	if pack.EsType == "" {
 		pack.EsType = pack.Logfile.CamelCaseName()
 	}
-	pack.EsIndex = this.indexName(pack.Project,
+	pack.EsIndex = this.indexName(project,
 		time.Unix(int64(pack.Message.Timestamp), 0))
 	if pack.EsType == "" {
 		engine.Globals().Printf("%s %v\n", pack.EsType, *pack)
