@@ -39,6 +39,16 @@ type jsonLine struct {
 	Loginfo logInfo `json:"_log_info"`
 }
 
+func BenchmarkMultiply(b *testing.B) {
+	n := 1
+	for i := 0; i < b.N; i++ {
+		n *= 2
+		if n > (1 << 30) {
+			n = 1
+		}
+	}
+}
+
 func BenchmarkRecycleChannel(b *testing.B) {
 	recycleChan := make(chan *engine.PipelinePack, 100)
 	pack := engine.NewPipelinePack(recycleChan)
