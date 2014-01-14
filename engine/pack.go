@@ -1,6 +1,7 @@
 package engine
 
 import (
+	"fmt"
 	"github.com/funkygao/als"
 	"sync/atomic"
 	"time"
@@ -58,6 +59,18 @@ func NewPipelinePack(recycleChan chan *PipelinePack) (this *PipelinePack) {
 
 func (this *PipelinePack) IncRef() {
 	atomic.AddInt32(&this.RefCount, 1)
+}
+
+func (this PipelinePack) String() string {
+	s := fmt.Sprintf("[%s]%s, loop=%d", this.Project, this.Sink, this.MsgLoopCount)
+	if this.EsIndex != "" {
+		s = fmt.Sprintf("%s, index{%s, %s}", s, this.EsIndex, this.EsType)
+	}
+	if this.CardinalityKey != "" {
+		s = fmt.Sprintf("%s, cardinal{%s, %s, %v}", s, this.CardinalityKey, this.CardinalityInterval, this.CardinalityData)
+	}
+
+	return s
 }
 
 func (this *PipelinePack) Reset() {

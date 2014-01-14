@@ -34,7 +34,7 @@ func (this *DebugOutput) Run(r engine.OutputRunner, h engine.PluginHelper) error
 			}
 
 			if !this.blackhole {
-				globals.Printf("[%s]%v\n", pack.Sink, *pack)
+				globals.Println(*pack)
 			}
 
 			pack.Recycle()
