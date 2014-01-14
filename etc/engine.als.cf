@@ -318,6 +318,8 @@
                                         "regex: child \\d+ started",
                                         "you may need to increase start_servers",
                                         "spawning \\d+ children",
+                                        "dhclient: DHCPREQUEST",
+                                        "dhclient: DHCPACK",
                                     ]
                                 }
                             ]
