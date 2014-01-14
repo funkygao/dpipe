@@ -39,6 +39,22 @@
         }
     ]
 
+    //============================================================
+    //
+    //  Input                   Filter                      Output
+    //  -----                   ------                      ------
+    //    |                        |                           |
+    //  alsSysStat         rsDauCardinal                    EsOutput
+    //    |                        |                           |
+    //  ffsBi                  esBuffer                    CardinalityOutputRs
+    //    |                        |                           |
+    //  rsPv                   esFiltered                      |
+    //    |                        |                           |
+    //  rsDau                      |                        AlarmOutput
+    //    |                        |                           |
+    //  rsLogs                                          
+    //
+    //============================================================
     plugins: [
         {
             name:   "SelfSysInput"
