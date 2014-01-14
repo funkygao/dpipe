@@ -41,10 +41,6 @@ func (this *DebugOutput) Run(r engine.OutputRunner, h engine.PluginHelper) error
 		}
 	}
 
-	if globals.Verbose {
-		globals.Printf("[%s] stopped", r.Name())
-	}
-
 	return nil
 }
 
