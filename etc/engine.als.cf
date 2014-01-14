@@ -87,7 +87,7 @@
                     glob:   "/mnt/funplus/logs/fp_rstory/*.log"
                     except: [
                         "post", "index", "kernal", "phperror", "session", "load_data", "dau", "pv",
-                        "cheat_check",
+                        "cheat_check", "quest",
                     ]
                     project:   "RS"
                     sink:   "rsLogs"
