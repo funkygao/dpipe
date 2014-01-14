@@ -73,6 +73,7 @@ func (this *CardinalityFilter) Run(r engine.FilterRunner, h engine.PluginHelper)
 			}
 
 			this.handlePack(r, h, pack)
+			pack.Recycle()
 		}
 	}
 
@@ -115,9 +116,6 @@ func (this *CardinalityFilter) handlePack(r engine.FilterRunner,
 			}
 		}
 	}
-
-	// recycle the original pack
-	pack.Recycle()
 }
 
 func init() {
