@@ -101,6 +101,7 @@ func (this *messageRouter) runMainloop() {
 			atomic.AddInt32(&this.periodProcessMsgN, 1)
 			atomic.AddInt64(&this.totalProcessedMsgN, 1)
 
+			// got pack from Input, now dispatch
 			for _, matcher = range this.filterMatchers {
 				if matcher == nil {
 					continue
