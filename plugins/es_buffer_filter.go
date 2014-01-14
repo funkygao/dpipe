@@ -115,14 +115,14 @@ func (this *esBufferWorker) run(r engine.FilterRunner, h engine.PluginHelper) {
 
 // buffering pv, pv latency and the alike statistics before feeding ES
 type EsBufferFilter struct {
-	sink   string
+	ident  string
 	wokers []*esBufferWorker
 }
 
 func (this *EsBufferFilter) Init(config *conf.Conf) {
-	this.sink = config.String("sink", "")
-	if this.sink == "" {
-		panic("empty sink")
+	this.ident = config.String("ident", "")
+	if this.ident == "" {
+		panic("empty ident")
 	}
 
 	this.wokers = make([]*esBufferWorker, 0, 10)

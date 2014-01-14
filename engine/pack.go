@@ -26,8 +26,8 @@ type PipelinePack struct {
 	Logfile *als.AlsLogfile
 
 	// For routing
-	Sink string
-	Tag  string
+	Ident string
+	Tag   string
 
 	// Project name
 	Project string
@@ -62,7 +62,7 @@ func (this *PipelinePack) IncRef() {
 }
 
 func (this PipelinePack) String() string {
-	s := fmt.Sprintf("[%s]%s, loop=%d", this.Project, this.Sink, this.MsgLoopCount)
+	s := fmt.Sprintf("[%s]%s, loop=%d", this.Project, this.Ident, this.MsgLoopCount)
 	if this.EsIndex != "" {
 		s = fmt.Sprintf("%s, index{%s, %s}", s, this.EsIndex, this.EsType)
 	}
@@ -82,7 +82,7 @@ func (this *PipelinePack) Reset() {
 	this.CardinalityKey = ""
 	this.CardinalityData = nil
 	this.CardinalityInterval = ""
-	this.Sink = ""
+	this.Ident = ""
 	this.Tag = ""
 	this.diagnostics.Reset()
 	this.Message.Reset()

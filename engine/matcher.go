@@ -59,7 +59,7 @@ func (this *MatchRunner) Start(matchChan chan *PipelinePack) {
 
 func (this *MatchRunner) match(pack *PipelinePack) bool {
 	for _, match := range this.matches {
-		if pack.Sink == match {
+		if pack.Ident == match {
 			return true
 		}
 	}

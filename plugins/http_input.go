@@ -7,17 +7,17 @@ import (
 )
 
 type HttpInput struct {
-	sink string
-	addr string
+	ident string
+	addr  string
 
 	stopping bool
 	runner   engine.InputRunner
 }
 
 func (this *HttpInput) Init(config *conf.Conf) {
-	this.sink = config.String("sink", "")
-	if this.sink == "" {
-		panic("empty sink")
+	this.ident = config.String("ident", "")
+	if this.ident == "" {
+		panic("empty ident")
 	}
 	this.addr = config.String("addr", ":9786")
 }

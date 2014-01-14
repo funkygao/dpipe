@@ -43,7 +43,7 @@
         {
             name:   "SelfSysInput"
             ticker_interval: 10
-            sink:   "alsSysStat"
+            ident:   "alsSysStat"
         }
 
         {
@@ -68,19 +68,19 @@
                     glob:   "/mnt/funplus/logs/fp_ffseaside/bi_*.log"
                     project:   "FFS"
                     tail:   true
-                    sink:   "ffsBi"
+                    ident:   "ffsBi"
                 }
 
                 {
                     glob:   "/mnt/funplus/logs/fp_rstory/pv*.log"
                     project:   "RS"
-                    sink:   "rsPv"
+                    ident:   "rsPv"
                 }
 
                 {
                     glob:   "/mnt/funplus/logs/fp_rstory/dau*.log"
                     project:   "RS"
-                    sink:   "rsDau"
+                    ident:   "rsDau"
                 }
 
                 {
@@ -90,7 +90,7 @@
                         "cheat_check", "quest",
                     ]
                     project:   "RS"
-                    sink:   "rsLogs"
+                    ident:   "rsLogs"
                 }
             ]
         }
@@ -99,7 +99,7 @@
             name:   "CardinalityFilter"
             match:  ["rsDau", ]
             disabled: false
-            sink:   "rsDauCardinal"
+            ident:   "rsDauCardinal"
             converts: [
                 {
                     log_prefix: "dau"
@@ -132,7 +132,7 @@
         {
             name:   "EsBufferFilter"
             match:  ["rsDau", "rsPv", ]
-            sink:   "esBuffer"
+            ident:   "esBuffer"
             disabled: false
             workers: [
                 {
@@ -162,7 +162,7 @@
             name:   "EsFilter"
             index_pattern:  "@ym"
             match:  ["ffsBi", "rsLogs", "esBuffer", ]
-            sink:   "esFiltered"
+            ident:   "esFiltered"
             converts: [
                 // act: ip|money|range|del
                 {

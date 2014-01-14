@@ -7,14 +7,14 @@ import (
 
 type SelfSysInput struct {
 	stopChan chan bool
-	sink     string
+	ident    string
 }
 
 func (this *SelfSysInput) Init(config *conf.Conf) {
 	this.stopChan = make(chan bool)
-	this.sink = config.String("sink", "")
-	if this.sink == "" {
-		panic("empty sink")
+	this.ident = config.String("ident", "")
+	if this.ident == "" {
+		panic("empty ident")
 	}
 }
 

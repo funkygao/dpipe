@@ -14,14 +14,14 @@ import (
 // Stats from /proc/uptime, /proc/loadavg, /proc/meminfo, /proc/stat
 type SelfSysInput struct {
 	stopChan chan bool
-	sink     string
+	ident    string
 }
 
 func (this *SelfSysInput) Init(config *conf.Conf) {
 	this.stopChan = make(chan bool)
-	this.sink = config.String("sink", "")
-	if this.sink == "" {
-		panic("empty sink")
+	this.ident = config.String("ident", "")
+	if this.ident == "" {
+		panic("empty ident")
 	}
 }
 
@@ -62,7 +62,7 @@ func (this *SelfSysInput) Run(r engine.InputRunner, h engine.PluginHelper) error
 		}
 
 		pack.Project = "als"
-		pack.Sink = this.sink
+		pack.Ident = this.ident
 		pack.EsIndex = "als"
 		pack.EsType = "sys"
 		r.Inject(pack)

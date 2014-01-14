@@ -20,14 +20,14 @@ type BatchAlsLogInput struct {
 	rootDir     string
 	workersWg   *sync.WaitGroup
 	excepts     []string
-	sink        string
+	ident       string
 }
 
 func (this *BatchAlsLogInput) Init(config *conf.Conf) {
 	this.rootDir = config.String("root_dir", "")
-	this.sink = config.String("sink", "")
-	if this.sink == "" {
-		panic("empty sink")
+	this.ident = config.String("ident", "")
+	if this.ident == "" {
+		panic("empty ident")
 	}
 	this.project = config.String("project", "rs")
 	this.workerNChan = make(chan int, config.Int("concurrent_num", 20))
@@ -139,7 +139,7 @@ LOOP:
 				continue
 			}
 
-			pack.Sink = this.sink
+			pack.Ident = this.ident
 			pack.Project = this.project
 			pack.Logfile.SetPath(path)
 			this.runner.Inject(pack)

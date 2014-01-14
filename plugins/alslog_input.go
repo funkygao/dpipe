@@ -16,7 +16,7 @@ type logfileSource struct {
 	glob    string
 	excepts []string
 	project string
-	sink    string
+	ident   string
 	tail    bool
 
 	_files []string
@@ -31,9 +31,9 @@ func (this *logfileSource) load(config *conf.Conf) {
 	this.project = config.String("project", "")
 	this.tail = config.Bool("tail", true)
 	this.excepts = config.StringList("except", nil)
-	this.sink = config.String("sink", "")
-	if this.sink == "" {
-		panic("empty sink")
+	this.ident = config.String("ident", "")
+	if this.ident == "" {
+		panic("empty ident")
 	}
 	this._files = make([]string, 0, 100)
 }
@@ -184,7 +184,7 @@ func (this *AlsLogInput) runSingleAlsLogInput(fn string, r engine.InputRunner,
 
 		pack.Project = source.project
 		pack.Logfile.SetPath(fn)
-		pack.Sink = source.sink
+		pack.Ident = source.ident
 		r.Inject(pack)
 	}
 

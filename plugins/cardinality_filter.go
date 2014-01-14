@@ -31,18 +31,17 @@ func (this *cardinalityConverter) load(section *conf.Conf) {
 }
 
 type CardinalityFilter struct {
-	sink       string
+	ident      string
 	converters []cardinalityConverter
 }
 
 func (this *CardinalityFilter) Init(config *conf.Conf) {
-	const CONV = "converts"
-	this.sink = config.String("sink", "")
-	if this.sink == "" {
-		panic("empty sink")
+	this.ident = config.String("ident", "")
+	if this.ident == "" {
+		panic("empty ident")
 	}
-	for i := 0; i < len(config.List(CONV, nil)); i++ {
-		section, err := config.Section(fmt.Sprintf("%s[%d]", CONV, i))
+	for i := 0; i < len(config.List("converts", nil)); i++ {
+		section, err := config.Section(fmt.Sprintf("%s[%d]", "converts", i))
 		if err != nil {
 			panic(err)
 		}

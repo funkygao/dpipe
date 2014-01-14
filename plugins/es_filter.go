@@ -24,16 +24,16 @@ func (this *esConverter) load(section *conf.Conf) {
 }
 
 type EsFilter struct {
-	sink         string
+	ident        string
 	indexPattern string
 	converters   []esConverter
 }
 
 func (this *EsFilter) Init(config *conf.Conf) {
 	const CONV = "converts"
-	this.sink = config.String("sink", "")
-	if this.sink == "" {
-		panic("empty sink")
+	this.ident = config.String("ident", "")
+	if this.ident == "" {
+		panic("empty ident")
 	}
 	this.converters = make([]esConverter, 0, 10)
 	this.indexPattern = config.String("index_pattern", "")
@@ -104,7 +104,7 @@ func (this *EsFilter) indexName(project *engine.ConfProject, date time.Time) str
 }
 
 func (this *EsFilter) handlePack(pack *engine.PipelinePack, project *engine.ConfProject) bool {
-	pack.Sink = this.sink
+	pack.Ident = this.ident
 	if pack.EsType == "" {
 		pack.EsType = pack.Logfile.CamelCaseName()
 	}
