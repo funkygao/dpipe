@@ -49,6 +49,15 @@ func BenchmarkMultiply(b *testing.B) {
 	}
 }
 
+func BenchmarkGoroutine(b *testing.B) {
+	n := 1
+	for i := 0; i < b.N; i++ {
+		go func() {
+			n += 1
+		}()
+	}
+}
+
 func BenchmarkRecycleChannel(b *testing.B) {
 	recycleChan := make(chan *engine.PipelinePack, 100)
 	pack := engine.NewPipelinePack(recycleChan)

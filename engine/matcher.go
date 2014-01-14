@@ -66,3 +66,7 @@ func (this *MatchRunner) match(pack *PipelinePack) bool {
 
 	return false
 }
+
+func (this *MatchRunner) Name() string {
+	return this.runner.Name()
+}
