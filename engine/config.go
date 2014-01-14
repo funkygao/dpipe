@@ -193,7 +193,6 @@ func (this *EngineConfig) loadPluginSection(section *conf.Conf) {
 type pluginCommons struct {
 	name     string `json:"name"`
 	class    string `json:"class"`
-	poolSize int    `json:"pool_size"`
 	ticker   int    `json:"ticker_interval"`
 	disabled bool   `json:"disabled"`
 	comment  string `json:"comment"`
@@ -211,7 +210,6 @@ func (this *pluginCommons) load(section *conf.Conf) {
 		this.class = this.name
 	}
 	this.comment = section.String("comment", "")
-	this.poolSize = section.Int("pool_size", Globals().PoolSize)
 	this.ticker = section.Int("ticker_interval", Globals().TickerLength)
 	this.disabled = section.Bool("disabled", false)
 }
