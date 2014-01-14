@@ -79,15 +79,15 @@ func (this *EsOutput) Run(r engine.OutputRunner, h engine.PluginHelper) error {
 
 func (this *EsOutput) feedEs(project *engine.ConfProject, pack *engine.PipelinePack) {
 	if pack.EsIndex == "" {
-		project.Println(pack.EsIndex)
-		project.Printf("invalid esindex: %s, %#v, msg: %s\n", pack.Logfile.Base(), *pack,
+		project.Printf("invalid esindex: %s, %#v, msg: %s\n", pack.Logfile.Base(),
+			*pack,
 			pack.Message.RawLine())
 
 		return
 	}
 	if pack.EsType == "" {
-		project.Println(pack.EsType)
-		project.Printf("invalid estype: %s, %#v, msg: %s\n", pack.Logfile.Base(), *pack,
+		project.Printf("invalid estype: %s, %#v, msg: %s\n", pack.Logfile.Base(),
+			*pack,
 			pack.Message.RawLine())
 
 		return
@@ -97,6 +97,7 @@ func (this *EsOutput) feedEs(project *engine.ConfProject, pack *engine.PipelineP
 	data, err := pack.Message.MarshalPayload()
 	if err != nil {
 		project.Println(err, *pack)
+		return
 	}
 	id, _ := golib.UUID()
 	this.indexer.Index(pack.EsIndex, pack.EsType, id, "", &date, data) // ttl empty

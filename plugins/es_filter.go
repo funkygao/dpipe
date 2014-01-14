@@ -119,6 +119,7 @@ func (this *EsFilter) handlePack(pack *engine.PipelinePack, project *engine.Conf
 		return false
 	}
 
+	// each ES item has area and ts fields
 	pack.Message.SetField("area", pack.Message.Area)
 	pack.Message.SetField("ts", pack.Message.Timestamp)
 
