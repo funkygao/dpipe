@@ -42,8 +42,8 @@
     plugins: [
         {
             name:   "SelfSysInput"
-            ticker_interval: 10
             ident:   "alsSysStat"
+            ticker_interval: 10
         }
 
         {
@@ -65,32 +65,32 @@
             ticker_interval: 20
             sources: [
                 {
-                    glob:   "/mnt/funplus/logs/fp_ffseaside/bi_*.log"
-                    project:   "FFS"
-                    tail:   true
                     ident:   "ffsBi"
+                    project:   "FFS"
+                    glob:   "/mnt/funplus/logs/fp_ffseaside/bi_*.log"
+                    tail:   true
                 }
 
                 {
-                    glob:   "/mnt/funplus/logs/fp_rstory/pv*.log"
-                    project:   "RS"
                     ident:   "rsPv"
-                }
-
-                {
-                    glob:   "/mnt/funplus/logs/fp_rstory/dau*.log"
                     project:   "RS"
-                    ident:   "rsDau"
+                    glob:   "/mnt/funplus/logs/fp_rstory/pv*.log"
                 }
 
                 {
+                    ident:   "rsDau"
+                    project:   "RS"
+                    glob:   "/mnt/funplus/logs/fp_rstory/dau*.log"
+                }
+
+                {
+                    ident:   "rsLogs"
+                    project:   "RS"
                     glob:   "/mnt/funplus/logs/fp_rstory/*.log"
                     except: [
-                        "post", "index", "kernal", "phperror", "session", "load_data", "dau", "pv",
+                        "post", "index", "session", "load_data", "dau", "pv",
                         "cheat_check", "quest",
                     ]
-                    project:   "RS"
-                    ident:   "rsLogs"
                 }
             ]
         }
@@ -98,8 +98,8 @@
         {
             name:   "CardinalityFilter"
             match:  ["rsDau", ]
-            disabled: false
             ident:   "rsDauCardinal"
+            disabled: false
             converts: [
                 {
                     log_prefix: "dau"
@@ -125,8 +125,8 @@
         {
             name:   "CardinalityOutputRs"
             class:  "CardinalityOutput"
-            project:   "RS"
             match:  ["rsDauCardinal", ]
+            project:   "RS"
         }
 
         {
@@ -160,9 +160,9 @@
 
         {
             name:   "EsFilter"
-            index_pattern:  "@ym"
             match:  ["ffsBi", "rsLogs", "esBuffer", ]
             ident:   "esFiltered"
+            index_pattern:  "@ym"
             converts: [
                 // act: ip|money|range|del
                 {
