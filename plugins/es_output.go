@@ -94,7 +94,10 @@ func (this *EsOutput) feedEs(project *engine.ConfProject, pack *engine.PipelineP
 	}
 
 	date := time.Unix(int64(pack.Message.Timestamp), 0)
-	data, _ := pack.Message.MarshalPayload()
+	data, err := pack.Message.MarshalPayload()
+	if err != nil {
+		project.Println(err, *pack)
+	}
 	id, _ := golib.UUID()
 	this.indexer.Index(pack.EsIndex, pack.EsType, id, "", &date, data) // ttl empty
 }
