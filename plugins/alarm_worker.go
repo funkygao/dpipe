@@ -77,9 +77,19 @@ func (this *alarmWorkerConfigField) value(msg *als.AlsMessage) (val interface{},
 	// ignores
 	if this.ignores != nil {
 		for _, ignore := range this.ignores {
-			if strings.Contains(val.(string), ignore) {
+			valstr := val.(string)
+			if strings.Contains(valstr, ignore) {
 				err = errIgnored
 				return
+			}
+
+			if strings.HasPrefix(ignore, "regex:") {
+				pattern := strings.TrimSpace(ignore[6:])
+				// TODO lessen the overhead
+				if matched, _ := regexp.MatchString(pattern, valstr); matched {
+					err = errIgnored
+					return
+				}
 			}
 		}
 	}

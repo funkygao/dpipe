@@ -311,7 +311,15 @@
                             iprintf:        "%3s %15s %s"
                             fields: [
                                 {name: "host"}
-                                {name: "msg"}
+                                {
+                                    name: "msg"
+                                    ignores: [
+                                        "Log statistics",
+                                        "regex: child \\d+ started",
+                                        "you may need to increase start_servers",
+                                        "spawning \\d+ children",
+                                    ]
+                                }
                             ]
                         }
 
