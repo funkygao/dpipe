@@ -55,5 +55,5 @@ func (this *ConfProject) FromConfig(c *conf.Conf) {
 }
 
 func (this *ConfProject) Stop() {
-
+	this.Println("Stopped")
 }
