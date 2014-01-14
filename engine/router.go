@@ -86,7 +86,7 @@ func (this *messageRouter) runMainloop() {
 			this.removeMatcher(matcher, this.filterMatchers)
 
 		case <-ticker.C:
-			globals.Printf("processed msg: %v, elapsed: %s, speed: %d/s\n",
+			globals.Printf("Total msg: %v, elapsed: %s, speed: %d/s\n",
 				this.totalProcessedMsgN, time.Since(globals.StartedAt),
 				this.periodProcessMsgN/int32(globals.TickerLength))
 			this.periodProcessMsgN = int32(0)
