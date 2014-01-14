@@ -2,8 +2,10 @@ package benchmark
 
 import (
 	"encoding/json"
+	"github.com/funkygao/dpipe/engine"
 	"github.com/vmihailenco/msgpack"
 	"testing"
+	"unsafe"
 )
 
 var in = map[string]interface{}{
@@ -35,6 +37,34 @@ type logInfo struct {
 type jsonLine struct {
 	Uri     string
 	Loginfo logInfo `json:"_log_info"`
+}
+
+func BenchmarkRecycleChannel(b *testing.B) {
+	recycleChan := make(chan *engine.PipelinePack, 100)
+	pack := engine.NewPipelinePack(recycleChan)
+	go func(pack *engine.PipelinePack) {
+		for {
+			recycleChan <- pack
+		}
+	}(pack)
+	for i := 0; i < b.N; i++ {
+		<-recycleChan
+	}
+	b.SetBytes(int64(unsafe.Sizeof(pack)))
+}
+
+func BenchmarkPluginChannel(b *testing.B) {
+	recycleChan := make(chan *engine.PipelinePack, 50)
+	pack := engine.NewPipelinePack(recycleChan)
+	go func(pack *engine.PipelinePack) {
+		for {
+			recycleChan <- pack
+		}
+	}(pack)
+	for i := 0; i < b.N; i++ {
+		<-recycleChan
+	}
+	b.SetBytes(int64(unsafe.Sizeof(pack)))
 }
 
 func BenchmarkJSONEncodeAndDecode(b *testing.B) {
