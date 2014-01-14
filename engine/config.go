@@ -172,20 +172,20 @@ func (this *EngineConfig) loadPluginSection(section *conf.Conf) {
 		return
 	}
 
-	runner := NewFORunner(wrapper.name, plugin, pluginCommons)
-	matcher := NewMatchRunner(section.StringList("match", []string{}), runner)
-	runner.matcher = matcher
+	foRunner := NewFORunner(wrapper.name, plugin, pluginCommons)
+	matcher := NewMatchRunner(section.StringList("match", nil), foRunner)
+	foRunner.matcher = matcher
 
 	switch pluginCategory {
 	case "Filter":
 		this.router.filterMatchers = append(this.router.filterMatchers, matcher)
-		this.FilterRunners[runner.name] = runner
-		this.filterWrappers[runner.name] = wrapper
+		this.FilterRunners[foRunner.name] = foRunner
+		this.filterWrappers[foRunner.name] = wrapper
 
 	case "Output":
 		this.router.outputMatchers = append(this.router.outputMatchers, matcher)
-		this.OutputRunners[runner.name] = runner
-		this.outputWrappers[runner.name] = wrapper
+		this.OutputRunners[foRunner.name] = foRunner
+		this.outputWrappers[foRunner.name] = wrapper
 	}
 }
 
