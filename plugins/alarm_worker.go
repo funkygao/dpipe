@@ -217,10 +217,12 @@ func (this *alarmWorker) stop() {
 	if this.statsStmt != nil {
 		this.statsStmt.Close()
 	}
-	this.db.Close()
+	if this.db != nil {
+		this.db.Close()
+	}
 }
 
-func (this *alarmWorker) run(h engine.PluginHelper, dbReady chan bool) {
+func (this *alarmWorker) run(h engine.PluginHelper, goAhead chan bool) {
 	var (
 		globals = engine.Globals()
 		summary = stats.Summary{}
@@ -231,13 +233,14 @@ func (this *alarmWorker) run(h engine.PluginHelper, dbReady chan bool) {
 	this.project = h.Project(this.projName)
 
 	if globals.DryRun || this.instantAlarmOnly {
+		goAhead <- true
 		return
 	}
 
 	this.createDB()
 	this.prepareInsertStmt()
 	this.prepareStatsStmt()
-	dbReady <- true
+	goAhead <- true
 
 	for !globals.Stopping {
 		time.Sleep(this.conf.windowSize)

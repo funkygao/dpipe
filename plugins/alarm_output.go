@@ -60,11 +60,11 @@ func (this *AlarmOutput) Run(r engine.OutputRunner, h engine.PluginHelper) error
 	}
 
 	// start all the workers
-	dbReady := make(chan bool)
+	goAhead := make(chan bool)
 	for _, projectWorkers := range this.workers {
 		for _, w := range projectWorkers {
-			go w.run(h, dbReady)
-			<-dbReady // in case of race condition with worker.inject
+			go w.run(h, goAhead)
+			<-goAhead // in case of race condition with worker.inject
 		}
 	}
 
