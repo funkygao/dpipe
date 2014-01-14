@@ -13,6 +13,7 @@ import (
 
 type EsOutput struct {
 	flushInterval time.Duration
+	dryRun        bool
 	bulkMaxConn   int `json:"bulk_max_conn"`
 	bulkMaxDocs   int `json:"bulk_max_docs"`
 	bulkMaxBuffer int `json:"bulk_max_buffer"` // in Byte
@@ -28,6 +29,7 @@ func (this *EsOutput) Init(config *conf.Conf) {
 	this.bulkMaxConn = config.Int("bulk_max_conn", 20)
 	this.bulkMaxDocs = config.Int("bulk_max_docs", 100)
 	this.bulkMaxBuffer = config.Int("bulk_max_buffer", 10<<20) // 10 MB
+	this.dryRun = config.Bool("dryrun", false)
 }
 
 func (this *EsOutput) Run(r engine.OutputRunner, h engine.PluginHelper) error {
@@ -90,6 +92,10 @@ func (this *EsOutput) feedEs(project *engine.ConfProject, pack *engine.PipelineP
 			*pack,
 			pack.Message.RawLine())
 
+		return
+	}
+
+	if this.dryRun {
 		return
 	}
 

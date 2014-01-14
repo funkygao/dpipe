@@ -205,6 +205,7 @@
         {
             name:   "EsOutput"
             match:  ["esFiltered", "alsSysStat"]
+            dryrun: true
             domain: "localhost"
             port: "9200"
             flush_interval: 30
