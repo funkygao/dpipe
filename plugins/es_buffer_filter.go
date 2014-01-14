@@ -146,7 +146,7 @@ func (this *EsBufferFilter) Run(r engine.FilterRunner, h engine.PluginHelper) er
 	)
 
 	for _, worker := range this.wokers {
-		worker.run(r, h)
+		go worker.run(r, h)
 	}
 
 	for ok {
