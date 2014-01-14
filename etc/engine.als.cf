@@ -353,7 +353,7 @@
                             abnormal_base:  10
                             abnormal_percent: 0.6
                             create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, uri VARCHAR(200));"
-                            insert_stmt:    "INSERT INTO %s(area, ts, uri) VALUES(?,?,?,?)"
+                            insert_stmt:    "INSERT INTO %s(area, ts, uri) VALUES(?,?,?)"
                             stats_stmt:     "SELECT COUNT(*) AS c, area, uri FROM %s where ts<=? GROUP BY area, uri ORDER BY c DESC"
                             printf:         "%5d %3s %s"
                             fields: [
