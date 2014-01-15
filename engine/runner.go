@@ -77,7 +77,8 @@ func (this *foRunner) Inject(pack *PipelinePack) bool {
 	}
 
 	if pack.Ident == "" {
-		Globals().Fatalf("empty Ident: %s(%v)", *pack, *pack.Message)
+		Globals().Fatalf("empty Ident: %s (%v) msg:%s", *pack, *pack.Message,
+			pack.Message.RawLine())
 		return false
 	}
 
