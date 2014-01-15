@@ -23,5 +23,5 @@ _testmain.go
 var/
 .DS_Store
 fpiped
-sky
+cmd/sky/sky
 
