@@ -328,7 +328,9 @@ func (this *alarmWorker) inject(msg *als.AlsMessage) {
 
 	if this.conf.instantFormat != "" {
 		iargs := append([]interface{}{msg.Area}, args...) // 'area' is always 1st col
+		this.Lock()
 		this.colorPrintfLn(true, this.conf.instantFormat, iargs...)
+		this.Unlock()
 		if this.instantAlarmOnly {
 			return
 		}
