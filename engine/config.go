@@ -35,7 +35,7 @@ type EngineConfig struct {
 	inputRecycleChan chan *PipelinePack
 
 	// PipelinePack supply for Filter plugins
-	injectRecycleChan chan *PipelinePack
+	filterRecycleChan chan *PipelinePack
 
 	hostname string
 	pid      int
@@ -59,7 +59,7 @@ func NewEngineConfig(globals *GlobalConfigStruct) (this *EngineConfig) {
 	this.outputWrappers = make(map[string]*PluginWrapper)
 
 	this.inputRecycleChan = make(chan *PipelinePack, globals.PoolSize)
-	this.injectRecycleChan = make(chan *PipelinePack, globals.PoolSize)
+	this.filterRecycleChan = make(chan *PipelinePack, globals.PoolSize)
 
 	this.projects = make(map[string]*ConfProject)
 
@@ -105,7 +105,7 @@ func (this *EngineConfig) PipelinePack(msgLoopCount int) *PipelinePack {
 		return nil
 	}
 
-	pack := <-this.injectRecycleChan
+	pack := <-this.filterRecycleChan
 	pack.Reset()
 	pack.MsgLoopCount = msgLoopCount
 
