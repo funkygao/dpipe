@@ -115,6 +115,7 @@ func (this *esBufferWorker) run(r engine.FilterRunner, h engine.PluginHelper) {
 			pack.EsIndex = indexName(h.Project(this.projectName),
 				this.indexPattern, time.Unix(int64(this.timestamp), 0))
 			pack.EsType = this.camelName
+			pack.Project = this.projectName
 			r.Inject(pack)
 
 			this.summary.Reset()

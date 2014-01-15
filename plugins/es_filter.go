@@ -84,11 +84,15 @@ func (this *EsFilter) Run(r engine.FilterRunner, h engine.PluginHelper) error {
 
 func (this *EsFilter) handlePack(pack *engine.PipelinePack, project *engine.ConfProject) bool {
 	pack.Ident = this.ident
+
 	if pack.EsType == "" {
 		pack.EsType = pack.Logfile.CamelCaseName()
 	}
-	pack.EsIndex = indexName(project, this.indexPattern,
-		time.Unix(int64(pack.Message.Timestamp), 0))
+	if pack.EsIndex == "" {
+		pack.EsIndex = indexName(project, this.indexPattern,
+			time.Unix(int64(pack.Message.Timestamp), 0))
+	}
+
 	if pack.EsType == "" {
 		engine.Globals().Printf("%s %v\n", pack.EsType, *pack)
 		return false
