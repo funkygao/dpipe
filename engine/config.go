@@ -71,6 +71,21 @@ func NewEngineConfig(globals *GlobalConfigStruct) (this *EngineConfig) {
 	return this
 }
 
+func (this *EngineConfig) pluginNames() (names []string) {
+	names = make([]string, 0, 20)
+	for _, pr := range this.InputRunners {
+		names = append(names, pr.Name())
+	}
+	for _, pr := range this.FilterRunners {
+		names = append(names, pr.Name())
+	}
+	for _, pr := range this.OutputRunners {
+		names = append(names, pr.Name())
+	}
+
+	return
+}
+
 func (this *EngineConfig) EngineConfig() *EngineConfig {
 	return this
 }

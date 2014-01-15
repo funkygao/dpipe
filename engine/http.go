@@ -34,22 +34,29 @@ func (this *EngineConfig) handleHttpQuery(w http.ResponseWriter, req *http.Reque
 
 	output := make(map[string]interface{})
 	switch cmd {
-	case "runners":
+	case "", "ping":
+		// ping
+		output["status"] = "ok"
+
+	case "stat":
+		output["projects"] = this.projects
+		output["inputs"] = this.InputRunners
 		output["filters"] = this.FilterRunners
 		output["outputs"] = this.OutputRunners
-	case "projects":
-		output["projects"] = this.projects
-	case "inputs":
-		output["inputs"] = this.InputRunners
-	case "router":
 		output["router"] = this.router
+		output["totalM"] = this.router.totalProcessedMsgN
+		output["periodM"] = this.router.periodProcessMsgN
+		output["start"] = globals.StartedAt
+
+	case "plugins":
+		output["plugins"] = this.pluginNames()
 	}
 
 	return output, nil
 }
 
 func (this *EngineConfig) addHttpHandlers() {
-	this.httpApiHandleFunc("/q/{cmd}",
+	this.httpApiHandleFunc("/{cmd}",
 		func(w http.ResponseWriter, req *http.Request,
 			params map[string]interface{}) (interface{}, error) {
 			return this.handleHttpQuery(w, req, params)

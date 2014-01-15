@@ -6,6 +6,8 @@ Release Notes - Flume - Version v0.5.0.rc
 
 ** Improvement
 
+    . http monitoring with cmd: [ping, stat, plugins]
+
 ** Bug
 
 ----
