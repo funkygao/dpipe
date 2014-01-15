@@ -97,7 +97,7 @@ func (this *EsOutput) feedEs(project *engine.ConfProject, pack *engine.PipelineP
 		project.Printf("Empty ES config: %s plugins:%v",
 			*pack, pack.PluginNames())
 
-		this.counters["error"] += 1
+		this.counters["_error"] += 1
 
 		return
 	}
