@@ -65,6 +65,7 @@ func (this *logfileSource) refresh(wg *sync.WaitGroup) {
 
 type AlsLogInput struct {
 	stopChan chan bool
+	counters map[string]int
 	sources  []*logfileSource
 }
 
@@ -73,6 +74,7 @@ func (this *AlsLogInput) Init(config *conf.Conf) {
 		engine.Globals().Printf("%#v\n", *config)
 	}
 
+	this.counters = make(map[string]int)
 	this.stopChan = make(chan bool)
 
 	// get the sources
@@ -130,6 +132,7 @@ func (this *AlsLogInput) Run(r engine.InputRunner, h engine.PluginHelper) error 
 			// TODO
 
 		case <-r.Ticker():
+			this.showCounters()
 
 		case <-this.stopChan:
 			stopped = true
@@ -137,6 +140,15 @@ func (this *AlsLogInput) Run(r engine.InputRunner, h engine.PluginHelper) error 
 	}
 
 	return nil
+}
+
+func (this *AlsLogInput) showCounters() {
+	globals := engine.Globals()
+	for ident, n := range this.counters {
+		globals.Printf("%12s %8d", ident, n)
+
+		this.counters[ident] = 0
+	}
 }
 
 func (this *AlsLogInput) runSingleAlsLogInput(fn string, r engine.InputRunner,
@@ -183,6 +195,7 @@ func (this *AlsLogInput) runSingleAlsLogInput(fn string, r engine.InputRunner,
 			continue
 		}
 
+		this.counters[source.ident] += 1
 		pack.Project = source.project
 		pack.Logfile.SetPath(fn)
 		pack.Ident = source.ident
