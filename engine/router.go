@@ -107,18 +107,24 @@ func (this *messageRouter) runMainloop() {
 					continue
 				}
 
-				pack.diagnostics.AddStamp(matcher.runner)
-				pack.IncRef()
-				matcher.inChan <- pack
+				if matcher.match(pack) {
+					pack.diagnostics.AddStamp(matcher.runner)
+					pack.IncRef()
+					matcher.inChan <- pack
+				}
+
 			}
 			for _, matcher = range this.outputMatchers {
 				if matcher == nil {
 					continue
 				}
 
-				pack.diagnostics.AddStamp(matcher.runner)
-				pack.IncRef()
-				matcher.inChan <- pack
+				if matcher.match(pack) {
+					pack.diagnostics.AddStamp(matcher.runner)
+					pack.IncRef()
+					matcher.inChan <- pack
+				}
+
 			}
 
 			// never forget this!
