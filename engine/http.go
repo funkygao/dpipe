@@ -51,6 +51,7 @@ func (this *EngineConfig) handleHttpQuery(w http.ResponseWriter, req *http.Reque
 		output["hostname"] = this.hostname
 		output["inputChannel"] = cap(this.inputRecycleChan)
 		output["filterChannel"] = cap(this.filterRecycleChan)
+		output["allPlugins"] = availablePlugins
 
 	case "plugins":
 		output["plugins"] = this.pluginNames()

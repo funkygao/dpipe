@@ -8,7 +8,6 @@
 
 *   github.com/funkygao/cron, for CardinalityOutput
 
-
 *   send alarm emails according to msg priority
 
 *   from benchmark, the bottleneck is JSON marshal/unmarshal 20000ns/op, that's 50K msg/s

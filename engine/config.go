@@ -150,10 +150,7 @@ func (this *EngineConfig) loadPluginSection(section *conf.Conf) {
 	pluginCommons := new(pluginCommons)
 	pluginCommons.load(section)
 	if pluginCommons.disabled {
-		globals := Globals()
-		if globals.Verbose {
-			globals.Printf("[%s] disabled\n", pluginCommons.name)
-		}
+		Globals().Printf("[%s]disabled\n", pluginCommons.name)
 
 		return
 	}
