@@ -77,7 +77,8 @@ func (this *foRunner) Inject(pack *PipelinePack) bool {
 	}
 
 	if pack.Ident == "" {
-		Globals().Fatalf("empty Ident: %s", *pack)
+		Globals().Fatalf("empty Ident: %s(%v)", *pack, *pack.Message)
+		return false
 	}
 
 	this.engine.router.InChan() <- pack
