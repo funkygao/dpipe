@@ -20,7 +20,8 @@ _cgo_export.*
 _testmain.go
 
 *.exe
-alser
-cmd/fpiped/fpiped
 var/
 .DS_Store
+fpiped
+sky
+
