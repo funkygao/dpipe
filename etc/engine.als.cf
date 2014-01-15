@@ -123,12 +123,14 @@
                     fields: [
                         {
                             key:   "uid"
+                            type:  "int"
                             interval: [
                                 "week", "month",
                             ]
                         }
                         {
                             key:   "ip"
+                            type:  "string"
                             interval: [
                                 "week", "month",
                             ]

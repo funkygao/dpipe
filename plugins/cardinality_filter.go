@@ -8,6 +8,7 @@ import (
 
 type cardinalityField struct {
 	key       string
+	typ       string
 	intervals []string
 }
 
@@ -25,6 +26,7 @@ func (this *cardinalityConverter) load(section *conf.Conf) {
 		keyPrefix := fmt.Sprintf("fields[%d].", i)
 		field := cardinalityField{}
 		field.key = section.String(keyPrefix+"key", "")
+		field.typ = section.String(keyPrefix+"type", "string")
 		field.intervals = section.StringList(keyPrefix+"interval", nil)
 		this.fields = append(this.fields, field)
 	}
@@ -87,7 +89,7 @@ func (this *CardinalityFilter) handlePack(r engine.FilterRunner,
 		}
 
 		for _, f := range c.fields {
-			val, err := pack.Message.ValueOfKey(f.key)
+			val, err := pack.Message.FieldValue(f.key, f.typ)
 			if err != nil {
 				if globals.Verbose {
 					globals.Println(err)
