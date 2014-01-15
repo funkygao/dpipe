@@ -181,7 +181,7 @@
 
         {
             name:   "EsFilter"
-            match:  ["ffsBi", "rsLogs", "esBuffer", ]
+            match:  ["ffsBi", "rsLogs", ]
             ident:   "esFiltered"
             index_pattern:  "@ym"
             converts: [
@@ -209,7 +209,7 @@
 
         {
             name:   "EsOutput"
-            match:  ["esFiltered", "alsSysStat"]
+            match:  ["esFiltered", "alsSysStat", "esBuffer"]
             dryrun: true
             domain: "localhost"
             port: "9200"

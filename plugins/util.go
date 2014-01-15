@@ -8,7 +8,7 @@ import (
 )
 
 func indexName(project *engine.ConfProject, indexPattern string,
-	date time.Time) string {
+	date time.Time) (index string) {
 	const (
 		YM           = "@ym"
 		INDEX_PREFIX = "fun_"
@@ -22,8 +22,11 @@ func indexName(project *engine.ConfProject, indexPattern string,
 			prefix = fields[0]
 		}
 
-		return fmt.Sprintf("%s%s_%d_%02d", INDEX_PREFIX, prefix, date.Year(), int(date.Month()))
+		index = fmt.Sprintf("%s%s_%d_%02d", INDEX_PREFIX, prefix, date.Year(), int(date.Month()))
+		return
 	}
 
-	return INDEX_PREFIX + indexPattern
+	index = INDEX_PREFIX + indexPattern
+
+	return
 }
