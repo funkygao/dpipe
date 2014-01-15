@@ -321,6 +321,7 @@
                                     ignores: [
                                         "Log statistics",
                                         "regex: child \\d+ started",
+                                        "regex: child \\d+ exited with code 0",
                                         "you may need to increase start_servers",
                                         "spawning \\d+ children",
                                         "dhclient: DHCPREQUEST",
