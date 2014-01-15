@@ -342,8 +342,8 @@
                             abnormal_percent: 0.8
                             create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, tbl VARCHAR(50), method VARCHAR(30), t FLOAT, host CHAR(30), server CHAR(60));"
                             insert_stmt:    "INSERT INTO %s(area, ts, tbl, method, t, host, server) VALUES(?,?,?,?,?,?,?)"
-                            stats_stmt:     "SELECT COUNT(*) AS c, area, method, tbl, server FROM %s WHERE ts<=? GROUP BY area, tbl, method, server ORDER BY c DESC"
-                            printf:         "%5d %3s %12s %18s %s"
+                            stats_stmt:     "SELECT COUNT(*) AS c, area, method, tbl FROM %s WHERE ts<=? GROUP BY area, method, tbl ORDER BY c DESC"
+                            printf:         "%5d %3s %12s %18s"
                             iprintf:        "MongoSlow %3s %15s %8s %8.4f %15s %s"
                             fields: [
                                 { name: "table" }
