@@ -10,7 +10,7 @@ import (
 
 func (this *EngineConfig) launchHttpServ() {
 	this.httpRouter = mux.NewRouter()
-	this.httpServer = &http.Server{Addr: this.String("http_addr", ":9876"), Handler: this.httpRouter}
+	this.httpServer = &http.Server{Addr: this.String("http_addr", "127.0.0.1:9876"), Handler: this.httpRouter}
 	this.addHttpHandlers()
 
 	var err error
