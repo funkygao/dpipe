@@ -77,8 +77,8 @@ func (this *foRunner) Inject(pack *PipelinePack) bool {
 	}
 
 	if pack.Ident == "" {
-		Globals().Fatalf("empty Ident: %s (%v) msg:%s", *pack, *pack.Message,
-			pack.Message.RawLine())
+		Globals().Printf("Pack with empty ident:%s runners:%#v",
+			*pack, pack.diagnostics.pluginRunners)
 		return false
 	}
 

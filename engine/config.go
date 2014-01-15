@@ -85,7 +85,8 @@ func (this *EngineConfig) Project(name string) *ConfProject {
 }
 
 // For Filter to generate new pack
-func (this *EngineConfig) PipelinePack(msgLoopCount int) *PipelinePack {
+func (this *EngineConfig) PipelinePack(msgLoopCount int,
+	pluginRunner PluginRunner) *PipelinePack {
 	if msgLoopCount++; msgLoopCount > Globals().MaxMsgLoops {
 		return nil
 	}
@@ -93,6 +94,7 @@ func (this *EngineConfig) PipelinePack(msgLoopCount int) *PipelinePack {
 	pack := <-this.injectRecycleChan
 	pack.Reset()
 	pack.MsgLoopCount = msgLoopCount
+	pack.diagnostics.AddStamp(pluginRunner)
 
 	return pack
 }
