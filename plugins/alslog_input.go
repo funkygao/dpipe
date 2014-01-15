@@ -132,7 +132,7 @@ func (this *AlsLogInput) Run(r engine.InputRunner, h engine.PluginHelper) error 
 			// TODO
 
 		case <-r.Ticker():
-			this.showCounters()
+			this.handlePeriodicalCounters()
 
 		case <-this.stopChan:
 			stopped = true
@@ -142,7 +142,7 @@ func (this *AlsLogInput) Run(r engine.InputRunner, h engine.PluginHelper) error 
 	return nil
 }
 
-func (this *AlsLogInput) showCounters() {
+func (this *AlsLogInput) handlePeriodicalCounters() {
 	globals := engine.Globals()
 	for ident, n := range this.counters {
 		globals.Printf("%12s %8d", ident, n)
