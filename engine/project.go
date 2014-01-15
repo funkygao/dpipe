@@ -18,6 +18,7 @@ type ConfProject struct {
 
 	Name        string `json:"name"`
 	IndexPrefix string `json:"index_prefix"`
+	ShowError   bool
 
 	MailConf projectEmailConf
 }
@@ -25,6 +26,7 @@ type ConfProject struct {
 func (this *ConfProject) FromConfig(c *conf.Conf) {
 	this.Name = c.String("name", "")
 	this.IndexPrefix = c.String("index_prefix", this.Name)
+	this.ShowError = c.Bool("show_error", true)
 	mailSection, err := c.Section("alarm_email")
 	if err == nil {
 		this.MailConf = projectEmailConf{}
