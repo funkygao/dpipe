@@ -92,9 +92,9 @@ func (this *EngineConfig) httpApiHandleFunc(path string,
 		w.WriteHeader(status)
 
 		if ret != nil {
-			// write json result
-			encoder := json.NewEncoder(w)
-			encoder.Encode(ret)
+			// pretty write json result
+			pretty, _ := json.MarshalIndent(ret, "", "  ")
+			w.Write(pretty)
 		}
 	}
 
