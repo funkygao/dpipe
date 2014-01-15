@@ -107,6 +107,8 @@ func (this *CardinalityFilter) handlePack(r engine.FilterRunner,
 					continue
 				}
 
+				p.Ident = this.ident
+				p.Project = c.project
 				p.CardinalityKey = fmt.Sprintf("%s.%s.%s", pack.Project, f.key, interval)
 				p.CardinalityData = val
 				p.CardinalityInterval = interval
