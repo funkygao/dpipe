@@ -7,6 +7,7 @@
 *   keep user related dimension in mem, such as gender, paid, abtype
 
 *   github.com/funkygao/cron, for CardinalityOutput
+    cardinality checkpoint and resume
 
 *   send alarm emails according to msg priority
 
