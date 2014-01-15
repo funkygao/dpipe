@@ -68,13 +68,18 @@
 
         {
             name:   "rsSkyOutput"
-            match:  []
-            disabled: true
+            match:  ["rsLogs", ]
+            disabled: false
             table:  "rs_user"
             fields: [
                 {
-                    name:   ""
-                    type:   ""
+                    camel_name: "dau"
+                    action: "visit"
+                }
+                {
+                    camel_name: "blah"
+                    name: ""
+                    type: ""
                 }
             ]
         }

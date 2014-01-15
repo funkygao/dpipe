@@ -14,13 +14,17 @@ const (
 )
 
 type skyOutputField struct {
-	name string
-	typ  string
+	camelName string
+	action    string
+	name      string
+	typ       string
 }
 
 func (this *skyOutputField) load(section *conf.Conf) {
 	this.name = section.String("name", "")
 	this.typ = section.String("type", als.KEY_TYPE_STRING)
+	this.camelName = section.String("camel_name", "")
+	this.action = section.String("action", "")
 }
 
 type SkyOutput struct {
@@ -96,15 +100,26 @@ func (this *SkyOutput) feedSky(pack *engine.PipelinePack) {
 	// get uid
 	uid, err = pack.Message.FieldValue(UID_FIELD, als.KEY_TYPE_INT)
 	if err != nil {
+		// if not uid based, ignored
 		return
 	}
 
 	event := sky.NewEvent(pack.Message.Time(), map[string]interface{}{})
 	// fill in the event fields
 	for _, f := range this.fields {
-		val, err = pack.Message.FieldValue(f.name, f.typ)
-		if err != nil {
+		if pack.Logfile.CamelCaseName() != f.camelName {
 			continue
+		}
+
+		if f.action != "" {
+			// already specified dedicated action
+			event.Data["action"] = f.action
+			event.Data["area"] = pack.Message.Area
+		} else {
+			val, err = pack.Message.FieldValue(f.name, f.typ)
+			if err != nil {
+				continue
+			}
 		}
 
 		event.Data[f.name] = val
