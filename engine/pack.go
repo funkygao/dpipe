@@ -62,12 +62,14 @@ func (this *PipelinePack) IncRef() {
 }
 
 func (this PipelinePack) String() string {
-	s := fmt.Sprintf("[%s]%s, loop=%d", this.Project, this.Ident, this.MsgLoopCount)
+	s := fmt.Sprintf("[%s]%s@%s, rc=%d, loop=%d", this.Project, this.Ident,
+		this.Tag, this.RefCount, this.MsgLoopCount)
 	if this.EsIndex != "" {
 		s = fmt.Sprintf("%s, index{%s, %s}", s, this.EsIndex, this.EsType)
 	}
 	if this.CardinalityKey != "" {
-		s = fmt.Sprintf("%s, cardinal{%s, %s, %v}", s, this.CardinalityKey, this.CardinalityInterval, this.CardinalityData)
+		s = fmt.Sprintf("%s, cardinal{%s, %s, %v}", s, this.CardinalityKey,
+			this.CardinalityInterval, this.CardinalityData)
 	}
 
 	return s
