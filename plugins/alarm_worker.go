@@ -164,10 +164,10 @@ func (this *alarmWorkerConfig) statsSql() string {
 type alarmWorker struct {
 	*sync.Mutex
 
-	project   *engine.ConfProject
-	projName  string
-	emailChan chan string
-	mutex     *sync.Mutex // accross all alarm workers in a project
+	project      *engine.ConfProject
+	projName     string
+	emailChan    chan string
+	workersMutex *sync.Mutex // accross all alarm workers in a project
 
 	conf alarmWorkerConfig
 
@@ -271,7 +271,7 @@ func (this *alarmWorker) run(h engine.PluginHelper, goAhead chan bool) {
 		colsN := len(cols)
 		values := make([]interface{}, colsN)
 		valuePtrs := make([]interface{}, colsN)
-		this.mutex.Lock()
+		this.workersMutex.Lock()
 		this.printWindowTitle(windowHead, windowTail, this.conf.title)
 		for rows.Next() {
 			beep = false
@@ -311,7 +311,7 @@ func (this *alarmWorker) run(h engine.PluginHelper, goAhead chan bool) {
 			this.colorPrintfLn(false, "Total: %.1f, Mean: %.1f", summary.Sum, summary.Mean)
 		}
 
-		this.mutex.Unlock()
+		this.workersMutex.Unlock()
 		rows.Close()
 
 		this.moveWindowForward(windowTail)
@@ -328,9 +328,10 @@ func (this *alarmWorker) inject(msg *als.AlsMessage) {
 
 	if this.conf.instantFormat != "" {
 		iargs := append([]interface{}{msg.Area}, args...) // 'area' is always 1st col
-		this.Lock()
+		this.workersMutex.Lock()
 		this.colorPrintfLn(true, this.conf.instantFormat, iargs...)
-		this.Unlock()
+		this.workersMutex.Unlock()
+
 		if this.instantAlarmOnly {
 			return
 		}

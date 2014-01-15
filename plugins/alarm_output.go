@@ -38,7 +38,7 @@ func (this *AlarmOutput) Init(config *conf.Conf) {
 			}
 
 			worker := &alarmWorker{projName: proj, emailChan: this.emailChans[proj],
-				mutex: workersMutex}
+				workersMutex: workersMutex}
 			worker.init(section)
 			this.workers[proj][worker.conf.camelName] = worker
 		}
