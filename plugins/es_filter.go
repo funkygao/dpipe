@@ -9,16 +9,16 @@ import (
 )
 
 type esConverter struct {
-	key    string // key name
-	action string // action
-	cur    string // currency
-	rang   []int  // range
+	key      string // key name
+	typ      string // type
+	currency string // currency field name
+	rang     []int  // range
 }
 
 func (this *esConverter) load(section *conf.Conf) {
 	this.key = section.String("key", "")
-	this.action = section.String("act", "")
-	this.cur = section.String("cur", "")
+	this.typ = section.String("type", "")
+	this.currency = section.String("currency", "")
 	this.rang = section.IntList("range", nil)
 }
 
@@ -107,7 +107,7 @@ func (this *EsFilter) handlePack(pack *engine.PipelinePack, project *engine.Conf
 	pack.Message.SetField("ts", pack.Message.Timestamp)
 
 	for _, conv := range this.converters {
-		switch conv.action {
+		switch conv.typ {
 		case "money":
 			amount, err := pack.Message.FieldValue(conv.key, als.KEY_TYPE_MONEY)
 			if err != nil {
@@ -115,7 +115,7 @@ func (this *EsFilter) handlePack(pack *engine.PipelinePack, project *engine.Conf
 				continue
 			}
 
-			currency, err := pack.Message.FieldValue(conv.cur, als.KEY_TYPE_STRING)
+			currency, err := pack.Message.FieldValue(conv.currency, als.KEY_TYPE_STRING)
 			if err != nil {
 				// has money field, but no currency field?
 				return false

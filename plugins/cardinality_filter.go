@@ -14,7 +14,7 @@ type cardinalityField struct {
 
 type cardinalityConverter struct {
 	logPrefix string
-	project   string // action
+	project   string
 	fields    []cardinalityField
 }
 

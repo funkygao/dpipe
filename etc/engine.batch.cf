@@ -30,23 +30,23 @@
             index_pattern:  "@ym"
             ident:   "allFiltered"
             converts: [
-                // act: ip|money|range|del
+                // type: ip|money|range|del
                 {
                     key: "ip"
-                    act: "ip"
+                    type: "ip"
                 }
                 {
                     key: "_log_info.ip"
-                    act: "ip"
+                    type: "ip"
                 }
                 {
                     key: "data.amount"
-                    act: "money"
-                    cur: "data.currency"
+                    type: "money"
+                    currency: "data.currency"
                 }
                 {
                     key: "level"
-                    act: "range"
+                    type: "range"
                     range: [1, 14, 19, 23, 27, 31, 36, 41, 46, 51, 57, 63, 69, 75, 101]
                 }
             ]
