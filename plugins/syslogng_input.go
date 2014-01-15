@@ -5,7 +5,7 @@ import (
 	conf "github.com/funkygao/jsconf"
 )
 
-//
+// Directly recv syslog-ng upstream packets
 type SyslogngInput struct {
 	ident string
 	addr  string
