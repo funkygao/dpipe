@@ -20,7 +20,7 @@ type skyOutputField struct {
 
 func (this *skyOutputField) load(section *conf.Conf) {
 	this.name = section.String("name", "")
-	this.typ = section.String("type", "string")
+	this.typ = section.String("type", als.KEY_TYPE_STRING)
 }
 
 type SkyOutput struct {
