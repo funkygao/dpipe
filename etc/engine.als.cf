@@ -10,7 +10,7 @@
         }
         {
             name:   "RS"
-            show_error: true
+            show_error: false
             alarm_email: {
                 recipients:   "peng.gao@funplusgame.com,zhengkai@gmail.com,yan.zhang@funplusgame.com"
                 busy_line_threshold: 25

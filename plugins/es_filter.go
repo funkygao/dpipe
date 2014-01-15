@@ -71,19 +71,17 @@ func (this *EsFilter) Run(r engine.FilterRunner, h engine.PluginHelper) error {
 				break
 			}
 
-			if this.handlePack(pack, h.Project(pack.Project)) {
-				r.Inject(pack)
-			} else {
-				pack.Recycle()
-			}
+			this.handlePack(r, h, pack)
+			pack.Recycle()
 		}
 	}
 
 	return nil
 }
 
-func (this *EsFilter) handlePack(pack *engine.PipelinePack, project *engine.ConfProject) bool {
-	pack.Ident = this.ident
+func (this *EsFilter) handlePack(r engine.FilterRunner,
+	h engine.PluginHelper, pack *engine.PipelinePack) {
+	project := h.Project(pack.Project)
 
 	if pack.EsType == "" {
 		pack.EsType = pack.Logfile.CamelCaseName()
@@ -95,16 +93,22 @@ func (this *EsFilter) handlePack(pack *engine.PipelinePack, project *engine.Conf
 
 	if pack.EsType == "" {
 		engine.Globals().Printf("%s %v\n", pack.EsType, *pack)
-		return false
+		return
 	}
 	if pack.EsIndex == "" {
 		engine.Globals().Printf("%s %v\n", pack.EsIndex, *pack)
-		return false
+		return
 	}
 
+	p := h.PipelinePack(pack.MsgLoopCount)
+	p.Ident = this.ident
+	p.EsIndex = pack.EsIndex
+	p.Project = pack.Project
+	p.EsType = pack.EsType
+
 	// each ES item has area and ts fields
-	pack.Message.SetField("area", pack.Message.Area)
-	pack.Message.SetField("ts", pack.Message.Timestamp)
+	p.Message.SetField("area", pack.Message.Area)
+	p.Message.SetField("ts", pack.Message.Timestamp)
 
 	for _, conv := range this.converters {
 		switch conv.action {
@@ -118,10 +122,10 @@ func (this *EsFilter) handlePack(pack *engine.PipelinePack, project *engine.Conf
 			currency, err := pack.Message.FieldValue(conv.cur, als.KEY_TYPE_STRING)
 			if err != nil {
 				// has money field, but no currency field?
-				return false
+				return
 			}
 
-			pack.Message.SetField("usd",
+			p.Message.SetField("usd",
 				als.MoneyInUsdCents(currency.(string), amount.(int)))
 
 		case "ip":
@@ -130,7 +134,7 @@ func (this *EsFilter) handlePack(pack *engine.PipelinePack, project *engine.Conf
 				continue
 			}
 
-			pack.Message.SetField("cntry", als.IpToCountry(ip.(string)))
+			p.Message.SetField("cntry", als.IpToCountry(ip.(string)))
 
 		case "range":
 			if len(conv.rang) < 2 {
@@ -142,14 +146,14 @@ func (this *EsFilter) handlePack(pack *engine.PipelinePack, project *engine.Conf
 				continue
 			}
 
-			pack.Message.SetField(conv.key+"_rg", als.GroupInt(val.(int), conv.rang))
+			p.Message.SetField(conv.key+"_rg", als.GroupInt(val.(int), conv.rang))
 
 		case "del":
 			pack.Message.DelField(conv.key)
 		}
 	}
 
-	return true
+	r.Inject(p)
 }
 
 func init() {

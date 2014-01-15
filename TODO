@@ -19,5 +19,3 @@
     https://github.com/jbrukh/bayesian.git
 
 *   router report which input has the most throughput
-
-*   route EsBufferFilter directly to EsOutput
