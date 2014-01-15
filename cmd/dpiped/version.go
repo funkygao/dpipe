@@ -1,6 +1,6 @@
 package main
 
 const (
-	VERSION = "0.5.0.beta"
+	VERSION = "v0.5.0.rc"
 	AUTHOR  = "gaopeng@funplusgame.com"
 )
