@@ -174,8 +174,9 @@ func (this *AlsLogInput) runSingleAlsLogInput(fn string, r engine.InputRunner,
 
 		pack = <-inChan
 		if err := pack.Message.FromLine(line.Text); err != nil {
-			if err != als.ErrEmptyLine {
-				h.Project(source.project).Printf("[%s]%v: %s", fn, err, line.Text)
+			project := h.Project(source.project)
+			if project.ShowError && err != als.ErrEmptyLine {
+				project.Printf("[%s]%v: %s", fn, err, line.Text)
 			}
 
 			pack.Recycle()
