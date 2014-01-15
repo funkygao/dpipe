@@ -92,7 +92,7 @@ func (this *CardinalityFilter) handlePack(r engine.FilterRunner,
 			val, err := pack.Message.FieldValue(f.key, f.typ)
 			if err != nil {
 				if globals.Verbose {
-					globals.Println(err)
+					h.Project(c.project).Println(err)
 				}
 
 				return
