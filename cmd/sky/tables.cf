@@ -5,7 +5,7 @@
             props: [
                 {
                     name:   "uid"
-                    type:   "int"
+                    type:   "integer"
                     transient: false
                 }
 
