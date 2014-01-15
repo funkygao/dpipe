@@ -13,10 +13,10 @@
         {
             name:   "BatchAlsLogInput"
             class:  "BatchAlsLogInput"
+            ident:   "allIn"
             ticker_interval: 10
             root_dir: "/data2/als"
             project:   "rs"
-            ident:   "allIn"
             concurrent_num: 50
             chkpntfile: "_.gob"
             except: [

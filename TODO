@@ -20,3 +20,5 @@
 *   RELOAD on HUP
 
 *   if timestamp out of date, force to be now
+
+*   why batchalslog doesn't have same es count as 'wc -l'
