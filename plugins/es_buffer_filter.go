@@ -85,7 +85,7 @@ func (this *esBufferWorker) run(r engine.FilterRunner, h engine.PluginHelper) {
 		select {
 		case <-time.After(this.interval):
 			// generate new pack
-			p := h.PipelinePack(0, r)
+			p := h.PipelinePack(0)
 
 			switch this.expression {
 			case "count":

@@ -72,13 +72,9 @@ func (this *foRunner) MatchRunner() *MatchRunner {
 }
 
 func (this *foRunner) Inject(pack *PipelinePack) bool {
-	if this.matcher.match(pack) {
-		panic("deadloop: inject to myself")
-	}
-
 	if pack.Ident == "" {
-		Globals().Printf("Plugin %v new pack with empty ident:%s",
-			pack.diagnostics.PluginNames(), *pack)
+		Globals().Printf("Plugin %v new pack with empty ident: %s",
+			this.Name(), *pack)
 		return false
 	}
 
