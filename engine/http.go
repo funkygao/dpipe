@@ -43,10 +43,14 @@ func (this *EngineConfig) handleHttpQuery(w http.ResponseWriter, req *http.Reque
 		output["inputs"] = this.InputRunners
 		output["filters"] = this.FilterRunners
 		output["outputs"] = this.OutputRunners
-		output["router"] = this.router
+		output["router"] = *this.router
 		output["totalM"] = this.router.totalProcessedMsgN
 		output["periodM"] = this.router.periodProcessMsgN
 		output["start"] = globals.StartedAt
+		output["pid"] = this.pid
+		output["hostname"] = this.hostname
+		output["inputChannel"] = cap(this.inputRecycleChan)
+		output["filterChannel"] = cap(this.injectRecycleChan)
 
 	case "plugins":
 		output["plugins"] = this.pluginNames()
