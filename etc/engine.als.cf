@@ -156,12 +156,14 @@
                 {
                     camel_name: "dau"
                     project:    "RS"
+                    index_pattern:  "@ym"
                     expression: "count"
                     interval:   60
                 }
                 {
                     camel_name: "pv"
                     project:    "RS"
+                    index_pattern:  "@ym"
                     field_name: "_log_info.elapsed"
                     field_type: "float"
                     expression: "mean"
@@ -170,6 +172,7 @@
                 {
                     camel_name: "pv"
                     project:    "RS"
+                    index_pattern:  "@ym"
                     expression: "count"
                     interval:   120
                 }

@@ -5,7 +5,6 @@ import (
 	"github.com/funkygao/als"
 	"github.com/funkygao/dpipe/engine"
 	conf "github.com/funkygao/jsconf"
-	"strings"
 	"time"
 )
 
@@ -83,32 +82,12 @@ func (this *EsFilter) Run(r engine.FilterRunner, h engine.PluginHelper) error {
 	return nil
 }
 
-func (this *EsFilter) indexName(project *engine.ConfProject, date time.Time) string {
-	const (
-		YM           = "@ym"
-		INDEX_PREFIX = "fun_"
-	)
-
-	if strings.HasSuffix(this.indexPattern, YM) {
-		prefix := project.IndexPrefix
-		fields := strings.SplitN(this.indexPattern, YM, 2)
-		if fields[0] != "" {
-			// e,g. rs@ym
-			prefix = fields[0]
-		}
-
-		return fmt.Sprintf("%s%s_%d_%02d", INDEX_PREFIX, prefix, date.Year(), int(date.Month()))
-	}
-
-	return INDEX_PREFIX + this.indexPattern
-}
-
 func (this *EsFilter) handlePack(pack *engine.PipelinePack, project *engine.ConfProject) bool {
 	pack.Ident = this.ident
 	if pack.EsType == "" {
 		pack.EsType = pack.Logfile.CamelCaseName()
 	}
-	pack.EsIndex = this.indexName(project,
+	pack.EsIndex = indexName(project, this.indexPattern,
 		time.Unix(int64(pack.Message.Timestamp), 0))
 	if pack.EsType == "" {
 		engine.Globals().Printf("%s %v\n", pack.EsType, *pack)

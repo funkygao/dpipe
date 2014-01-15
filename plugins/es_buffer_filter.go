@@ -10,25 +10,30 @@ import (
 )
 
 type esBufferWorker struct {
-	projectName string
-	camelName   string
-	fieldName   string
-	fieldType   string
-	expression  string // count, mean, max, min, sum, sd
-	interval    time.Duration
+	ident        string
+	projectName  string
+	camelName    string
+	indexPattern string
+	fieldName    string
+	fieldType    string
+	expression   string // count, mean, max, min, sum, sd
+	interval     time.Duration
 
-	summary stats.Summary
-	esField string
+	summary   stats.Summary
+	esField   string
+	timestamp uint64 // only store latest
 }
 
-func (this *esBufferWorker) init(config *conf.Conf) {
+func (this *esBufferWorker) init(config *conf.Conf, ident string) {
 	this.camelName = config.String("camel_name", "")
 	if this.camelName == "" {
 		panic("empty camel_name")
 	}
 
+	this.ident = ident
 	this.interval = time.Duration(config.Int("interval", 10)) * time.Second
 	this.projectName = config.String("project", "")
+	this.indexPattern = config.String("index_pattern", "@ym")
 	this.expression = config.String("expression", "count")
 	if this.expression != "count" {
 		this.fieldName = config.String("field_name", "")
@@ -50,6 +55,8 @@ func (this *esBufferWorker) init(config *conf.Conf) {
 }
 
 func (this esBufferWorker) inject(pack *engine.PipelinePack) {
+	this.timestamp = pack.Message.Timestamp
+
 	switch this.expression {
 	case "count":
 		this.summary.N += 1
@@ -85,26 +92,30 @@ func (this *esBufferWorker) run(r engine.FilterRunner, h engine.PluginHelper) {
 		select {
 		case <-time.After(this.interval):
 			// generate new pack
-			p := h.PipelinePack(0)
+			pack := h.PipelinePack(0)
 
 			switch this.expression {
 			case "count":
-				p.Message.SetField(this.esField, this.summary.N)
+				pack.Message.SetField(this.esField, this.summary.N)
 			case "mean":
-				p.Message.SetField(this.esField, this.summary.Mean)
+				pack.Message.SetField(this.esField, this.summary.Mean)
 			case "max":
-				p.Message.SetField(this.esField, this.summary.Max)
+				pack.Message.SetField(this.esField, this.summary.Max)
 			case "min":
-				p.Message.SetField(this.esField, this.summary.Min)
+				pack.Message.SetField(this.esField, this.summary.Min)
 			case "sd":
-				p.Message.SetField(this.esField, this.summary.Sd())
+				pack.Message.SetField(this.esField, this.summary.Sd())
 			case "sum":
-				p.Message.SetField(this.esField, this.summary.Sum)
+				pack.Message.SetField(this.esField, this.summary.Sum)
 			default:
 				panic("invalid expression: " + this.expression)
 			}
 
-			r.Inject(p)
+			pack.Ident = this.ident
+			pack.EsIndex = indexName(h.Project(this.projectName),
+				this.indexPattern, time.Unix(int64(this.timestamp), 0))
+			pack.EsType = this.camelName
+			r.Inject(pack)
 
 			this.summary.Reset()
 		}
@@ -133,7 +144,7 @@ func (this *EsBufferFilter) Init(config *conf.Conf) {
 		}
 
 		worker := new(esBufferWorker)
-		worker.init(section)
+		worker.init(section, this.ident)
 		this.wokers = append(this.wokers, worker)
 	}
 }
