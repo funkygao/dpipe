@@ -61,6 +61,10 @@ func (this *PipelinePack) IncRef() {
 	atomic.AddInt32(&this.RefCount, 1)
 }
 
+func (this *PipelinePack) PluginNames() (names []string) {
+	return this.diagnostics.PluginNames()
+}
+
 func (this PipelinePack) String() string {
 	s := fmt.Sprintf("[%s]%s@%s, rc=%d, loop=%d", this.Project, this.Ident,
 		this.Tag, this.RefCount, this.MsgLoopCount)
