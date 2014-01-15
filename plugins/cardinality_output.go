@@ -2,6 +2,7 @@ package plugins
 
 import (
 	"github.com/funkygao/dpipe/engine"
+	"github.com/funkygao/golib/bjtime"
 	"github.com/funkygao/golib/observer"
 	"github.com/funkygao/golib/stats"
 	conf "github.com/funkygao/jsconf"
@@ -20,11 +21,6 @@ func (this *CardinalityOutput) Init(config *conf.Conf) {
 }
 
 func (this *CardinalityOutput) Run(r engine.OutputRunner, h engine.PluginHelper) error {
-	globals := engine.Globals()
-	if globals.Verbose {
-		globals.Printf("[%s] started\n", r.Name())
-	}
-
 	var (
 		pack      *engine.PipelinePack
 		resetChan = make(chan interface{})
@@ -43,16 +39,12 @@ func (this *CardinalityOutput) Run(r engine.OutputRunner, h engine.PluginHelper)
 			this.dumpCounters(project)
 
 		case <-resetChan:
+			project.Println("Cardinality all reset")
 			this.resetCounters()
 
 		case pack, ok = <-inChan:
 			if !ok {
 				break
-			}
-
-			if globals.Debug {
-				project.Printf("key:%s interval:%s data:%v", pack.CardinalityKey,
-					pack.CardinalityInterval, pack.CardinalityData)
 			}
 
 			if pack.CardinalityKey != "" && pack.CardinalityData != nil {
@@ -74,8 +66,9 @@ func (this *CardinalityOutput) Run(r engine.OutputRunner, h engine.PluginHelper)
 func (this *CardinalityOutput) dumpCounters(project *engine.ConfProject) {
 	project.Println("Current cardinalities:")
 	for _, key := range this.counters.Categories() {
-		project.Printf("%25s[%v] %d\n", key,
-			this.counters.StartedAt(key), this.counters.Count(key))
+		project.Printf("%15s[%v] %d\n", key,
+			bjtime.TsToString(int(this.counters.StartedAt(key).Unix())),
+			this.counters.Count(key))
 	}
 }
 

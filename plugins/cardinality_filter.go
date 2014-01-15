@@ -52,16 +52,13 @@ func (this *CardinalityFilter) Init(config *conf.Conf) {
 	}
 }
 
-func (this *CardinalityFilter) Run(r engine.FilterRunner, h engine.PluginHelper) error {
-	globals := engine.Globals()
-	if globals.Verbose {
-		globals.Printf("[%s] started\n", r.Name())
-	}
-
+func (this *CardinalityFilter) Run(r engine.FilterRunner,
+	h engine.PluginHelper) error {
 	var (
-		pack   *engine.PipelinePack
-		ok     = true
-		inChan = r.InChan()
+		globals = engine.Globals()
+		pack    *engine.PipelinePack
+		ok      = true
+		inChan  = r.InChan()
 	)
 
 	for ok && !globals.Stopping {
