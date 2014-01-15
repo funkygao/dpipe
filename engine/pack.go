@@ -66,8 +66,8 @@ func (this *PipelinePack) PluginNames() (names []string) {
 }
 
 func (this PipelinePack) String() string {
-	s := fmt.Sprintf("[%s]%s@%s, rc=%d, loop=%d", this.Project, this.Ident,
-		this.Tag, this.RefCount, this.MsgLoopCount)
+	s := fmt.Sprintf("%s@%s, rc=%d, loop=%d", this.Ident, this.Project,
+		this.RefCount, this.MsgLoopCount)
 	if this.EsIndex != "" {
 		s = fmt.Sprintf("%s, index{%s, %s}", s, this.EsIndex, this.EsType)
 	}
