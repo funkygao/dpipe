@@ -2,6 +2,8 @@ Release Notes - Flume - Version v0.5.0.rc
 
 ** New Feature
 
+    . EsOutput periodically report statistics
+
 ** Improvement
 
 ** Bug

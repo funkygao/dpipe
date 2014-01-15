@@ -65,7 +65,7 @@ func (this *logfileSource) refresh(wg *sync.WaitGroup) {
 
 type AlsLogInput struct {
 	stopChan chan bool
-	counters map[string]int
+	counters map[string]int // ident -> N
 	sources  []*logfileSource
 }
 
@@ -145,7 +145,7 @@ func (this *AlsLogInput) Run(r engine.InputRunner, h engine.PluginHelper) error 
 func (this *AlsLogInput) handlePeriodicalCounters() {
 	globals := engine.Globals()
 	for ident, n := range this.counters {
-		globals.Printf("%12s %8d", ident, n)
+		globals.Printf("alslog %12s %8d", ident, n)
 
 		this.counters[ident] = 0
 	}
