@@ -61,11 +61,12 @@ func (this *messageRouter) removeMatcher(matcher *MatchRunner,
 // Dispatch pack from Input to MatchRunners
 func (this *messageRouter) runMainloop() {
 	var (
-		globals = Globals()
-		ok      = true
-		pack    *PipelinePack
-		ticker  *time.Ticker
-		matcher *MatchRunner
+		globals    = Globals()
+		ok         = true
+		pack       *PipelinePack
+		ticker     *time.Ticker
+		matcher    *MatchRunner
+		foundMatch bool
 	)
 
 	if globals.Verbose {
@@ -100,6 +101,7 @@ func (this *messageRouter) runMainloop() {
 			pack.diagnostics.Reset()
 			atomic.AddInt32(&this.periodProcessMsgN, 1)
 			atomic.AddInt64(&this.totalProcessedMsgN, 1)
+			foundMatch = false
 
 			// got pack from Input, now dispatch
 			for _, matcher = range this.filterMatchers {
@@ -108,6 +110,8 @@ func (this *messageRouter) runMainloop() {
 				}
 
 				if matcher.match(pack) {
+					foundMatch = true
+
 					pack.diagnostics.AddStamp(matcher.runner)
 					pack.IncRef()
 					matcher.inChan <- pack
@@ -120,11 +124,17 @@ func (this *messageRouter) runMainloop() {
 				}
 
 				if matcher.match(pack) {
+					foundMatch = true
+
 					pack.diagnostics.AddStamp(matcher.runner)
 					pack.IncRef()
 					matcher.inChan <- pack
 				}
 
+			}
+
+			if !foundMatch {
+				globals.Printf("Found no match: %s", *pack)
 			}
 
 			// never forget this!
