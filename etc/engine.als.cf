@@ -278,6 +278,16 @@
                                     normalizers: ["digit", "batch_token", ]
                                     ignores: [
                                         "Energy Error, Client: ?, Server: ?, info:batch",
+                                        "batch token error",
+                                        "Sorry, someone has logged",
+                                        "cost is not enough",
+                                        "payment error: OK",
+                                        "new pay : OK",
+                                        "new pay : start",
+                                        "XP Error, Client",
+                                        "time error",
+                                        "snsid or uid error",
+                                        "key error",
                                     ]
                                 }
                             ]
