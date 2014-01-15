@@ -40,6 +40,10 @@ type iRunner struct {
 }
 
 func (this *iRunner) Inject(pack *PipelinePack) {
+	if pack.Ident == "" {
+		Globals().Fatalf("empty Ident: %s", *pack)
+	}
+
 	this.engine.router.InChan() <- pack
 }
 

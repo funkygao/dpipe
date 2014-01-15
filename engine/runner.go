@@ -72,6 +72,14 @@ func (this *foRunner) MatchRunner() *MatchRunner {
 }
 
 func (this *foRunner) Inject(pack *PipelinePack) bool {
+	if this.matcher.match(pack) {
+		panic("deadloop: inject to myself")
+	}
+
+	if pack.Ident == "" {
+		Globals().Fatalf("empty Ident: %s", *pack)
+	}
+
 	this.engine.router.InChan() <- pack
 	return true
 }
