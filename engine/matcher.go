@@ -40,13 +40,9 @@ func (this *MatchRunner) Start(matchChan chan *PipelinePack) {
 		globals.Printf("MatchRunner for %s started", this.runner.Name())
 	}
 
-	// the mainloop
+	// the mainloop, we only recv matched packs
 	for pack := range this.inChan {
-		if this.match(pack) {
-			matchChan <- pack
-		} else {
-			pack.Recycle()
-		}
+		matchChan <- pack
 	}
 
 	close(matchChan)
