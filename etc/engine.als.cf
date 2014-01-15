@@ -365,7 +365,7 @@
                             camel_name: "memcacheTo"
                             colors: [ "FgYellow", ]
                             window_size:    0
-                            iprintf:        "CacheSlow %3s %15s %8.4f %15s"
+                            iprintf:        "CacheSlow %3s %20s %8.4f %15s"
                             fields: [
                                 {
                                     name: "key"
