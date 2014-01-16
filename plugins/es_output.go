@@ -94,7 +94,7 @@ func (this *EsOutput) Run(r engine.OutputRunner, h engine.PluginHelper) error {
 func (this *EsOutput) handlePeriodicalCounters() {
 	globals := engine.Globals()
 	for name, n := range this.counters {
-		globals.Printf("sink to ES %20s %8d", name, n)
+		globals.Printf("sink to ES %30s %8d", name, n)
 
 		this.counters[name] = 0
 	}
