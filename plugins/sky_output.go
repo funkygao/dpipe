@@ -9,10 +9,6 @@ import (
 	"strconv"
 )
 
-const (
-	UID_FIELD = "_log_info.uid"
-)
-
 type skyOutputField struct {
 	camelName string
 	action    string
@@ -98,10 +94,14 @@ func (this *SkyOutput) feedSky(pack *engine.PipelinePack) {
 	)
 
 	// get uid
-	uid, err = pack.Message.FieldValue(UID_FIELD, als.KEY_TYPE_INT)
+	uid, err = pack.Message.FieldValue("_log_info.uid", als.KEY_TYPE_INT)
 	if err != nil {
-		// if not uid based, ignored
-		return
+		uid, err = pack.Message.FieldValue("uid", als.KEY_TYPE_INT)
+		if err != nil {
+			// if not uid based, ignored
+			return
+		}
+
 	}
 
 	event := sky.NewEvent(pack.Message.Time(), map[string]interface{}{})
