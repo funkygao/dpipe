@@ -72,6 +72,7 @@
             match:  ["rsDau", ]
             disabled: false
             table:  "rs_user"
+            uid_field: "uid"
             fields: [
                 {
                     camel_name: "dau"

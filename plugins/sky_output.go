@@ -26,10 +26,12 @@ func (this *skyOutputField) load(section *conf.Conf) {
 type SkyOutput struct {
 	table    *sky.Table
 	stopChan chan bool
+	uidField string
 	fields   []skyOutputField
 }
 
 func (this *SkyOutput) Init(config *conf.Conf) {
+	this.uidField = config.String("uid_field", "_log_info.uid")
 	this.stopChan = make(chan bool)
 	var (
 		host string = config.String("host", "localhost")
@@ -94,14 +96,10 @@ func (this *SkyOutput) feedSky(pack *engine.PipelinePack) {
 	)
 
 	// get uid
-	uid, err = pack.Message.FieldValue("_log_info.uid", als.KEY_TYPE_INT)
+	uid, err = pack.Message.FieldValue(this.uidField, als.KEY_TYPE_INT)
 	if err != nil {
-		uid, err = pack.Message.FieldValue("uid", als.KEY_TYPE_INT)
-		if err != nil {
-			// if not uid based, ignored
-			return
-		}
-
+		engine.Globals().Printf("invalid uid: %v %s", err, *pack)
+		return
 	}
 
 	event := sky.NewEvent(pack.Message.Time(), map[string]interface{}{})

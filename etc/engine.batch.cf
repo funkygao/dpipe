@@ -52,6 +52,7 @@
             name:   "rsSkyOutput"
             class:  "SkyOutput"
             match:  ["rsDau", ]
+            uid_field: "uid"
             disabled: false
             table:  "rs_user"
             fields: [
