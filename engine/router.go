@@ -1,6 +1,7 @@
 package engine
 
 import (
+	"github.com/funkygao/golib/gofmt"
 	"runtime"
 	"sync/atomic"
 	"time"
@@ -87,8 +88,9 @@ func (this *messageRouter) runMainloop() {
 			this.removeMatcher(matcher, this.filterMatchers)
 
 		case <-ticker.C:
-			globals.Printf("Total msg: %v, elapsed: %s, speed: %d/s\n",
-				this.totalProcessedMsgN, time.Since(globals.StartedAt),
+			globals.Printf("Total msg: %s, elapsed: %s, speed: %d/s",
+				gofmt.Comma(this.totalProcessedMsgN),
+				time.Since(globals.StartedAt),
 				this.periodProcessMsgN/int32(globals.TickerLength))
 			this.periodProcessMsgN = int32(0)
 
