@@ -483,7 +483,6 @@ func (this *alarmWorker) getWindowBorder(wheres ...string) (head, tail int, err 
 }
 
 func (this *alarmWorker) printWindowTitle(head, tail int, title string) {
-	this.project.Println() // seperator
 	this.colorPrintfLn(false, "(%s  ~  %s) %s", bjtime.TsToString(head),
 		bjtime.TsToString(tail), title)
 }
