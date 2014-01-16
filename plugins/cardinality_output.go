@@ -1,11 +1,13 @@
 package plugins
 
 import (
+	"fmt"
 	"github.com/funkygao/dpipe/engine"
 	"github.com/funkygao/golib/bjtime"
-	"github.com/funkygao/golib/observer"
 	"github.com/funkygao/golib/stats"
 	conf "github.com/funkygao/jsconf"
+	"github.com/gorilla/mux"
+	"net/http"
 )
 
 type CardinalityOutput struct {
@@ -22,26 +24,20 @@ func (this *CardinalityOutput) Init(config *conf.Conf) {
 
 func (this *CardinalityOutput) Run(r engine.OutputRunner, h engine.PluginHelper) error {
 	var (
-		pack      *engine.PipelinePack
-		resetChan = make(chan interface{})
-		dumpChan  = make(chan interface{})
-		ok        = true
-		project   = h.Project(this.project)
-		inChan    = r.InChan()
+		pack     *engine.PipelinePack
+		dumpChan = make(chan interface{})
+		ok       = true
+		project  = h.Project(this.project)
+		inChan   = r.InChan()
 	)
 
-	observer.Subscribe(engine.RELOAD, resetChan)
-	observer.Subscribe(engine.SIGUSR1, dumpChan)
+	h.HttpApiHandleFunc("/card/{key}", func(w http.ResponseWriter,
+		req *http.Request, params map[string]interface{}) (interface{}, error) {
+		return this.handleHttpRequest(w, req, params)
+	}).Methods("GET", "PUT")
 
 	for ok {
 		select {
-		case <-dumpChan:
-			this.dumpCounters(project)
-
-		case <-resetChan:
-			project.Println("Cardinality all reset")
-			this.resetCounters()
-
 		case pack, ok = <-inChan:
 			if !ok {
 				break
@@ -63,6 +59,38 @@ func (this *CardinalityOutput) Run(r engine.OutputRunner, h engine.PluginHelper)
 	return nil
 }
 
+func (this *CardinalityOutput) handleHttpRequest(w http.ResponseWriter,
+	req *http.Request, params map[string]interface{}) (interface{}, error) {
+	vars := mux.Vars(req)
+	key := vars["key"]
+	globals := engine.Globals()
+	if globals.Verbose {
+		globals.Println(req.Method, key)
+	}
+
+	output := make(map[string]interface{})
+	switch req.Method {
+	case "GET":
+		if key != "" {
+			output[key] = this.counters.Count(key)
+			return output, nil
+		}
+
+		// show all counters
+		for _, c := range this.counters.Categories() {
+			output[c] = fmt.Sprintf("[%v]%d",
+				bjtime.TsToString(int(this.counters.StartedAt(c).Unix())),
+				this.counters.Count(c))
+		}
+
+	case "PUT":
+		this.counters.Reset(key)
+		output["msg"] = "ok"
+	}
+
+	return output, nil
+}
+
 func (this *CardinalityOutput) dumpCounters(project *engine.ConfProject) {
 	project.Println("Current cardinalities:")
 	for _, key := range this.counters.Categories() {
@@ -70,10 +98,6 @@ func (this *CardinalityOutput) dumpCounters(project *engine.ConfProject) {
 			bjtime.TsToString(int(this.counters.StartedAt(key).Unix())),
 			this.counters.Count(key))
 	}
-}
-
-func (this *CardinalityOutput) resetCounters() {
-	this.counters.ResetAll()
 }
 
 func init() {

@@ -3,6 +3,8 @@ package engine
 import (
 	"fmt"
 	conf "github.com/funkygao/jsconf"
+	"github.com/gorilla/mux"
+	"net/http"
 )
 
 // Plugin must have Init method
@@ -41,4 +43,7 @@ type PluginHelper interface {
 	EngineConfig() *EngineConfig
 	PipelinePack(msgLoopCount int) *PipelinePack
 	Project(name string) *ConfProject
+	HttpApiHandleFunc(path string,
+		handlerFunc func(http.ResponseWriter,
+			*http.Request, map[string]interface{}) (interface{}, error)) *mux.Route
 }

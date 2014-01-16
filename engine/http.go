@@ -55,20 +55,23 @@ func (this *EngineConfig) handleHttpQuery(w http.ResponseWriter, req *http.Reque
 
 	case "plugins":
 		output["plugins"] = this.pluginNames()
+
+	case "paths":
+		output["all"] = this.httpPaths
 	}
 
 	return output, nil
 }
 
 func (this *EngineConfig) addHttpHandlers() {
-	this.httpApiHandleFunc("/{cmd}",
+	this.HttpApiHandleFunc("/{cmd}",
 		func(w http.ResponseWriter, req *http.Request,
 			params map[string]interface{}) (interface{}, error) {
 			return this.handleHttpQuery(w, req, params)
 		}).Methods("GET")
 }
 
-func (this *EngineConfig) httpApiHandleFunc(path string,
+func (this *EngineConfig) HttpApiHandleFunc(path string,
 	handlerFunc func(http.ResponseWriter,
 		*http.Request, map[string]interface{}) (interface{}, error)) *mux.Route {
 	wrappedFunc := func(w http.ResponseWriter, req *http.Request) {
@@ -98,6 +101,7 @@ func (this *EngineConfig) httpApiHandleFunc(path string,
 		}
 	}
 
+	this.httpPaths = append(this.httpPaths, path)
 	return this.httpRouter.HandleFunc(path, wrappedFunc)
 }
 

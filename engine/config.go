@@ -17,6 +17,7 @@ type EngineConfig struct {
 	listener   net.Listener
 	httpServer *http.Server
 	httpRouter *mux.Router
+	httpPaths  []string
 
 	projects map[string]*ConfProject
 
@@ -62,6 +63,7 @@ func NewEngineConfig(globals *GlobalConfigStruct) (this *EngineConfig) {
 	this.filterRecycleChan = make(chan *PipelinePack, globals.PoolSize)
 
 	this.projects = make(map[string]*ConfProject)
+	this.httpPaths = make([]string, 0, 6)
 
 	this.router = NewMessageRouter()
 
