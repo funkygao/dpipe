@@ -40,27 +40,8 @@ func (this *messageRouter) InChan() chan *PipelinePack {
 	return this.inChan
 }
 
-func (this *messageRouter) Start() {
-	go this.runMainloop()
-}
-
-func (this *messageRouter) removeMatcher(matcher *MatchRunner,
-	matchers []*MatchRunner) {
-	if matcher == nil {
-		return
-	}
-
-	for idx, m := range matchers {
-		if m == matcher {
-			close(m.inChan)
-			matchers[idx] = nil
-			break
-		}
-	}
-}
-
 // Dispatch pack from Input to MatchRunners
-func (this *messageRouter) runMainloop() {
+func (this *messageRouter) Start(done chan<- bool) {
 	var (
 		globals    = Globals()
 		ok         = true
@@ -147,9 +128,6 @@ func (this *messageRouter) runMainloop() {
 		}
 	}
 
-	globals.Printf("Router stopped with total msg: %s",
-		gofmt.Comma(this.totalProcessedMsgN))
-
 	for _, matcher = range this.filterMatchers {
 		close(matcher.inChan)
 	}
@@ -157,4 +135,23 @@ func (this *messageRouter) runMainloop() {
 		close(matcher.inChan)
 	}
 
+	globals.Printf("Router stopped with total msg: %s",
+		gofmt.Comma(this.totalProcessedMsgN))
+
+	done <- true
+}
+
+func (this *messageRouter) removeMatcher(matcher *MatchRunner,
+	matchers []*MatchRunner) {
+	if matcher == nil {
+		return
+	}
+
+	for idx, m := range matchers {
+		if m == matcher {
+			close(m.inChan)
+			matchers[idx] = nil
+			break
+		}
+	}
 }

@@ -73,7 +73,8 @@ func Launch(e *EngineConfig) {
 	go inputPackTracker.Run()
 	go filterPackTracker.Run()
 
-	e.router.Start()
+	routerDone := make(chan bool)
+	go e.router.Start(routerDone)
 
 	if globals.Verbose {
 		globals.Println("Launching Input(s)...")
@@ -161,6 +162,8 @@ func Launch(e *EngineConfig) {
 	if globals.Verbose {
 		globals.Println("All Outputs terminated")
 	}
+
+	<-routerDone
 
 	globals.Println("Engine shutdown complete.")
 }
