@@ -99,16 +99,16 @@ func (this *PipelinePack) Reset() {
 
 /*
                     IncRef2
-                   -------> Output -> DecRef2 --------------------------+
-                  |                                                     |
-                  | IncRef3                                             |
-Input -> packA -> |-------> Filter1 -> Output1 -> DecRef1 --------------| race
-                  |                                                     | condition
-                  | IncRef4                                             |
-                  |-------> Filter2 -> Output2 -> DecRef0 -- recyled ---+
-                  |
-                  | DecRef3
-                   -------- router
+                   -------> Output -------------> DecRef2 --+
+                  |                                         |
+                  | IncRef3                                 |
+Input -> packA -> |-------> Filter1 -> Output1 -> DecRef1 --| race
+                  |                                         | condition
+                  | IncRef4                                 |
+                  |-------> Filter2 -> Output2 -> DecRef0 --+
+                  |                                  |
+                  | DecRef3                          V
+                   -------- router                   o[recyled]
 */
 func (this *PipelinePack) Recycle() {
 	count := atomic.AddInt32(&this.RefCount, -1)
