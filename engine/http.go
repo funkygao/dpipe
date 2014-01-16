@@ -11,7 +11,12 @@ import (
 func (this *EngineConfig) launchHttpServ() {
 	this.httpRouter = mux.NewRouter()
 	this.httpServer = &http.Server{Addr: this.String("http_addr", "127.0.0.1:9876"), Handler: this.httpRouter}
-	this.addHttpHandlers()
+
+	this.RegisterHttpApi("/admin/{cmd}",
+		func(w http.ResponseWriter, req *http.Request,
+			params map[string]interface{}) (interface{}, error) {
+			return this.handleHttpQuery(w, req, params)
+		}).Methods("GET")
 
 	var err error
 	this.listener, err = net.Listen("tcp", this.httpServer.Addr)
@@ -53,14 +58,6 @@ func (this *EngineConfig) handleHttpQuery(w http.ResponseWriter, req *http.Reque
 	}
 
 	return output, nil
-}
-
-func (this *EngineConfig) addHttpHandlers() {
-	this.RegisterHttpApi("/admin/{cmd}",
-		func(w http.ResponseWriter, req *http.Request,
-			params map[string]interface{}) (interface{}, error) {
-			return this.handleHttpQuery(w, req, params)
-		}).Methods("GET")
 }
 
 func (this *EngineConfig) RegisterHttpApi(path string,
