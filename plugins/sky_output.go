@@ -126,7 +126,10 @@ func (this *SkyOutput) feedSky(pack *engine.PipelinePack) {
 	}
 
 	// objectId is uid string
-	this.table.AddEvent(strconv.Itoa(uid.(int)), event, sky.Merge)
+	err = this.table.AddEvent(strconv.Itoa(uid.(int)), event, sky.Merge)
+	if err != nil {
+		engine.Globals().Println(err)
+	}
 }
 
 func init() {
