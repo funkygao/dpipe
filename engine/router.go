@@ -106,6 +106,8 @@ func (this *messageRouter) runMainloop() {
 			foundMatch = false
 
 			// got pack from Input, now dispatch
+			// for each target, pack will inc ref count
+			// and the router will dec ref count only once
 			for _, matcher = range this.filterMatchers {
 				if matcher == nil {
 					continue
