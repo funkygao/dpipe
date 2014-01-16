@@ -68,7 +68,7 @@ func (this *CardinalityOutput) handleHttpRequest(w http.ResponseWriter,
 	case "GET":
 		if key == "all" {
 			for _, c := range this.counters.Categories() {
-				output[c] = fmt.Sprintf("[%v]%d",
+				output[c] = fmt.Sprintf("[%v] %d",
 					bjtime.TsToString(int(this.counters.StartedAt(c).Unix())),
 					this.counters.Count(c))
 			}
