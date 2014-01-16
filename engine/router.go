@@ -129,10 +129,14 @@ func (this *messageRouter) Start(done chan<- bool) {
 	}
 
 	for _, matcher = range this.filterMatchers {
-		close(matcher.inChan)
+		if matcher != nil {
+			close(matcher.inChan)
+		}
 	}
 	for _, matcher = range this.outputMatchers {
-		close(matcher.inChan)
+		if matcher != nil {
+			close(matcher.inChan)
+		}
 	}
 
 	globals.Printf("Router stopped with total msg: %s",

@@ -48,6 +48,7 @@ func (this *EsOutput) Run(r engine.OutputRunner, h engine.PluginHelper) error {
 		pack       *engine.PipelinePack
 		reloadChan = make(chan interface{})
 		ok         = true
+		globals    = engine.Globals()
 		inChan     = r.InChan()
 	)
 
@@ -81,9 +82,13 @@ func (this *EsOutput) Run(r engine.OutputRunner, h engine.PluginHelper) error {
 	}
 
 	// before shutdown, flush again
-	engine.Globals().Println("Waiting for ES flush...")
+	if globals.Verbose {
+		engine.Globals().Println("Waiting for ES flush...")
+	}
 	this.indexer.Flush()
-	engine.Globals().Println("ES flushed")
+	if globals.Verbose {
+		engine.Globals().Println("ES flushed")
+	}
 
 	// let indexer stop
 	this.stopChan <- true

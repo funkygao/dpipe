@@ -163,6 +163,7 @@ func Launch(e *EngineConfig) {
 		globals.Println("All Outputs terminated")
 	}
 
+	close(e.router.inChan)
 	<-routerDone
 
 	globals.Println("Engine shutdown complete.")
