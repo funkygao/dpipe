@@ -118,9 +118,10 @@ func (this *SkyOutput) feedSky(pack *engine.PipelinePack) {
 			if err != nil {
 				continue
 			}
+
+			event.Data[f.name] = val
 		}
 
-		event.Data[f.name] = val
 	}
 
 	// objectId is uid string
