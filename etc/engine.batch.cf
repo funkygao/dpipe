@@ -73,7 +73,7 @@
                     project:    "rs"
                     index_pattern:  "@ym"
                     expression: "count"
-                    interval:   60
+                    interval:   5
                 }
                 {
                     camel_name: "pv"
@@ -82,14 +82,14 @@
                     field_name: "_log_info.elapsed"
                     field_type: "float"
                     expression: "mean"
-                    interval:   120
+                    interval:   5
                 }
                 {
                     camel_name: "pv"
                     project:    "rs"
                     index_pattern:  "@ym"
                     expression: "count"
-                    interval:   120
+                    interval:   5
                 }
             ]
         }
