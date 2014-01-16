@@ -12,20 +12,22 @@ import (
 )
 
 type EsOutput struct {
-	flushInterval time.Duration
-	dryRun        bool
-	counters      map[string]int // EsIndex -> N
-	bulkMaxConn   int            `json:"bulk_max_conn"`
-	bulkMaxDocs   int            `json:"bulk_max_docs"`
-	bulkMaxBuffer int            `json:"bulk_max_buffer"` // in Byte
-	indexer       *core.BulkIndexer
-	stopChan      chan bool
+	flushInterval  time.Duration
+	reportInterval time.Duration
+	dryRun         bool
+	counters       map[string]int // EsIndex -> N
+	bulkMaxConn    int            `json:"bulk_max_conn"`
+	bulkMaxDocs    int            `json:"bulk_max_docs"`
+	bulkMaxBuffer  int            `json:"bulk_max_buffer"` // in Byte
+	indexer        *core.BulkIndexer
+	stopChan       chan bool
 }
 
 func (this *EsOutput) Init(config *conf.Conf) {
 	this.stopChan = make(chan bool)
 	api.Domain = config.String("domain", "localhost")
 	api.Port = config.String("port", "9200")
+	this.reportInterval = time.Duration(config.Int("report_interval", 30)) * time.Second
 	this.flushInterval = time.Duration(config.Int("flush_interval", 30)) * time.Second
 	this.bulkMaxConn = config.Int("bulk_max_conn", 20)
 	this.bulkMaxDocs = config.Int("bulk_max_docs", 100)
@@ -55,7 +57,7 @@ func (this *EsOutput) Run(r engine.OutputRunner, h engine.PluginHelper) error {
 		case <-this.stopChan:
 			ok = false
 
-		case <-r.Ticker():
+		case <-time.After(this.reportInterval):
 			this.handlePeriodicalCounters()
 
 		case <-reloadChan:

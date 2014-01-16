@@ -222,6 +222,7 @@
             dryrun: true
             domain: "localhost"
             port: "9200"
+            report_interval: 10
             flush_interval: 30
             bulk_max_conn: 20
             bulk_max_docs: 100

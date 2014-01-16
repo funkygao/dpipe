@@ -24,11 +24,10 @@ func (this *CardinalityOutput) Init(config *conf.Conf) {
 
 func (this *CardinalityOutput) Run(r engine.OutputRunner, h engine.PluginHelper) error {
 	var (
-		pack     *engine.PipelinePack
-		dumpChan = make(chan interface{})
-		ok       = true
-		project  = h.Project(this.project)
-		inChan   = r.InChan()
+		pack    *engine.PipelinePack
+		ok      = true
+		project = h.Project(this.project)
+		inChan  = r.InChan()
 	)
 
 	h.HttpApiHandleFunc("/card/{key}", func(w http.ResponseWriter,
