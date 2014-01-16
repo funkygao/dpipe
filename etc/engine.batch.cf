@@ -12,6 +12,28 @@
 
     plugins: [
         {
+            name:   "pv"
+            class:  "BatchAlsLogInput"
+            ident:   "rsPv"
+            ticker_interval: 60
+            root_dir: "/data2/als/pv"
+            project:   "rs"
+            concurrent_num: 10
+            chkpntfile: "pv.gob"
+        }
+
+        {
+            name:   "dau"
+            class:  "BatchAlsLogInput"
+            ident:   "rsDau"
+            ticker_interval: 30
+            root_dir: "/data2/als/dau"
+            project:   "rs"
+            concurrent_num: 10
+            chkpntfile: "dau.gob"
+        }
+
+        {
             name:   "BatchAlsLogInput"
             class:  "BatchAlsLogInput"
             ident:   "allIn"
@@ -22,15 +44,60 @@
             chkpntfile: "_.gob"
             except: [
                 "bigdata", "bigdata_rcfail", "cheat_check", "cheater", "load_data",
-                "newpay", "post", "quest", "session",
+                "newpay", "post", "quest", "session", "dau", "pv",
             ]
         }
-        
+
+        {
+            name:   "rsSkyOutput"
+            class:  "SkyOutput"
+            match:  ["rsDau", ]
+            disabled: false
+            table:  "rs_user"
+            fields: [
+                {
+                    camel_name: "dau"
+                    action: "visit"
+                }
+            ]
+        }
+
+        {
+            name:   "EsBufferFilter"
+            match:  ["rsDau", "rsPv", ]
+            ident:   "esBuffer"
+            disabled: false
+            workers: [
+                {
+                    camel_name: "dau"
+                    project:    "RS"
+                    index_pattern:  "@ym"
+                    expression: "count"
+                    interval:   60
+                }
+                {
+                    camel_name: "pv"
+                    project:    "RS"
+                    index_pattern:  "@ym"
+                    field_name: "_log_info.elapsed"
+                    field_type: "float"
+                    expression: "mean"
+                    interval:   120
+                }
+                {
+                    camel_name: "pv"
+                    project:    "RS"
+                    index_pattern:  "@ym"
+                    expression: "count"
+                    interval:   120
+                }
+            ]
+        }
         {
             name:   "EsFilter"
             match:  ["allIn", ]
             index_pattern:  "@ym"
-            ident:   "allFiltered"
+            ident:   "esFiltered"
             converts: [
                 // type: ip|money|range|del
                 {
@@ -56,7 +123,7 @@
 
         {
             name:   "EsOutput"
-            match:  ["allFiltered", ]
+            match:  ["esFiltered", "esBuffer", ]
             domain: "localhost"
             port: "9200"
             report_interval: 10
