@@ -69,7 +69,7 @@
         {
             name:   "rsSkyOutput"
             class:  "SkyOutput"
-            match:  ["rsLogs", ]
+            match:  ["rsDau", ]
             disabled: false
             table:  "rs_user"
             fields: [

@@ -69,7 +69,7 @@ func (this PipelinePack) String() string {
 	s := fmt.Sprintf("%s@%s, rc=%d, loop=%d", this.Ident, this.Project,
 		this.RefCount, this.MsgLoopCount)
 	if this.Logfile != nil {
-		s = fmt.Sprintf("%s src:%s", s, this.Logfile.Base())
+		s = fmt.Sprintf("%s src=%s", s, this.Logfile.Base())
 	}
 	if this.EsIndex != "" {
 		s = fmt.Sprintf("%s, index{%s, %s}", s, this.EsIndex, this.EsType)
