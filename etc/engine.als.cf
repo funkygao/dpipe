@@ -71,6 +71,7 @@
             class:  "SkyOutput"
             match:  ["rsDau", ]
             disabled: false
+            project:    "RS"
             table:  "rs_user"
             uid_field: "uid"
             fields: [

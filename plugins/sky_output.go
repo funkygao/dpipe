@@ -27,11 +27,13 @@ type SkyOutput struct {
 	table    *sky.Table
 	stopChan chan bool
 	uidField string
+	project  string
 	fields   []skyOutputField
 }
 
 func (this *SkyOutput) Init(config *conf.Conf) {
 	this.uidField = config.String("uid_field", "_log_info.uid")
+	this.project = config.String("project", "")
 	this.stopChan = make(chan bool)
 	var (
 		host string = config.String("host", "localhost")
@@ -65,9 +67,10 @@ func (this *SkyOutput) Init(config *conf.Conf) {
 
 func (this *SkyOutput) Run(r engine.OutputRunner, h engine.PluginHelper) error {
 	var (
-		ok     = true
-		pack   *engine.PipelinePack
-		inChan = r.InChan()
+		ok      = true
+		pack    *engine.PipelinePack
+		inChan  = r.InChan()
+		project = h.Project(this.project)
 	)
 
 	for ok {
@@ -80,7 +83,7 @@ func (this *SkyOutput) Run(r engine.OutputRunner, h engine.PluginHelper) error {
 				break
 			}
 
-			this.feedSky(pack)
+			this.feedSky(project, pack)
 			pack.Recycle()
 		}
 	}
@@ -88,7 +91,7 @@ func (this *SkyOutput) Run(r engine.OutputRunner, h engine.PluginHelper) error {
 	return nil
 }
 
-func (this *SkyOutput) feedSky(pack *engine.PipelinePack) {
+func (this *SkyOutput) feedSky(project *engine.ConfProject, pack *engine.PipelinePack) {
 	var (
 		uid interface{}
 		val interface{}
@@ -98,7 +101,10 @@ func (this *SkyOutput) feedSky(pack *engine.PipelinePack) {
 	// get uid
 	uid, err = pack.Message.FieldValue(this.uidField, als.KEY_TYPE_INT)
 	if err != nil {
-		engine.Globals().Printf("invalid uid: %v %s", err, *pack)
+		if project.ShowError {
+			project.Printf("invalid uid: %v %s", err, *pack)
+		}
+
 		return
 	}
 
@@ -126,8 +132,8 @@ func (this *SkyOutput) feedSky(pack *engine.PipelinePack) {
 
 	// objectId is uid string
 	err = this.table.AddEvent(strconv.Itoa(uid.(int)), event, sky.Merge)
-	if err != nil {
-		engine.Globals().Println(err)
+	if err != nil && project.ShowError {
+		project.Println(err)
 	}
 }
 
