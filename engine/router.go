@@ -147,15 +147,14 @@ func (this *messageRouter) runMainloop() {
 		}
 	}
 
+	globals.Printf("Router stopped with total msg: %s",
+		gofmt.Comma(this.totalProcessedMsgN))
+
 	for _, matcher = range this.filterMatchers {
 		close(matcher.inChan)
 	}
 	for _, matcher = range this.outputMatchers {
 		close(matcher.inChan)
-	}
-
-	if globals.Verbose {
-		globals.Println("Router stopped")
 	}
 
 }
