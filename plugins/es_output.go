@@ -26,6 +26,7 @@ type EsOutput struct {
 func (this *EsOutput) Init(config *conf.Conf) {
 	this.stopChan = make(chan bool)
 	api.Domain = config.String("domain", "localhost")
+	this.counters = make(map[string]int)
 	api.Port = config.String("port", "9200")
 	this.reportInterval = time.Duration(config.Int("report_interval", 30)) * time.Second
 	this.flushInterval = time.Duration(config.Int("flush_interval", 30)) * time.Second
