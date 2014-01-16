@@ -96,7 +96,7 @@ func (this *EngineConfig) HttpApiHandleFunc(path string,
 
 		if ret != nil {
 			// pretty write json result
-			pretty, _ := json.MarshalIndent(ret, "", "  ")
+			pretty, _ := json.MarshalIndent(ret, "", "    ")
 			w.Write(pretty)
 		}
 	}
