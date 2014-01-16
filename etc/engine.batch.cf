@@ -18,7 +18,7 @@
             ticker_interval: 10
             root_dir: "/data2/als/pv"
             project:   "rs"
-            concurrent_num: 10
+            concurrent_num: 30
             chkpntfile: "pv.gob"
         }
 
