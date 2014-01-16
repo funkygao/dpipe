@@ -20,7 +20,8 @@
             concurrent_num: 50
             chkpntfile: "_.gob"
             except: [
-                "post", "load_data", "newpay", "bigdata", "quest", "cheat_check", "index", 
+                "bigdata", "bigdata_rcfail", "cheat_check", "cheater", "load_data",
+                "newpay", "post", "quest", "session",
             ]
         }
         
@@ -57,6 +58,7 @@
             match:  ["allFiltered", ]
             domain: "localhost"
             port: "9200"
+            report_interval: 10
             flush_interval: 30
             bulk_max_conn: 20
             bulk_max_docs: 100
