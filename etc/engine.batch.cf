@@ -6,6 +6,7 @@
         {
             name:    "rs"
             logfile: "var/rs.log"
+            show_error: false
         }
     ]
 
