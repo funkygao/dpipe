@@ -134,7 +134,7 @@ LOOP:
 			pack = <-inChan
 			if err = pack.Message.FromLine(string(line)); err != nil {
 				if project.ShowError && err != als.ErrEmptyLine {
-					project.Printf("[%s]%v: %s", fn, err, line.Text)
+					project.Printf("[%s]%v: %s", path, err, string(line))
 				}
 
 				pack.Recycle()
