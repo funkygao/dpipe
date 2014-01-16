@@ -43,7 +43,7 @@
             concurrent_num: 50
             chkpntfile: "_.gob"
             except: [
-                "bigdata", "bigdata_rcfail", "cheat_check", "cheater", "load_data",
+                "bigdata", "bigdata_rcfail", "cheat_check", "cheater", "index", "load_data",
                 "newpay", "post", "quest", "session", "dau", "pv",
             ]
         }

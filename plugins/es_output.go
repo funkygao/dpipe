@@ -15,7 +15,7 @@ type EsOutput struct {
 	flushInterval  time.Duration
 	reportInterval time.Duration
 	dryRun         bool
-	counters       map[string]int // EsType -> N
+	counters       map[string]int // EsIndex:EsType -> N
 	bulkMaxConn    int            `json:"bulk_max_conn"`
 	bulkMaxDocs    int            `json:"bulk_max_docs"`
 	bulkMaxBuffer  int            `json:"bulk_max_buffer"` // in Byte
@@ -93,10 +93,10 @@ func (this *EsOutput) Run(r engine.OutputRunner, h engine.PluginHelper) error {
 
 func (this *EsOutput) handlePeriodicalCounters() {
 	globals := engine.Globals()
-	for typ, n := range this.counters {
-		globals.Printf("sink to ES %20s %8d", typ, n)
+	for name, n := range this.counters {
+		globals.Printf("sink to ES %20s %8d", name, n)
 
-		this.counters[typ] = 0
+		this.counters[name] = 0
 	}
 }
 
@@ -110,7 +110,7 @@ func (this *EsOutput) feedEs(project *engine.ConfProject, pack *engine.PipelineP
 		return
 	}
 
-	this.counters[pack.EsType] += 1
+	this.counters[pack.EsIndex+":"+pack.EsType] += 1
 
 	if this.dryRun {
 		return
