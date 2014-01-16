@@ -15,7 +15,7 @@
             name:   "pv"
             class:  "BatchAlsLogInput"
             ident:   "rsPv"
-            ticker_interval: 60
+            ticker_interval: 10
             root_dir: "/data2/als/pv"
             project:   "rs"
             concurrent_num: 10
