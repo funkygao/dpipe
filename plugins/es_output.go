@@ -81,7 +81,9 @@ func (this *EsOutput) Run(r engine.OutputRunner, h engine.PluginHelper) error {
 	}
 
 	// before shutdown, flush again
+	engine.Globals().Println("Waiting for ES flush...")
 	this.indexer.Flush()
+	engine.Globals().Println("ES flushed")
 
 	// let indexer stop
 	this.stopChan <- true
