@@ -107,6 +107,7 @@ func (this *esBufferWorker) run(r engine.FilterRunner, h engine.PluginHelper) {
 				panic("invalid expression: " + this.expression)
 			}
 
+			pack.Message.Timestamp = this.timestamp
 			pack.Ident = this.ident
 			pack.EsIndex = indexName(h.Project(this.projectName),
 				this.indexPattern, time.Unix(int64(this.timestamp), 0))
