@@ -28,7 +28,7 @@ func (this *CardinalityOutput) Run(r engine.OutputRunner, h engine.PluginHelper)
 		inChan  = r.InChan()
 	)
 
-	h.HttpApiHandleFunc("/card/{key}", func(w http.ResponseWriter,
+	h.RegisterHttpApi("/card/{key}", func(w http.ResponseWriter,
 		req *http.Request, params map[string]interface{}) (interface{}, error) {
 		return this.handleHttpRequest(w, req, params)
 	}).Methods("GET", "PUT")

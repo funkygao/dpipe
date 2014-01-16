@@ -56,14 +56,14 @@ func (this *EngineConfig) handleHttpQuery(w http.ResponseWriter, req *http.Reque
 }
 
 func (this *EngineConfig) addHttpHandlers() {
-	this.HttpApiHandleFunc("/admin/{cmd}",
+	this.RegisterHttpApi("/admin/{cmd}",
 		func(w http.ResponseWriter, req *http.Request,
 			params map[string]interface{}) (interface{}, error) {
 			return this.handleHttpQuery(w, req, params)
 		}).Methods("GET")
 }
 
-func (this *EngineConfig) HttpApiHandleFunc(path string,
+func (this *EngineConfig) RegisterHttpApi(path string,
 	handlerFunc func(http.ResponseWriter,
 		*http.Request, map[string]interface{}) (interface{}, error)) *mux.Route {
 	wrappedFunc := func(w http.ResponseWriter, req *http.Request) {
@@ -90,6 +90,13 @@ func (this *EngineConfig) HttpApiHandleFunc(path string,
 			// pretty write json result
 			pretty, _ := json.MarshalIndent(ret, "", "    ")
 			w.Write(pretty)
+		}
+	}
+
+	// path can't be duplicated
+	for _, p := range this.httpPaths {
+		if p == path {
+			panic(path + " already registered")
 		}
 	}
 
