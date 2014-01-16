@@ -1,6 +1,7 @@
 package engine
 
 import (
+	"github.com/funkygao/golib/gofmt"
 	"github.com/funkygao/golib/observer"
 	"os"
 	"os/signal"
@@ -73,8 +74,7 @@ func Launch(e *EngineConfig) {
 	go inputPackTracker.Run()
 	go filterPackTracker.Run()
 
-	routerDone := make(chan bool)
-	go e.router.Start(routerDone)
+	go e.router.Start()
 
 	if globals.Verbose {
 		globals.Println("Launching Input(s)...")
@@ -163,8 +163,6 @@ func Launch(e *EngineConfig) {
 		globals.Println("All Outputs terminated")
 	}
 
-	close(e.router.inChan)
-	<-routerDone
-
-	globals.Println("Engine shutdown complete.")
+	globals.Println("Engine shutdown complete with msg: %s.",
+		gofmt.Comma(e.router.totalProcessedMsgN))
 }

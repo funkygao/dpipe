@@ -109,7 +109,7 @@ func (this *EsOutput) handlePeriodicalCounters() {
 
 func (this *EsOutput) feedEs(project *engine.ConfProject, pack *engine.PipelinePack) {
 	if pack.EsType == "" || pack.EsIndex == "" {
-		project.Printf("Empty ES config: %s plugins:%v",
+		project.Printf("Empty ES meta: %s plugins:%v",
 			*pack, pack.PluginNames())
 
 		this.counters["_error_"] += 1

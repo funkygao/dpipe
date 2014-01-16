@@ -41,7 +41,7 @@ func (this *messageRouter) InChan() chan *PipelinePack {
 }
 
 // Dispatch pack from Input to MatchRunners
-func (this *messageRouter) Start(done chan<- bool) {
+func (this *messageRouter) Start() {
 	var (
 		globals    = Globals()
 		ok         = true
@@ -139,10 +139,6 @@ func (this *messageRouter) Start(done chan<- bool) {
 		}
 	}
 
-	globals.Printf("Router stopped with total msg: %s",
-		gofmt.Comma(this.totalProcessedMsgN))
-
-	done <- true
 }
 
 func (this *messageRouter) removeMatcher(matcher *MatchRunner,
