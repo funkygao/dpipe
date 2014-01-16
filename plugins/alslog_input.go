@@ -7,6 +7,7 @@ import (
 	"github.com/funkygao/golib/observer"
 	conf "github.com/funkygao/jsconf"
 	"github.com/funkygao/tail"
+	"os"
 	"path/filepath"
 	"strings"
 	"sync"
