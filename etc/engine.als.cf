@@ -68,6 +68,7 @@
 
         {
             name:   "rsSkyOutput"
+            class:  "SkyOutput"
             match:  ["rsLogs", ]
             disabled: false
             table:  "rs_user"
