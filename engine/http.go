@@ -34,8 +34,7 @@ func (this *EngineConfig) handleHttpQuery(w http.ResponseWriter, req *http.Reque
 
 	output := make(map[string]interface{})
 	switch cmd {
-	case "", "ping":
-		// ping
+	case "ping":
 		output["status"] = "ok"
 
 	case "stat":
@@ -49,8 +48,6 @@ func (this *EngineConfig) handleHttpQuery(w http.ResponseWriter, req *http.Reque
 		output["start"] = globals.StartedAt
 		output["pid"] = this.pid
 		output["hostname"] = this.hostname
-		output["inputChannel"] = cap(this.inputRecycleChan)
-		output["filterChannel"] = cap(this.filterRecycleChan)
 		output["allPlugins"] = availablePlugins
 
 	case "plugins":
@@ -64,7 +61,7 @@ func (this *EngineConfig) handleHttpQuery(w http.ResponseWriter, req *http.Reque
 }
 
 func (this *EngineConfig) addHttpHandlers() {
-	this.HttpApiHandleFunc("/{cmd}",
+	this.HttpApiHandleFunc("/admin/{cmd}",
 		func(w http.ResponseWriter, req *http.Request,
 			params map[string]interface{}) (interface{}, error) {
 			return this.handleHttpQuery(w, req, params)

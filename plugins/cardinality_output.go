@@ -66,16 +66,14 @@ func (this *CardinalityOutput) handleHttpRequest(w http.ResponseWriter,
 	output := make(map[string]interface{})
 	switch req.Method {
 	case "GET":
-		if key != "" {
+		if key == "all" {
+			for _, c := range this.counters.Categories() {
+				output[c] = fmt.Sprintf("[%v]%d",
+					bjtime.TsToString(int(this.counters.StartedAt(c).Unix())),
+					this.counters.Count(c))
+			}
+		} else {
 			output[key] = this.counters.Count(key)
-			return output, nil
-		}
-
-		// show all counters
-		for _, c := range this.counters.Categories() {
-			output[c] = fmt.Sprintf("[%v]%d",
-				bjtime.TsToString(int(this.counters.StartedAt(c).Unix())),
-				this.counters.Count(c))
 		}
 
 	case "PUT":
