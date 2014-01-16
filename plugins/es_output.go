@@ -51,6 +51,9 @@ func (this *EsOutput) Run(r engine.OutputRunner, h engine.PluginHelper) error {
 		inChan     = r.InChan()
 	)
 
+	reportTicker := time.NewTicker(this.reportInterval)
+	defer reportTicker.Stop()
+
 	observer.Subscribe(engine.RELOAD, reloadChan)
 
 	for ok {
@@ -58,7 +61,7 @@ func (this *EsOutput) Run(r engine.OutputRunner, h engine.PluginHelper) error {
 		case <-this.stopChan:
 			ok = false
 
-		case <-time.After(this.reportInterval):
+		case <-reportTicker.C:
 			this.handlePeriodicalCounters()
 
 		case <-reloadChan:
@@ -89,7 +92,7 @@ func (this *EsOutput) Run(r engine.OutputRunner, h engine.PluginHelper) error {
 func (this *EsOutput) handlePeriodicalCounters() {
 	globals := engine.Globals()
 	for index, n := range this.counters {
-		globals.Printf("sink to ES %12s %8d", index, n)
+		globals.Printf("sink to ES %20s %8d", index, n)
 
 		this.counters[index] = 0
 	}
