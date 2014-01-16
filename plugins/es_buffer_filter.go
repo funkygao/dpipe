@@ -84,11 +84,7 @@ func (this esBufferWorker) inject(pack *engine.PipelinePack) {
 }
 
 func (this *esBufferWorker) run(r engine.FilterRunner, h engine.PluginHelper) {
-	var (
-		globals = engine.Globals()
-	)
-
-	for !globals.Stopping {
+	for !engine.Globals().Stopping {
 		select {
 		case <-time.After(this.interval):
 			// generate new pack
