@@ -42,6 +42,10 @@ func (this *BatchAlsLogInput) CleanupForRestart() bool {
 	return false
 }
 
+func (this *BatchAlsLogInput) Stop() {
+
+}
+
 func (this *BatchAlsLogInput) Run(r engine.InputRunner, h engine.PluginHelper) error {
 	this.runner = r
 	this.h = h
@@ -69,10 +73,6 @@ func (this *BatchAlsLogInput) Run(r engine.InputRunner, h engine.PluginHelper) e
 	globals.Shutdown()
 
 	return nil
-}
-
-func (this *BatchAlsLogInput) Stop() {
-
 }
 
 func (this *BatchAlsLogInput) shouldRunSingleLogfile(path string) bool {
