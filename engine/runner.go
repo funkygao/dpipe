@@ -1,6 +1,7 @@
 package engine
 
 import (
+	"fmt"
 	"sync"
 )
 
@@ -25,7 +26,6 @@ type FilterOutputRunner interface {
 	Matcher() *Matcher
 }
 
-// Base struct for the specialized PluginRunners
 type pRunnerBase struct {
 	name          string
 	plugin        Plugin
@@ -39,7 +39,6 @@ type foRunner struct {
 
 	matcher   *Matcher
 	inChan    chan *PipelinePack
-	engine    *EngineConfig
 	leakCount int
 }
 
@@ -78,9 +77,9 @@ func (this *foRunner) Matcher() *Matcher {
 
 func (this *foRunner) Inject(pack *PipelinePack) bool {
 	if pack.Ident == "" {
-		Globals().Printf("Plugin %v new pack with empty ident: %s",
+		errmsg := fmt.Sprintf("Plugin %s tries to inject pack with empty ident: %s",
 			this.Name(), *pack)
-		return false
+		panic(errmsg)
 	}
 
 	this.engine.router.inChan <- pack
