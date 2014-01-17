@@ -30,7 +30,3 @@ func (this *Matcher) match(pack *PipelinePack) bool {
 
 	return false
 }
-
-func (this *Matcher) Name() string {
-	return this.runner.Name()
-}
