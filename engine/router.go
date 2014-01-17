@@ -106,19 +106,27 @@ func (this *messageRouter) Start(routerReady chan<- interface{}) {
 				}
 			}
 
-			for _, matcher = range this.outputMatchers {
-				if matcher != nil && matcher.match(pack) {
-					foundMatch = true
+			// If we send pack to filterMatchers and then outputMatchers
+			// because filter may change pack Ident, and this pack bacuase
+			// of shared mem, may match both filterMatcher and now outputMatcher
+			// then dup dispatching happens!!!
+			//
+			// So, we for a give pack, filter sink and output sink is exclusive
+			if !foundMatch {
+				for _, matcher = range this.outputMatchers {
+					if matcher != nil && matcher.match(pack) {
+						foundMatch = true
 
-					pack.IncRef()
-					pack.diagnostics.AddStamp(matcher.runner)
-					matcher.inChan <- pack
+						pack.IncRef()
+						pack.diagnostics.AddStamp(matcher.runner)
+						matcher.inChan <- pack
+					}
 				}
 			}
 
 			if !foundMatch {
-				globals.Printf("Found no match: %s, msg=%s", *pack,
-					pack.Message.RawLine())
+				globals.Printf("Found no match: %s, msg=%s",
+					*pack, pack.Message.Payload)
 			}
 
 			// never forget this!
