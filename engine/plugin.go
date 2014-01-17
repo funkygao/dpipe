@@ -7,8 +7,6 @@ import (
 	"net/http"
 )
 
-// Plugin must have Init method
-// Besides, it can have CleanupForRestart
 type Plugin interface {
 	Init(config *conf.Conf)
 }
