@@ -63,7 +63,7 @@ func (this *BatchAlsLogInput) Run(r engine.InputRunner, h engine.PluginHelper) e
 
 	globals := engine.Globals()
 	if globals.Verbose {
-		globals.Printf("Total line: %d", this.lineN)
+		globals.Printf("Total msg: %d", this.lineN)
 	}
 
 	globals.Shutdown()
