@@ -80,7 +80,7 @@ func (this *iRunner) runMainloop(e *EngineConfig, wg *sync.WaitGroup) {
 	globals := Globals()
 	for !globals.Stopping {
 		if globals.Verbose {
-			globals.Printf("[%s] starting", this.name)
+			globals.Printf("[%s]starting", this.name)
 		}
 
 		if err := this.Input().Run(this, e); err != nil {
@@ -88,7 +88,7 @@ func (this *iRunner) runMainloop(e *EngineConfig, wg *sync.WaitGroup) {
 		}
 
 		if globals.Verbose {
-			globals.Printf("[%s] stopped", this.name)
+			globals.Printf("[%s]stopped", this.name)
 		}
 
 		if globals.Stopping {
