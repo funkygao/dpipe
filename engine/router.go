@@ -10,8 +10,10 @@ import (
 type messageRouter struct {
 	inChan chan *PipelinePack
 
-	periodProcessMsgN  int32
+	totalInputMsgN     int64
+	periodInputMsgN    int32
 	totalProcessedMsgN int64 // 16 BilionBillion
+	periodProcessMsgN  int32
 
 	removeFilterMatcher chan *Matcher
 	removeOutputMatcher chan *Matcher
@@ -53,6 +55,8 @@ func (this *messageRouter) Start(routerReady chan<- interface{}) {
 	// tell others to go ahead
 	routerReady <- true
 
+DONE:
+
 	for ok {
 		runtime.Gosched()
 
@@ -68,21 +72,31 @@ func (this *messageRouter) Start(routerReady chan<- interface{}) {
 			}
 
 		case <-ticker.C:
-			globals.Printf("Total msg: %s, elapsed: %s, speed: %d/s",
-				gofmt.Comma(this.totalProcessedMsgN),
+			globals.Printf("Elapsed: %s, Total: %s, speed: %d/s\nInput: %s, speed: %d/s",
 				time.Since(globals.StartedAt),
-				this.periodProcessMsgN/int32(globals.TickerLength))
+				gofmt.Comma(this.totalProcessedMsgN),
+				this.periodProcessMsgN/int32(globals.TickerLength),
+				gofmt.Comma(this.totalInputMsgN),
+				this.periodInputMsgN/int32(globals.TickerLength))
+
+			this.periodInputMsgN = int32(0)
 			this.periodProcessMsgN = int32(0)
 
 		case pack, ok = <-this.inChan:
 			if !ok {
 				globals.Stopping = true
-				break
+				break DONE
+			}
+
+			atomic.AddInt32(&this.periodProcessMsgN, 1)
+			atomic.AddInt64(&this.totalProcessedMsgN, 1)
+			if len(pack.diagnostics.Runners()) == 0 {
+				// has no runner pack, means Input generated pack
+				atomic.AddInt64(&this.totalInputMsgN, 1)
+				atomic.AddInt32(&this.periodInputMsgN, 1)
 			}
 
 			pack.diagnostics.Reset()
-			atomic.AddInt32(&this.periodProcessMsgN, 1)
-			atomic.AddInt64(&this.totalProcessedMsgN, 1)
 			foundMatch = false
 
 			// got pack from Input, now dispatch
@@ -125,6 +139,10 @@ func (this *messageRouter) Start(routerReady chan<- interface{}) {
 		}
 	}
 
+	if globals.Verbose {
+		globals.Println("Starting to shutdown filters and outputs...")
+	}
+
 	for _, matcher = range this.filterMatchers {
 		if matcher != nil {
 			close(matcher.InChan())
@@ -134,6 +152,10 @@ func (this *messageRouter) Start(routerReady chan<- interface{}) {
 		if matcher != nil {
 			close(matcher.InChan())
 		}
+	}
+
+	if globals.Verbose {
+		globals.Println("Filters and outputs chan closed")
 	}
 
 }

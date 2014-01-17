@@ -81,7 +81,7 @@ func (this *EsFilter) Run(r engine.FilterRunner, h engine.PluginHelper) error {
 		}
 	}
 
-	globals.Printf("Total transformed: %d", count)
+	globals.Printf("Total filtered: %d", count)
 
 	return nil
 }
