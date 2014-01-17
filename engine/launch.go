@@ -66,7 +66,9 @@ func Launch(e *EngineConfig) {
 	go inputPackTracker.Run()
 	go filterPackTracker.Run()
 
-	go e.router.Start()
+	routerReady := make(chan interface{})
+	go e.router.Start(routerReady)
+	<-routerReady
 
 	if globals.Verbose {
 		globals.Println("Launching Input(s)...")

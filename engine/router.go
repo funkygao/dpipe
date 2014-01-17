@@ -41,7 +41,7 @@ func (this *messageRouter) InChan() chan *PipelinePack {
 }
 
 // Dispatch pack from Input to MatchRunners
-func (this *messageRouter) Start() {
+func (this *messageRouter) Start(routerReady chan<- interface{}) {
 	var (
 		globals    = Globals()
 		ok         = true
@@ -51,22 +51,29 @@ func (this *messageRouter) Start() {
 		foundMatch bool
 	)
 
+	ticker = time.NewTicker(time.Second * time.Duration(globals.TickerLength))
+	defer ticker.Stop()
+
 	if globals.Verbose {
 		globals.Printf("Router started with ticker %ds\n", globals.TickerLength)
 	}
 
-	ticker = time.NewTicker(time.Second * time.Duration(globals.TickerLength))
-	defer ticker.Stop()
+	// tell others to go ahead
+	routerReady <- true
 
 	for ok {
 		runtime.Gosched()
 
 		select {
 		case matcher = <-this.removeOutputMatcher:
-			this.removeMatcher(matcher, this.outputMatchers)
+			if matcher != nil {
+				this.removeMatcher(matcher, this.outputMatchers)
+			}
 
 		case matcher = <-this.removeFilterMatcher:
-			this.removeMatcher(matcher, this.filterMatchers)
+			if matcher != nil {
+				this.removeMatcher(matcher, this.filterMatchers)
+			}
 
 		case <-ticker.C:
 			globals.Printf("Total msg: %s, elapsed: %s, speed: %d/s",
@@ -90,36 +97,28 @@ func (this *messageRouter) Start() {
 			// for each target, pack will inc ref count
 			// and the router will dec ref count only once
 			for _, matcher = range this.filterMatchers {
-				if matcher == nil {
-					continue
-				}
-
-				if matcher.match(pack) {
+				if matcher != nil && matcher.match(pack) {
 					foundMatch = true
 
-					pack.diagnostics.AddStamp(matcher.runner)
 					pack.IncRef()
+					pack.diagnostics.AddStamp(matcher.runner)
 					matcher.inChan <- pack
 				}
-
 			}
-			for _, matcher = range this.outputMatchers {
-				if matcher == nil {
-					continue
-				}
 
-				if matcher.match(pack) {
+			for _, matcher = range this.outputMatchers {
+				if matcher != nil && matcher.match(pack) {
 					foundMatch = true
 
-					pack.diagnostics.AddStamp(matcher.runner)
 					pack.IncRef()
+					pack.diagnostics.AddStamp(matcher.runner)
 					matcher.inChan <- pack
 				}
-
 			}
 
 			if !foundMatch {
-				globals.Printf("Found no match: %s", *pack)
+				globals.Printf("Found no match: %s, msg=%s", *pack,
+					pack.Message.RawLine())
 			}
 
 			// never forget this!
@@ -142,10 +141,6 @@ func (this *messageRouter) Start() {
 
 func (this *messageRouter) removeMatcher(matcher *MatchRunner,
 	matchers []*MatchRunner) {
-	if matcher == nil {
-		return
-	}
-
 	for idx, m := range matchers {
 		if m == matcher {
 			close(m.inChan)
