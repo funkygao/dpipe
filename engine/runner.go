@@ -78,7 +78,7 @@ func (this *foRunner) Inject(pack *PipelinePack) bool {
 		return false
 	}
 
-	this.engine.router.InChan() <- pack
+	this.engine.router.inChan <- pack
 	return true
 }
 

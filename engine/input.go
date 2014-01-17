@@ -44,7 +44,7 @@ func (this *iRunner) Inject(pack *PipelinePack) {
 		Globals().Fatalf("empty Ident: %s", *pack)
 	}
 
-	this.engine.router.InChan() <- pack
+	this.engine.router.inChan <- pack
 }
 
 func (this *iRunner) InChan() chan *PipelinePack {

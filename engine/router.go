@@ -7,10 +7,6 @@ import (
 	"time"
 )
 
-type MessageRouter interface {
-	InChan() chan *PipelinePack
-}
-
 type messageRouter struct {
 	inChan chan *PipelinePack
 
@@ -34,10 +30,6 @@ func NewMessageRouter() (this *messageRouter) {
 	this.outputMatchers = make([]*MatchRunner, 0, 10)
 
 	return this
-}
-
-func (this *messageRouter) InChan() chan *PipelinePack {
-	return this.inChan
 }
 
 // Dispatch pack from Input to MatchRunners
