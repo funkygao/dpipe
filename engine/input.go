@@ -21,8 +21,6 @@ type InputRunner interface {
 	// Associated Input plugin object.
 	Input() Input
 
-	Start(e *EngineConfig, wg *sync.WaitGroup) (err error)
-
 	// Injects PipelinePack into the Router's input channel for delivery
 	// to all Filter and Output plugins with corresponding matcher.
 	Inject(pack *PipelinePack)
@@ -63,12 +61,14 @@ func (this *iRunner) Ticker() (t <-chan time.Time) {
 	return this.ticker
 }
 
-func (this *iRunner) Start(e *EngineConfig, wg *sync.WaitGroup) error {
+func (this *iRunner) start(e *EngineConfig, wg *sync.WaitGroup) error {
 	this.engine = e
-	this.inChan = e.inputRecycleChan // got the engine PipelinePack pool
 	if this.tickLength > 0 {
 		this.ticker = time.Tick(this.tickLength)
 	}
+
+	// got the engine's recylable PipelinePack pool
+	this.inChan = e.inputRecycleChan
 
 	go this.runMainloop(e, wg)
 	return nil

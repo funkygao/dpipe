@@ -13,21 +13,21 @@ type messageRouter struct {
 	periodProcessMsgN  int32
 	totalProcessedMsgN int64 // 16 BilionBillion
 
-	removeFilterMatcher chan *MatchRunner
-	removeOutputMatcher chan *MatchRunner
+	removeFilterMatcher chan *Matcher
+	removeOutputMatcher chan *Matcher
 
-	filterMatchers []*MatchRunner
-	outputMatchers []*MatchRunner
+	filterMatchers []*Matcher
+	outputMatchers []*Matcher
 }
 
 func NewMessageRouter() (this *messageRouter) {
 	this = new(messageRouter)
 	this.inChan = make(chan *PipelinePack, Globals().PluginChanSize)
 
-	this.removeFilterMatcher = make(chan *MatchRunner)
-	this.removeOutputMatcher = make(chan *MatchRunner)
-	this.filterMatchers = make([]*MatchRunner, 0, 10)
-	this.outputMatchers = make([]*MatchRunner, 0, 10)
+	this.removeFilterMatcher = make(chan *Matcher)
+	this.removeOutputMatcher = make(chan *Matcher)
+	this.filterMatchers = make([]*Matcher, 0, 10)
+	this.outputMatchers = make([]*Matcher, 0, 10)
 
 	return this
 }
@@ -39,7 +39,7 @@ func (this *messageRouter) Start(routerReady chan<- interface{}) {
 		ok         = true
 		pack       *PipelinePack
 		ticker     *time.Ticker
-		matcher    *MatchRunner
+		matcher    *Matcher
 		foundMatch bool
 	)
 
@@ -94,7 +94,7 @@ func (this *messageRouter) Start(routerReady chan<- interface{}) {
 
 					pack.IncRef()
 					pack.diagnostics.AddStamp(matcher.runner)
-					matcher.inChan <- pack
+					matcher.InChan() <- pack
 				}
 			}
 
@@ -111,7 +111,7 @@ func (this *messageRouter) Start(routerReady chan<- interface{}) {
 
 						pack.IncRef()
 						pack.diagnostics.AddStamp(matcher.runner)
-						matcher.inChan <- pack
+						matcher.InChan() <- pack
 					}
 				}
 			}
@@ -127,22 +127,21 @@ func (this *messageRouter) Start(routerReady chan<- interface{}) {
 
 	for _, matcher = range this.filterMatchers {
 		if matcher != nil {
-			close(matcher.inChan)
+			close(matcher.InChan())
 		}
 	}
 	for _, matcher = range this.outputMatchers {
 		if matcher != nil {
-			close(matcher.inChan)
+			close(matcher.InChan())
 		}
 	}
 
 }
 
-func (this *messageRouter) removeMatcher(matcher *MatchRunner,
-	matchers []*MatchRunner) {
+func (this *messageRouter) removeMatcher(matcher *Matcher, matchers []*Matcher) {
 	for idx, m := range matchers {
 		if m == matcher {
-			close(m.inChan)
+			close(m.InChan())
 			matchers[idx] = nil
 			break
 		}

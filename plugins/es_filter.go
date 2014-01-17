@@ -81,7 +81,7 @@ func (this *EsFilter) Run(r engine.FilterRunner, h engine.PluginHelper) error {
 		}
 	}
 
-	globals.Printf("Total %d msg handled", count)
+	globals.Printf("Total msg handled: %d", count)
 
 	return nil
 }

@@ -29,8 +29,7 @@ func Launch(e *EngineConfig) {
 	}
 	for _, runner := range e.OutputRunners {
 		outputsWg.Add(1)
-		if err = runner.Start(e, outputsWg); err != nil {
-			outputsWg.Done()
+		if err = runner.start(e, outputsWg); err != nil {
 			panic(err)
 		}
 	}
@@ -40,8 +39,7 @@ func Launch(e *EngineConfig) {
 	}
 	for _, runner := range e.FilterRunners {
 		filtersWg.Add(1)
-		if err = runner.Start(e, filtersWg); err != nil {
-			filtersWg.Done()
+		if err = runner.start(e, filtersWg); err != nil {
 			panic(err)
 		}
 	}
@@ -75,7 +73,7 @@ func Launch(e *EngineConfig) {
 	}
 	for _, runner := range e.InputRunners {
 		inputsWg.Add(1)
-		if err = runner.Start(e, inputsWg); err != nil {
+		if err = runner.start(e, inputsWg); err != nil {
 			inputsWg.Done()
 			panic(err)
 		}
@@ -134,7 +132,7 @@ func Launch(e *EngineConfig) {
 	// we must wait for all the packs to be handled before shutdown
 
 	for _, runner := range e.FilterRunners {
-		e.router.removeFilterMatcher <- runner.MatchRunner()
+		e.router.removeFilterMatcher <- runner.Matcher()
 
 		if globals.Verbose {
 			globals.Printf("Stop message sent to '%s'", runner.Name())
@@ -146,7 +144,7 @@ func Launch(e *EngineConfig) {
 	}
 
 	for _, runner := range e.OutputRunners {
-		e.router.removeOutputMatcher <- runner.MatchRunner()
+		e.router.removeOutputMatcher <- runner.Matcher()
 
 		if globals.Verbose {
 			globals.Printf("Stop message sent to '%s'", runner.Name())

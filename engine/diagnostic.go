@@ -32,11 +32,12 @@ func (this *DiagnosticTracker) Run() {
 
 	idleMax := globals.MaxPackIdle
 	probablePacks := make([]*PipelinePack, 0, len(this.packs))
-	ticker := time.NewTicker(time.Duration(30) * time.Second)
+	ticker := time.NewTicker(time.Duration(globals.DiagnosticInterval) * time.Second)
 	defer ticker.Stop()
 
 	if globals.Verbose {
-		globals.Printf("Diagnostic[%s] started with 30s\n", this.PoolName)
+		globals.Printf("Diagnostic[%s] started with %ds\n", this.PoolName,
+			globals.DiagnosticInterval)
 	}
 
 	for !globals.Stopping {
@@ -65,7 +66,7 @@ func (this *DiagnosticTracker) Run() {
 			globals.Printf("[%s]%d packs have been idle more than %.0f seconds",
 				this.PoolName, len(probablePacks), idleMax.Seconds())
 			for runner, count = range pluginCounts {
-				runner.SetLeakCount(count) // let runner know leak count
+				runner.setLeakCount(count) // let runner know leak count
 
 				globals.Printf("\t%s: %d", runner.Name(), count)
 			}

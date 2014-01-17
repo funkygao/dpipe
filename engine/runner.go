@@ -6,14 +6,23 @@ import (
 
 // Base interface for the  plugin runners.
 type PluginRunner interface {
+	start(e *EngineConfig, wg *sync.WaitGroup) (err error)
+
 	Name() string
-	SetName(name string)
 
 	// Underlying plugin object
 	Plugin() Plugin
 
-	SetLeakCount(count int)
+	setLeakCount(count int)
 	LeakCount() int
+}
+
+// Filter and Output runner extends PluginRunner
+type FilterOutputRunner interface {
+	PluginRunner
+
+	InChan() chan *PipelinePack
+	Matcher() *Matcher
 }
 
 // Base struct for the specialized PluginRunners
@@ -28,7 +37,7 @@ type pRunnerBase struct {
 type foRunner struct {
 	pRunnerBase
 
-	matcher   *MatchRunner
+	matcher   *Matcher
 	inChan    chan *PipelinePack
 	engine    *EngineConfig
 	leakCount int
@@ -38,15 +47,11 @@ func (this *pRunnerBase) Name() string {
 	return this.name
 }
 
-func (this *pRunnerBase) SetName(name string) {
-	this.name = name
-}
-
 func (this *pRunnerBase) Plugin() Plugin {
 	return this.plugin
 }
 
-func (this *pRunnerBase) SetLeakCount(count int) {
+func (this *pRunnerBase) setLeakCount(count int) {
 	this.leakCount = count
 }
 
@@ -67,7 +72,7 @@ func NewFORunner(name string, plugin Plugin, pluginCommons *pluginCommons) (this
 	return
 }
 
-func (this *foRunner) MatchRunner() *MatchRunner {
+func (this *foRunner) Matcher() *Matcher {
 	return this.matcher
 }
 
@@ -94,10 +99,9 @@ func (this *foRunner) Filter() Filter {
 	return this.plugin.(Filter)
 }
 
-func (this *foRunner) Start(e *EngineConfig, wg *sync.WaitGroup) error {
+func (this *foRunner) start(e *EngineConfig, wg *sync.WaitGroup) error {
 	this.engine = e
 
-	go this.matcher.Start(this.inChan)
 	go this.runMainloop(e, wg)
 	return nil
 }
