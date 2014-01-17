@@ -86,16 +86,17 @@ func (this *BatchAlsLogInput) runSingleLogfile(path string, f os.FileInfo, err e
 		return
 	}
 
+	this.workersWg.Add(1)
+
 	// limit concurrent workers
 	this.workerNChan <- 1
+
 	go this.doRunSingleLogfile(path)
 
 	return
 }
 
 func (this *BatchAlsLogInput) doRunSingleLogfile(path string) {
-	this.workersWg.Add(1)
-
 	reader := als.NewAlsReader(path)
 	if e := reader.Open(); e != nil {
 		panic(e)
