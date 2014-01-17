@@ -57,10 +57,9 @@ func (this *CardinalityFilter) Init(config *conf.Conf) {
 func (this *CardinalityFilter) Run(r engine.FilterRunner,
 	h engine.PluginHelper) error {
 	var (
-		globals = engine.Globals()
-		pack    *engine.PipelinePack
-		ok      = true
-		inChan  = r.InChan()
+		pack   *engine.PipelinePack
+		ok     = true
+		inChan = r.InChan()
 	)
 
 	for ok {
