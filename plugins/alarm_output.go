@@ -51,7 +51,6 @@ func (this *AlarmOutput) Run(r engine.OutputRunner, h engine.PluginHelper) error
 		pack       *engine.PipelinePack
 		reloadChan = make(chan interface{})
 		ok         = true
-		globals    = engine.Globals()
 		inChan     = r.InChan()
 	)
 
