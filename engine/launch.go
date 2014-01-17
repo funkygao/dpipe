@@ -155,6 +155,6 @@ func Launch(e *EngineConfig) {
 		globals.Println("All Outputs terminated")
 	}
 
-	globals.Printf("Engine shutdown complete, total msg: %s.",
+	globals.Printf("Engine shutdown complete with total dispatched msg: %s",
 		gofmt.Comma(e.router.totalProcessedMsgN))
 }
