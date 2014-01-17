@@ -22,7 +22,7 @@ func (this *DebugOutput) Run(r engine.OutputRunner, h engine.PluginHelper) error
 		inChan  = r.InChan()
 	)
 
-	for ok && !globals.Stopping {
+	for ok {
 		select {
 		case pack, ok = <-inChan:
 			if !ok {

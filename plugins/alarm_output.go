@@ -70,7 +70,7 @@ func (this *AlarmOutput) Run(r engine.OutputRunner, h engine.PluginHelper) error
 
 	observer.Subscribe(engine.RELOAD, reloadChan)
 
-	for ok && !globals.Stopping {
+	for ok {
 		select {
 		case <-reloadChan:
 			// TODO

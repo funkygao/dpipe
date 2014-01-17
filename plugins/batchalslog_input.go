@@ -128,7 +128,7 @@ func (this *BatchAlsLogInput) doRunSingleLogfile(path string) {
 	)
 
 LOOP:
-	for !globals.Stopping {
+	for {
 		line, err = reader.ReadLine()
 		switch err {
 		case nil:

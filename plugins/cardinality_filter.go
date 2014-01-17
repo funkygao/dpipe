@@ -63,7 +63,7 @@ func (this *CardinalityFilter) Run(r engine.FilterRunner,
 		inChan  = r.InChan()
 	)
 
-	for ok && !globals.Stopping {
+	for ok {
 		select {
 		case pack, ok = <-inChan:
 			if !ok {
