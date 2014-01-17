@@ -143,9 +143,6 @@ func (this *messageRouter) removeMatcher(matcher *MatchRunner,
 	matchers []*MatchRunner) {
 	for idx, m := range matchers {
 		if m == matcher {
-			for len(m.inChan) > 0 {
-				time.Sleep(time.Millisecond * 5)
-			}
 			close(m.inChan)
 			matchers[idx] = nil
 			break
