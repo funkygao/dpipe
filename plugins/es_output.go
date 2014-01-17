@@ -82,7 +82,7 @@ func (this *EsOutput) Run(r engine.OutputRunner, h engine.PluginHelper) error {
 		}
 	}
 
-	engine.Globals().Println(this.totalN)
+	engine.Globals().Printf("Total %d msg handled", this.totalN)
 
 	// before shutdown, flush again
 	if globals.Verbose {

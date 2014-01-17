@@ -61,6 +61,7 @@ func (this *EsFilter) Run(r engine.FilterRunner, h engine.PluginHelper) error {
 	var (
 		pack   *engine.PipelinePack
 		ok     = true
+		count  = 0
 		inChan = r.InChan()
 	)
 
@@ -72,12 +73,15 @@ func (this *EsFilter) Run(r engine.FilterRunner, h engine.PluginHelper) error {
 			}
 
 			if this.handlePack(pack, h.Project(pack.Project)) {
+				count += 1
 				r.Inject(pack)
 			} else {
 				pack.Recycle()
 			}
 		}
 	}
+
+	globals.Printf("Total %d msg handled", count)
 
 	return nil
 }
