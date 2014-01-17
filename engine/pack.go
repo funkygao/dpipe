@@ -71,6 +71,9 @@ func (this PipelinePack) String() string {
 	if this.Logfile != nil {
 		s = fmt.Sprintf("%s src=%s", s, this.Logfile.Base())
 	}
+	if this.Message != nil {
+		s = fmt.Sprintf("%s payload=%s", s, this.Message.Payload)
+	}
 	if this.EsIndex != "" {
 		s = fmt.Sprintf("%s, index{%s, %s}", s, this.EsIndex, this.EsType)
 	}
