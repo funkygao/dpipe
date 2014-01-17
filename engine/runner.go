@@ -1,7 +1,6 @@
 package engine
 
 import (
-	"fmt"
 	"sync"
 )
 
@@ -26,6 +25,7 @@ type FilterOutputRunner interface {
 	Matcher() *Matcher
 }
 
+// Base for all runners
 type pRunnerBase struct {
 	name          string
 	plugin        Plugin
@@ -76,12 +76,6 @@ func (this *foRunner) Matcher() *Matcher {
 }
 
 func (this *foRunner) Inject(pack *PipelinePack) bool {
-	if pack.Ident == "" {
-		errmsg := fmt.Sprintf("Plugin %s tries to inject pack with empty ident: %s",
-			this.Name(), *pack)
-		panic(errmsg)
-	}
-
 	this.engine.router.inChan <- pack
 	return true
 }
@@ -101,11 +95,11 @@ func (this *foRunner) Filter() Filter {
 func (this *foRunner) start(e *EngineConfig, wg *sync.WaitGroup) error {
 	this.engine = e
 
-	go this.runMainloop(e, wg)
+	go this.runMainloop(wg)
 	return nil
 }
 
-func (this *foRunner) runMainloop(e *EngineConfig, wg *sync.WaitGroup) {
+func (this *foRunner) runMainloop(wg *sync.WaitGroup) {
 	defer wg.Done()
 
 	var (
@@ -121,7 +115,7 @@ func (this *foRunner) runMainloop(e *EngineConfig, wg *sync.WaitGroup) {
 			}
 
 			pluginType = "filter"
-			filter.Run(this, e)
+			filter.Run(this, this.engine)
 
 			if globals.Verbose {
 				globals.Printf("Filter[%s]stopped", this.name)
@@ -132,7 +126,7 @@ func (this *foRunner) runMainloop(e *EngineConfig, wg *sync.WaitGroup) {
 			}
 
 			pluginType = "output"
-			output.Run(this, e)
+			output.Run(this, this.engine)
 
 			if globals.Verbose {
 				globals.Printf("Output[%s]stopped", this.name)
@@ -159,9 +153,9 @@ func (this *foRunner) runMainloop(e *EngineConfig, wg *sync.WaitGroup) {
 
 		// Re-initialize our plugin using its wrapper
 		if pluginType == "filter" {
-			pw = e.filterWrappers[this.name]
+			pw = this.engine.filterWrappers[this.name]
 		} else {
-			pw = e.outputWrappers[this.name]
+			pw = this.engine.outputWrappers[this.name]
 		}
 		this.plugin = pw.Create()
 	}
