@@ -43,8 +43,11 @@ func (this *EngineConfig) handleHttpQuery(w http.ResponseWriter, req *http.Reque
 		output["status"] = "ok"
 
 	case "stat":
-		output["projects"] = this.projects
-		output["totalM"] = this.router.totalProcessedMsgN
+		output["goroutines"] = this.stats.NumGoroutine()
+		output["memStats"] = this.stats.MemStats()
+		output["lastGC"] = this.stats.LastGC()
+		//output["projects"] = this.projects
+		output["totalM"] = this.stats.DispatchedMessageCount()
 		output["periodM"] = this.router.periodProcessMsgN
 		output["start"] = globals.StartedAt
 		output["pid"] = this.pid

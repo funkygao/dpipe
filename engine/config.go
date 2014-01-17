@@ -31,6 +31,7 @@ type EngineConfig struct {
 	outputWrappers map[string]*PluginWrapper
 
 	router *messageRouter
+	stats  *Stats
 
 	// PipelinePack supply for Input plugins.
 	inputRecycleChan chan *PipelinePack
@@ -66,6 +67,7 @@ func NewEngineConfig(globals *GlobalConfigStruct) (this *EngineConfig) {
 	this.httpPaths = make([]string, 0, 6)
 
 	this.router = NewMessageRouter()
+	this.stats = newStats(this)
 
 	this.hostname, _ = os.Hostname()
 	this.pid = os.Getpid()
