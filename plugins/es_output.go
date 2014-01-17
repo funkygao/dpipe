@@ -21,6 +21,7 @@ type EsOutput struct {
 	bulkMaxBuffer  int            `json:"bulk_max_buffer"` // in Byte
 	indexer        *core.BulkIndexer
 	stopChan       chan bool
+	total          int
 }
 
 func (this *EsOutput) Init(config *conf.Conf) {
@@ -56,6 +57,7 @@ func (this *EsOutput) Run(r engine.OutputRunner, h engine.PluginHelper) error {
 	defer reportTicker.Stop()
 
 	observer.Subscribe(engine.RELOAD, reloadChan)
+	t := 0
 
 	for ok {
 		select {
@@ -76,10 +78,14 @@ func (this *EsOutput) Run(r engine.OutputRunner, h engine.PluginHelper) error {
 				break
 			}
 
+			t += 1
+
 			this.feedEs(h.Project(pack.Project), pack)
 			pack.Recycle()
 		}
 	}
+
+	engine.Globals().Println(this.total, t)
 
 	// before shutdown, flush again
 	if globals.Verbose {
@@ -130,6 +136,7 @@ func (this *EsOutput) feedEs(project *engine.ConfProject, pack *engine.PipelineP
 		return
 	}
 	id, _ := golib.UUID()
+	this.total += 1
 	this.indexer.Index(pack.EsIndex, pack.EsType, id, "", &date, data) // ttl empty
 }
 

@@ -96,8 +96,8 @@ func (this *AlsLogInput) Stop() {
 	close(this.stopChan)
 }
 
-func (this *AlsLogInput) CleanupForRestart() {
-
+func (this *AlsLogInput) CleanupForRestart() bool {
+	return true
 }
 
 func (this *AlsLogInput) Run(r engine.InputRunner, h engine.PluginHelper) error {

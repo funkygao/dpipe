@@ -35,8 +35,9 @@ func (this *BatchAlsLogInput) Init(config *conf.Conf) {
 	this.excepts = config.StringList("except", nil)
 }
 
-func (this *BatchAlsLogInput) CleanupForRestart() {
+func (this *BatchAlsLogInput) CleanupForRestart() bool {
 	this.chkpnt.Dump()
+	return false
 }
 
 func (this *BatchAlsLogInput) Run(r engine.InputRunner, h engine.PluginHelper) error {

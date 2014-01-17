@@ -96,11 +96,13 @@ func (this *iRunner) runMainloop(e *EngineConfig, wg *sync.WaitGroup) {
 		}
 
 		if restart, ok := this.plugin.(Restarting); ok {
-			restart.CleanupForRestart()
+			if !restart.CleanupForRestart() {
+				return
+			}
 		}
 
 		if globals.Verbose {
-			globals.Printf("Restarting %s\n", this.Name())
+			globals.Printf("[%s]restarting", this.name)
 		}
 
 		// Re-initialize our plugin with its wrapper

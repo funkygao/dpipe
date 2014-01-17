@@ -14,8 +14,9 @@ type Plugin interface {
 }
 
 // If a Plugin implements CleanupForRestart, it will be called on restart
+// Return value determines whether restart it or run once
 type Restarting interface {
-	CleanupForRestart()
+	CleanupForRestart() bool
 }
 
 func RegisterPlugin(name string, factory func() Plugin) {

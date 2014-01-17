@@ -61,6 +61,7 @@ func (this *EsFilter) Run(r engine.FilterRunner, h engine.PluginHelper) error {
 	var (
 		pack   *engine.PipelinePack
 		ok     = true
+		total  = 0
 		inChan = r.InChan()
 	)
 
@@ -72,6 +73,7 @@ func (this *EsFilter) Run(r engine.FilterRunner, h engine.PluginHelper) error {
 			}
 
 			if this.handlePack(pack, h.Project(pack.Project)) {
+				total += 1
 				r.Inject(pack)
 			} else {
 				pack.Recycle()
@@ -79,6 +81,7 @@ func (this *EsFilter) Run(r engine.FilterRunner, h engine.PluginHelper) error {
 		}
 	}
 
+	engine.Globals().Println(total)
 	return nil
 }
 
