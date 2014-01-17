@@ -130,8 +130,8 @@ func Launch(e *EngineConfig) {
 	}
 
 	// ok, now we are sure no more inputs, but in route.inChan there
-	// still may be filter/output injected packs, we must wait for all
-	// the packs handled before shutdown
+	// still may be filter injected packs and output not consumed packs
+	// we must wait for all the packs to be handled before shutdown
 
 	for _, runner := range e.FilterRunners {
 		e.router.removeFilterMatcher <- runner.MatchRunner()
