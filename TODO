@@ -32,3 +32,4 @@
 
 *   ESOutput 数目不对，多出了一些item
     router的计数器，针对的是所有的msg，应该只针对input
+    rm routerReady

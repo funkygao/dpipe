@@ -129,6 +129,10 @@ func Launch(e *EngineConfig) {
 		globals.Println("All Inputs terminated")
 	}
 
+	// ok, now we are sure no more inputs, but in route.inChan there
+	// still may be filter/output injected packs, we must wait for all
+	// the packs handled before shutdown
+
 	for _, runner := range e.FilterRunners {
 		e.router.removeFilterMatcher <- runner.MatchRunner()
 
