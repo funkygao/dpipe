@@ -9,18 +9,20 @@ import (
 	"path/filepath"
 	"strings"
 	"sync"
+	"sync/atomic"
 )
 
 type BatchAlsLogInput struct {
 	runner      engine.InputRunner
-	project     string
 	h           engine.PluginHelper
 	chkpnt      *als.FileCheckpoint
+	workersWg   *sync.WaitGroup
+	lineN       int64
 	workerNChan chan int
 	rootDir     string
-	workersWg   *sync.WaitGroup
 	excepts     []string
 	ident       string
+	project     string
 }
 
 func (this *BatchAlsLogInput) Init(config *conf.Conf) {
@@ -59,7 +61,12 @@ func (this *BatchAlsLogInput) Run(r engine.InputRunner, h engine.PluginHelper) e
 	this.workersWg.Wait()
 	this.chkpnt.Dump()
 
-	engine.Globals().Shutdown()
+	globals := engine.Globals()
+	if globals.Verbose {
+		globals.Printf("Total line: %d", this.lineN)
+	}
+
+	globals.Shutdown()
 
 	return nil
 }
@@ -126,6 +133,7 @@ LOOP:
 		switch err {
 		case nil:
 			lineN += 1
+			atomic.AddInt64(&this.lineN, 1)
 			if globals.Verbose && lineN == 1 {
 				project.Printf("[%s]started\n", path)
 			}
