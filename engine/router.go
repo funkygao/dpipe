@@ -117,8 +117,7 @@ func (this *messageRouter) Start(routerReady chan<- interface{}) {
 			}
 
 			if !foundMatch {
-				globals.Printf("Found no match: %s, msg=%s",
-					*pack, pack.Message.Payload)
+				globals.Printf("Found no match: %s", *pack)
 			}
 
 			// never forget this!
