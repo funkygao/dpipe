@@ -114,7 +114,7 @@ Main pipeline data structure containing a AlsMessage and other metadata
               Input         ^           |               |                   ^
                 |           |           | put           | put               |
                 |           |           |               |                   |
-                 ----->-----          Matcher         Matcher               |
+                 ----->-----       Matcher.inChan   Matcher.inChan          |
                    inject               |               |                   |
                                         | put           | put               |
                                         V               V                   |
