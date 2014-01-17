@@ -66,8 +66,8 @@ func (this *PipelinePack) PluginNames() (names []string) {
 }
 
 func (this PipelinePack) String() string {
-	s := fmt.Sprintf("%s@%s, rc=%d, loop=%d", this.Ident, this.Project,
-		this.RefCount, this.MsgLoopCount)
+	s := fmt.Sprintf("%s@%s, rc=%d, loop=%d, runner=%v", this.Ident, this.Project,
+		this.RefCount, this.MsgLoopCount, this.diagnostics.PluginNames())
 	if this.Logfile != nil {
 		s = fmt.Sprintf("%s src=%s", s, this.Logfile.Base())
 	}
@@ -104,7 +104,7 @@ func (this *PipelinePack) Reset() {
                     IncRef2
                    -------> Output -------------> DecRef2 --+
                   |                                         |
-                  | IncRef3                                 |
+         rc=1     | IncRef3                                 |
 Input -> packA -> |-------> Filter1 -> Output1 -> DecRef1 --| race
                   |                                         | condition
                   | IncRef4                                 |
