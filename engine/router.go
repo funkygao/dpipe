@@ -120,7 +120,6 @@ func (this *messageRouter) Start() {
 
 			if !foundMatch {
 				globals.Printf("Found no match: %s", *pack)
-				panic("cannot bear your config file, baby!")
 			}
 
 			// never forget this!
