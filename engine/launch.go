@@ -27,11 +27,7 @@ func Launch(e *EngineConfig) {
 	if globals.Verbose {
 		globals.Println("Launching Output(s)...")
 	}
-	for name, runner := range e.OutputRunners {
-		if globals.Verbose {
-			globals.Printf("Starting %s\n", name)
-		}
-
+	for _, runner := range e.OutputRunners {
 		outputsWg.Add(1)
 		if err = runner.Start(e, outputsWg); err != nil {
 			outputsWg.Done()
@@ -42,11 +38,7 @@ func Launch(e *EngineConfig) {
 	if globals.Verbose {
 		globals.Println("Launching Filter(s)...")
 	}
-	for name, runner := range e.FilterRunners {
-		if globals.Verbose {
-			globals.Printf("Starting %s\n", name)
-		}
-
+	for _, runner := range e.FilterRunners {
 		filtersWg.Add(1)
 		if err = runner.Start(e, filtersWg); err != nil {
 			filtersWg.Done()
@@ -79,11 +71,7 @@ func Launch(e *EngineConfig) {
 	if globals.Verbose {
 		globals.Println("Launching Input(s)...")
 	}
-	for name, runner := range e.InputRunners {
-		if globals.Verbose {
-			globals.Printf("Starting %s\n", name)
-		}
-
+	for _, runner := range e.InputRunners {
 		inputsWg.Add(1)
 		if err = runner.Start(e, inputsWg); err != nil {
 			inputsWg.Done()

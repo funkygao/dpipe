@@ -114,25 +114,25 @@ func (this *foRunner) runMainloop(e *EngineConfig, wg *sync.WaitGroup) {
 	for !globals.Stopping {
 		if filter, ok := this.plugin.(Filter); ok {
 			if globals.Verbose {
-				globals.Printf("[%s]starting", this.name)
+				globals.Printf("Filter[%s]starting", this.name)
 			}
 
 			pluginType = "filter"
 			filter.Run(this, e)
 
 			if globals.Verbose {
-				globals.Printf("[%s]stopped", this.name)
+				globals.Printf("Filter[%s]stopped", this.name)
 			}
 		} else if output, ok := this.plugin.(Output); ok {
 			if globals.Verbose {
-				globals.Printf("[%s]starting", this.name)
+				globals.Printf("Output[%s]starting", this.name)
 			}
 
 			pluginType = "output"
 			output.Run(this, e)
 
 			if globals.Verbose {
-				globals.Printf("[%s]stopped", this.name)
+				globals.Printf("Output[%s]stopped", this.name)
 			}
 		} else {
 			panic("unkown plugin type")
