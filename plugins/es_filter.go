@@ -64,7 +64,7 @@ func (this *EsFilter) Run(r engine.FilterRunner, h engine.PluginHelper) error {
 		inChan = r.InChan()
 	)
 
-	for ok && !globals.Stopping {
+	for ok {
 		select {
 		case pack, ok = <-inChan:
 			if !ok {
