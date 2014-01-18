@@ -12,7 +12,7 @@ import (
 	"sync/atomic"
 )
 
-type BatchAlsLogInput struct {
+type ArchiveInput struct {
 	runner      engine.InputRunner
 	h           engine.PluginHelper
 	chkpnt      *als.FileCheckpoint
@@ -25,7 +25,7 @@ type BatchAlsLogInput struct {
 	project     string
 }
 
-func (this *BatchAlsLogInput) Init(config *conf.Conf) {
+func (this *ArchiveInput) Init(config *conf.Conf) {
 	this.rootDir = config.String("root_dir", "")
 	this.ident = config.String("ident", "")
 	if this.ident == "" {
@@ -37,16 +37,16 @@ func (this *BatchAlsLogInput) Init(config *conf.Conf) {
 	this.excepts = config.StringList("except", nil)
 }
 
-func (this *BatchAlsLogInput) CleanupForRestart() bool {
+func (this *ArchiveInput) CleanupForRestart() bool {
 	this.chkpnt.Dump()
 	return false
 }
 
-func (this *BatchAlsLogInput) Stop() {
+func (this *ArchiveInput) Stop() {
 
 }
 
-func (this *BatchAlsLogInput) Run(r engine.InputRunner, h engine.PluginHelper) error {
+func (this *ArchiveInput) Run(r engine.InputRunner, h engine.PluginHelper) error {
 	this.runner = r
 	this.h = h
 
@@ -75,7 +75,7 @@ func (this *BatchAlsLogInput) Run(r engine.InputRunner, h engine.PluginHelper) e
 	return nil
 }
 
-func (this *BatchAlsLogInput) shouldRunSingleLogfile(path string) bool {
+func (this *ArchiveInput) shouldRunSingleLogfile(path string) bool {
 	if this.chkpnt.Contains(path) {
 		return false
 	}
@@ -89,7 +89,7 @@ func (this *BatchAlsLogInput) shouldRunSingleLogfile(path string) bool {
 	return true
 }
 
-func (this *BatchAlsLogInput) runSingleLogfile(path string, f os.FileInfo, err error) (e error) {
+func (this *ArchiveInput) runSingleLogfile(path string, f os.FileInfo, err error) (e error) {
 	if f == nil || f.IsDir() || !this.shouldRunSingleLogfile(path) {
 		return
 	}
@@ -104,7 +104,7 @@ func (this *BatchAlsLogInput) runSingleLogfile(path string, f os.FileInfo, err e
 	return
 }
 
-func (this *BatchAlsLogInput) doRunSingleLogfile(path string) {
+func (this *ArchiveInput) doRunSingleLogfile(path string) {
 	reader := als.NewAlsReader(path)
 	if e := reader.Open(); e != nil {
 		panic(e)
@@ -171,7 +171,7 @@ LOOP:
 }
 
 func init() {
-	engine.RegisterPlugin("BatchAlsLogInput", func() engine.Plugin {
-		return new(BatchAlsLogInput)
+	engine.RegisterPlugin("ArchiveInput", func() engine.Plugin {
+		return new(ArchiveInput)
 	})
 }
