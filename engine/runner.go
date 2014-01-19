@@ -15,6 +15,8 @@ type PluginRunner interface {
 
 	setLeakCount(count int)
 	LeakCount() int
+
+	Stopped() bool
 }
 
 // Filter and Output runner extends PluginRunner
@@ -32,6 +34,7 @@ type pRunnerBase struct {
 	engine        *EngineConfig
 	pluginCommons *pluginCommons
 	leakCount     int
+	stopped       bool
 }
 
 type foRunner struct {
@@ -58,6 +61,10 @@ func (this *pRunnerBase) LeakCount() int {
 	return this.leakCount
 }
 
+func (this *pRunnerBase) Stopped() bool {
+	return this.stopped
+}
+
 func NewFORunner(name string, plugin Plugin, pluginCommons *pluginCommons) (this *foRunner) {
 	this = &foRunner{
 		pRunnerBase: pRunnerBase{
@@ -65,9 +72,9 @@ func NewFORunner(name string, plugin Plugin, pluginCommons *pluginCommons) (this
 			plugin:        plugin,
 			pluginCommons: pluginCommons,
 		},
+		inChan: make(chan *PipelinePack, Globals().PluginChanSize),
 	}
 
-	this.inChan = make(chan *PipelinePack, Globals().PluginChanSize)
 	return
 }
 
@@ -94,6 +101,7 @@ func (this *foRunner) Filter() Filter {
 
 func (this *foRunner) start(e *EngineConfig, wg *sync.WaitGroup) error {
 	this.engine = e
+	this.stopped = false
 
 	go this.runMainloop(wg)
 	return nil
@@ -159,5 +167,7 @@ func (this *foRunner) runMainloop(wg *sync.WaitGroup) {
 		}
 		this.plugin = pw.Create()
 	}
+
+	this.stopped = true
 
 }
