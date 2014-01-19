@@ -154,7 +154,7 @@ func Launch(e *EngineConfig) {
 		globals.Println("All Outputs terminated")
 	}
 
-	e.router.Stop()
+	close(e.router.inChan)
 
 	globals.Printf("Shutdown with input:%s, dispatch: %s",
 		gofmt.Comma(e.router.totalInputMsgN),

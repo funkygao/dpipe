@@ -137,36 +137,6 @@ LOOP:
 	}
 }
 
-func (this *messageRouter) Stop() {
-	globals := Globals()
-	if globals.Verbose {
-		globals.Println("Waiting for all Filter and Ouput finish...")
-	}
-
-	var (
-		n       = 0
-		allN    = len(this.filterMatchers) + len(this.outputMatchers)
-		matcher *Matcher
-	)
-	for n != allN {
-		for _, matcher = range this.filterMatchers {
-			if matcher.runner.Stopped() {
-				n += 1
-			}
-		}
-		for _, matcher = range this.outputMatchers {
-			if !matcher.runner.Stopped() {
-				n += 1
-			}
-		}
-
-		time.Sleep(time.Millisecond * 2)
-	}
-
-	// safe to close my inChan now
-	close(this.inChan)
-}
-
 func (this *messageRouter) removeMatcher(matcher *Matcher, matchers []*Matcher) {
 	for _, m := range matchers {
 		if m == matcher {
