@@ -49,7 +49,7 @@ func Launch(e *EngineConfig) {
 	filterPackTracker := NewDiagnosticTracker("filterPackTracker")
 
 	if globals.Verbose {
-		globals.Printf("Initializing PipelinePack pools %d\n", globals.PoolSize)
+		globals.Printf("Initializing PipelinePack pools with size=%d\n", globals.PoolSize)
 	}
 	for i := 0; i < globals.PoolSize; i++ {
 		inputPack := NewPipelinePack(e.inputRecycleChan)
@@ -115,11 +115,11 @@ func Launch(e *EngineConfig) {
 	}
 
 	for _, runner := range e.InputRunners {
-		runner.Input().Stop()
-
 		if globals.Verbose {
 			globals.Printf("Stop message sent to '%s'", runner.Name())
 		}
+
+		runner.Input().Stop()
 	}
 	inputsWg.Wait() // wait for all inputs done
 	if globals.Verbose {
@@ -131,11 +131,11 @@ func Launch(e *EngineConfig) {
 	// we must wait for all the packs to be consumed before shutdown
 
 	for _, runner := range e.FilterRunners {
-		e.router.removeFilterMatcher <- runner.Matcher()
-
 		if globals.Verbose {
 			globals.Printf("Stop message sent to '%s'", runner.Name())
 		}
+
+		e.router.removeFilterMatcher <- runner.Matcher()
 	}
 	filtersWg.Wait()
 	if globals.Verbose {
@@ -143,11 +143,11 @@ func Launch(e *EngineConfig) {
 	}
 
 	for _, runner := range e.OutputRunners {
-		e.router.removeOutputMatcher <- runner.Matcher()
-
 		if globals.Verbose {
 			globals.Printf("Stop message sent to '%s'", runner.Name())
 		}
+
+		e.router.removeOutputMatcher <- runner.Matcher()
 	}
 	outputsWg.Wait()
 	if globals.Verbose {
