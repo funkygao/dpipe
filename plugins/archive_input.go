@@ -67,7 +67,7 @@ func (this *ArchiveInput) Run(r engine.InputRunner, h engine.PluginHelper) error
 
 	globals := engine.Globals()
 	if globals.Verbose {
-		globals.Printf("Total msg: %d", this.lineN)
+		globals.Printf("[%s]Total msg: %d", r.Name(), this.lineN)
 	}
 
 	globals.Shutdown()

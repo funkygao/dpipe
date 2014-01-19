@@ -62,14 +62,10 @@ DONE:
 
 		select {
 		case matcher = <-this.removeOutputMatcher:
-			if matcher != nil {
-				this.removeMatcher(matcher, this.outputMatchers)
-			}
+			this.removeMatcher(matcher, this.outputMatchers)
 
 		case matcher = <-this.removeFilterMatcher:
-			if matcher != nil {
-				this.removeMatcher(matcher, this.filterMatchers)
-			}
+			this.removeMatcher(matcher, this.filterMatchers)
 
 		case <-ticker.C:
 			globals.Printf("Elapsed: %s, Total: %s, speed: %d/s\nInput: %s, speed: %d/s",
@@ -106,7 +102,7 @@ DONE:
 			//
 			// We have to dispatch to Output then Filter to avoid that case
 			for _, matcher = range this.outputMatchers {
-				if matcher != nil && matcher.match(pack) {
+				if matcher.match(pack) {
 					foundMatch = true
 
 					pack.IncRef()
@@ -119,7 +115,7 @@ DONE:
 			// for each target, pack will inc ref count
 			// and the router will dec ref count only once
 			for _, matcher = range this.filterMatchers {
-				if matcher != nil && matcher.match(pack) {
+				if matcher.match(pack) {
 					foundMatch = true
 
 					pack.IncRef()
@@ -138,31 +134,44 @@ DONE:
 	}
 
 	if globals.Verbose {
-		globals.Println("Starting to shutdown filters and outputs...")
+		globals.Println("Router shutdown.")
 	}
+}
 
-	for _, matcher = range this.filterMatchers {
-		if matcher != nil {
-			close(matcher.InChan())
-		}
-	}
-	for _, matcher = range this.outputMatchers {
-		if matcher != nil {
-			close(matcher.InChan())
-		}
-	}
-
+func (this *messageRouter) Stop() {
+	globals := Globals()
 	if globals.Verbose {
-		globals.Println("Filters and outputs chan closed")
+		globals.Println("Waiting for all Filter and Ouput finish...")
 	}
 
+	var (
+		n       = 0
+		allN    = len(this.filterMatchers) + len(this.outputMatchers)
+		matcher *Matcher
+	)
+	for n != allN {
+		for _, matcher = range this.filterMatchers {
+			if matcher.runner.Stopped() {
+				n += 1
+			}
+		}
+		for _, matcher = range this.outputMatchers {
+			if !matcher.runner.Stopped() {
+				n += 1
+			}
+		}
+
+		time.Sleep(time.Millisecond * 2)
+	}
+
+	// safe to close my inChan now
+	close(this.inChan)
 }
 
 func (this *messageRouter) removeMatcher(matcher *Matcher, matchers []*Matcher) {
-	for idx, m := range matchers {
+	for _, m := range matchers {
 		if m == matcher {
 			close(m.InChan())
-			matchers[idx] = nil
 			break
 		}
 	}

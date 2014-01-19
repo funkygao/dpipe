@@ -81,7 +81,7 @@ func (this *EsFilter) Run(r engine.FilterRunner, h engine.PluginHelper) error {
 		}
 	}
 
-	globals.Printf("Total filtered: %d", count)
+	globals.Printf("[%s]Total filtered: %d", r.Name(), count)
 
 	return nil
 }

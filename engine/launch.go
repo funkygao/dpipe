@@ -81,7 +81,6 @@ func Launch(e *EngineConfig) {
 
 	globals.Println("Engine ready")
 
-	// now, we have started all runners. next, wait for sigint
 	globals.sigChan = make(chan os.Signal)
 	signal.Notify(globals.sigChan, syscall.SIGINT, syscall.SIGHUP,
 		syscall.SIGUSR2, syscall.SIGUSR1)
@@ -129,7 +128,7 @@ func Launch(e *EngineConfig) {
 
 	// ok, now we are sure no more inputs, but in route.inChan there
 	// still may be filter injected packs and output not consumed packs
-	// we must wait for all the packs to be handled before shutdown
+	// we must wait for all the packs to be consumed before shutdown
 
 	for _, runner := range e.FilterRunners {
 		e.router.removeFilterMatcher <- runner.Matcher()
@@ -154,6 +153,8 @@ func Launch(e *EngineConfig) {
 	if globals.Verbose {
 		globals.Println("All Outputs terminated")
 	}
+
+	e.router.Stop()
 
 	globals.Printf("Shutdown with input:%s, dispatch: %s",
 		gofmt.Comma(e.router.totalInputMsgN),
