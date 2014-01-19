@@ -29,15 +29,14 @@ type EsFilter struct {
 }
 
 func (this *EsFilter) Init(config *conf.Conf) {
-	const CONV = "converts"
 	this.ident = config.String("ident", "")
 	if this.ident == "" {
 		panic("empty ident")
 	}
 	this.converters = make([]esConverter, 0, 10)
 	this.indexPattern = config.String("index_pattern", "")
-	for i := 0; i < len(config.List(CONV, nil)); i++ {
-		section, err := config.Section(fmt.Sprintf("%s[%d]", CONV, i))
+	for i := 0; i < len(config.List("converts", nil)); i++ {
+		section, err := config.Section(fmt.Sprintf("%s[%d]", "converts", i))
 		if err != nil {
 			panic(err)
 		}
@@ -46,30 +45,36 @@ func (this *EsFilter) Init(config *conf.Conf) {
 		c.load(section)
 		this.converters = append(this.converters, c)
 	}
-}
 
-func (this *EsFilter) Run(r engine.FilterRunner, h engine.PluginHelper) error {
-	globals := engine.Globals()
-	geodbFile := h.EngineConfig().String("geodbfile", "")
+	geodbFile := config.String("geodbfile", "")
 	if err := als.LoadGeoDb(geodbFile); err != nil {
 		panic(err)
 	}
+	globals := engine.Globals()
 	if globals.Verbose {
-		globals.Printf("Load geodb from %s\n", geodbFile)
+		globals.Printf("Loaded geodb %s\n", geodbFile)
 	}
+}
 
+func (this *EsFilter) Run(r engine.FilterRunner, h engine.PluginHelper) error {
 	var (
-		pack   *engine.PipelinePack
-		ok     = true
-		count  = 0
-		inChan = r.InChan()
+		globals = engine.Globals()
+		pack    *engine.PipelinePack
+		ok      = true
+		count   = 0
+		inChan  = r.InChan()
 	)
 
+LOOP:
 	for ok {
 		select {
 		case pack, ok = <-inChan:
 			if !ok {
-				break
+				break LOOP
+			}
+
+			if globals.Debug {
+				globals.Println(*pack)
 			}
 
 			if this.handlePack(pack, h.Project(pack.Project)) {
@@ -81,7 +86,7 @@ func (this *EsFilter) Run(r engine.FilterRunner, h engine.PluginHelper) error {
 		}
 	}
 
-	globals.Printf("Total %d msg handled", count)
+	globals.Printf("[%s]Total filtered: %d", r.Name(), count)
 
 	return nil
 }

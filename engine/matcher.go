@@ -1,54 +1,31 @@
 package engine
 
 import (
-	"strings"
+	"fmt"
 )
 
-type MatchRunner struct {
-	inChan  chan *PipelinePack
-	runner  PluginRunner
+type Matcher struct {
+	runner  FilterOutputRunner
 	matches []string
 }
 
-func NewMatchRunner(matches []string, r PluginRunner) *MatchRunner {
-	this := new(MatchRunner)
+func NewMatchRunner(matches []string, r FilterOutputRunner) *Matcher {
+	this := new(Matcher)
 	this.matches = matches
 	this.runner = r
-	this.inChan = make(chan *PipelinePack, Globals().PluginChanSize)
 	return this
 }
 
-// Let my runner start myself
-func (this *MatchRunner) Start(matchChan chan *PipelinePack) {
-	defer func() {
-		if r := recover(); r != nil {
-			var (
-				err error
-				ok  bool
-			)
-			if err, ok = r.(error); !ok {
-				panic(r)
-			}
-			if !strings.Contains(err.Error(), "send on closed channel") {
-				panic(r)
-			}
-		}
-	}()
-
-	globals := Globals()
-	if globals.Verbose {
-		globals.Printf("MatchRunner for %s started", this.runner.Name())
-	}
-
-	// the mainloop, we only recv matched packs
-	for pack := range this.inChan {
-		matchChan <- pack
-	}
-
-	close(matchChan)
+func (this *Matcher) InChan() chan *PipelinePack {
+	return this.runner.InChan()
 }
 
-func (this *MatchRunner) match(pack *PipelinePack) bool {
+func (this *Matcher) match(pack *PipelinePack) bool {
+	if pack.Ident == "" {
+		errmsg := fmt.Sprintf("Pack with empty ident: %s", *pack)
+		panic(errmsg)
+	}
+
 	if len(this.matches) == 0 {
 		// match all
 		return true
@@ -61,8 +38,4 @@ func (this *MatchRunner) match(pack *PipelinePack) bool {
 	}
 
 	return false
-}
-
-func (this *MatchRunner) Name() string {
-	return this.runner.Name()
 }

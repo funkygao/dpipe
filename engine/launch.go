@@ -29,8 +29,7 @@ func Launch(e *EngineConfig) {
 	}
 	for _, runner := range e.OutputRunners {
 		outputsWg.Add(1)
-		if err = runner.Start(e, outputsWg); err != nil {
-			outputsWg.Done()
+		if err = runner.start(e, outputsWg); err != nil {
 			panic(err)
 		}
 	}
@@ -40,8 +39,7 @@ func Launch(e *EngineConfig) {
 	}
 	for _, runner := range e.FilterRunners {
 		filtersWg.Add(1)
-		if err = runner.Start(e, filtersWg); err != nil {
-			filtersWg.Done()
+		if err = runner.start(e, filtersWg); err != nil {
 			panic(err)
 		}
 	}
@@ -51,7 +49,7 @@ func Launch(e *EngineConfig) {
 	filterPackTracker := NewDiagnosticTracker("filterPackTracker")
 
 	if globals.Verbose {
-		globals.Printf("Initializing PipelinePack pools %d\n", globals.PoolSize)
+		globals.Printf("Initializing PipelinePack pools with size=%d\n", globals.PoolSize)
 	}
 	for i := 0; i < globals.PoolSize; i++ {
 		inputPack := NewPipelinePack(e.inputRecycleChan)
@@ -75,7 +73,7 @@ func Launch(e *EngineConfig) {
 	}
 	for _, runner := range e.InputRunners {
 		inputsWg.Add(1)
-		if err = runner.Start(e, inputsWg); err != nil {
+		if err = runner.start(e, inputsWg); err != nil {
 			inputsWg.Done()
 			panic(err)
 		}
@@ -83,7 +81,6 @@ func Launch(e *EngineConfig) {
 
 	globals.Println("Engine ready")
 
-	// now, we have started all runners. next, wait for sigint
 	globals.sigChan = make(chan os.Signal)
 	signal.Notify(globals.sigChan, syscall.SIGINT, syscall.SIGHUP,
 		syscall.SIGUSR2, syscall.SIGUSR1)
@@ -118,11 +115,11 @@ func Launch(e *EngineConfig) {
 	}
 
 	for _, runner := range e.InputRunners {
-		runner.Input().Stop()
-
 		if globals.Verbose {
 			globals.Printf("Stop message sent to '%s'", runner.Name())
 		}
+
+		runner.Input().Stop()
 	}
 	inputsWg.Wait() // wait for all inputs done
 	if globals.Verbose {
@@ -131,14 +128,14 @@ func Launch(e *EngineConfig) {
 
 	// ok, now we are sure no more inputs, but in route.inChan there
 	// still may be filter injected packs and output not consumed packs
-	// we must wait for all the packs to be handled before shutdown
+	// we must wait for all the packs to be consumed before shutdown
 
 	for _, runner := range e.FilterRunners {
-		e.router.removeFilterMatcher <- runner.MatchRunner()
-
 		if globals.Verbose {
 			globals.Printf("Stop message sent to '%s'", runner.Name())
 		}
+
+		e.router.removeFilterMatcher <- runner.Matcher()
 	}
 	filtersWg.Wait()
 	if globals.Verbose {
@@ -146,17 +143,20 @@ func Launch(e *EngineConfig) {
 	}
 
 	for _, runner := range e.OutputRunners {
-		e.router.removeOutputMatcher <- runner.MatchRunner()
-
 		if globals.Verbose {
 			globals.Printf("Stop message sent to '%s'", runner.Name())
 		}
+
+		e.router.removeOutputMatcher <- runner.Matcher()
 	}
 	outputsWg.Wait()
 	if globals.Verbose {
 		globals.Println("All Outputs terminated")
 	}
 
-	globals.Printf("Engine shutdown complete, total msg: %s.",
+	close(e.router.inChan)
+
+	globals.Printf("Shutdown with input:%s, dispatch: %s",
+		gofmt.Comma(e.router.totalInputMsgN),
 		gofmt.Comma(e.router.totalProcessedMsgN))
 }

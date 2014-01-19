@@ -6,31 +6,42 @@ import (
 
 // Base interface for the  plugin runners.
 type PluginRunner interface {
+	start(e *EngineConfig, wg *sync.WaitGroup) (err error)
+
 	Name() string
-	SetName(name string)
 
 	// Underlying plugin object
 	Plugin() Plugin
 
-	SetLeakCount(count int)
+	setLeakCount(count int)
 	LeakCount() int
+
+	Stopped() bool
 }
 
-// Base struct for the specialized PluginRunners
+// Filter and Output runner extends PluginRunner
+type FilterOutputRunner interface {
+	PluginRunner
+
+	InChan() chan *PipelinePack
+	Matcher() *Matcher
+}
+
+// Base for all runners
 type pRunnerBase struct {
 	name          string
 	plugin        Plugin
 	engine        *EngineConfig
 	pluginCommons *pluginCommons
 	leakCount     int
+	stopped       bool
 }
 
 type foRunner struct {
 	pRunnerBase
 
-	matcher   *MatchRunner
+	matcher   *Matcher
 	inChan    chan *PipelinePack
-	engine    *EngineConfig
 	leakCount int
 }
 
@@ -38,20 +49,20 @@ func (this *pRunnerBase) Name() string {
 	return this.name
 }
 
-func (this *pRunnerBase) SetName(name string) {
-	this.name = name
-}
-
 func (this *pRunnerBase) Plugin() Plugin {
 	return this.plugin
 }
 
-func (this *pRunnerBase) SetLeakCount(count int) {
+func (this *pRunnerBase) setLeakCount(count int) {
 	this.leakCount = count
 }
 
 func (this *pRunnerBase) LeakCount() int {
 	return this.leakCount
+}
+
+func (this *pRunnerBase) Stopped() bool {
+	return this.stopped
 }
 
 func NewFORunner(name string, plugin Plugin, pluginCommons *pluginCommons) (this *foRunner) {
@@ -61,23 +72,17 @@ func NewFORunner(name string, plugin Plugin, pluginCommons *pluginCommons) (this
 			plugin:        plugin,
 			pluginCommons: pluginCommons,
 		},
+		inChan: make(chan *PipelinePack, Globals().PluginChanSize),
 	}
 
-	this.inChan = make(chan *PipelinePack, Globals().PluginChanSize)
 	return
 }
 
-func (this *foRunner) MatchRunner() *MatchRunner {
+func (this *foRunner) Matcher() *Matcher {
 	return this.matcher
 }
 
 func (this *foRunner) Inject(pack *PipelinePack) bool {
-	if pack.Ident == "" {
-		Globals().Printf("Plugin %v new pack with empty ident: %s",
-			this.Name(), *pack)
-		return false
-	}
-
 	this.engine.router.inChan <- pack
 	return true
 }
@@ -94,21 +99,22 @@ func (this *foRunner) Filter() Filter {
 	return this.plugin.(Filter)
 }
 
-func (this *foRunner) Start(e *EngineConfig, wg *sync.WaitGroup) error {
+func (this *foRunner) start(e *EngineConfig, wg *sync.WaitGroup) error {
 	this.engine = e
 
-	go this.matcher.Start(this.inChan)
-	go this.runMainloop(e, wg)
+	go this.runMainloop(wg)
 	return nil
 }
 
-func (this *foRunner) runMainloop(e *EngineConfig, wg *sync.WaitGroup) {
+func (this *foRunner) runMainloop(wg *sync.WaitGroup) {
 	defer wg.Done()
 
 	var (
 		pluginType string
 		pw         *PluginWrapper
 	)
+
+	this.stopped = false
 
 	globals := Globals()
 	for !globals.Stopping {
@@ -118,7 +124,7 @@ func (this *foRunner) runMainloop(e *EngineConfig, wg *sync.WaitGroup) {
 			}
 
 			pluginType = "filter"
-			filter.Run(this, e)
+			filter.Run(this, this.engine)
 
 			if globals.Verbose {
 				globals.Printf("Filter[%s]stopped", this.name)
@@ -129,7 +135,7 @@ func (this *foRunner) runMainloop(e *EngineConfig, wg *sync.WaitGroup) {
 			}
 
 			pluginType = "output"
-			output.Run(this, e)
+			output.Run(this, this.engine)
 
 			if globals.Verbose {
 				globals.Printf("Output[%s]stopped", this.name)
@@ -156,11 +162,12 @@ func (this *foRunner) runMainloop(e *EngineConfig, wg *sync.WaitGroup) {
 
 		// Re-initialize our plugin using its wrapper
 		if pluginType == "filter" {
-			pw = e.filterWrappers[this.name]
+			pw = this.engine.filterWrappers[this.name]
 		} else {
-			pw = e.outputWrappers[this.name]
+			pw = this.engine.outputWrappers[this.name]
 		}
 		this.plugin = pw.Create()
 	}
 
+	this.stopped = true
 }

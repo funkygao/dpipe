@@ -21,6 +21,7 @@ func parseFlags() {
 	flag.BoolVar(&options.dryrun, "dryrun", false, "dry run")
 	flag.StringVar(&options.cpuprof, "cpuprof", "", "cpu profiling file")
 	flag.StringVar(&options.memprof, "memprof", "", "memory profiling file")
+	flag.IntVar(&options.diagnosticInterval, "diag", 20, "diagnostic interval in seconds")
 	flag.Usage = showUsage
 
 	flag.Parse()
@@ -67,9 +68,9 @@ func newLogger() *log.Logger {
 		}
 	}
 
-	logOptions := log.Ldate | log.Ltime
-	if options.verbose {
-		logOptions |= log.Lshortfile
+	logOptions := log.Ldate | log.Ltime | log.Lshortfile
+	if options.debug {
+		logOptions |= log.Lmicroseconds
 	}
 
 	prefix := fmt.Sprintf("[%d]", os.Getpid())

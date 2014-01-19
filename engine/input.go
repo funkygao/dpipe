@@ -12,6 +12,12 @@ type Input interface {
 	Stop()
 }
 
+// If a Plugin implements CleanupForRestart, it will be called on restart
+// Return value determines whether restart it or run once
+type Restarting interface {
+	CleanupForRestart() bool
+}
+
 type InputRunner interface {
 	PluginRunner
 
@@ -20,8 +26,6 @@ type InputRunner interface {
 
 	// Associated Input plugin object.
 	Input() Input
-
-	Start(e *EngineConfig, wg *sync.WaitGroup) (err error)
 
 	// Injects PipelinePack into the Router's input channel for delivery
 	// to all Filter and Output plugins with corresponding matcher.
@@ -63,12 +67,15 @@ func (this *iRunner) Ticker() (t <-chan time.Time) {
 	return this.ticker
 }
 
-func (this *iRunner) Start(e *EngineConfig, wg *sync.WaitGroup) error {
+func (this *iRunner) start(e *EngineConfig, wg *sync.WaitGroup) error {
 	this.engine = e
-	this.inChan = e.inputRecycleChan // got the engine PipelinePack pool
+	this.stopped = false
 	if this.tickLength > 0 {
 		this.ticker = time.Tick(this.tickLength)
 	}
+
+	// got the engine's recylable PipelinePack pool
+	this.inChan = e.inputRecycleChan
 
 	go this.runMainloop(e, wg)
 	return nil
@@ -109,6 +116,8 @@ func (this *iRunner) runMainloop(e *EngineConfig, wg *sync.WaitGroup) {
 		iw := e.inputWrappers[this.name]
 		this.plugin = iw.Create()
 	}
+
+	this.stopped = true
 }
 
 func NewInputRunner(name string, input Input, pluginCommons *pluginCommons) (r InputRunner) {

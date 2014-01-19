@@ -9,8 +9,8 @@ import (
 type projectEmailConf struct {
 	Recipients                                string
 	BusyLineThreshold                         int
-	SleepStart, SleepStep, SleepMax, SleepMin int
 	LineThreshold                             int
+	SleepStart, SleepStep, SleepMax, SleepMin int
 }
 
 type ConfProject struct {
@@ -18,7 +18,7 @@ type ConfProject struct {
 
 	Name        string `json:"name"`
 	IndexPrefix string `json:"index_prefix"`
-	ShowError   bool
+	ShowError   bool   `json:"show_error"`
 
 	MailConf projectEmailConf
 }

@@ -1,7 +1,4 @@
 {
-    // global conf shared by all projects
-    geodbfile: "/opt/local/share/GeoIP/GeoIP.dat"
-    
     projects: [
         {
             name:    "rs"
@@ -13,7 +10,7 @@
     plugins: [
         {
             name:   "pv"
-            class:  "BatchAlsLogInput"
+            class:  "ArchiveInput"
             ident:   "rsPv"
             ticker_interval: 10
             root_dir: "/data2/als/pv"
@@ -24,7 +21,7 @@
 
         {
             name:   "dau"
-            class:  "BatchAlsLogInput"
+            class:  "ArchiveInput"
             ident:   "rsDau"
             ticker_interval: 30
             root_dir: "/data2/als/dau"
@@ -34,8 +31,8 @@
         }
 
         {
-            name:   "BatchAlsLogInput"
-            class:  "BatchAlsLogInput"
+            name:   "ArchiveInput"
+            class:  "ArchiveInput"
             ident:   "allIn"
             ticker_interval: 10
             root_dir: "/data2/als"
@@ -97,6 +94,7 @@
         }
         {
             name:   "EsFilter"
+            geodbfile: "/opt/local/share/GeoIP/GeoIP.dat"
             match:  ["allIn", ]
             index_pattern:  "@ym"
             ident:   "esFiltered"

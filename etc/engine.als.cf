@@ -1,6 +1,5 @@
 {
     // global conf shared by all projects
-    geodbfile: "/opt/local/share/GeoIP/GeoIP.dat"
     http_addr: "127.0.0.1:9876"
     
     projects: [
@@ -193,6 +192,7 @@
 
         {
             name:   "EsFilter"
+            geodbfile: "/opt/local/share/GeoIP/GeoIP.dat"
             match:  ["ffsBi", "rsLogs", ]
             ident:   "esFiltered"
             index_pattern:  "@ym"

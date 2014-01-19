@@ -126,4 +126,20 @@ Main pipeline data structure containing a AlsMessage and other metadata
                                                       |         Filter         |
                                                       +------------------------+
     
-    
+   
+##### shutdown
+
+
+        engine SIGINT
+          |
+        http.Stop
+          |
+        all Input.Stop()
+          |
+        router ----- close filterRunner.inChan --- Filter stopped
+          |     |
+          |      --- close outRunner.inChan ------ Output stopped
+          |
+        router ----- wait for FO runner finish --- close router.inChan 
+          |
+        done
