@@ -35,7 +35,7 @@ func (this *DiagnosticTracker) Run() {
 	ticker := time.NewTicker(time.Duration(globals.DiagnosticInterval) * time.Second)
 	defer ticker.Stop()
 
-	if globals.Verbose {
+	if globals.Debug {
 		globals.Printf("Diagnostic[%s] started with %ds\n", this.PoolName,
 			globals.DiagnosticInterval)
 	}
