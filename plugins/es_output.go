@@ -35,13 +35,6 @@ func (this *EsOutput) Init(config *conf.Conf) {
 	this.bulkMaxDocs = config.Int("bulk_max_docs", 100)
 	this.bulkMaxBuffer = config.Int("bulk_max_buffer", 10<<20) // 10 MB
 	this.dryRun = config.Bool("dryrun", false)
-
-	this.indexer = core.NewBulkIndexer(this.bulkMaxConn)
-	this.indexer.BulkMaxDocs = this.bulkMaxDocs
-	this.indexer.BulkMaxBuffer = this.bulkMaxBuffer
-
-	// start the bulk indexer
-	this.indexer.Run(this.stopChan)
 }
 
 func (this *EsOutput) Run(r engine.OutputRunner, h engine.PluginHelper) error {
@@ -53,6 +46,13 @@ func (this *EsOutput) Run(r engine.OutputRunner, h engine.PluginHelper) error {
 		inChan       = r.InChan()
 		reportTicker = time.NewTicker(this.reportInterval)
 	)
+
+	this.indexer = core.NewBulkIndexer(this.bulkMaxConn)
+	this.indexer.BulkMaxDocs = this.bulkMaxDocs
+	this.indexer.BulkMaxBuffer = this.bulkMaxBuffer
+
+	// start the bulk indexer
+	this.indexer.Run(this.stopChan)
 
 	defer reportTicker.Stop()
 
