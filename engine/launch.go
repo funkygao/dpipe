@@ -22,6 +22,13 @@ func Launch(e *EngineConfig) {
 	globals := Globals()
 	globals.Println("Launching Engine...")
 
+	// setup signal handler first to avoid race condition
+	// if Input terminates very soon, global.Shutdown will
+	// not be able to trap it
+	globals.sigChan = make(chan os.Signal)
+	signal.Notify(globals.sigChan, syscall.SIGINT, syscall.SIGHUP,
+		syscall.SIGUSR2, syscall.SIGUSR1)
+
 	e.launchHttpServ()
 
 	if globals.Verbose {
@@ -79,11 +86,8 @@ func Launch(e *EngineConfig) {
 		}
 	}
 
-	globals.Println("Engine ready")
+	globals.Println("Engine waiting for signals...")
 
-	globals.sigChan = make(chan os.Signal)
-	signal.Notify(globals.sigChan, syscall.SIGINT, syscall.SIGHUP,
-		syscall.SIGUSR2, syscall.SIGUSR1)
 	for !globals.Stopping {
 		select {
 		case sig := <-globals.sigChan:
@@ -107,12 +111,6 @@ func Launch(e *EngineConfig) {
 	}
 
 	// cleanup after shutdown
-
-	e.stopHttpServ()
-
-	for _, project := range e.projects {
-		project.Stop()
-	}
 
 	for _, runner := range e.InputRunners {
 		if globals.Verbose {
@@ -157,6 +155,12 @@ func Launch(e *EngineConfig) {
 	e.router.waitForFilters()
 	e.router.waitForOutputs()
 	close(e.router.inChan)
+
+	e.stopHttpServ()
+
+	for _, project := range e.projects {
+		project.Stop()
+	}
 
 	globals.Printf("Shutdown with input:%s, dispatch: %s",
 		gofmt.Comma(e.router.totalInputMsgN),
