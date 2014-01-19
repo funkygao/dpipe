@@ -49,7 +49,7 @@ func (this *messageRouter) Start(routerReady chan<- interface{}) {
 	defer ticker.Stop()
 
 	if globals.Verbose {
-		globals.Printf("Router started with ticker %ds\n", globals.TickerLength)
+		globals.Printf("Router started with ticker=%ds\n", globals.TickerLength)
 	}
 
 	// tell others to go ahead
@@ -138,8 +138,23 @@ LOOP:
 }
 
 func (this *messageRouter) removeMatcher(matcher *Matcher, matchers []*Matcher) {
+	globals := Globals()
 	for _, m := range matchers {
 		if m == matcher {
+			// waiting for Filter/Output consume all the queued packs
+			queuePacks := len(m.InChan())
+			for queuePacks > 0 {
+				if globals.Debug {
+					globals.Printf("[%s]queued unconsumed packs: %d", m.runner.Name(), queuePacks)
+				}
+				time.Sleep(time.Millisecond * 2)
+				queuePacks = len(m.InChan())
+			}
+
+			if globals.Debug {
+				globals.Printf("Close inChan of %s", m.runner.Name())
+			}
+
 			close(m.InChan())
 			return
 		}
