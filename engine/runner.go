@@ -101,7 +101,6 @@ func (this *foRunner) Filter() Filter {
 
 func (this *foRunner) start(e *EngineConfig, wg *sync.WaitGroup) error {
 	this.engine = e
-	this.stopped = false
 
 	go this.runMainloop(wg)
 	return nil
@@ -114,6 +113,8 @@ func (this *foRunner) runMainloop(wg *sync.WaitGroup) {
 		pluginType string
 		pw         *PluginWrapper
 	)
+
+	this.stopped = false
 
 	globals := Globals()
 	for !globals.Stopping {
@@ -169,5 +170,4 @@ func (this *foRunner) runMainloop(wg *sync.WaitGroup) {
 	}
 
 	this.stopped = true
-
 }
