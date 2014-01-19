@@ -18,6 +18,9 @@ type messageRouter struct {
 	removeFilterMatcher chan *Matcher
 	removeOutputMatcher chan *Matcher
 
+	filtersDoneChan chan bool
+	outputsDoneChan chan bool
+
 	filterMatchers []*Matcher
 	outputMatchers []*Matcher
 }
@@ -30,6 +33,8 @@ func NewMessageRouter() (this *messageRouter) {
 	this.removeOutputMatcher = make(chan *Matcher)
 	this.filterMatchers = make([]*Matcher, 0, 10)
 	this.outputMatchers = make([]*Matcher, 0, 10)
+	this.filtersDoneChan = make(chan bool)
+	this.outputsDoneChan = make(chan bool)
 
 	return this
 }
@@ -61,10 +66,10 @@ LOOP:
 
 		select {
 		case matcher = <-this.removeOutputMatcher:
-			this.removeMatcher(matcher, this.outputMatchers)
+			go this.removeMatcher(matcher, this.outputMatchers)
 
 		case matcher = <-this.removeFilterMatcher:
-			this.removeMatcher(matcher, this.filterMatchers)
+			go this.removeMatcher(matcher, this.filterMatchers)
 
 		case <-ticker.C:
 			globals.Printf("Elapsed: %s, Total: %s, speed: %d/s, Input: %s, speed: %d/s",
@@ -106,6 +111,10 @@ LOOP:
 
 					pack.IncRef()
 					pack.diagnostics.AddStamp(matcher.runner)
+					if globals.Debug {
+						globals.Printf("[%s]queued packs: %d", matcher.runner.Name(),
+							len(matcher.InChan()))
+					}
 					matcher.InChan() <- pack
 				}
 			}
@@ -119,6 +128,10 @@ LOOP:
 
 					pack.IncRef()
 					pack.diagnostics.AddStamp(matcher.runner)
+					if globals.Debug {
+						globals.Printf("[%s]queued packs: %d", matcher.runner.Name(),
+							len(matcher.InChan()))
+					}
 					matcher.InChan() <- pack
 				}
 			}
@@ -141,14 +154,23 @@ func (this *messageRouter) removeMatcher(matcher *Matcher, matchers []*Matcher) 
 	globals := Globals()
 	for _, m := range matchers {
 		if m == matcher {
-			// waiting for Filter/Output consume all the queued packs
-			queuePacks := len(m.InChan())
-			for queuePacks > 0 {
+			queuedPacks := len(this.inChan)
+			for queuedPacks > 0 {
 				if globals.Debug {
-					globals.Printf("[%s]queued unconsumed packs: %d", m.runner.Name(), queuePacks)
+					globals.Printf("[router]queued packs: %d", queuedPacks)
 				}
 				time.Sleep(time.Millisecond * 2)
-				queuePacks = len(m.InChan())
+				queuedPacks = len(this.inChan)
+			}
+
+			// waiting for Filter/Output consume all the queued packs
+			queuedPacks = len(m.InChan())
+			for queuedPacks > 0 {
+				if globals.Debug {
+					globals.Printf("[%s]queued packs: %d", m.runner.Name(), queuedPacks)
+				}
+				time.Sleep(time.Millisecond * 2)
+				queuedPacks = len(m.InChan())
 			}
 
 			if globals.Debug {
@@ -156,7 +178,25 @@ func (this *messageRouter) removeMatcher(matcher *Matcher, matchers []*Matcher) 
 			}
 
 			close(m.InChan())
+			if _, ok := m.runner.Plugin().(Filter); ok {
+				this.filtersDoneChan <- true
+			} else {
+				this.outputsDoneChan <- true
+			}
+
 			return
 		}
+	}
+}
+
+func (this *messageRouter) waitForFilters() {
+	for i := 0; i < len(this.filterMatchers); i++ {
+		<-this.filtersDoneChan
+	}
+}
+
+func (this *messageRouter) waitForOutputs() {
+	for i := 0; i < len(this.outputMatchers); i++ {
+		<-this.outputsDoneChan
 	}
 }

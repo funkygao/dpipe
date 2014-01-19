@@ -15,8 +15,6 @@ type PluginRunner interface {
 
 	setLeakCount(count int)
 	LeakCount() int
-
-	Stopped() bool
 }
 
 // Filter and Output runner extends PluginRunner
@@ -34,7 +32,6 @@ type pRunnerBase struct {
 	engine        *EngineConfig
 	pluginCommons *pluginCommons
 	leakCount     int
-	stopped       bool
 }
 
 type foRunner struct {
@@ -59,10 +56,6 @@ func (this *pRunnerBase) setLeakCount(count int) {
 
 func (this *pRunnerBase) LeakCount() int {
 	return this.leakCount
-}
-
-func (this *pRunnerBase) Stopped() bool {
-	return this.stopped
 }
 
 func NewFORunner(name string, plugin Plugin, pluginCommons *pluginCommons) (this *foRunner) {
@@ -114,10 +107,8 @@ func (this *foRunner) runMainloop(wg *sync.WaitGroup) {
 		pw         *PluginWrapper
 	)
 
-	this.stopped = false
-
 	globals := Globals()
-	for !globals.Stopping {
+	for {
 		if filter, ok := this.plugin.(Filter); ok {
 			if globals.Verbose {
 				globals.Printf("Filter[%s]starting", this.name)
@@ -144,8 +135,6 @@ func (this *foRunner) runMainloop(wg *sync.WaitGroup) {
 			panic("unkown plugin type")
 		}
 
-		// Plugin return from 'Run', they died? or we want to stop?
-
 		if globals.Stopping {
 			return
 		}
@@ -169,5 +158,4 @@ func (this *foRunner) runMainloop(wg *sync.WaitGroup) {
 		this.plugin = pw.Create()
 	}
 
-	this.stopped = true
 }

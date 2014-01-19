@@ -69,7 +69,6 @@ func (this *iRunner) Ticker() (t <-chan time.Time) {
 
 func (this *iRunner) start(e *EngineConfig, wg *sync.WaitGroup) error {
 	this.engine = e
-	this.stopped = false
 	if this.tickLength > 0 {
 		this.ticker = time.Tick(this.tickLength)
 	}
@@ -85,7 +84,7 @@ func (this *iRunner) runMainloop(e *EngineConfig, wg *sync.WaitGroup) {
 	defer wg.Done()
 
 	globals := Globals()
-	for !globals.Stopping {
+	for {
 		if globals.Verbose {
 			globals.Printf("Input[%s]starting", this.name)
 		}
@@ -117,7 +116,6 @@ func (this *iRunner) runMainloop(e *EngineConfig, wg *sync.WaitGroup) {
 		this.plugin = iw.Create()
 	}
 
-	this.stopped = true
 }
 
 func NewInputRunner(name string, input Input, pluginCommons *pluginCommons) (r InputRunner) {

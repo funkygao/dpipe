@@ -154,6 +154,8 @@ func Launch(e *EngineConfig) {
 		globals.Println("All Outputs terminated")
 	}
 
+	e.router.waitForFilters()
+	e.router.waitForOutputs()
 	close(e.router.inChan)
 
 	globals.Printf("Shutdown with input:%s, dispatch: %s",
