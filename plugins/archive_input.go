@@ -127,7 +127,6 @@ func (this *ArchiveInput) doRunSingleLogfile(path string) {
 		globals = engine.Globals()
 	)
 
-LOOP:
 	for {
 		line, err = reader.ReadLine()
 		switch err {
@@ -154,6 +153,9 @@ LOOP:
 			pack.Ident = this.ident
 			pack.Project = this.project
 			pack.Logfile.SetPath(path)
+			if globals.Debug {
+				globals.Println(*pack)
+			}
 			this.runner.Inject(pack)
 
 		case io.EOF:
@@ -164,7 +166,11 @@ LOOP:
 			this.chkpnt.Put(path)
 			this.chkpnt.Dump()
 
-			break LOOP
+			return
+
+		default:
+			// unknown error
+			panic(err)
 		}
 	}
 
