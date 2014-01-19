@@ -70,10 +70,10 @@ LOOP:
 			go this.removeMatcher(matcher, this.filterMatchers)
 
 		case <-ticker.C:
-			globals.Printf("Elapsed: %s, Total: %s, speed: %d/s, Input: %s, speed: %d/s",
-				time.Since(globals.StartedAt),
+			globals.Printf("Total: %s, speed: %d/s",
 				gofmt.Comma(this.totalProcessedMsgN),
-				this.periodProcessMsgN/int32(globals.TickerLength),
+				this.periodProcessMsgN/int32(globals.TickerLength))
+			globals.Printf("Input: %s, speed: %d/s",
 				gofmt.Comma(this.totalInputMsgN),
 				this.periodInputMsgN/int32(globals.TickerLength))
 
