@@ -69,7 +69,7 @@ func (this *AlarmOutput) Run(r engine.OutputRunner, h engine.PluginHelper) error
 
 	observer.Subscribe(engine.RELOAD, reloadChan)
 
-DONE:
+LOOP:
 	for ok {
 		select {
 		case <-reloadChan:
@@ -77,7 +77,7 @@ DONE:
 
 		case pack, ok = <-inChan:
 			if !ok {
-				break DONE
+				break LOOP
 			}
 
 			this.handlePack(pack)

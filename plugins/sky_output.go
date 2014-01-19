@@ -73,7 +73,7 @@ func (this *SkyOutput) Run(r engine.OutputRunner, h engine.PluginHelper) error {
 		project = h.Project(this.project)
 	)
 
-DONE:
+LOOP:
 	for ok {
 		select {
 		case <-this.stopChan:
@@ -81,7 +81,7 @@ DONE:
 
 		case pack, ok = <-inChan:
 			if !ok {
-				break DONE
+				break LOOP
 			}
 
 			this.feedSky(project, pack)

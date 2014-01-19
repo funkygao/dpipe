@@ -158,12 +158,12 @@ func (this *EsBufferFilter) Run(r engine.FilterRunner, h engine.PluginHelper) er
 		go worker.run(r, h)
 	}
 
-DONE:
+LOOP:
 	for ok {
 		select {
 		case pack, ok = <-inChan:
 			if !ok {
-				break DONE
+				break LOOP
 			}
 
 			this.handlePack(pack)

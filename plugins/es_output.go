@@ -58,7 +58,7 @@ func (this *EsOutput) Run(r engine.OutputRunner, h engine.PluginHelper) error {
 
 	observer.Subscribe(engine.RELOAD, reloadChan)
 
-DONE:
+LOOP:
 	for ok {
 		select {
 		case <-this.stopChan:
@@ -75,7 +75,7 @@ DONE:
 
 		case pack, ok = <-inChan:
 			if !ok {
-				break DONE
+				break LOOP
 			}
 
 			this.feedEs(h.Project(pack.Project), pack)

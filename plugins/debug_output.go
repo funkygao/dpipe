@@ -22,12 +22,12 @@ func (this *DebugOutput) Run(r engine.OutputRunner, h engine.PluginHelper) error
 		inChan  = r.InChan()
 	)
 
-DONE:
+LOOP:
 	for ok {
 		select {
 		case pack, ok = <-inChan:
 			if !ok {
-				break DONE
+				break LOOP
 			}
 
 			if !this.blackhole {

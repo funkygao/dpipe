@@ -55,8 +55,7 @@ func (this *messageRouter) Start(routerReady chan<- interface{}) {
 	// tell others to go ahead
 	routerReady <- true
 
-DONE:
-
+LOOP:
 	for ok {
 		runtime.Gosched()
 
@@ -81,7 +80,7 @@ DONE:
 		case pack, ok = <-this.inChan:
 			if !ok {
 				globals.Stopping = true
-				break DONE
+				break LOOP
 			}
 
 			atomic.AddInt32(&this.periodProcessMsgN, 1)
