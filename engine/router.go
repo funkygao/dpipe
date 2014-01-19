@@ -99,6 +99,22 @@ DONE:
 			pack.diagnostics.Reset()
 			foundMatch = false
 
+			// If we send pack to filterMatchers and then outputMatchers
+			// because filter may change pack Ident, and this pack bacuase
+			// of shared mem, may match both filterMatcher and outputMatcher
+			// then dup dispatching happens!!!
+			//
+			// We have to dispatch to Output then Filter to avoid that case
+			for _, matcher = range this.outputMatchers {
+				if matcher != nil && matcher.match(pack) {
+					foundMatch = true
+
+					pack.IncRef()
+					pack.diagnostics.AddStamp(matcher.runner)
+					matcher.InChan() <- pack
+				}
+			}
+
 			// got pack from Input, now dispatch
 			// for each target, pack will inc ref count
 			// and the router will dec ref count only once
@@ -109,24 +125,6 @@ DONE:
 					pack.IncRef()
 					pack.diagnostics.AddStamp(matcher.runner)
 					matcher.InChan() <- pack
-				}
-			}
-
-			// If we send pack to filterMatchers and then outputMatchers
-			// because filter may change pack Ident, and this pack bacuase
-			// of shared mem, may match both filterMatcher and now outputMatcher
-			// then dup dispatching happens!!!
-			//
-			// So, we for a give pack, filter sink and output sink is exclusive
-			if !foundMatch {
-				for _, matcher = range this.outputMatchers {
-					if matcher != nil && matcher.match(pack) {
-						foundMatch = true
-
-						pack.IncRef()
-						pack.diagnostics.AddStamp(matcher.runner)
-						matcher.InChan() <- pack
-					}
 				}
 			}
 
