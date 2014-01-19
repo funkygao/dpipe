@@ -119,6 +119,10 @@ func (this *EngineConfig) decodeHttpParams(w http.ResponseWriter, req *http.Requ
 func (this *EngineConfig) stopHttpServ() {
 	if this.listener != nil {
 		this.listener.Close()
-		Globals().Println("HTTP stopped")
+
+		globals := Globals()
+		if globals.Verbose {
+			globals.Println("HTTP stopped")
+		}
 	}
 }
