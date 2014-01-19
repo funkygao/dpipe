@@ -172,7 +172,7 @@ func (this *messageRouter) removeMatcher(matcher *Matcher, matchers []*Matcher) 
 	for _, m := range matchers {
 		if m == matcher {
 			close(m.InChan())
-			break
+			return
 		}
 	}
 }

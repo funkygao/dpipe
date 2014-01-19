@@ -58,6 +58,7 @@ func (this *EsOutput) Run(r engine.OutputRunner, h engine.PluginHelper) error {
 
 	observer.Subscribe(engine.RELOAD, reloadChan)
 
+DONE:
 	for ok {
 		select {
 		case <-this.stopChan:
@@ -74,7 +75,7 @@ func (this *EsOutput) Run(r engine.OutputRunner, h engine.PluginHelper) error {
 
 		case pack, ok = <-inChan:
 			if !ok {
-				break
+				break DONE
 			}
 
 			this.feedEs(h.Project(pack.Project), pack)

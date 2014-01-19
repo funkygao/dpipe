@@ -62,11 +62,12 @@ func (this *CardinalityFilter) Run(r engine.FilterRunner,
 		inChan = r.InChan()
 	)
 
+DONE:
 	for ok {
 		select {
 		case pack, ok = <-inChan:
 			if !ok {
-				break
+				break DONE
 			}
 
 			this.handlePack(r, h, pack)

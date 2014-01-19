@@ -33,11 +33,12 @@ func (this *CardinalityOutput) Run(r engine.OutputRunner, h engine.PluginHelper)
 		return this.handleHttpRequest(w, req, params)
 	}).Methods("GET", "PUT")
 
+DONE:
 	for ok {
 		select {
 		case pack, ok = <-inChan:
 			if !ok {
-				break
+				break DONE
 			}
 
 			if pack.CardinalityKey != "" && pack.CardinalityData != nil {

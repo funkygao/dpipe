@@ -65,11 +65,12 @@ func (this *EsFilter) Run(r engine.FilterRunner, h engine.PluginHelper) error {
 		inChan = r.InChan()
 	)
 
+DONE:
 	for ok {
 		select {
 		case pack, ok = <-inChan:
 			if !ok {
-				break
+				break DONE
 			}
 
 			if this.handlePack(pack, h.Project(pack.Project)) {
