@@ -23,6 +23,7 @@ type ArchiveInput struct {
 	excepts     []string
 	ident       string
 	project     string
+	leftN       int
 }
 
 func (this *ArchiveInput) Init(config *conf.Conf) {
@@ -46,6 +47,16 @@ func (this *ArchiveInput) Stop() {
 
 }
 
+func (this *ArchiveInput) showProgress(r engine.InputRunner) {
+	for {
+		select {
+		case <-r.Ticker():
+			engine.Globals().Printf("Left %d files", this.leftN)
+		}
+	}
+
+}
+
 func (this *ArchiveInput) Run(r engine.InputRunner, h engine.PluginHelper) error {
 	this.runner = r
 	this.h = h
@@ -60,6 +71,8 @@ func (this *ArchiveInput) Run(r engine.InputRunner, h engine.PluginHelper) error
 	this.workersWg = new(sync.WaitGroup)
 
 	filepath.Walk(this.rootDir, this.runSingleLogfile)
+
+	go this.showProgress(r)
 
 	// wait for all workers done
 	this.workersWg.Wait()
@@ -94,6 +107,7 @@ func (this *ArchiveInput) runSingleLogfile(path string, f os.FileInfo, err error
 		return
 	}
 
+	this.leftN += 1
 	this.workersWg.Add(1)
 
 	// limit concurrent workers
@@ -113,6 +127,7 @@ func (this *ArchiveInput) doRunSingleLogfile(path string) {
 	defer func() {
 		reader.Close()
 		this.workersWg.Done()
+		this.leftN -= 1
 
 		<-this.workerNChan // release the lock
 	}()
