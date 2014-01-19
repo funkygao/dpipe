@@ -107,7 +107,7 @@ LOOP:
 func (this *EsOutput) handlePeriodicalCounters() {
 	globals := engine.Globals()
 	for name, n := range this.counters {
-		if globals.Verbose {
+		if n > 0 && globals.Verbose {
 			globals.Printf("ES %30s %8d", name, n)
 		}
 
