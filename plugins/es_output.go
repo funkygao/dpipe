@@ -78,6 +78,10 @@ LOOP:
 				break LOOP
 			}
 
+			if globals.Debug {
+				globals.Println(*pack)
+			}
+
 			this.feedEs(h.Project(pack.Project), pack)
 			pack.Recycle()
 		}
