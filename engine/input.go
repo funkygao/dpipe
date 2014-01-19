@@ -95,7 +95,7 @@ func (this *iRunner) runMainloop(e *EngineConfig, wg *sync.WaitGroup) {
 		}
 
 		if globals.Verbose {
-			globals.Printf("Input[%s]stopped", this.name)
+			globals.Printf("Input[%s]done", this.name)
 		}
 
 		if globals.Stopping {

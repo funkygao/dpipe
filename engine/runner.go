@@ -127,7 +127,7 @@ func (this *foRunner) runMainloop(wg *sync.WaitGroup) {
 			filter.Run(this, this.engine)
 
 			if globals.Verbose {
-				globals.Printf("Filter[%s]stopped", this.name)
+				globals.Printf("Filter[%s]done", this.name)
 			}
 		} else if output, ok := this.plugin.(Output); ok {
 			if globals.Verbose {
@@ -138,7 +138,7 @@ func (this *foRunner) runMainloop(wg *sync.WaitGroup) {
 			output.Run(this, this.engine)
 
 			if globals.Verbose {
-				globals.Printf("Output[%s]stopped", this.name)
+				globals.Printf("Output[%s]done", this.name)
 			}
 		} else {
 			panic("unkown plugin type")
