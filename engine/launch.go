@@ -152,8 +152,7 @@ func Launch(e *EngineConfig) {
 		globals.Println("All Outputs terminated")
 	}
 
-	e.router.waitForFilters()
-	e.router.waitForOutputs()
+	e.router.waitForFlush()
 	close(e.router.inChan)
 
 	e.stopHttpServ()

@@ -18,11 +18,10 @@ type messageRouter struct {
 	removeFilterMatcher chan *Matcher
 	removeOutputMatcher chan *Matcher
 
-	filtersDoneChan chan bool
-	outputsDoneChan chan bool
-
 	filterMatchers []*Matcher
 	outputMatchers []*Matcher
+
+	closedMatcherChan chan interface{}
 }
 
 func NewMessageRouter() (this *messageRouter) {
@@ -33,8 +32,7 @@ func NewMessageRouter() (this *messageRouter) {
 	this.removeOutputMatcher = make(chan *Matcher)
 	this.filterMatchers = make([]*Matcher, 0, 10)
 	this.outputMatchers = make([]*Matcher, 0, 10)
-	this.filtersDoneChan = make(chan bool)
-	this.outputsDoneChan = make(chan bool)
+	this.closedMatcherChan = make(chan interface{})
 
 	return this
 }
@@ -159,16 +157,17 @@ func (this *messageRouter) removeMatcher(matcher *Matcher, matchers []*Matcher) 
 				if globals.Debug {
 					globals.Printf("[router]queued packs: %d", queuedPacks)
 				}
+
 				time.Sleep(time.Millisecond * 2)
 				queuedPacks = len(this.inChan)
 			}
 
-			// waiting for Filter/Output consume all the queued packs
 			queuedPacks = len(m.InChan())
 			for queuedPacks > 0 {
 				if globals.Debug {
 					globals.Printf("[%s]queued packs: %d", m.runner.Name(), queuedPacks)
 				}
+
 				time.Sleep(time.Millisecond * 2)
 				queuedPacks = len(m.InChan())
 			}
@@ -178,25 +177,15 @@ func (this *messageRouter) removeMatcher(matcher *Matcher, matchers []*Matcher) 
 			}
 
 			close(m.InChan())
-			if _, ok := m.runner.Plugin().(Filter); ok {
-				this.filtersDoneChan <- true
-			} else {
-				this.outputsDoneChan <- true
-			}
+			this.closedMatcherChan <- 1
 
 			return
 		}
 	}
 }
 
-func (this *messageRouter) waitForFilters() {
-	for i := 0; i < len(this.filterMatchers); i++ {
-		<-this.filtersDoneChan
-	}
-}
-
-func (this *messageRouter) waitForOutputs() {
-	for i := 0; i < len(this.outputMatchers); i++ {
-		<-this.outputsDoneChan
+func (this *messageRouter) waitForFlush() {
+	for i := 0; i < len(this.filterMatchers)+len(this.outputMatchers); i++ {
+		<-this.closedMatcherChan
 	}
 }
