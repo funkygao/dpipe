@@ -109,10 +109,6 @@ LOOP:
 
 					pack.IncRef()
 					pack.diagnostics.AddStamp(matcher.runner)
-					if globals.Debug {
-						globals.Printf("[%s]queued packs: %d", matcher.runner.Name(),
-							len(matcher.InChan()))
-					}
 					matcher.InChan() <- pack
 				}
 			}
@@ -126,10 +122,6 @@ LOOP:
 
 					pack.IncRef()
 					pack.diagnostics.AddStamp(matcher.runner)
-					if globals.Debug {
-						globals.Printf("[%s]queued packs: %d", matcher.runner.Name(),
-							len(matcher.InChan()))
-					}
 					matcher.InChan() <- pack
 				}
 			}
