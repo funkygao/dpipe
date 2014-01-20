@@ -14,11 +14,12 @@ import (
 )
 
 type logfileSource struct {
-	glob    string
-	excepts []string
-	project string
-	ident   string
-	tail    bool
+	glob     string
+	excepts  []string
+	project  string
+	ident    string
+	disabled bool
+	tail     bool
 
 	_files []string
 }
@@ -32,6 +33,7 @@ func (this *logfileSource) load(config *conf.Conf) {
 	this.project = config.String("project", "")
 	this.tail = config.Bool("tail", true)
 	this.excepts = config.StringList("except", nil)
+	this.disabled = config.Bool("disabled", false)
 	this.ident = config.String("ident", "")
 	if this.ident == "" {
 		panic("empty ident")
@@ -41,6 +43,10 @@ func (this *logfileSource) load(config *conf.Conf) {
 
 func (this *logfileSource) refresh(wg *sync.WaitGroup) {
 	defer wg.Done()
+
+	if this.disabled {
+		return
+	}
 
 	files, err := filepath.Glob(this.glob)
 	if err != nil {
@@ -212,6 +218,10 @@ func (this *AlsLogInput) runSingleAlsLogInput(fn string, r engine.InputRunner,
 func (this *AlsLogInput) refreshSources() {
 	wg := new(sync.WaitGroup)
 	for _, s := range this.sources {
+		if s.disabled {
+			continue
+		}
+
 		wg.Add(1)
 		go s.refresh(wg)
 	}
