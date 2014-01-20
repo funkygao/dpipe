@@ -83,8 +83,6 @@ func (this *ArchiveInput) Run(r engine.InputRunner, h engine.PluginHelper) error
 		globals.Printf("[%s]Total msg: %d", r.Name(), this.lineN)
 	}
 
-	globals.Shutdown()
-
 	return nil
 }
 
