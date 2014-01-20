@@ -42,6 +42,9 @@ func (this *EngineConfig) handleHttpQuery(w http.ResponseWriter, req *http.Reque
 	case "ping":
 		output["status"] = "ok"
 
+	case "panic":
+		panic("on purpose")
+
 	case "stat":
 		output["goroutines"] = this.stats.NumGoroutine()
 		output["memStats"] = this.stats.MemStats()
