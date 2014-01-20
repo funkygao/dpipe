@@ -108,7 +108,7 @@ func (this *EsOutput) handlePeriodicalCounters() {
 	globals := engine.Globals()
 	for name, n := range this.counters {
 		if n > 0 && globals.Verbose {
-			globals.Printf("ES %40s %8d", name, n)
+			globals.Printf("%-50s %8d", name, n)
 		}
 
 		this.counters[name] = 0

@@ -70,6 +70,10 @@ func (this *DiagnosticTracker) Run() {
 
 				globals.Printf("\t%s: %d", runner.Name(), count)
 			}
+
+			for _, pack := range probablePacks {
+				globals.Println(*pack)
+			}
 		}
 	}
 }
