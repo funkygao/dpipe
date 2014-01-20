@@ -107,6 +107,7 @@ func (this *ArchiveInput) runSingleLogfile(path string, f os.FileInfo, err error
 		return
 	}
 
+	this.workersWg.Add(1)
 	this.leftN += 1
 
 	go this.doRunSingleLogfile(path)
@@ -115,8 +116,6 @@ func (this *ArchiveInput) runSingleLogfile(path string, f os.FileInfo, err error
 }
 
 func (this *ArchiveInput) doRunSingleLogfile(path string) {
-	this.workersWg.Add(1)
-
 	// limit concurrent workers
 	this.workerNChan <- 1
 
