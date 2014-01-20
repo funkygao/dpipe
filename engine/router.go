@@ -51,6 +51,20 @@ func (this *messageRouter) Start(routerReady chan<- interface{}) {
 	ticker = time.NewTicker(time.Second * time.Duration(globals.TickerLength))
 	defer ticker.Stop()
 
+	go func() {
+		for _ = range ticker.C {
+			globals.Printf("Total: %s, speed: %d/s",
+				gofmt.Comma(this.totalProcessedMsgN),
+				this.periodProcessMsgN/int32(globals.TickerLength))
+			globals.Printf("Input: %s, speed: %d/s",
+				gofmt.Comma(this.totalInputMsgN),
+				this.periodInputMsgN/int32(globals.TickerLength))
+
+			this.periodInputMsgN = int32(0)
+			this.periodProcessMsgN = int32(0)
+		}
+	}()
+
 	if globals.Verbose {
 		globals.Printf("Router started with ticker=%ds\n", globals.TickerLength)
 	}
@@ -68,17 +82,6 @@ LOOP:
 
 		case matcher = <-this.removeFilterMatcher:
 			go this.removeMatcher(matcher, this.filterMatchers)
-
-		case <-ticker.C:
-			globals.Printf("Total: %s, speed: %d/s",
-				gofmt.Comma(this.totalProcessedMsgN),
-				this.periodProcessMsgN/int32(globals.TickerLength))
-			globals.Printf("Input: %s, speed: %d/s",
-				gofmt.Comma(this.totalInputMsgN),
-				this.periodInputMsgN/int32(globals.TickerLength))
-
-			this.periodInputMsgN = int32(0)
-			this.periodProcessMsgN = int32(0)
 
 		case pack, ok = <-this.inChan:
 			if !ok {
