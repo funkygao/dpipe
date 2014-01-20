@@ -152,7 +152,9 @@ func (this *AlsLogInput) Run(r engine.InputRunner, h engine.PluginHelper) error 
 func (this *AlsLogInput) handlePeriodicalCounters() {
 	globals := engine.Globals()
 	for ident, n := range this.counters {
-		globals.Printf("%-15s %8d", ident, n)
+		if n > 0 {
+			globals.Printf("%-15s %8d", ident, n)
+		}
 
 		this.counters[ident] = 0
 	}
