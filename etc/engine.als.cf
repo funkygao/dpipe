@@ -112,7 +112,7 @@
                     glob:   "/mnt/funplus/logs/fp_rstory/*.log"
                     except: [
                         "post", "index", "session", "load_data", "dau", "pv",
-                        "cheat_check", "quest", "user.",
+                        "cheat_check", "quest", "user.", "bigdata.",
                     ]
                 }
             ]
