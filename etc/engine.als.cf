@@ -66,24 +66,13 @@
         }
 
         {
-            name:   "rsSkyOutput"
+            name:   "rsUserSkyOutput"
             class:  "SkyOutput"
-            match:  ["rsDau", ]
-            disabled: false
+            match:  ["rsUser", ]
+            disabled: true
             project:    "RS"
-            table:  "rs_user"
-            uid_field: "uid"
-            fields: [
-                {
-                    camel_name: "dau"
-                    action: "visit"
-                }
-                {
-                    camel_name: "blah"
-                    name: ""
-                    type: ""
-                }
-            ]
+            table:      "rs_user"
+            uid_field:  "uid"
         }
 
         {
@@ -105,6 +94,13 @@
                 }
 
                 {
+                    ident:   "rsUser"
+                    project:   "RS"
+                    disabled:   true
+                    glob:   "/mnt/funplus/logs/fp_rstory/user.*.log"
+                }
+
+                {
                     ident:   "rsDau"
                     project:   "RS"
                     glob:   "/mnt/funplus/logs/fp_rstory/dau*.log"
@@ -116,7 +112,7 @@
                     glob:   "/mnt/funplus/logs/fp_rstory/*.log"
                     except: [
                         "post", "index", "session", "load_data", "dau", "pv",
-                        "cheat_check", "quest",
+                        "cheat_check", "quest", "user.",
                     ]
                 }
             ]
@@ -234,7 +230,6 @@
         {
             name:   "AlarmOutput"
             match:  ["rsLogs", ]
-            disabled: false
             projects: [
                 {
                     name:   "RS"
