@@ -6,7 +6,7 @@ import (
 
 // Automatically check if no more Input and time to shutdown
 func runShutdownWatchdog(e *EngineConfig) {
-	ticker := time.NewTicker(time.Second)
+	ticker := time.NewTicker(time.Millisecond * 50)
 	defer ticker.Stop()
 
 	var (

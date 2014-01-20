@@ -19,9 +19,10 @@ type esBufferWorker struct {
 	expression   string // count, mean, max, min, sum, sd
 	interval     time.Duration
 
-	summary stats.Summary
-	esField string
-	esType  string
+	summary   stats.Summary
+	esField   string
+	esType    string
+	timestamp uint64
 }
 
 func (this *esBufferWorker) init(config *conf.Conf, ident string) {
@@ -56,6 +57,7 @@ func (this *esBufferWorker) init(config *conf.Conf, ident string) {
 }
 
 func (this *esBufferWorker) inject(pack *engine.PipelinePack) {
+	this.timestamp = pack.Message.Timestamp
 	switch this.expression {
 	case "count":
 		this.summary.N += 1
@@ -107,10 +109,10 @@ func (this *esBufferWorker) flush(r engine.FilterRunner, h engine.PluginHelper) 
 		panic("invalid expression: " + this.expression)
 	}
 
-	pack.Message.Timestamp = uint64(time.Now().UTC().Unix()) // now
+	pack.Message.Timestamp = this.timestamp
 	pack.Ident = this.ident
 	pack.EsIndex = indexName(h.Project(this.projectName),
-		this.indexPattern, time.Unix(int64(pack.Message.Timestamp), 0))
+		this.indexPattern, time.Unix(int64(this.timestamp), 0))
 	pack.EsType = this.esType
 	pack.Project = this.projectName
 	globals := engine.Globals()

@@ -51,6 +51,10 @@ func (this *ArchiveInput) showProgress(r engine.InputRunner) {
 	for {
 		select {
 		case <-r.Ticker():
+			if this.leftN == 0 {
+				return
+			}
+
 			engine.Globals().Printf("[%s]Left %d files", r.Name(), this.leftN)
 		}
 	}
