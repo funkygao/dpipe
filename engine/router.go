@@ -104,6 +104,7 @@ LOOP:
 			//
 			// We have to dispatch to Output then Filter to avoid that case
 			for _, matcher = range this.outputMatchers {
+				// a pack can match several Output
 				if matcher.match(pack) {
 					foundMatch = true
 
@@ -117,6 +118,7 @@ LOOP:
 			// for each target, pack will inc ref count
 			// and the router will dec ref count only once
 			for _, matcher = range this.filterMatchers {
+				// a pack can match several Filter
 				if matcher.match(pack) {
 					foundMatch = true
 
