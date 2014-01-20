@@ -84,7 +84,8 @@ func (this esBufferWorker) inject(pack *engine.PipelinePack) {
 }
 
 func (this *esBufferWorker) run(r engine.FilterRunner, h engine.PluginHelper) {
-	for !engine.Globals().Stopping {
+	globals := engine.Globals()
+	for !globals.Stopping {
 		select {
 		case <-time.After(this.interval):
 			// generate new pack
@@ -113,6 +114,9 @@ func (this *esBufferWorker) run(r engine.FilterRunner, h engine.PluginHelper) {
 				this.indexPattern, time.Unix(int64(this.timestamp), 0))
 			pack.EsType = this.camelName
 			pack.Project = this.projectName
+			if globals.Debug {
+				globals.Println(*pack)
+			}
 			r.Inject(pack)
 
 			this.summary.Reset()
@@ -149,9 +153,10 @@ func (this *EsBufferFilter) Init(config *conf.Conf) {
 
 func (this *EsBufferFilter) Run(r engine.FilterRunner, h engine.PluginHelper) error {
 	var (
-		pack   *engine.PipelinePack
-		ok     = true
-		inChan = r.InChan()
+		pack    *engine.PipelinePack
+		ok      = true
+		globals = engine.Globals()
+		inChan  = r.InChan()
 	)
 
 	for _, worker := range this.wokers {
@@ -164,6 +169,10 @@ LOOP:
 		case pack, ok = <-inChan:
 			if !ok {
 				break LOOP
+			}
+
+			if globals.Debug {
+				globals.Println(*pack)
 			}
 
 			this.handlePack(pack)
