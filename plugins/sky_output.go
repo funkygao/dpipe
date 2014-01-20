@@ -70,6 +70,7 @@ func (this *SkyOutput) Run(r engine.OutputRunner, h engine.PluginHelper) error {
 		ok      = true
 		pack    *engine.PipelinePack
 		inChan  = r.InChan()
+		globals = engine.Globals()
 		project = h.Project(this.project)
 	)
 
@@ -82,6 +83,10 @@ LOOP:
 		case pack, ok = <-inChan:
 			if !ok {
 				break LOOP
+			}
+
+			if globals.Debug {
+				globals.Println(*pack)
 			}
 
 			this.feedSky(project, pack)
