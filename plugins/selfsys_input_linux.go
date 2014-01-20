@@ -63,7 +63,7 @@ func (this *SelfSysInput) Run(r engine.InputRunner, h engine.PluginHelper) error
 
 		pack.Project = "als"
 		pack.Ident = this.ident
-		pack.EsIndex = "als"
+		pack.EsIndex = "fun_als"
 		pack.EsType = "sys"
 		r.Inject(pack)
 	}
