@@ -5,6 +5,7 @@ import (
 	"github.com/funkygao/dpipe/engine"
 	"github.com/funkygao/golib"
 	"github.com/funkygao/golib/observer"
+	"github.com/funkygao/golib/sortedmap"
 	conf "github.com/funkygao/jsconf"
 	"github.com/mattbaird/elastigo/api"
 	"github.com/mattbaird/elastigo/core"
@@ -15,19 +16,20 @@ type EsOutput struct {
 	flushInterval  time.Duration
 	reportInterval time.Duration
 	dryRun         bool
-	counters       map[string]int // EsIndex:EsType -> N
-	bulkMaxConn    int            `json:"bulk_max_conn"`
-	bulkMaxDocs    int            `json:"bulk_max_docs"`
-	bulkMaxBuffer  int            `json:"bulk_max_buffer"` // in Byte
-	indexer        *core.BulkIndexer
-	stopChan       chan bool
-	totalN         int
+
+	counters      *sortedmap.SortedMap
+	bulkMaxConn   int `json:"bulk_max_conn"`
+	bulkMaxDocs   int `json:"bulk_max_docs"`
+	bulkMaxBuffer int `json:"bulk_max_buffer"` // in Byte
+	indexer       *core.BulkIndexer
+	stopChan      chan bool
+	totalN        int
 }
 
 func (this *EsOutput) Init(config *conf.Conf) {
 	this.stopChan = make(chan bool)
 	api.Domain = config.String("domain", "localhost")
-	this.counters = make(map[string]int)
+	this.counters = sortedmap.NewSortedMap()
 	api.Port = config.String("port", "9200")
 	this.reportInterval = time.Duration(config.Int("report_interval", 30)) * time.Second
 	this.flushInterval = time.Duration(config.Int("flush_interval", 30)) * time.Second
@@ -106,26 +108,30 @@ LOOP:
 
 func (this *EsOutput) handlePeriodicalCounters() {
 	globals := engine.Globals()
-	for name, n := range this.counters {
-		if n > 0 && globals.Verbose {
-			globals.Printf("%-50s %8d", name, n)
+
+	for _, key := range this.counters.SortedKeys() {
+		val := this.counters.Get(key)
+		if val > 0 && globals.Verbose {
+			globals.Printf("%-50s %8d", key, val)
 		}
 
-		this.counters[name] = 0
+		this.counters.Set(key, 0)
 	}
 }
 
 func (this *EsOutput) feedEs(project *engine.ConfProject, pack *engine.PipelinePack) {
 	if pack.EsType == "" || pack.EsIndex == "" {
-		project.Printf("Empty ES meta: %s plugins:%v",
-			*pack, pack.PluginNames())
+		if project.ShowError {
+			project.Printf("Empty ES meta: %s plugins:%v",
+				*pack, pack.PluginNames())
+		}
 
-		this.counters["_error_"] += 1
+		this.counters.Inc("_error_")
 
 		return
 	}
 
-	this.counters[pack.EsIndex+":"+pack.EsType] += 1
+	this.counters.Inc(pack.EsIndex + ":" + pack.EsType)
 	this.totalN += 1
 
 	if this.dryRun {

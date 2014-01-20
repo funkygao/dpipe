@@ -72,7 +72,7 @@ func (this *DiagnosticTracker) Run() {
 			}
 
 			for _, pack := range probablePacks {
-				globals.Println(*pack)
+				globals.Printf("[%s]%s", this.PoolName, *pack)
 			}
 		}
 	}
