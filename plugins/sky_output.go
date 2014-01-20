@@ -9,32 +9,15 @@ import (
 	"strconv"
 )
 
-type skyOutputField struct {
-	camelName string
-	action    string
-	name      string
-	typ       string
-}
-
-func (this *skyOutputField) load(section *conf.Conf) {
-	this.name = section.String("name", "")
-	this.typ = section.String("type", als.KEY_TYPE_STRING)
-	this.camelName = section.String("camel_name", "")
-	this.action = section.String("action", "")
-}
-
 type SkyOutput struct {
 	table    *sky.Table
-	stopChan chan bool
 	uidField string
 	project  string
-	fields   []skyOutputField
 }
 
 func (this *SkyOutput) Init(config *conf.Conf) {
 	this.uidField = config.String("uid_field", "_log_info.uid")
 	this.project = config.String("project", "")
-	this.stopChan = make(chan bool)
 	var (
 		host string = config.String("host", "localhost")
 		port int    = config.Int("port", 8585)
@@ -46,21 +29,9 @@ func (this *SkyOutput) Init(config *conf.Conf) {
 		panic(fmt.Sprintf("sky server not running: %s:%d", host, port))
 	}
 
-	this.table, _ = client.GetTable(config.String("table", "user"))
+	this.table, _ = client.GetTable(config.String("table", ""))
 	if this.table == nil {
 		panic("must create table in advance")
-	}
-
-	this.fields = make([]skyOutputField, 0, 10)
-	for i := 0; i < len(config.List("fields", nil)); i++ {
-		section, err := config.Section(fmt.Sprintf("fields[%d]", i))
-		if err != nil {
-			panic(err)
-		}
-
-		f := skyOutputField{}
-		f.load(section)
-		this.fields = append(this.fields, f)
 	}
 
 }
@@ -77,9 +48,6 @@ func (this *SkyOutput) Run(r engine.OutputRunner, h engine.PluginHelper) error {
 LOOP:
 	for ok {
 		select {
-		case <-this.stopChan:
-			ok = false
-
 		case pack, ok = <-inChan:
 			if !ok {
 				break LOOP
@@ -97,10 +65,10 @@ LOOP:
 	return nil
 }
 
-func (this *SkyOutput) feedSky(project *engine.ConfProject, pack *engine.PipelinePack) {
+func (this *SkyOutput) feedSky(project *engine.ConfProject,
+	pack *engine.PipelinePack) {
 	var (
 		uid interface{}
-		val interface{}
 		err error
 	)
 
@@ -114,27 +82,16 @@ func (this *SkyOutput) feedSky(project *engine.ConfProject, pack *engine.Pipelin
 		return
 	}
 
-	event := sky.NewEvent(pack.Message.Time(), map[string]interface{}{})
-	// fill in the event fields
-	for _, f := range this.fields {
-		if pack.Logfile.CamelCaseName() != f.camelName {
-			continue
+	eventMap, err := pack.Message.Map()
+	if err != nil {
+		if project.ShowError {
+			project.Println(err)
 		}
 
-		if f.action != "" {
-			// already specified dedicated action
-			event.Data["action"] = f.action
-			event.Data["area"] = pack.Message.Area
-		} else {
-			val, err = pack.Message.FieldValue(f.name, f.typ)
-			if err != nil {
-				continue
-			}
-
-			event.Data[f.name] = val
-		}
-
+		return
 	}
+
+	event := sky.NewEvent(pack.Message.Time(), eventMap)
 
 	// objectId is uid string
 	err = this.table.AddEvent(strconv.Itoa(uid.(int)), event, sky.Merge)
