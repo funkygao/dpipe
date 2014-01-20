@@ -108,10 +108,6 @@ func (this *ArchiveInput) runSingleLogfile(path string, f os.FileInfo, err error
 	}
 
 	this.leftN += 1
-	this.workersWg.Add(1)
-
-	// limit concurrent workers
-	this.workerNChan <- 1
 
 	go this.doRunSingleLogfile(path)
 
@@ -119,6 +115,11 @@ func (this *ArchiveInput) runSingleLogfile(path string, f os.FileInfo, err error
 }
 
 func (this *ArchiveInput) doRunSingleLogfile(path string) {
+	this.workersWg.Add(1)
+
+	// limit concurrent workers
+	this.workerNChan <- 1
+
 	reader := als.NewAlsReader(path)
 	if e := reader.Open(); e != nil {
 		panic(e)
