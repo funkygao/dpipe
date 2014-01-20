@@ -21,6 +21,7 @@ type esBufferWorker struct {
 
 	summary stats.Summary
 	esField string
+	esType  string
 }
 
 func (this *esBufferWorker) init(config *conf.Conf, ident string) {
@@ -44,16 +45,17 @@ func (this *esBufferWorker) init(config *conf.Conf, ident string) {
 
 	this.summary = stats.Summary{}
 
-	// prefill the es fieldl name
+	// prefill the es field name
 	switch this.expression {
 	case "count":
 		this.esField = "count"
 	default:
 		this.esField = this.expression + "_" + this.fieldName
 	}
+	this.esType = this.camelName + "_" + this.expression
 }
 
-func (this esBufferWorker) inject(pack *engine.PipelinePack) {
+func (this *esBufferWorker) inject(pack *engine.PipelinePack) {
 	switch this.expression {
 	case "count":
 		this.summary.N += 1
@@ -81,6 +83,10 @@ func (this esBufferWorker) inject(pack *engine.PipelinePack) {
 }
 
 func (this *esBufferWorker) flush(r engine.FilterRunner, h engine.PluginHelper) {
+	if this.summary.N == 0 {
+		return
+	}
+
 	// generate new pack
 	pack := h.PipelinePack(0)
 
@@ -105,7 +111,7 @@ func (this *esBufferWorker) flush(r engine.FilterRunner, h engine.PluginHelper) 
 	pack.Ident = this.ident
 	pack.EsIndex = indexName(h.Project(this.projectName),
 		this.indexPattern, time.Unix(int64(pack.Message.Timestamp), 0))
-	pack.EsType = this.camelName
+	pack.EsType = this.esType
 	pack.Project = this.projectName
 	globals := engine.Globals()
 	if globals.Debug {
@@ -180,9 +186,12 @@ LOOP:
 		}
 	}
 
+	total := 0
 	for _, worker := range this.wokers {
+		total += worker.summary.N
 		worker.flush(r, h)
 	}
+	globals.Printf("[%s]Total filtered: %d", r.Name(), total)
 
 	return nil
 }
