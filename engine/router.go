@@ -127,7 +127,7 @@ LOOP:
 			}
 
 			if !foundMatch {
-				globals.Printf("Found no match: %s", *pack)
+				panic("Found no match: " + pack.String())
 			}
 
 			// never forget this!
