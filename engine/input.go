@@ -98,11 +98,13 @@ func (this *iRunner) runMainloop(e *EngineConfig, wg *sync.WaitGroup) {
 		}
 
 		if globals.Stopping {
+			e.InputRunners[this.name] = nil
 			return
 		}
 
 		if restart, ok := this.plugin.(Restarting); ok {
 			if !restart.CleanupForRestart() {
+				e.InputRunners[this.name] = nil
 				return
 			}
 		}

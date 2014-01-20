@@ -87,6 +87,7 @@ func Launch(e *EngineConfig) {
 	}
 
 	globals.Println("Engine waiting for signals...")
+	go runShutdownWatchdog(e)
 
 	for !globals.Stopping {
 		select {
@@ -113,6 +114,11 @@ func Launch(e *EngineConfig) {
 	// cleanup after shutdown
 
 	for _, runner := range e.InputRunners {
+		if runner == nil {
+			// this Input plugin already exit
+			continue
+		}
+
 		if globals.Verbose {
 			globals.Printf("Stop message sent to '%s'", runner.Name())
 		}
