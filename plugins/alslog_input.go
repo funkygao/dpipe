@@ -186,10 +186,11 @@ func (this *AlsLogInput) runSingleAlsLogInput(fn string, r engine.InputRunner,
 	var tailConf tail.Config
 	if source.tail {
 		tailConf = tail.Config{
-			Follow:   true, // tail -f
-			ReOpen:   true, // tail -F
-			Poll:     true, // Poll for file changes instead of using inotify
-			Location: &tail.SeekInfo{Offset: int64(0), Whence: os.SEEK_END},
+			LimitRate: int64(0), // lines per second
+			Follow:    true,     // tail -f
+			ReOpen:    true,     // tail -F
+			Poll:      true,     // Poll for file changes instead of using inotify
+			Location:  &tail.SeekInfo{Offset: int64(0), Whence: os.SEEK_END},
 		}
 	}
 
@@ -202,34 +203,40 @@ func (this *AlsLogInput) runSingleAlsLogInput(fn string, r engine.InputRunner,
 	var (
 		pack    *engine.PipelinePack
 		inChan  = r.InChan()
+		line    *tail.Line
+		ok      bool
 		globals = engine.Globals()
 	)
 
-	for line := range t.Lines {
-		if globals.Debug {
-			globals.Printf("[%s]got line: %s\n", filepath.Base(fn), line.Text)
-		}
-
-		if *stopped {
-			break
-		}
-
-		pack = <-inChan
-		if err := pack.Message.FromLine(line.Text); err != nil {
-			project := h.Project(source.project)
-			if project.ShowError && err != als.ErrEmptyLine {
-				project.Printf("[%s]%v: %s", fn, err, line.Text)
+LOOP:
+	for !*stopped {
+		select {
+		case line, ok = <-t.Lines:
+			if !ok {
+				break LOOP
 			}
 
-			pack.Recycle()
-			continue
-		}
+			if globals.Debug {
+				globals.Printf("[%s]got line: %s\n", filepath.Base(fn), line.Text)
+			}
 
-		this.counters.Inc(source.ident, 1)
-		pack.Project = source.project
-		pack.Logfile.SetPath(fn)
-		pack.Ident = source.ident
-		r.Inject(pack)
+			pack = <-inChan
+			if err := pack.Message.FromLine(line.Text); err != nil {
+				project := h.Project(source.project)
+				if project.ShowError && err != als.ErrEmptyLine {
+					project.Printf("[%s]%v: %s", fn, err, line.Text)
+				}
+
+				pack.Recycle()
+				continue
+			}
+
+			this.counters.Inc(source.ident, 1)
+			pack.Project = source.project
+			pack.Logfile.SetPath(fn)
+			pack.Ident = source.ident
+			r.Inject(pack)
+		}
 	}
 
 	if globals.Verbose {
