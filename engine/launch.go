@@ -21,6 +21,16 @@ func Launch(e *EngineConfig) {
 
 	globals := Globals()
 	globals.Println("Launching Engine...")
+	globals.Println(`
+     _       _                _ 
+    | |     (_)              | |
+  __| |_ __  _ _ __   ___  __| |
+ / _  | '_ \| | '_ \ / _ \/ _  |
+| (_| | |_) | | |_) |  __/ (_| |
+ \__,_| .__/|_| .__/ \___|\__,_|
+      | |     | |               
+      |_|     |_|                         
+		`)
 
 	// setup signal handler first to avoid race condition
 	// if Input terminates very soon, global.Shutdown will
