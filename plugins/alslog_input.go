@@ -116,16 +116,10 @@ func (this *AlsLogInput) Run(r engine.InputRunner, h engine.PluginHelper) error 
 	var (
 		globals    = engine.Globals()
 		reloadChan = make(chan interface{})
-		wg         = new(sync.WaitGroup)
 		stopped    = false
 	)
 
 	observer.Subscribe(engine.RELOAD, reloadChan)
-	go func() {
-		for _ = range r.Ticker() {
-			this.handlePeriodicalCounters()
-		}
-	}()
 
 	for !stopped {
 		this.refreshSources()
@@ -141,8 +135,7 @@ func (this *AlsLogInput) Run(r engine.InputRunner, h engine.PluginHelper) error 
 				}
 
 				this.opened[fn] = true
-				wg.Add(1)
-				go this.runSingleAlsLogInput(fn, r, h, *source, &stopped, wg)
+				go this.runSingleAlsLogInput(fn, r, h, *source, &stopped)
 			}
 		}
 
@@ -158,7 +151,9 @@ func (this *AlsLogInput) Run(r engine.InputRunner, h engine.PluginHelper) error 
 		}
 	}
 
-	wg.Wait()
+	for len(this.opened) > 0 {
+		time.Sleep(time.Millisecond * 20)
+	}
 
 	return nil
 }
@@ -183,9 +178,7 @@ func (this *AlsLogInput) handlePeriodicalCounters() {
 }
 
 func (this *AlsLogInput) runSingleAlsLogInput(fn string, r engine.InputRunner,
-	h engine.PluginHelper, source logfileSource, stopped *bool, wg *sync.WaitGroup) {
-	defer wg.Done()
-
+	h engine.PluginHelper, source logfileSource, stopped *bool) {
 	var tailConf tail.Config
 	if source.tail {
 		tailConf = tail.Config{
@@ -245,6 +238,8 @@ LOOP:
 
 		}
 	}
+
+	delete(this.opened, fn)
 
 	if globals.Verbose {
 		globals.Printf("[%s]%s stopped", source.project, fn)
