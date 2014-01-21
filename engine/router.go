@@ -2,18 +2,54 @@ package engine
 
 import (
 	"github.com/funkygao/golib/gofmt"
-	"runtime"
+	"log"
 	"sync/atomic"
 	"time"
 )
 
+type routerStats struct {
+	totalInputMsgN  int64
+	periodInputMsgN int32
+	totalInputSize  int64
+	periodInputSize int64
+
+	totalProcessedMsgN int64 // 16 BilionBillion
+	periodProcessMsgN  int32
+}
+
+func (this *routerStats) inject(pack *PipelinePack) {
+	atomic.AddInt32(&this.periodProcessMsgN, 1)
+	atomic.AddInt64(&this.totalProcessedMsgN, 1)
+	if len(pack.diagnostics.Runners()) == 0 {
+		// has no runner pack, means Input generated pack
+		atomic.AddInt64(&this.totalInputMsgN, 1)
+		atomic.AddInt32(&this.periodInputMsgN, 1)
+		atomic.AddInt64(&this.totalInputSize, int64(pack.Message.Size()))
+		atomic.AddInt64(&this.periodInputSize, int64(pack.Message.Size()))
+	}
+}
+
+func (this *routerStats) resetPeriodCounters() {
+	this.periodInputMsgN = int32(0)
+	this.periodProcessMsgN = int32(0)
+	this.periodInputSize = int64(0)
+}
+
+func (this *routerStats) render(logger *log.Logger, elapsed int) {
+	logger.Printf("Total: %sm %s, speed: %dm/s %s/s",
+		gofmt.Comma(this.totalProcessedMsgN),
+		gofmt.ByteSize(this.totalInputSize),
+		this.periodProcessMsgN/int32(elapsed),
+		gofmt.ByteSize(this.periodInputSize))
+	logger.Printf("Input: %sm, speed: %dm/s",
+		gofmt.Comma(this.totalInputMsgN),
+		this.periodInputMsgN/int32(elapsed))
+}
+
 type messageRouter struct {
 	inChan chan *PipelinePack
 
-	totalInputMsgN     int64
-	periodInputMsgN    int32
-	totalProcessedMsgN int64 // 16 BilionBillion
-	periodProcessMsgN  int32
+	stats routerStats
 
 	removeFilterMatcher chan *Matcher
 	removeOutputMatcher chan *Matcher
@@ -27,18 +63,18 @@ type messageRouter struct {
 func NewMessageRouter() (this *messageRouter) {
 	this = new(messageRouter)
 	this.inChan = make(chan *PipelinePack, Globals().PluginChanSize)
-
+	this.stats = routerStats{}
 	this.removeFilterMatcher = make(chan *Matcher)
 	this.removeOutputMatcher = make(chan *Matcher)
 	this.filterMatchers = make([]*Matcher, 0, 10)
 	this.outputMatchers = make([]*Matcher, 0, 10)
 	this.closedMatcherChan = make(chan interface{})
 
-	return this
+	return
 }
 
 // Dispatch pack from Input to MatchRunners
-func (this *messageRouter) Start(routerReady chan<- interface{}) {
+func (this *messageRouter) Start() {
 	var (
 		globals    = Globals()
 		ok         = true
@@ -51,31 +87,12 @@ func (this *messageRouter) Start(routerReady chan<- interface{}) {
 	ticker = time.NewTicker(time.Second * time.Duration(globals.TickerLength))
 	defer ticker.Stop()
 
-	go func() {
-		for _ = range ticker.C {
-			globals.Printf("Total: %s, speed: %d/s",
-				gofmt.Comma(this.totalProcessedMsgN),
-				this.periodProcessMsgN/int32(globals.TickerLength))
-			globals.Printf("Input: %s, speed: %d/s",
-				gofmt.Comma(this.totalInputMsgN),
-				this.periodInputMsgN/int32(globals.TickerLength))
-
-			this.periodInputMsgN = int32(0)
-			this.periodProcessMsgN = int32(0)
-		}
-	}()
-
 	if globals.Verbose {
 		globals.Printf("Router started with ticker=%ds\n", globals.TickerLength)
 	}
 
-	// tell others to go ahead
-	routerReady <- true
-
 LOOP:
 	for ok {
-		runtime.Gosched()
-
 		select {
 		case matcher = <-this.removeOutputMatcher:
 			go this.removeMatcher(matcher, this.outputMatchers)
@@ -83,19 +100,17 @@ LOOP:
 		case matcher = <-this.removeFilterMatcher:
 			go this.removeMatcher(matcher, this.filterMatchers)
 
+		case <-ticker.C:
+			this.stats.render(globals.Logger, globals.TickerLength)
+			this.stats.resetPeriodCounters()
+
 		case pack, ok = <-this.inChan:
 			if !ok {
 				globals.Stopping = true
 				break LOOP
 			}
 
-			atomic.AddInt32(&this.periodProcessMsgN, 1)
-			atomic.AddInt64(&this.totalProcessedMsgN, 1)
-			if len(pack.diagnostics.Runners()) == 0 {
-				// has no runner pack, means Input generated pack
-				atomic.AddInt64(&this.totalInputMsgN, 1)
-				atomic.AddInt32(&this.periodInputMsgN, 1)
-			}
+			this.stats.inject(pack)
 
 			pack.diagnostics.Reset()
 			foundMatch = false

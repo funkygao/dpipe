@@ -71,9 +71,7 @@ func Launch(e *EngineConfig) {
 	go inputPackTracker.Run()
 	go filterPackTracker.Run()
 
-	routerReady := make(chan interface{})
-	go e.router.Start(routerReady)
-	<-routerReady
+	go e.router.Start()
 
 	if globals.Verbose {
 		globals.Println("Launching Input(s)...")
@@ -168,6 +166,6 @@ func Launch(e *EngineConfig) {
 	}
 
 	globals.Printf("Shutdown with input:%s, dispatch: %s",
-		gofmt.Comma(e.router.totalInputMsgN),
-		gofmt.Comma(e.router.totalProcessedMsgN))
+		gofmt.Comma(e.router.stats.totalInputMsgN),
+		gofmt.Comma(e.router.stats.totalProcessedMsgN))
 }

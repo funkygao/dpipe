@@ -6,6 +6,7 @@ import (
 	"io"
 	"net"
 	"net/http"
+	"runtime/debug"
 )
 
 func (this *EngineConfig) launchHttpServ() {
@@ -42,16 +43,14 @@ func (this *EngineConfig) handleHttpQuery(w http.ResponseWriter, req *http.Reque
 	case "ping":
 		output["status"] = "ok"
 
-	case "panic":
-		panic("on purpose")
+	case "stack":
+		output["stack"] = string(debug.Stack())
 
 	case "stat":
 		output["goroutines"] = this.stats.NumGoroutine()
-		output["memStats"] = this.stats.MemStats()
+		output["memStats"] = this.stats.MemInfo()
 		output["lastGC"] = this.stats.LastGC()
-		//output["projects"] = this.projects
-		output["totalM"] = this.stats.DispatchedMessageCount()
-		output["periodM"] = this.router.periodProcessMsgN
+		output["router"] = this.router.stats
 		output["start"] = globals.StartedAt
 		output["pid"] = this.pid
 		output["hostname"] = this.hostname

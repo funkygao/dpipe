@@ -4,36 +4,32 @@ import (
 	"runtime"
 )
 
-type Stats struct {
+type EngineStats struct {
 	engine   *EngineConfig
-	memStats *runtime.MemStats
+	MemStats *runtime.MemStats
 }
 
-func newStats(e *EngineConfig) (this *Stats) {
-	this = new(Stats)
+func newEngineStats(e *EngineConfig) (this *EngineStats) {
+	this = new(EngineStats)
 	this.engine = e
-	this.memStats = new(runtime.MemStats)
+	this.MemStats = new(runtime.MemStats)
 	return
 }
 
-func (this *Stats) DispatchedMessageCount() int64 {
-	return this.engine.router.totalProcessedMsgN
-}
-
-func (this *Stats) NumGoroutine() int {
+func (this *EngineStats) NumGoroutine() int {
 	return runtime.NumGoroutine()
 }
 
-func (this *Stats) LastGC() uint64 {
+func (this *EngineStats) LastGC() uint64 {
 	this.refreshMemStats()
-	return this.memStats.LastGC
+	return this.MemStats.LastGC
 }
 
-func (this *Stats) MemStats() runtime.MemStats {
+func (this *EngineStats) MemInfo() runtime.MemStats {
 	this.refreshMemStats()
-	return *this.memStats
+	return *this.MemStats
 }
 
-func (this *Stats) refreshMemStats() {
-	runtime.ReadMemStats(this.memStats)
+func (this *EngineStats) refreshMemStats() {
+	runtime.ReadMemStats(this.MemStats)
 }

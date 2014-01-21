@@ -15,18 +15,23 @@
                 }
 
                 {
-                    name:   "area"
+                    name:   "ident"
                     type:   "factor"
                 }
 
                 {
-                    name:   "host"
-                    type:   "string"
+                    name:   "user.level"
+                    type:   "integer"
                 }
 
                 {
-                    name:   "gendar"
-                    type:   "factor"
+                    name:   "user.xp"
+                    type:   "integer"
+                }
+
+                {
+                    name:   "user.reputation"
+                    type:   "integer"
                 }
                 
             ]

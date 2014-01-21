@@ -25,6 +25,8 @@ type PipelinePack struct {
 	// AlsMessage only knows a line, we need data source for routing
 	Logfile *als.AlsLogfile
 
+	Input bool
+
 	// For routing
 	Ident string
 
@@ -50,6 +52,7 @@ func NewPipelinePack(recycleChan chan *PipelinePack) (this *PipelinePack) {
 		RecycleChan:  recycleChan,
 		RefCount:     int32(1),
 		MsgLoopCount: 0,
+		Input:        false,
 		diagnostics:  NewPacketTracking(),
 		Message:      als.NewAlsMessage(),
 		Logfile:      als.NewAlsLogfile(),

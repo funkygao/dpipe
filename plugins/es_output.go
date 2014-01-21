@@ -126,12 +126,12 @@ func (this *EsOutput) feedEs(project *engine.ConfProject, pack *engine.PipelineP
 				*pack, pack.PluginNames())
 		}
 
-		this.counters.Inc("_error_")
+		this.counters.Inc("_error_", 1)
 
 		return
 	}
 
-	this.counters.Inc(pack.EsIndex + ":" + pack.EsType)
+	this.counters.Inc(pack.EsIndex+":"+pack.EsType, 1)
 	this.totalN += 1
 
 	if this.dryRun {

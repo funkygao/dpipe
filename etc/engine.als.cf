@@ -42,22 +42,6 @@
         }
     ]
 
-    //============================================================
-    //
-    //  Input                   Filter                      Output
-    //  -----                   ------                      ------
-    //    |                        |                           |
-    //  alsSysStat         rsDauCardinal                    EsOutput
-    //    |                        |                           |
-    //  ffsBi                  esBuffer                    CardinalityOutputRs
-    //    |                        |                           |
-    //  rsPv                   esFiltered                      |
-    //    |                        |                           |
-    //  rsDau                      |                        AlarmOutput
-    //    |                        |                           |
-    //  rsLogs                                          
-    //
-    //============================================================
     plugins: [
         {
             name:   "SelfSysInput"
@@ -88,8 +72,9 @@
                 }
 
                 {
-                    ident:   "rsPv"
-                    project:   "RS"
+                    ident:      "rsPv"
+                    project:    "RS"
+                    disabled:   true
                     glob:   "/mnt/funplus/logs/fp_rstory/pv*.log"
                 }
 
@@ -218,7 +203,7 @@
         {
             name:   "EsOutput"
             match:  ["esFiltered", "alsSysStat", "esBuffer"]
-            dryrun: true
+            dryrun: false
             domain: "localhost"
             port: "9200"
             report_interval: 10

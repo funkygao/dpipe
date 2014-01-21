@@ -115,6 +115,11 @@ func (this *AlsLogInput) Run(r engine.InputRunner, h engine.PluginHelper) error 
 	)
 
 	observer.Subscribe(engine.RELOAD, reloadChan)
+	go func() {
+		for _ = range r.Ticker() {
+			this.handlePeriodicalCounters()
+		}
+	}()
 
 	for !stopped {
 		this.refreshSources()
