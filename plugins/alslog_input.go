@@ -12,6 +12,7 @@ import (
 	"path/filepath"
 	"strings"
 	"sync"
+	"time"
 )
 
 type logfileSource struct {
@@ -76,6 +77,7 @@ type AlsLogInput struct {
 	showProgress bool
 	counters     *sortedmap.SortedMap // ident -> N
 	sources      []*logfileSource
+	opened       map[string]bool
 }
 
 func (this *AlsLogInput) Init(config *conf.Conf) {
@@ -85,6 +87,7 @@ func (this *AlsLogInput) Init(config *conf.Conf) {
 
 	this.showProgress = config.Bool("show_pregress", true)
 	this.counters = sortedmap.NewSortedMap()
+	this.opened = make(map[string]bool)
 	this.stopChan = make(chan bool)
 
 	// get the sources
@@ -111,11 +114,10 @@ func (this *AlsLogInput) CleanupForRestart() bool {
 
 func (this *AlsLogInput) Run(r engine.InputRunner, h engine.PluginHelper) error {
 	var (
-		globals     = engine.Globals()
-		reloadChan  = make(chan interface{})
-		openedFiles = make(map[string]bool)
-		wg          = new(sync.WaitGroup)
-		stopped     = false
+		globals    = engine.Globals()
+		reloadChan = make(chan interface{})
+		wg         = new(sync.WaitGroup)
+		stopped    = false
 	)
 
 	observer.Subscribe(engine.RELOAD, reloadChan)
@@ -130,7 +132,7 @@ func (this *AlsLogInput) Run(r engine.InputRunner, h engine.PluginHelper) error 
 
 		for _, source := range this.sources {
 			for _, fn := range source._files {
-				if _, present := openedFiles[fn]; present {
+				if _, present := this.opened[fn]; present {
 					continue
 				}
 
@@ -138,7 +140,7 @@ func (this *AlsLogInput) Run(r engine.InputRunner, h engine.PluginHelper) error 
 					globals.Printf("[%s]found new file %s", source.project, fn)
 				}
 
-				openedFiles[fn] = true
+				this.opened[fn] = true
 				wg.Add(1)
 				go this.runSingleAlsLogInput(fn, r, h, *source, &stopped, wg)
 			}
@@ -170,6 +172,7 @@ func (this *AlsLogInput) handlePeriodicalCounters() {
 		n       = 0
 		globals = engine.Globals()
 	)
+	globals.Printf("Opened files: %d", len(this.opened))
 	for _, ident := range this.counters.SortedKeys() {
 		if n = this.counters.Get(ident); n > 0 {
 			globals.Printf("%-15s %8d", ident, n)
@@ -201,11 +204,12 @@ func (this *AlsLogInput) runSingleAlsLogInput(fn string, r engine.InputRunner,
 	defer t.Stop()
 
 	var (
-		pack    *engine.PipelinePack
-		inChan  = r.InChan()
-		line    *tail.Line
-		ok      bool
-		globals = engine.Globals()
+		pack      *engine.PipelinePack
+		inChan    = r.InChan()
+		line      *tail.Line
+		ok        bool
+		checkStop = time.Duration(time.Second)
+		globals   = engine.Globals()
 	)
 
 LOOP:
@@ -236,6 +240,9 @@ LOOP:
 			pack.Logfile.SetPath(fn)
 			pack.Ident = source.ident
 			r.Inject(pack)
+
+		case <-time.After(checkStop):
+
 		}
 	}
 
