@@ -65,6 +65,7 @@ func NewEngineConfig(globals *GlobalConfigStruct) (this *EngineConfig) {
 	this.inputRecycleChan = make(chan *PipelinePack, globals.PoolSize)
 	this.filterRecycleChan = make(chan *PipelinePack, globals.PoolSize)
 
+	this.diagnosticTrackers = make(map[string]*DiagnosticTracker)
 	this.projects = make(map[string]*ConfProject)
 	this.httpPaths = make([]string, 0, 6)
 
