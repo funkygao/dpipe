@@ -31,7 +31,10 @@ func (this *EngineStats) Runtime() map[string]interface{} {
 	s["memory.gc.num"] = this.MemStats.NumGC
 	s["memory.gc.total_pause"] = fmt.Sprintf("%dms",
 		this.MemStats.PauseTotalNs/uint64(time.Millisecond))
-	s["memory.heap"] = gofmt.ByteSize(this.MemStats.HeapAlloc).String()
+	s["memory.heap.alloc"] = gofmt.ByteSize(this.MemStats.HeapAlloc).String()       // 堆上目前分配的内存
+	s["memory.heap.sys"] = gofmt.ByteSize(this.MemStats.HeapSys).String()           // 程序向操作系统申请的内存
+	s["memory.heap.idle"] = gofmt.ByteSize(this.MemStats.HeapIdle).String()         // 堆上目前没有使用的内存
+	s["memory.heap.released"] = gofmt.ByteSize(this.MemStats.HeapReleased).String() // 回收到操作系统的内存
 	s["memory.heap.objects"] = gofmt.Comma(int64(this.MemStats.HeapObjects))
 	s["memory.stack"] = gofmt.ByteSize(this.MemStats.StackInuse).String()
 	gcPausesMs := make([]string, 0, 20)
