@@ -10,11 +10,14 @@ import (
 func indexName(project *engine.ConfProject, indexPattern string,
 	date time.Time) (index string) {
 	const (
-		YM           = "@ym"
+		YM  = "@ym"
+		YMW = "@ymw"
+		YMD = "@ymd"
+
 		INDEX_PREFIX = "fun_"
 	)
 
-	if strings.HasSuffix(indexPattern, YM) {
+	if strings.Contains(indexPattern, YM) {
 		prefix := project.IndexPrefix
 		fields := strings.SplitN(indexPattern, YM, 2)
 		if fields[0] != "" {
@@ -22,7 +25,19 @@ func indexName(project *engine.ConfProject, indexPattern string,
 			prefix = fields[0]
 		}
 
-		index = fmt.Sprintf("%s%s_%d_%02d", INDEX_PREFIX, prefix, date.Year(), int(date.Month()))
+		switch indexPattern {
+		case YM:
+			index = fmt.Sprintf("%s%s_%d_%02d", INDEX_PREFIX, prefix,
+				date.Year(), int(date.Month()))
+		case YMW:
+			year, week := date.ISOWeek()
+			index = fmt.Sprintf("%s%s_%d_w%02d", INDEX_PREFIX, prefix,
+				year, week)
+		case YMD:
+			index = fmt.Sprintf("%s%s_%d_%02d_%02d", INDEX_PREFIX, prefix,
+				date.Year(), int(date.Month()), date.Day())
+		}
+
 		return
 	}
 

@@ -11,6 +11,7 @@ Release Notes - Flume - Version v0.5.0.rc
     . http monitoring with cmd: [ping, stat, plugins]
     . when timestamp is obviously invalid, correct it[als pkg]
     . report msg/s bytes/s
+    . ES index patterns add support for ym/ymw/ymd
 
 ** Bug
 
