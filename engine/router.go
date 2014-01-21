@@ -24,7 +24,7 @@ func (this *routerStats) inject(pack *PipelinePack) {
 	atomic.AddInt64(&this.periodProcessedBytes, int64(pack.Message.Size()))
 	atomic.AddInt32(&this.periodProcessedMsgN, 1)
 
-	if len(pack.diagnostics.Runners()) == 0 {
+	if pack.Input {
 		// has no runner pack, means Input generated pack
 		atomic.AddInt64(&this.totalInputMsgN, 1)
 		atomic.AddInt32(&this.periodInputMsgN, 1)

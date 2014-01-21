@@ -15,10 +15,6 @@ type PipelinePack struct {
 	// Reference counter, internal GC
 	RefCount int32
 
-	// Raw data yet to be decoded
-	// TODO raw blob mainly for TCP stream
-	MsgBytes []byte
-
 	// Decoded msg
 	Message *als.AlsMessage
 
