@@ -2,6 +2,8 @@ package engine
 
 import (
 	"encoding/json"
+	"fmt"
+	"github.com/funkygao/golib/bjtime"
 	"github.com/gorilla/mux"
 	"io"
 	"net"
@@ -42,6 +44,18 @@ func (this *EngineConfig) handleHttpQuery(w http.ResponseWriter, req *http.Reque
 	switch cmd {
 	case "ping":
 		output["status"] = "ok"
+
+	case "pool":
+		for poolName, _ := range this.diagnosticTrackers {
+			packs := make([]string, 0, globals.PoolSize)
+			for _, pack := range this.diagnosticTrackers[poolName].packs {
+				s := fmt.Sprintf("[%s]%s",
+					bjtime.TimeToString(pack.diagnostics.LastAccess),
+					*pack)
+				packs = append(packs, s)
+			}
+			output[poolName] = packs
+		}
 
 	case "stack":
 		output["stack"] = string(debug.Stack())

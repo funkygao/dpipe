@@ -30,6 +30,8 @@ type EngineConfig struct {
 	OutputRunners  map[string]OutputRunner
 	outputWrappers map[string]*PluginWrapper
 
+	diagnosticTrackers map[string]*DiagnosticTracker
+
 	router *messageRouter
 	stats  *EngineStats
 
