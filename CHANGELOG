@@ -5,6 +5,7 @@ Release Notes - Flume - Version v0.5.0.rc
     . EsOutput periodically report statistics
     . engine permits plugins to register HTTP REST api callback
     . cardinality output will export/reset counters through REST
+    . replication from local logs to remote via TCP(compression TODO)
 
 ** Improvement
 
