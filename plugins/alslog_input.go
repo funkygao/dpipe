@@ -85,7 +85,7 @@ func (this *AlsLogInput) Init(config *conf.Conf) {
 		engine.Globals().Printf("%#v\n", *config)
 	}
 
-	this.showProgress = config.Bool("show_pregress", true)
+	this.showProgress = config.Bool("show_progress", true)
 	this.counters = sortedmap.NewSortedMap()
 	this.stopChan = make(chan bool)
 

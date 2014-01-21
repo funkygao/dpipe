@@ -16,6 +16,7 @@ type EsOutput struct {
 	flushInterval  time.Duration
 	reportInterval time.Duration
 	dryRun         bool
+	showProgress   bool
 
 	counters      *sortedmap.SortedMap
 	bulkMaxConn   int `json:"bulk_max_conn"`
@@ -32,6 +33,7 @@ func (this *EsOutput) Init(config *conf.Conf) {
 	this.counters = sortedmap.NewSortedMap()
 	api.Port = config.String("port", "9200")
 	this.reportInterval = time.Duration(config.Int("report_interval", 30)) * time.Second
+	this.showProgress = config.Bool("show_progress", true)
 	this.flushInterval = time.Duration(config.Int("flush_interval", 30)) * time.Second
 	this.bulkMaxConn = config.Int("bulk_max_conn", 20)
 	this.bulkMaxDocs = config.Int("bulk_max_docs", 100)
@@ -107,15 +109,17 @@ LOOP:
 }
 
 func (this *EsOutput) handlePeriodicalCounters() {
-	globals := engine.Globals()
+	if !this.showProgress {
+		return
+	}
 
 	for _, key := range this.counters.SortedKeys() {
 		val := this.counters.Get(key)
-		if val > 0 && globals.Verbose {
-			globals.Printf("%-50s %8d", key, val)
-		}
+		if val > 0 {
+			engine.Globals().Printf("%-50s %8d", key, val)
 
-		this.counters.Set(key, 0)
+			this.counters.Set(key, 0)
+		}
 	}
 }
 
