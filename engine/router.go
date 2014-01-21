@@ -41,15 +41,15 @@ func (this *routerStats) resetPeriodCounters() {
 }
 
 func (this *routerStats) render(logger *log.Logger, elapsed int) {
-	logger.Printf("Total: %s %s, speed: %d/s %s/s",
+	logger.Printf("Total: %10s %10s, speed: %10d/s %10s/s",
 		gofmt.Comma(this.totalProcessedMsgN),
 		gofmt.ByteSize(this.totalProcessedBytes),
-		this.periodProcessedMsgN/int32(elapsed),
+		gofmt.Comma(int64(this.periodProcessedMsgN/int32(elapsed))),
 		gofmt.ByteSize(this.periodProcessedBytes/int64(elapsed)))
-	logger.Printf("Input: %s %s, speed: %d/s %s/s",
+	logger.Printf("Input: %10s %10s, speed: %10d/s %10s/s",
 		gofmt.Comma(int64(this.periodInputMsgN)),
 		gofmt.ByteSize(this.periodInputBytes),
-		this.periodInputMsgN/int32(elapsed),
+		gofmt.Comma(int64(this.periodInputMsgN/int32(elapsed))),
 		gofmt.ByteSize(this.periodInputBytes/int64(elapsed)))
 }
 
