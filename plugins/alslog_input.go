@@ -17,7 +17,7 @@ import (
 
 type logfileSource struct {
 	glob     string
-	excepts  []string
+	ignores  []string
 	project  string
 	ident    string
 	disabled bool
@@ -34,13 +34,23 @@ func (this *logfileSource) load(config *conf.Conf) {
 
 	this.project = config.String("project", "")
 	this.tail = config.Bool("tail", true)
-	this.excepts = config.StringList("except", nil)
+	this.ignores = config.StringList("ignores", nil)
 	this.disabled = config.Bool("disabled", false)
 	this.ident = config.String("ident", "")
 	if this.ident == "" {
 		panic("empty ident")
 	}
 	this._files = make([]string, 0, 100)
+}
+
+func (this *logfileSource) ignored(fn string) bool {
+	for _, ignore := range this.ignores {
+		if strings.HasPrefix(filepath.Base(fn), ignore) {
+			return true
+		}
+	}
+
+	return false
 }
 
 func (this *logfileSource) refresh(wg *sync.WaitGroup) {
@@ -56,17 +66,8 @@ func (this *logfileSource) refresh(wg *sync.WaitGroup) {
 	}
 
 	this._files = this._files[:0]
-	var excluded bool
 	for _, fn := range files {
-		excluded = false
-		for _, except := range this.excepts {
-			if strings.HasPrefix(filepath.Base(fn), except) {
-				excluded = true
-				break
-			}
-		}
-
-		if !excluded {
+		if !this.ignored(fn) {
 			this._files = append(this._files, fn)
 		}
 	}
@@ -77,7 +78,6 @@ type AlsLogInput struct {
 	showProgress bool
 	counters     *sortedmap.SortedMap // ident -> N
 	sources      []*logfileSource
-	opened       map[string]bool
 }
 
 func (this *AlsLogInput) Init(config *conf.Conf) {
@@ -87,11 +87,10 @@ func (this *AlsLogInput) Init(config *conf.Conf) {
 
 	this.showProgress = config.Bool("show_pregress", true)
 	this.counters = sortedmap.NewSortedMap()
-	this.opened = make(map[string]bool)
 	this.stopChan = make(chan bool)
 
 	// get the sources
-	this.sources = make([]*logfileSource, 0, 300)
+	this.sources = make([]*logfileSource, 0, 20)
 	for i := 0; i < len(config.List("sources", nil)); i++ {
 		section, err := config.Section(fmt.Sprintf("sources[%d]", i))
 		if err != nil {
@@ -114,9 +113,9 @@ func (this *AlsLogInput) CleanupForRestart() bool {
 
 func (this *AlsLogInput) Run(r engine.InputRunner, h engine.PluginHelper) error {
 	var (
-		globals    = engine.Globals()
 		reloadChan = make(chan interface{})
 		stopped    = false
+		opened     = make(map[string]bool) // safe because within a goroutine
 	)
 
 	observer.Subscribe(engine.RELOAD, reloadChan)
@@ -126,15 +125,11 @@ func (this *AlsLogInput) Run(r engine.InputRunner, h engine.PluginHelper) error 
 
 		for _, source := range this.sources {
 			for _, fn := range source._files {
-				if _, present := this.opened[fn]; present {
+				if _, present := opened[fn]; present {
 					continue
 				}
 
-				if globals.Verbose {
-					globals.Printf("[%s]found new file %s", source.project, fn)
-				}
-
-				this.opened[fn] = true
+				opened[fn] = true
 				go this.runSingleAlsLogInput(fn, r, h, *source, &stopped)
 			}
 		}
@@ -144,21 +139,19 @@ func (this *AlsLogInput) Run(r engine.InputRunner, h engine.PluginHelper) error 
 			// TODO
 
 		case <-r.Ticker():
-			this.handlePeriodicalCounters()
+			this.handlePeriodicalCounters(len(opened))
 
 		case <-this.stopChan:
 			stopped = true
 		}
 	}
 
-	for len(this.opened) > 0 {
-		time.Sleep(time.Millisecond * 20)
-	}
+	// FIXME wait for all
 
 	return nil
 }
 
-func (this *AlsLogInput) handlePeriodicalCounters() {
+func (this *AlsLogInput) handlePeriodicalCounters(opendFiles int) {
 	if !this.showProgress {
 		return
 	}
@@ -167,7 +160,7 @@ func (this *AlsLogInput) handlePeriodicalCounters() {
 		n       = 0
 		globals = engine.Globals()
 	)
-	globals.Printf("Opened files: %d", len(this.opened))
+	globals.Printf("Opened files: %d", opendFiles)
 	for _, ident := range this.counters.SortedKeys() {
 		if n = this.counters.Get(ident); n > 0 {
 			globals.Printf("%-15s %8d", ident, n)
@@ -205,6 +198,10 @@ func (this *AlsLogInput) runSingleAlsLogInput(fn string, r engine.InputRunner,
 		globals   = engine.Globals()
 	)
 
+	if globals.Verbose {
+		globals.Printf("[%s]%s started", source.project, fn)
+	}
+
 LOOP:
 	for !*stopped {
 		select {
@@ -238,8 +235,6 @@ LOOP:
 
 		}
 	}
-
-	delete(this.opened, fn)
 
 	if globals.Verbose {
 		globals.Printf("[%s]%s stopped", source.project, fn)

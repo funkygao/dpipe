@@ -8,42 +8,49 @@ import (
 )
 
 type routerStats struct {
-	totalInputMsgN  int64
-	periodInputMsgN int32
-	totalInputSize  int64
-	periodInputSize int64
-
-	totalProcessedMsgN int64 // 16 BilionBillion
-	periodProcessMsgN  int32
+	totalInputMsgN       int64
+	periodInputMsgN      int32
+	totalInputBytes      int64
+	periodInputBytes     int64
+	totalProcessedBytes  int64
+	totalProcessedMsgN   int64 // 16 BilionBillion
+	periodProcessedMsgN  int32
+	periodProcessedBytes int64
 }
 
 func (this *routerStats) inject(pack *PipelinePack) {
-	atomic.AddInt32(&this.periodProcessMsgN, 1)
+	atomic.AddInt64(&this.totalProcessedBytes, int64(pack.Message.Size()))
 	atomic.AddInt64(&this.totalProcessedMsgN, 1)
+	atomic.AddInt64(&this.periodProcessedBytes, int64(pack.Message.Size()))
+	atomic.AddInt32(&this.periodProcessedMsgN, 1)
+
 	if len(pack.diagnostics.Runners()) == 0 {
 		// has no runner pack, means Input generated pack
 		atomic.AddInt64(&this.totalInputMsgN, 1)
 		atomic.AddInt32(&this.periodInputMsgN, 1)
-		atomic.AddInt64(&this.totalInputSize, int64(pack.Message.Size()))
-		atomic.AddInt64(&this.periodInputSize, int64(pack.Message.Size()))
+		atomic.AddInt64(&this.totalInputBytes, int64(pack.Message.Size()))
+		atomic.AddInt64(&this.periodInputBytes, int64(pack.Message.Size()))
 	}
 }
 
 func (this *routerStats) resetPeriodCounters() {
+	this.periodProcessedBytes = int64(0)
+	this.periodInputBytes = int64(0)
 	this.periodInputMsgN = int32(0)
-	this.periodProcessMsgN = int32(0)
-	this.periodInputSize = int64(0)
+	this.periodProcessedMsgN = int32(0)
 }
 
 func (this *routerStats) render(logger *log.Logger, elapsed int) {
-	logger.Printf("Total: %sm %s, speed: %dm/s %s/s",
+	logger.Printf("Total: %s %s, speed: %d/s %s/s",
 		gofmt.Comma(this.totalProcessedMsgN),
-		gofmt.ByteSize(this.totalInputSize),
-		this.periodProcessMsgN/int32(elapsed),
-		gofmt.ByteSize(this.periodInputSize))
-	logger.Printf("Input: %sm, speed: %dm/s",
-		gofmt.Comma(this.totalInputMsgN),
-		this.periodInputMsgN/int32(elapsed))
+		gofmt.ByteSize(this.totalProcessedBytes),
+		this.periodProcessedMsgN/int32(elapsed),
+		gofmt.ByteSize(this.periodProcessedBytes/int64(elapsed)))
+	logger.Printf("Input: %s %s, speed: %d/s %s/s",
+		gofmt.Comma(int64(this.periodInputMsgN)),
+		gofmt.ByteSize(this.periodInputBytes),
+		this.periodInputMsgN/int32(elapsed),
+		gofmt.ByteSize(this.periodInputBytes/int64(elapsed)))
 }
 
 type messageRouter struct {

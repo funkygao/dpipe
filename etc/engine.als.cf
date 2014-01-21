@@ -96,7 +96,7 @@
                     ident:   "rsLogs"
                     project:   "RS"
                     glob:   "/mnt/funplus/logs/fp_rstory/*.log"
-                    except: [
+                    ignores: [
                         "post", "index", "session", "load_data", "dau", "pv",
                         "cheat_check", "quest", "user.", "bigdata.",
                     ]
