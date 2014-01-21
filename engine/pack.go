@@ -27,7 +27,6 @@ type PipelinePack struct {
 
 	// For routing
 	Ident string
-	Tag   string
 
 	// Project name
 	Project string
@@ -95,7 +94,6 @@ func (this *PipelinePack) Reset() {
 	this.CardinalityData = nil
 	this.CardinalityInterval = ""
 	this.Ident = ""
-	this.Tag = ""
 	this.diagnostics.Reset()
 	this.Message.Reset()
 }
