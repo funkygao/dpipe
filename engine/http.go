@@ -47,9 +47,7 @@ func (this *EngineConfig) handleHttpQuery(w http.ResponseWriter, req *http.Reque
 		output["stack"] = string(debug.Stack())
 
 	case "stat":
-		output["goroutines"] = this.stats.NumGoroutine()
-		output["memStats"] = this.stats.MemInfo()
-		output["lastGC"] = this.stats.LastGC()
+		output["runtime"] = this.stats.Runtime()
 		output["router"] = this.router.stats
 		output["start"] = globals.StartedAt
 		output["pid"] = this.pid

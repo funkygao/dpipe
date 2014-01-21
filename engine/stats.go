@@ -19,27 +19,15 @@ func newEngineStats(e *EngineConfig) (this *EngineStats) {
 	return
 }
 
-func (this *EngineStats) NumGoroutine() int {
-	return runtime.NumGoroutine()
-}
-
-func (this *EngineStats) LastGC() uint64 {
-	this.refreshMemStats()
-	return this.MemStats.LastGC
-}
-
-func (this *EngineStats) MemInfo() runtime.MemStats {
-	this.refreshMemStats()
-	return *this.MemStats
-}
-
 func (this *EngineStats) Runtime() map[string]interface{} {
-	s := make(map[string]interface{})
 	this.refreshMemStats()
+
+	s := make(map[string]interface{})
 	s["goroutines"] = runtime.NumGoroutine()
 	s["memory.allocated"] = gofmt.ByteSize(this.MemStats.Alloc)
 	s["memory.mallocs"] = gofmt.ByteSize(this.MemStats.Mallocs)
 	s["memory.frees"] = gofmt.ByteSize(this.MemStats.Frees)
+	s["memory.last_gc"] = this.MemStats.LastGC
 	s["memory.gc.num"] = this.MemStats.NumGC
 	s["memory.gc.total_pause"] = fmt.Sprintf("%dms",
 		this.MemStats.PauseTotalNs/uint64(time.Millisecond))
