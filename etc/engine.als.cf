@@ -62,6 +62,7 @@
         {
             name:   "AlsLogInput"
             class:  "AlsLogInput"
+            show_pregress: true
             ticker_interval: 20
             sources: [
                 {

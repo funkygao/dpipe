@@ -5,6 +5,7 @@ import (
 	"github.com/funkygao/als"
 	"github.com/funkygao/dpipe/engine"
 	"github.com/funkygao/golib/observer"
+	"github.com/funkygao/golib/sortedmap"
 	conf "github.com/funkygao/jsconf"
 	"github.com/funkygao/tail"
 	"os"
@@ -71,9 +72,10 @@ func (this *logfileSource) refresh(wg *sync.WaitGroup) {
 }
 
 type AlsLogInput struct {
-	stopChan chan bool
-	counters map[string]int // ident -> N
-	sources  []*logfileSource
+	stopChan     chan bool
+	showProgress bool
+	counters     *sortedmap.SortedMap // ident -> N
+	sources      []*logfileSource
 }
 
 func (this *AlsLogInput) Init(config *conf.Conf) {
@@ -81,7 +83,8 @@ func (this *AlsLogInput) Init(config *conf.Conf) {
 		engine.Globals().Printf("%#v\n", *config)
 	}
 
-	this.counters = make(map[string]int)
+	this.showProgress = config.Bool("show_pregress", true)
+	this.counters = sortedmap.NewSortedMap()
 	this.stopChan = make(chan bool)
 
 	// get the sources
@@ -111,6 +114,7 @@ func (this *AlsLogInput) Run(r engine.InputRunner, h engine.PluginHelper) error 
 		globals     = engine.Globals()
 		reloadChan  = make(chan interface{})
 		openedFiles = make(map[string]bool)
+		wg          = new(sync.WaitGroup)
 		stopped     = false
 	)
 
@@ -135,7 +139,8 @@ func (this *AlsLogInput) Run(r engine.InputRunner, h engine.PluginHelper) error 
 				}
 
 				openedFiles[fn] = true
-				go this.runSingleAlsLogInput(fn, r, h, *source, &stopped)
+				wg.Add(1)
+				go this.runSingleAlsLogInput(fn, r, h, *source, &stopped, wg)
 			}
 		}
 
@@ -151,22 +156,33 @@ func (this *AlsLogInput) Run(r engine.InputRunner, h engine.PluginHelper) error 
 		}
 	}
 
+	wg.Wait()
+
 	return nil
 }
 
 func (this *AlsLogInput) handlePeriodicalCounters() {
-	globals := engine.Globals()
-	for ident, n := range this.counters {
-		if n > 0 {
-			globals.Printf("%-15s %8d", ident, n)
-		}
+	if !this.showProgress {
+		return
+	}
 
-		this.counters[ident] = 0
+	var (
+		n       = 0
+		globals = engine.Globals()
+	)
+	for _, ident := range this.counters.SortedKeys() {
+		if n = this.counters.Get(ident); n > 0 {
+			globals.Printf("%-15s %8d", ident, n)
+
+			this.counters.Set(ident, 0)
+		}
 	}
 }
 
 func (this *AlsLogInput) runSingleAlsLogInput(fn string, r engine.InputRunner,
-	h engine.PluginHelper, source logfileSource, stopped *bool) {
+	h engine.PluginHelper, source logfileSource, stopped *bool, wg *sync.WaitGroup) {
+	defer wg.Done()
+
 	var tailConf tail.Config
 	if source.tail {
 		tailConf = tail.Config{
@@ -209,7 +225,7 @@ func (this *AlsLogInput) runSingleAlsLogInput(fn string, r engine.InputRunner,
 			continue
 		}
 
-		this.counters[source.ident] += 1
+		this.counters.Inc(source.ident, 1)
 		pack.Project = source.project
 		pack.Logfile.SetPath(fn)
 		pack.Ident = source.ident
