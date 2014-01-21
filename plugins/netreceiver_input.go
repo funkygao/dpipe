@@ -1,7 +1,9 @@
 package plugins
 
 import (
+	"bufio"
 	"github.com/funkygao/dpipe/engine"
+	"github.com/funkygao/golib/gofmt"
 	conf "github.com/funkygao/jsconf"
 	"net"
 	"sync/atomic"
@@ -20,20 +22,26 @@ func (this *NetReceiverInput) Init(config *conf.Conf) {
 	this.maxLineSize = config.Int("max_line_size", 8<<10)
 }
 
+func (this *NetReceiverInput) reportStats(r engine.OutputRunner) {
+	globals := engine.Globals()
+
+	for _ = range r.Tick() {
+		globals.Printf("Total %s, speed: %s/s",
+			gofmt.ByteSize(this.totalBytes),
+			gofmt.ByteSize(this.periodBytes))
+
+		this.periodBytes = int64(0)
+	}
+}
+
 func (this *NetReceiverInput) Run(r engine.OutputRunner, h engine.PluginHelper) error {
 	listener, err := net.Listen("tcp4", this.listenAddr)
 	if err != nil {
 		panic(err)
 	}
-
 	defer listener.Close()
 
-	go func() {
-		globals := engine.Globals()
-		for _ = range r.Tick() {
-			globals.Printf("Total %dB, speed: %s/s", this.totalBytes, this.periodBytes)
-		}
-	}()
+	go this.reportStats(r)
 
 LOOP:
 	for {
@@ -48,34 +56,35 @@ LOOP:
 }
 
 func (this *NetReceiverInput) handleTcpConnection(conn net.Conn, r engine.OutputRunner) {
-	buf := make([]byte, 4<<10)
-	inChan := r.InChan()
-
 	var (
-		pack    *engine.PipelinePack
-		globals = engine.Globals()
-		ok      bool
+		lineReader = bufio.NewReader(conf)
+		line       string
+		err        error
+		pack       *engine.PipelinePack
+		ok         bool
+		inChan     = r.InChan()
+		globals    = engine.Globals()
 	)
 
-	globals.Printf("Connection from %s", conn.RemoteAddr().String())
+	globals.Printf("Connection from %s", conn.RemoteAddr())
 
 	for {
-		n, err := conn.Read(buf)
-		if err != nil || n == 0 {
-			conn.Close()
-			break
+		line, err = lineReader.ReadString('\n')
+		if err != nil {
+			globals.Printf("[%s]%s", conn.RemoteAddr(), err)
+			continue
 		}
 
-		atomic.AddInt64(this.totalBytes, n)
+		atomic.AddInt64(this.totalBytes, len(line))
+		atomic.AddInt64(this.periodBytes, len(line))
 
 		pack, ok = <-inChan
 		if !ok {
 			break
 		}
 
-		pack.Bytes = buf[:n] // copy bytes
+		// TODO marshal the pack from line
 		r.Inject(pack)
-
 	}
 
 	globals.Printf("Closed connection from %s", conn.RemoteAddr().String())
