@@ -62,9 +62,6 @@ func main() {
 
 	eng := engine.NewEngineConfig(globals)
 	eng.LoadConfigFile(options.configfile)
-	if options.validate {
-		shutdown()
-	}
 	engine.Launch(eng)
 
 	shutdown()

@@ -12,7 +12,6 @@ import (
 func parseFlags() {
 	flag.BoolVar(&options.verbose, "v", false, "verbose")
 	flag.StringVar(&options.configfile, "c", "etc/engine.als.cf", "main config file")
-	flag.BoolVar(&options.validate, "validate", false, "validate config and exit")
 	flag.StringVar(&options.logfile, "l", "", "master log file name")
 	flag.StringVar(&options.lockfile, "lockfile", "var/dpiped.lock", "lockfile path")
 	flag.BoolVar(&options.showversion, "version", false, "show version")

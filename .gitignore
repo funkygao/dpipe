@@ -25,3 +25,4 @@ var/
 fpiped
 cmd/sky/sky
 cmd/dpiped/dpiped
+cmd/dpconf/dpconf
