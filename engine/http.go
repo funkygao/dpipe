@@ -74,7 +74,7 @@ func (this *EngineConfig) handleHttpQuery(w http.ResponseWriter, req *http.Reque
 	case "plugins":
 		output["plugins"] = this.pluginNames()
 
-	case "paths":
+	case "uris":
 		output["all"] = this.httpPaths
 	}
 
