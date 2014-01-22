@@ -55,7 +55,8 @@ func Launch(e *EngineConfig) {
 	e.diagnosticTrackers[filterPackTracker.PoolName] = filterPackTracker
 
 	if globals.Verbose {
-		globals.Printf("Initializing PipelinePack pools with size=%d\n", globals.PoolSize)
+		globals.Printf("Initializing PipelinePack pools with size=%d\n",
+			globals.PoolSize)
 	}
 	for i := 0; i < globals.PoolSize; i++ {
 		inputPack := NewPipelinePack(e.inputRecycleChan)
@@ -164,7 +165,7 @@ func Launch(e *EngineConfig) {
 		project.Stop()
 	}
 
-	globals.Printf("Shutdown with input:%s, dispatch: %s",
+	globals.Printf("Shutdown with input:%s, dispatched: %s",
 		gofmt.Comma(e.router.stats.TotalInputMsgN),
 		gofmt.Comma(e.router.stats.TotalProcessedMsgN))
 }

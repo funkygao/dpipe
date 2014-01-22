@@ -20,7 +20,7 @@ type routerStats struct {
 	PeriodMaxMsgBytes    int64
 }
 
-func (this *routerStats) inject(pack *PipelinePack) {
+func (this *routerStats) update(pack *PipelinePack) {
 	msgBytes := int64(pack.Message.Size())
 	atomic.AddInt64(&this.TotalProcessedBytes, msgBytes)
 	atomic.AddInt64(&this.TotalProcessedMsgN, 1)
@@ -36,8 +36,8 @@ func (this *routerStats) inject(pack *PipelinePack) {
 	if pack.Input {
 		atomic.AddInt64(&this.TotalInputMsgN, 1)
 		atomic.AddInt32(&this.PeriodInputMsgN, 1)
-		atomic.AddInt64(&this.TotalInputBytes, int64(pack.Message.Size()))
-		atomic.AddInt64(&this.PeriodInputBytes, int64(pack.Message.Size()))
+		atomic.AddInt64(&this.TotalInputBytes, msgBytes)
+		atomic.AddInt64(&this.PeriodInputBytes, msgBytes)
 	}
 }
 
@@ -128,7 +128,7 @@ LOOP:
 				break LOOP
 			}
 
-			this.stats.inject(pack)
+			this.stats.update(pack)
 
 			pack.diagnostics.Reset()
 			foundMatch = false
