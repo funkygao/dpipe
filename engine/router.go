@@ -74,8 +74,6 @@ type messageRouter struct {
 
 	filterMatchers []*Matcher
 	outputMatchers []*Matcher
-
-	closedMatcherChan chan interface{}
 }
 
 func NewMessageRouter() (this *messageRouter) {
@@ -86,9 +84,16 @@ func NewMessageRouter() (this *messageRouter) {
 	this.removeOutputMatcher = make(chan *Matcher)
 	this.filterMatchers = make([]*Matcher, 0, 10)
 	this.outputMatchers = make([]*Matcher, 0, 10)
-	this.closedMatcherChan = make(chan interface{})
 
 	return
+}
+
+func (this *messageRouter) addFilterMatcher(matcher *Matcher) {
+	this.filterMatchers = append(this.filterMatchers, matcher)
+}
+
+func (this *messageRouter) addOutputMatcher(matcher *Matcher) {
+	this.outputMatchers = append(this.outputMatchers, matcher)
 }
 
 // Dispatch pack from Input to MatchRunners
@@ -113,10 +118,10 @@ LOOP:
 	for ok {
 		select {
 		case matcher = <-this.removeOutputMatcher:
-			go this.removeMatcher(matcher, this.outputMatchers)
+			this.removeMatcher(matcher, this.outputMatchers)
 
 		case matcher = <-this.removeFilterMatcher:
-			go this.removeMatcher(matcher, this.filterMatchers)
+			this.removeMatcher(matcher, this.filterMatchers)
 
 		case <-ticker.C:
 			this.stats.render(globals.Logger, globals.TickerLength)
@@ -141,7 +146,7 @@ LOOP:
 			// We have to dispatch to Output then Filter to avoid that case
 			for _, matcher = range this.outputMatchers {
 				// a pack can match several Output
-				if matcher.match(pack) {
+				if matcher != nil && matcher.match(pack) {
 					foundMatch = true
 
 					pack.IncRef()
@@ -155,7 +160,7 @@ LOOP:
 			// and the router will dec ref count only once
 			for _, matcher = range this.filterMatchers {
 				// a pack can match several Filter
-				if matcher.match(pack) {
+				if matcher != nil && matcher.match(pack) {
 					foundMatch = true
 
 					pack.IncRef()
@@ -165,7 +170,9 @@ LOOP:
 			}
 
 			if !foundMatch {
-				panic("Found no match: " + pack.String())
+				// Maybe we closed all filter/output inChan, but there
+				// still exits some remnant packs in router.inChan
+				globals.Printf("Found no match: " + pack.String())
 			}
 
 			// never forget this!
@@ -180,42 +187,17 @@ LOOP:
 
 func (this *messageRouter) removeMatcher(matcher *Matcher, matchers []*Matcher) {
 	globals := Globals()
-	for _, m := range matchers {
+	for idx, m := range matchers {
 		if m == matcher {
-			queuedPacks := len(this.inChan)
-			for queuedPacks > 0 {
-				if globals.Debug {
-					globals.Printf("[router]queued packs: %d", queuedPacks)
-				}
-
-				time.Sleep(time.Millisecond * 2)
-				queuedPacks = len(this.inChan)
+			if globals.Verbose {
+				globals.Printf("Closed matcher for %s", m.runner.Name())
 			}
 
-			queuedPacks = len(m.InChan())
-			for queuedPacks > 0 {
-				if globals.Debug {
-					globals.Printf("[%s]queued packs: %d", m.runner.Name(), queuedPacks)
-				}
-
-				time.Sleep(time.Millisecond * 2)
-				queuedPacks = len(m.InChan())
-			}
-
-			if globals.Debug {
-				globals.Printf("Close inChan of %s", m.runner.Name())
-			}
-
+			// in golang, close means we can no longer send to that chan
+			// but consumers can still recv from the chan
 			close(m.InChan())
-			this.closedMatcherChan <- 1
-
+			matchers[idx] = nil
 			return
 		}
-	}
-}
-
-func (this *messageRouter) waitForFlush() {
-	for i := 0; i < len(this.filterMatchers)+len(this.outputMatchers); i++ {
-		<-this.closedMatcherChan
 	}
 }
