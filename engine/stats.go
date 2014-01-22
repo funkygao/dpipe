@@ -29,6 +29,7 @@ func (this *EngineStats) Runtime() map[string]interface{} {
 	s["memory.frees"] = gofmt.ByteSize(this.MemStats.Frees).String()
 	s["memory.last_gc"] = this.MemStats.LastGC
 	s["memory.gc.num"] = this.MemStats.NumGC
+	s["memory.gc.num_per_second"] = float64(this.MemStats.NumGC) / time.Since(Globals().StartedAt).Seconds()
 	s["memory.gc.total_pause"] = fmt.Sprintf("%dms",
 		this.MemStats.PauseTotalNs/uint64(time.Millisecond))
 	s["memory.heap.alloc"] = gofmt.ByteSize(this.MemStats.HeapAlloc).String()       // 堆上目前分配的内存
