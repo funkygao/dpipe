@@ -11,12 +11,13 @@ import (
 
 func parseFlags() {
 	flag.BoolVar(&options.verbose, "v", false, "verbose")
-	flag.StringVar(&options.configfile, "c", "etc/engine.als.cf", "main config file")
-	flag.StringVar(&options.logfile, "l", "", "master log file name")
+	flag.BoolVar(&options.veryVerbose, "vv", false, "very verbose")
+	flag.StringVar(&options.configfile, "conf", "etc/engine.als.cf", "main config file")
+	flag.StringVar(&options.logfile, "log", "", "master log file name")
 	flag.StringVar(&options.lockfile, "lockfile", "var/dpiped.lock", "lockfile path")
 	flag.BoolVar(&options.showversion, "version", false, "show version")
 	flag.BoolVar(&options.debug, "debug", false, "debug mode")
-	flag.IntVar(&options.tick, "t", 60*10, "tick interval in seconds")
+	flag.IntVar(&options.tick, "tick", 60*10, "tick interval in seconds")
 	flag.BoolVar(&options.dryrun, "dryrun", false, "dry run")
 	flag.StringVar(&options.cpuprof, "cpuprof", "", "cpu profiling file")
 	flag.StringVar(&options.memprof, "memprof", "", "memory profiling file")

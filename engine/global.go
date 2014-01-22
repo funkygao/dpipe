@@ -30,6 +30,7 @@ type GlobalConfigStruct struct {
 	Stopping       bool
 	Debug          bool
 	Verbose        bool
+	VeryVerbose    bool
 	DryRun         bool
 	PoolSize       int
 	PluginChanSize int

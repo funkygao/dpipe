@@ -11,6 +11,7 @@ var (
 
 	options struct {
 		verbose            bool
+		veryVerbose        bool
 		configfile         string
 		showversion        bool
 		logfile            string
