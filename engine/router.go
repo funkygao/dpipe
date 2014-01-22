@@ -25,7 +25,6 @@ func (this *routerStats) inject(pack *PipelinePack) {
 	atomic.AddInt32(&this.PeriodProcessedMsgN, 1)
 
 	if pack.Input {
-		// has no runner pack, means Input generated pack
 		atomic.AddInt64(&this.TotalInputMsgN, 1)
 		atomic.AddInt32(&this.PeriodInputMsgN, 1)
 		atomic.AddInt64(&this.TotalInputBytes, int64(pack.Message.Size()))
@@ -41,12 +40,12 @@ func (this *routerStats) resetPeriodCounters() {
 }
 
 func (this *routerStats) render(logger *log.Logger, elapsed int) {
-	logger.Printf("Total: %10s %10s, speed: %6s/s %10s/s",
+	logger.Printf("Total:%10s %10s, speed:%6s/s %10s/s",
 		gofmt.Comma(this.TotalProcessedMsgN),
 		gofmt.ByteSize(this.TotalProcessedBytes),
 		gofmt.Comma(int64(this.PeriodProcessedMsgN/int32(elapsed))),
 		gofmt.ByteSize(this.PeriodProcessedBytes/int64(elapsed)))
-	logger.Printf("Input: %10s %10s, speed: %6s/s %10s/s",
+	logger.Printf("Input:%10s %10s, speed:%6s/s %10s/s",
 		gofmt.Comma(int64(this.PeriodInputMsgN)),
 		gofmt.ByteSize(this.PeriodInputBytes),
 		gofmt.Comma(int64(this.PeriodInputMsgN/int32(elapsed))),
