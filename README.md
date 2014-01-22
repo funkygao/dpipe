@@ -1,17 +1,18 @@
 dpipe
 =====
 
-Distributed Data Pipeline
 
-     _       _                _
-    | |     (_)              | |
-  __| |_ __  _ _ __   ___  __| |
- / _  | '_ \| | '_ \ / _ \/ _  |
-| (_| | |_) | | |_) |  __/ (_| |
- \__,_| .__/|_| .__/ \___|\__,_|
-      | |     | |
-      |_|     |_|
-        `)
+         _       _                _
+        | |     (_)              | |
+      __| |_ __  _ _ __   ___  __| |
+     / _  | '_ \| | '_ \ / _ \/ _  |
+    | (_| | |_) | | |_) |  __/ (_| |
+     \__,_| .__/|_| .__/ \___|\__,_|
+          | |     | |
+          |_|     |_|
+            `)
+
+Distributed Data Pipeline
 
 Performing "in-flight" processing of collected data, real time streaming analysis and alarming, and delivering the results to any number of destinations for further analysis.
 
