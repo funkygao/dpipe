@@ -8,7 +8,7 @@ import (
 	"io"
 	"net"
 	"net/http"
-	"runtime/debug"
+	"runtime"
 )
 
 func (this *EngineConfig) launchHttpServ() {
@@ -59,7 +59,9 @@ func (this *EngineConfig) handleHttpQuery(w http.ResponseWriter, req *http.Reque
 		}
 
 	case "stack":
-		output["stack"] = string(debug.Stack())
+		stack := make([]byte, 1<<20)
+		runtime.Stack(stack, true)
+		output["stacks"] = string(stack)
 
 	case "stat":
 		output["runtime"] = this.stats.Runtime()
