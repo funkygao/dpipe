@@ -115,6 +115,7 @@ func (this *AlsLogInput) CleanupForRestart() bool {
 
 func (this *AlsLogInput) Run(r engine.InputRunner, h engine.PluginHelper) error {
 	var (
+		globals    = engine.Globals()
 		reloadChan = make(chan interface{})
 		stopped    = false
 		opened     = make(map[string]bool) // safe because within a goroutine
@@ -123,6 +124,9 @@ func (this *AlsLogInput) Run(r engine.InputRunner, h engine.PluginHelper) error 
 	observer.Subscribe(engine.RELOAD, reloadChan)
 
 	for !stopped {
+		if globals.Verbose {
+			globals.Println("refreshing...")
+		}
 		this.refreshSources()
 
 		for _, source := range this.sources {
