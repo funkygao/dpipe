@@ -64,7 +64,7 @@
             name:   "AlsLogInput"
             class:  "AlsLogInput"
             show_pregress: true
-            ticker_interval: 20
+            ticker_interval: 30
             poll_interval_ms: 500
             sources: [
                 {
@@ -209,9 +209,9 @@
             match:  ["esFiltered", "alsSysStat", "esBuffer"]
             dryrun: false
             show_progress: true
+            report_interval: 60
             domain: "localhost"
             port: "9200"
-            report_interval: 10
             flush_interval: 30
             bulk_max_conn: 20
             bulk_max_docs: 100
