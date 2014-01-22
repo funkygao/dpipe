@@ -1,20 +1,20 @@
 #! /bin/bash -e
-
-#===========
-# update
-#===========
-if [[ $1 = "-u" ]]; then
-    go get -u github.com/funkygao/dpipe
-fi
-
-#===========
-# build
-#===========
+#===================
+# build with BuildId
+#===================
 cd $(dirname $0)/cmd/dpiped
 ID=$(git rev-parse HEAD | cut -c1-7)
-go build -ldflags "-X main.BuildID $ID"
+if [[ $1 = "-linux" ]]; then
+    #=======================================
+    # to enable cross compiling, you need to 
+    #=======================================
+    # cd $GOROOT/src; CGO_ENABLED=0 GOOS=linux GOARCH=386 ./make.bash
+    CGO_ENABLED=0 GOOS=linux GOARCH=386 go build -ldflags "-X main.BuildID $ID"
+else
+    go build -ldflags "-X main.BuildID $ID"
+fi
 
-#===========
+#=========
 # show ver
-#===========
+#=========
 ./dpiped -version

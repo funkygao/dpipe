@@ -10,3 +10,17 @@ func BenchmarkStringConstains(b *testing.B) {
 		strings.Contains("we are all here", "all")
 	}
 }
+
+func BenchmarkStringConcat(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		_ = "home" + ":" + "nice"
+	}
+}
+
+func BenchmarkStringLen(b *testing.B) {
+	s := "abcdefg"
+	for i := 0; i < b.N; i++ {
+		_ = len(s)
+	}
+
+}

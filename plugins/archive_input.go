@@ -108,6 +108,10 @@ func (this *ArchiveInput) runSingleLogfile(path string, f os.FileInfo, err error
 	if f == nil || f.IsDir() || !this.shouldRunSingleLogfile(path) {
 		return
 	}
+	if (f.Mode() & os.ModeSymlink) > 0 {
+		// are we to handle this case?
+		// TODO maybe it will never happens
+	}
 
 	this.workersWg.Add(1)
 	this.leftN += 1

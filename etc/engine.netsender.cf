@@ -1,0 +1,59 @@
+{
+    // global conf shared by all projects
+    http_addr: "127.0.0.1:9876"
+    
+    projects: [
+        {
+            name:   "als"
+            comment:"als server monitor"
+        }
+        {
+            name:   "RS"
+            show_error: true
+            alarm_email: {
+                recipients:   "peng.gao@funplusgame.com,zhengkai@gmail.com,yan.zhang@funplusgame.com"
+                busy_line_threshold: 25
+                line_threshold: 10
+                sleep_start:    600
+                sleep_step:     60
+                sleep_max:      1600
+                sleep_min:      250
+            }
+            logfile: "var/rs.log"    
+            index_prefix: "rs"      
+        }
+        {
+            name:   "FFS"
+            show_error: true
+            logfile: "var/ffs.log" 
+            index_prefix: "ffs"   
+        }
+        {
+            name:   "FF2"
+            show_error: true
+            logfile: "var/ff2.log" 
+            index_prefix: "ff2"   
+        }
+        {
+            name:   "FF"
+            show_error: true
+            logfile: "var/ff.log" 
+            index_prefix: "ff"   
+        }
+    ]
+
+    plugins: [
+        {
+            name:   "SelfSysInput"
+            ident:   "alsSysStat"
+            ticker_interval: 10
+        }
+
+        {
+            name:           "NetSenderOutput"
+            remote_addr:    "1.1.1.1:9000"
+            max_line_size:  4096
+        }
+    ]
+}
+
