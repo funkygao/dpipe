@@ -6,12 +6,15 @@ import (
 
 type Matcher struct {
 	runner  FilterOutputRunner
-	matches []string
+	matches map[string]bool
 }
 
 func NewMatchRunner(matches []string, r FilterOutputRunner) *Matcher {
 	this := new(Matcher)
-	this.matches = matches
+	this.matches = make(map[string]bool)
+	for _, m := range matches {
+		this.matches[m] = true
+	}
 	this.runner = r
 	return this
 }
@@ -31,11 +34,5 @@ func (this *Matcher) match(pack *PipelinePack) bool {
 		return true
 	}
 
-	for _, match := range this.matches {
-		if pack.Ident == match {
-			return true
-		}
-	}
-
-	return false
+	return this.matches[pack.Ident]
 }
