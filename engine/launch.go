@@ -164,7 +164,7 @@ func Launch(e *EngineConfig) {
 		project.Stop()
 	}
 
-	globals.Printf("Shutdown with input:%s, dispatched: %s",
+	globals.Printf("Shutdown with input:%s, dispatched:%s",
 		gofmt.Comma(e.router.stats.TotalInputMsgN),
 		gofmt.Comma(e.router.stats.TotalProcessedMsgN))
 }
