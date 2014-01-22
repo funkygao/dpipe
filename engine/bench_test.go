@@ -27,3 +27,12 @@ func BenchmarkRouterStatsUpdate(b *testing.B) {
 		stat.update(pack)
 	}
 }
+
+func BenchmarkMatcher(b *testing.B) {
+	pack := NewPipelinePack(nil)
+	pack.Ident = "foox"
+	matcher := NewMatcher([]string{"foo", "bar", "ping", "pong"}, nil)
+	for i := 0; i < b.N; i++ {
+		matcher.match(pack)
+	}
+}
