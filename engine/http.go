@@ -55,6 +55,7 @@ func (this *EngineConfig) handleHttpQuery(w http.ResponseWriter, req *http.Reque
 				packs = append(packs, s)
 			}
 			output[poolName] = packs
+			output[poolName+"_len"] = len(packs)
 		}
 
 	case "stack":
