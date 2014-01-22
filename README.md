@@ -126,8 +126,8 @@ Main pipeline data structure containing a AlsMessage and other metadata
                 |           |           | put           | put               |
                 |           |           |               |                   |
                  ----->-----       Matcher.inChan   Matcher.inChan          |
-                   inject               |               |                   |
-                                        | put           | put               |
+                   inject               ^               ^                   |
+                                        | is            | is                |
                                         V               V                   |
                                OutputRunner.inChan   FilterRunner.inChan    |
                                         |               |                   |
