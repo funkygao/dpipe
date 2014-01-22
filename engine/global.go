@@ -9,7 +9,6 @@ import (
 )
 
 const (
-	// control channel event types
 	RELOAD  = "reload"
 	STOP    = "stop"
 	SIGUSR1 = "user1"
@@ -61,9 +60,9 @@ func DefaultGlobals() *GlobalConfigStruct {
 		DryRun:             false,
 		PoolSize:           100,
 		PluginChanSize:     50,
-		TickerLength:       10 * 60,
+		TickerLength:       10 * 60, // 10 minutes
 		MaxMsgLoops:        4,
-		DiagnosticInterval: 20,
+		DiagnosticInterval: 30, // 30 seconds
 		MaxPackIdle:        idle,
 		StartedAt:          time.Now(),
 		Logger:             log.New(os.Stdout, "", log.Ldate|log.Lshortfile|log.Ltime),
