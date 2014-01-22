@@ -10,11 +10,13 @@ import (
 	"os"
 	"runtime"
 	"strconv"
+	"sync"
 	"time"
 )
 
 type EngineConfig struct {
 	*conf.Conf
+	*sync.Mutex
 
 	listener   net.Listener
 	httpServer *http.Server
@@ -49,6 +51,7 @@ type EngineConfig struct {
 
 func NewEngineConfig(globals *GlobalConfigStruct) (this *EngineConfig) {
 	this = new(EngineConfig)
+	this.Mutex = new(sync.Mutex)
 
 	if globals == nil {
 		globals = DefaultGlobals()
@@ -222,17 +225,17 @@ func (this *EngineConfig) loadPluginSection(section *conf.Conf) {
 	}
 
 	foRunner := NewFORunner(wrapper.name, plugin, pluginCommons)
-	matcher := NewMatchRunner(section.StringList("match", nil), foRunner)
+	matcher := NewMatcher(section.StringList("match", nil), foRunner)
 	foRunner.matcher = matcher
 
 	switch pluginCategory {
 	case "Filter":
-		this.router.filterMatchers = append(this.router.filterMatchers, matcher)
+		this.router.addFilterMatcher(matcher)
 		this.FilterRunners[foRunner.name] = foRunner
 		this.filterWrappers[foRunner.name] = wrapper
 
 	case "Output":
-		this.router.outputMatchers = append(this.router.outputMatchers, matcher)
+		this.router.addOutputMatcher(matcher)
 		this.OutputRunners[foRunner.name] = foRunner
 		this.outputWrappers[foRunner.name] = wrapper
 	}

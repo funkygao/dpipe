@@ -9,7 +9,7 @@ type Matcher struct {
 	matches map[string]bool
 }
 
-func NewMatchRunner(matches []string, r FilterOutputRunner) *Matcher {
+func NewMatcher(matches []string, r FilterOutputRunner) *Matcher {
 	this := new(Matcher)
 	this.matches = make(map[string]bool)
 	for _, m := range matches {
