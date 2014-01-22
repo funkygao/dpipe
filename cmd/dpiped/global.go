@@ -21,6 +21,7 @@ var (
 		memprof            string
 		lockfile           string
 		diagnosticInterval int
+		validate           bool
 	}
 )
 
