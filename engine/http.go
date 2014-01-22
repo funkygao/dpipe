@@ -60,8 +60,9 @@ func (this *EngineConfig) handleHttpQuery(w http.ResponseWriter, req *http.Reque
 
 	case "stack":
 		stack := make([]byte, 1<<20)
-		runtime.Stack(stack, true)
-		output["stacks"] = string(stack)
+		stackSize := runtime.Stack(stack, true)
+		globals.Println(string(stack[:stackSize]))
+		output["result"] = "go to global logger to see result"
 
 	case "stat":
 		output["runtime"] = this.stats.Runtime()
