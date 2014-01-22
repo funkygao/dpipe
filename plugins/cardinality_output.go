@@ -11,21 +11,25 @@ import (
 )
 
 type CardinalityOutput struct {
-	counters *stats.CardinalityCounter
-	project  string
+	counters   *stats.CardinalityCounter
+	checkpoint string
+	project    string
 }
 
 func (this *CardinalityOutput) Init(config *conf.Conf) {
-	this.counters = stats.NewCardinalityCounter()
+	this.checkpoint = config.String("checkpoint", "")
 	this.project = config.String("project", "")
+	this.counters = stats.NewCardinalityCounter()
+	if this.checkpoint != "" {
+		this.counters.Load(this.checkpoint)
+	}
 }
 
 func (this *CardinalityOutput) Run(r engine.OutputRunner, h engine.PluginHelper) error {
 	var (
-		pack    *engine.PipelinePack
-		ok      = true
-		project = h.Project(this.project)
-		inChan  = r.InChan()
+		pack   *engine.PipelinePack
+		ok     = true
+		inChan = r.InChan()
 	)
 
 	h.RegisterHttpApi("/card/{key}", func(w http.ResponseWriter,
@@ -50,7 +54,9 @@ LOOP:
 	}
 
 	// before we quit, dump counters
-	this.dumpCounters(project)
+	if this.checkpoint != "" {
+		this.counters.Dump(this.checkpoint)
+	}
 
 	return nil
 }
@@ -83,15 +89,6 @@ func (this *CardinalityOutput) handleHttpRequest(w http.ResponseWriter,
 	}
 
 	return output, nil
-}
-
-func (this *CardinalityOutput) dumpCounters(project *engine.ConfProject) {
-	project.Println("Current cardinalities:")
-	for _, key := range this.counters.Categories() {
-		project.Printf("%15s[%v] %d\n", key,
-			bjtime.TsToString(int(this.counters.StartedAt(key).Unix())),
-			this.counters.Count(key))
-	}
 }
 
 func init() {

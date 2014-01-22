@@ -137,6 +137,7 @@
         {
             name:   "CardinalityOutputRs"
             class:  "CardinalityOutput"
+            checkpoint: "var/rsCard.gob"
             match:  ["rsDauCardinal", ]
             project:   "RS"
         }

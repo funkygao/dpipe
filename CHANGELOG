@@ -7,6 +7,7 @@ Release Notes - Flume - Version v0.5.0.rc
     . cardinality output will export/reset counters through REST
     . replication from local logs to remote via TCP(compression TODO)
     . init.d script added
+    . cardinality output uses gob to checkpoint state between restarts
 
 ** Improvement
 
