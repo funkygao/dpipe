@@ -19,4 +19,8 @@ Release Notes - Flume - Version v0.5.0.rc
     . occasionally, EsOutput can't get EsIndex/EsType info
       [maybe] because SkyOutput matches all and because of race condition it recyles first
 
+** Todo
+
+    . 
+
 ----

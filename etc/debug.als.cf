@@ -1,0 +1,45 @@
+{
+    // global conf shared by all projects
+
+    projects: [
+        {
+            name: "fun"
+        }
+    ]
+
+    plugins: [
+        {
+            name:   "AlsLogInput"
+            class:  "AlsLogInput"
+            ticker_interval: 30
+            sources: [
+                {
+                    glob:   "/mnt/funplus/logs/fp_rstory/*.log"
+                    project:   "fun"
+                    ident:   "rs"
+                }
+                {
+                    glob:   "/mnt/funplus/logs/fp_ffseaside/*.log"
+                    project:   "fun"
+                    ident:   "ffs"
+                }
+                {
+                    glob:   "/mnt/funplus/logs/fp_ff2mobile/*.log"
+                    project:   "fun"
+                    ident:   "ff2"
+                }
+                {
+                    glob:   "/mnt/funplus/logs/fp_fslots/*.log"
+                    project:   "fun"
+                    ident:   "slots"
+                }
+            ]
+        }
+        
+        {
+            name:   "DebugOutput"
+            blackhole: true
+            match:  ["rs", "ffs", "ff2", "slots", ]
+        }
+    ]
+}

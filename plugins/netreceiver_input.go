@@ -22,10 +22,10 @@ func (this *NetReceiverInput) Init(config *conf.Conf) {
 	this.maxLineSize = config.Int("max_line_size", 8<<10)
 }
 
-func (this *NetReceiverInput) reportStats(r engine.OutputRunner) {
+func (this *NetReceiverInput) reportStats(r engine.InputRunner) {
 	globals := engine.Globals()
 
-	for _ = range r.Tick() {
+	for _ = range r.Ticker() {
 		globals.Printf("Total %s, speed: %s/s",
 			gofmt.ByteSize(this.totalBytes),
 			gofmt.ByteSize(this.periodBytes))
@@ -34,7 +34,7 @@ func (this *NetReceiverInput) reportStats(r engine.OutputRunner) {
 	}
 }
 
-func (this *NetReceiverInput) Run(r engine.OutputRunner, h engine.PluginHelper) error {
+func (this *NetReceiverInput) Run(r engine.InputRunner, h engine.PluginHelper) error {
 	listener, err := net.Listen("tcp4", this.listenAddr)
 	if err != nil {
 		panic(err)
@@ -53,11 +53,14 @@ LOOP:
 
 		go this.handleTcpConnection(conn, r)
 	}
+
+	return nil
 }
 
-func (this *NetReceiverInput) handleTcpConnection(conn net.Conn, r engine.OutputRunner) {
+func (this *NetReceiverInput) handleTcpConnection(conn net.Conn,
+	r engine.InputRunner) {
 	var (
-		lineReader = bufio.NewReader(conf)
+		lineReader = bufio.NewReader(conn)
 		line       string
 		err        error
 		pack       *engine.PipelinePack
@@ -75,8 +78,8 @@ func (this *NetReceiverInput) handleTcpConnection(conn net.Conn, r engine.Output
 			continue
 		}
 
-		atomic.AddInt64(this.totalBytes, len(line))
-		atomic.AddInt64(this.periodBytes, len(line))
+		atomic.AddInt64(&this.totalBytes, int64(len(line)))
+		atomic.AddInt64(&this.periodBytes, int64(len(line)))
 
 		pack, ok = <-inChan
 		if !ok {
@@ -88,7 +91,6 @@ func (this *NetReceiverInput) handleTcpConnection(conn net.Conn, r engine.Output
 	}
 
 	globals.Printf("Closed connection from %s", conn.RemoteAddr().String())
-
 }
 
 func init() {

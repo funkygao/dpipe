@@ -11,10 +11,11 @@ type netSenderTarget struct {
 }
 
 func (this *netSenderTarget) send(pack *engine.PipelinePack) {
-	n, err := this.c.Write(pack.Bytes)
-	if n != len(pack.Bytes) || err != nil {
-		panic(err)
-	}
+	/*
+		n, err := this.c.Write(pack.Bytes)
+		if n != len(pack.Bytes) || err != nil {
+			panic(err)
+		}*/
 }
 
 // Send local logs contents to remote TCP line by line
