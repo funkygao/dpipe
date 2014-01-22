@@ -21,6 +21,7 @@ type logfileSource struct {
 	project  string
 	ident    string
 	disabled bool
+	decode   bool
 	tail     bool
 
 	_files []string
@@ -37,6 +38,7 @@ func (this *logfileSource) load(config *conf.Conf) {
 	this.ignores = config.StringList("ignores", nil)
 	this.disabled = config.Bool("disabled", false)
 	this.ident = config.String("ident", "")
+	this.decode = config.Bool("decode", true)
 	if this.ident == "" {
 		panic("empty ident")
 	}
@@ -215,14 +217,16 @@ LOOP:
 			}
 
 			pack = <-inChan
-			if err := pack.Message.FromLine(line.Text); err != nil {
-				project := h.Project(source.project)
-				if project.ShowError && err != als.ErrEmptyLine {
-					project.Printf("[%s]%v: %s", fn, err, line.Text)
-				}
+			if source.decode {
+				if err := pack.Message.FromLine(line.Text); err != nil {
+					project := h.Project(source.project)
+					if project.ShowError && err != als.ErrEmptyLine {
+						project.Printf("[%s]%v: %s", fn, err, line.Text)
+					}
 
-				pack.Recycle()
-				continue
+					pack.Recycle()
+					continue
+				}
 			}
 
 			this.counters.Inc(source.ident, 1)
