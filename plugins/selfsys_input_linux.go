@@ -45,6 +45,10 @@ func (this *SelfSysInput) Run(r engine.InputRunner, h engine.PluginHelper) error
 			// same effect as sleep
 		}
 
+		if stopped {
+			break
+		}
+
 		stats.gatherStats()
 		jsonString, err = stats.jsonString()
 		if err != nil {

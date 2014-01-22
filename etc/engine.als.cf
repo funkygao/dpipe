@@ -65,6 +65,7 @@
             class:  "AlsLogInput"
             show_pregress: true
             ticker_interval: 20
+            poll_interval_ms: 500
             sources: [
                 {
                     ident:   "ffsBi"

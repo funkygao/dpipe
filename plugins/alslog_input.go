@@ -8,6 +8,7 @@ import (
 	"github.com/funkygao/golib/sortedmap"
 	conf "github.com/funkygao/jsconf"
 	"github.com/funkygao/tail"
+	"github.com/funkygao/tail/watch"
 	"os"
 	"path/filepath"
 	"strings"
@@ -90,6 +91,8 @@ func (this *AlsLogInput) Init(config *conf.Conf) {
 	this.showProgress = config.Bool("show_progress", true)
 	this.counters = sortedmap.NewSortedMap()
 	this.stopChan = make(chan bool)
+	watch.POLL_DURATION =
+		time.Duration(config.Int("poll_interval_ms", 250)) * time.Millisecond
 
 	// get the sources
 	this.sources = make([]*logfileSource, 0, 20)
