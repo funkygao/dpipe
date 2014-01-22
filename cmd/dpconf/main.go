@@ -5,10 +5,12 @@ import (
 	"fmt"
 	conf "github.com/funkygao/jsconf"
 	"github.com/funkygao/pretty"
+	"os"
 )
 
 const (
 	IDENT = "ident"
+	MATCH = "match"
 )
 
 var (
@@ -22,7 +24,8 @@ func main() {
 
 	cf, err := conf.Load(fn)
 	if err != nil {
-		panic(err)
+		fmt.Printf("Invalid config file[%s]: %v", fn, err)
+		os.Exit(1)
 	}
 
 	graph = make(map[string][]string)
@@ -39,6 +42,7 @@ func main() {
 	showGraph()
 }
 
+// recursive
 func handleSection(section *conf.Conf) {
 	ident := section.String(IDENT, "")
 	if ident != "" {
@@ -46,18 +50,26 @@ func handleSection(section *conf.Conf) {
 	}
 
 	sub := section.Interface("", nil).(map[string]interface{})
+	if sub == nil {
+		return
+	}
+
 	if sub != nil {
 		for k, v := range sub {
-			//pretty.Printf("%s => %v\n", k, v)
+			if x, ok := v.([]interface{}); ok {
 
-			if _, ok := v.([]interface{}); ok {
-				pretty.Printf("%s => %v\n", k, v)
-				continue
-
-				if _, strList := v.([]string); strList {
-					fmt.Println("haha", k)
+				switch x[0].(type) {
+				case string:
+					continue
+				case float64:
 					continue
 				}
+
+				if _, ss := x[0].(string); ss {
+					//continue
+				}
+				fmt.Printf("%s => %T\n", k, v)
+
 				for i := 0; i < len(section.List(k, nil)); i++ {
 					key := fmt.Sprintf("%s[%d]", k, i)
 					fmt.Println(key)
