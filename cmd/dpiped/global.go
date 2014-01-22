@@ -26,7 +26,7 @@ var (
 )
 
 const (
-	USAGE = `dpiped
+	USAGE = `dpiped - Distributed Data Pipeline
 
 Flags:
 `

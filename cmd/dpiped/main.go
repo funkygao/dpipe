@@ -44,6 +44,16 @@ func main() {
 		}
 	}()
 
+	globals.Println(`
+     _       _                _ 
+    | |     (_)              | |
+  __| |_ __  _ _ __   ___  __| |
+ / _  | '_ \| | '_ \ / _ \/ _  |
+| (_| | |_) | | |_) |  __/ (_| |
+ \__,_| .__/|_| .__/ \___|\__,_|
+      | |     | |               
+      |_|     |_|`)
+
 	setupProfiler()
 
 	ticker := time.NewTicker(time.Second * time.Duration(options.tick))

@@ -149,16 +149,7 @@ func (this *EngineConfig) LoadConfigFile(fn string) {
 	}
 	runtime.GOMAXPROCS(maxProcs)
 
-	globals.Println(`
-     _       _                _ 
-    | |     (_)              | |
-  __| |_ __  _ _ __   ___  __| |
- / _  | '_ \| | '_ \ / _ \/ _  |
-| (_| | |_) | | |_) |  __/ (_| |
- \__,_| .__/|_| .__/ \___|\__,_|
-      | |     | |               
-      |_|     |_|`)
-	globals.Printf("Starting with %d/%d CPUs...", maxProcs, totalCpus)
+	globals.Printf("Starting engine with %d/%d CPUs...", maxProcs, totalCpus)
 
 	// 'projects' section
 	for i := 0; i < len(this.List("projects", nil)); i++ {
