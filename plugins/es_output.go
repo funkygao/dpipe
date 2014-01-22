@@ -113,14 +113,17 @@ func (this *EsOutput) handlePeriodicalCounters() {
 		return
 	}
 
+	total := 0
 	for _, key := range this.counters.SortedKeys() {
 		val := this.counters.Get(key)
 		if val > 0 {
+			total += val
 			engine.Globals().Printf("%-50s %8d", key, val)
 
 			this.counters.Set(key, 0)
 		}
 	}
+	engine.Globals().Printf("%50s %8d", "Sum", total)
 }
 
 func (this *EsOutput) feedEs(project *engine.ConfProject, pack *engine.PipelinePack) {
