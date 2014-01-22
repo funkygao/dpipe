@@ -16,13 +16,22 @@ type routerStats struct {
 	TotalProcessedMsgN   int64 // 16 BilionBillion
 	PeriodProcessedMsgN  int32
 	PeriodProcessedBytes int64
+	TotalMaxMsgBytes     int64
+	PeriodMaxMsgBytes    int64
 }
 
 func (this *routerStats) inject(pack *PipelinePack) {
-	atomic.AddInt64(&this.TotalProcessedBytes, int64(pack.Message.Size()))
+	msgBytes := int64(pack.Message.Size())
+	atomic.AddInt64(&this.TotalProcessedBytes, msgBytes)
 	atomic.AddInt64(&this.TotalProcessedMsgN, 1)
-	atomic.AddInt64(&this.PeriodProcessedBytes, int64(pack.Message.Size()))
+	atomic.AddInt64(&this.PeriodProcessedBytes, msgBytes)
 	atomic.AddInt32(&this.PeriodProcessedMsgN, 1)
+	if msgBytes > this.TotalMaxMsgBytes {
+		this.TotalMaxMsgBytes = msgBytes
+	}
+	if msgBytes > this.PeriodMaxMsgBytes {
+		this.PeriodMaxMsgBytes = msgBytes
+	}
 
 	if pack.Input {
 		atomic.AddInt64(&this.TotalInputMsgN, 1)
@@ -37,17 +46,20 @@ func (this *routerStats) resetPeriodCounters() {
 	this.PeriodInputBytes = int64(0)
 	this.PeriodInputMsgN = int32(0)
 	this.PeriodProcessedMsgN = int32(0)
+	this.PeriodMaxMsgBytes = int64(0)
 }
 
 func (this *routerStats) render(logger *log.Logger, elapsed int) {
-	logger.Printf("Total:%10s %10s, speed:%6s/s %10s/s",
+	logger.Printf("Total:%10s %10s max:%8s speed:%6s/s %10s/s",
 		gofmt.Comma(this.TotalProcessedMsgN),
 		gofmt.ByteSize(this.TotalProcessedBytes),
+		gofmt.ByteSize(this.TotalMaxMsgBytes),
 		gofmt.Comma(int64(this.PeriodProcessedMsgN/int32(elapsed))),
 		gofmt.ByteSize(this.PeriodProcessedBytes/int64(elapsed)))
-	logger.Printf("Input:%10s %10s, speed:%6s/s %10s/s",
+	logger.Printf("Input:%10s %10s max:%8s speed:%6s/s %10s/s",
 		gofmt.Comma(int64(this.PeriodInputMsgN)),
 		gofmt.ByteSize(this.PeriodInputBytes),
+		gofmt.ByteSize(this.PeriodMaxMsgBytes),
 		gofmt.Comma(int64(this.PeriodInputMsgN/int32(elapsed))),
 		gofmt.ByteSize(this.PeriodInputBytes/int64(elapsed)))
 }
