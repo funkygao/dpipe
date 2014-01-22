@@ -20,7 +20,7 @@ func (this *DiagnosticTracker) AddPack(pack *PipelinePack) {
 	this.packs = append(this.packs, pack)
 }
 
-func (this *DiagnosticTracker) Run() {
+func (this *DiagnosticTracker) Run(interval int) {
 	var (
 		pack           *PipelinePack
 		earliestAccess time.Time
@@ -32,12 +32,12 @@ func (this *DiagnosticTracker) Run() {
 
 	idleMax := globals.MaxPackIdle
 	probablePacks := make([]*PipelinePack, 0, len(this.packs))
-	ticker := time.NewTicker(time.Duration(globals.DiagnosticInterval) * time.Second)
+	ticker := time.NewTicker(time.Duration(interval) * time.Second)
 	defer ticker.Stop()
 
 	if globals.Debug {
 		globals.Printf("Diagnostic[%s] started with %ds\n", this.PoolName,
-			globals.DiagnosticInterval)
+			interval)
 	}
 
 	for !globals.Stopping {

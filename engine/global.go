@@ -26,15 +26,14 @@ var (
 type GlobalConfigStruct struct {
 	*log.Logger
 
-	StartedAt          time.Time
-	Stopping           bool
-	Debug              bool
-	Verbose            bool
-	DryRun             bool
-	PoolSize           int
-	PluginChanSize     int
-	TickerLength       int
-	DiagnosticInterval int
+	StartedAt      time.Time
+	Stopping       bool
+	Debug          bool
+	Verbose        bool
+	DryRun         bool
+	PoolSize       int
+	PluginChanSize int
+	TickerLength   int
 
 	MaxMsgLoops int
 	MaxPackIdle time.Duration
@@ -55,16 +54,15 @@ func (this *GlobalConfigStruct) Kill(sig os.Signal) {
 func DefaultGlobals() *GlobalConfigStruct {
 	idle, _ := time.ParseDuration("2m")
 	return &GlobalConfigStruct{
-		Debug:              false,
-		Verbose:            false,
-		DryRun:             false,
-		PoolSize:           100,
-		PluginChanSize:     50,
-		TickerLength:       10 * 60, // 10 minutes
-		MaxMsgLoops:        4,
-		DiagnosticInterval: 30, // 30 seconds
-		MaxPackIdle:        idle,
-		StartedAt:          time.Now(),
-		Logger:             log.New(os.Stdout, "", log.Ldate|log.Lshortfile|log.Ltime),
+		Debug:          false,
+		Verbose:        false,
+		DryRun:         false,
+		PoolSize:       100,
+		PluginChanSize: 50,
+		TickerLength:   10 * 60, // 10 minutes
+		MaxMsgLoops:    4,
+		MaxPackIdle:    idle,
+		StartedAt:      time.Now(),
+		Logger:         log.New(os.Stdout, "", log.Ldate|log.Lshortfile|log.Ltime),
 	}
 }

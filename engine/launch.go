@@ -68,8 +68,8 @@ func Launch(e *EngineConfig) {
 		e.filterRecycleChan <- filterPack
 	}
 
-	go inputPackTracker.Run()
-	go filterPackTracker.Run()
+	go inputPackTracker.Run(e.Int("diagnostic_interval", 20))
+	go filterPackTracker.Run(e.Int("diagnostic_interval", 20))
 
 	go e.router.Start()
 

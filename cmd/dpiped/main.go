@@ -30,7 +30,6 @@ func init() {
 	globals.Verbose = options.verbose
 	globals.DryRun = options.dryrun
 	globals.TickerLength = options.tick
-	globals.DiagnosticInterval = options.diagnosticInterval
 	globals.Logger = newLogger()
 }
 
