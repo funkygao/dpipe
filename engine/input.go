@@ -12,12 +12,6 @@ type Input interface {
 	Stop()
 }
 
-// If a Plugin implements CleanupForRestart, it will be called on restart
-// Return value determines whether restart it or run once
-type Restarting interface {
-	CleanupForRestart() bool
-}
-
 type InputRunner interface {
 	PluginRunner
 
@@ -105,7 +99,10 @@ func (this *iRunner) runMainloop(e *EngineConfig, wg *sync.WaitGroup) {
 
 		if restart, ok := this.plugin.(Restarting); ok {
 			if !restart.CleanupForRestart() {
+				// when we found all Input stopped, shutdown engine
+				e.Lock()
 				e.InputRunners[this.name] = nil
+				e.Unlock()
 				return
 			}
 		}
