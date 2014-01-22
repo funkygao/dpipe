@@ -6,7 +6,6 @@ import (
 	"io"
 	"log"
 	"os"
-	"runtime"
 	"runtime/pprof"
 )
 
@@ -40,12 +39,7 @@ func showUsage() {
 	flag.PrintDefaults()
 }
 
-func setupMaxProcsAndProfiler() {
-	numCpu := runtime.NumCPU()
-	maxProcs := numCpu/2 + 1
-	runtime.GOMAXPROCS(numCpu)
-	globals.Printf("build[%s] starting with %d/%d CPUs...\n", BuildID, maxProcs, numCpu)
-
+func setupProfiler() {
 	if options.cpuprof != "" {
 		f, err := os.Create(options.cpuprof)
 		if err != nil {
@@ -55,7 +49,6 @@ func setupMaxProcsAndProfiler() {
 		globals.Printf("CPU profiler %s enabled\n", options.cpuprof)
 		pprof.StartCPUProfile(f)
 	}
-
 }
 
 func newLogger() *log.Logger {

@@ -15,26 +15,13 @@ func Launch(e *EngineConfig) {
 		outputsWg = new(sync.WaitGroup)
 		filtersWg = new(sync.WaitGroup)
 		inputsWg  = new(sync.WaitGroup)
-
-		err error
+		err       error
 	)
-
-	globals := Globals()
-	globals.Println("Launching Engine...")
-	globals.Println(`
-     _       _                _ 
-    | |     (_)              | |
-  __| |_ __  _ _ __   ___  __| |
- / _  | '_ \| | '_ \ / _ \/ _  |
-| (_| | |_) | | |_) |  __/ (_| |
- \__,_| .__/|_| .__/ \___|\__,_|
-      | |     | |               
-      |_|     |_|                         
-		`)
 
 	// setup signal handler first to avoid race condition
 	// if Input terminates very soon, global.Shutdown will
 	// not be able to trap it
+	globals := Globals()
 	globals.sigChan = make(chan os.Signal)
 	signal.Notify(globals.sigChan, syscall.SIGINT, syscall.SIGHUP,
 		syscall.SIGUSR2, syscall.SIGUSR1)

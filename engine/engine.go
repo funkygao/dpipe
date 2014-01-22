@@ -8,6 +8,8 @@ import (
 	"net"
 	"net/http"
 	"os"
+	"runtime"
+	"strconv"
 	"time"
 )
 
@@ -126,6 +128,34 @@ func (this *EngineConfig) LoadConfigFile(fn string) {
 	}
 
 	this.Conf = cf
+
+	var (
+		totalCpus int
+		maxProcs  int
+		globals   = Globals()
+	)
+	totalCpus = runtime.NumCPU()
+	cpuNumConfig := this.String("cpu_num", "auto")
+	if cpuNumConfig == "auto" {
+		maxProcs = totalCpus/2 + 1
+	} else {
+		maxProcs, err = strconv.Atoi(cpuNumConfig)
+		if err != nil {
+			panic(err)
+		}
+	}
+	runtime.GOMAXPROCS(maxProcs)
+
+	globals.Println(`
+     _       _                _ 
+    | |     (_)              | |
+  __| |_ __  _ _ __   ___  __| |
+ / _  | '_ \| | '_ \ / _ \/ _  |
+| (_| | |_) | | |_) |  __/ (_| |
+ \__,_| .__/|_| .__/ \___|\__,_|
+      | |     | |               
+      |_|     |_|`)
+	globals.Printf("Starting with %d/%d CPUs...", maxProcs, totalCpus)
 
 	// 'projects' section
 	for i := 0; i < len(this.List("projects", nil)); i++ {

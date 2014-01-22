@@ -44,7 +44,7 @@ func main() {
 		}
 	}()
 
-	setupMaxProcsAndProfiler()
+	setupProfiler()
 
 	ticker := time.NewTicker(time.Second * time.Duration(options.tick))
 	go runWatchdog(ticker)
