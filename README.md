@@ -10,7 +10,7 @@ dpipe
      \__,_| .__/|_| .__/ \___|\__,_|
           | |     | |
           |_|     |_|
-            `)
+            
 
 Distributed Data Pipeline
 
