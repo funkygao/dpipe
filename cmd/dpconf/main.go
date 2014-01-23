@@ -134,19 +134,21 @@ func showGraph() {
 			flag = "▼"
 		}
 
-		fmt.Printf("%15s[%s]", ident, flag)
+		fmt.Printf("\n%15s[%s]", ident, flag)
 		for _, m := range ie.matches {
-			if strings.HasSuffix(m, "Output") {
-				fmt.Printf(" %47s", m)
+			if strings.Contains(m, "Output") {
+				fmt.Printf(" %47s\n", m)
 			} else {
 				fmt.Printf(" %23s", m)
 			}
 			if next, present := identName[m]; present {
 				fmt.Printf(" %23v\n", graph[next].matches[0])
-				fmt.Printf("%18s", "")
+
 			}
+			fmt.Printf("%18s", "")
 		}
 		fmt.Println()
 		fmt.Println(strings.Repeat("-", 66))
+
 	}
 }
