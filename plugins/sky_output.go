@@ -7,21 +7,34 @@ import (
 	conf "github.com/funkygao/jsconf"
 	sky "github.com/funkygao/skyapi"
 	"strconv"
+	"strings"
 )
 
 type SkyOutput struct {
-	table       *sky.Table
-	uidField    string
-	actionField string
-	project     string
+	table           *sky.Table
+	uidField        string
+	uidFieldType    string
+	actionField     string
+	actionFieldType string
+	project         string
 }
 
 func (this *SkyOutput) Init(config *conf.Conf) {
+	this.uidFieldType, this.actionFieldType = als.KEY_TYPE_INT, als.KEY_TYPE_STRING
 	this.uidField = config.String("uid_field", "_log_info.uid")
+	if strings.Contains(this.uidField, "@") {
+		p := strings.SplitN(this.uidField, "@", 2)
+		this.uidField, this.uidFieldType = p[0], p[1]
+	}
 	this.actionField = config.String("action_field", "")
 	if this.actionField == "" {
 		panic("empty action field")
 	}
+	if strings.Contains(this.actionField, "@") {
+		p := strings.SplitN(this.actionField, "@", 2)
+		this.actionField, this.actionFieldType = p[0], p[1]
+	}
+
 	this.project = config.String("project", "")
 	var (
 		host string = config.String("host", "localhost")
@@ -79,7 +92,7 @@ func (this *SkyOutput) feedSky(project *engine.ConfProject,
 	)
 
 	// get uid
-	uid, err = pack.Message.FieldValue(this.uidField, als.KEY_TYPE_INT)
+	uid, err = pack.Message.FieldValue(this.uidField, this.uidFieldType)
 	if err != nil {
 		if project.ShowError {
 			project.Printf("invalid uid: %v %s", err, *pack)
@@ -88,7 +101,7 @@ func (this *SkyOutput) feedSky(project *engine.ConfProject,
 		return
 	}
 
-	action, err = pack.Message.FieldValue(this.actionField, als.KEY_TYPE_STRING)
+	action, err = pack.Message.FieldValue(this.actionField, this.actionFieldType)
 	if err != nil {
 		if project.ShowError {
 			project.Printf("invalid action: %v %s", err, *pack)
@@ -107,7 +120,11 @@ func (this *SkyOutput) feedSky(project *engine.ConfProject,
 	}
 
 	event := sky.NewEvent(pack.Message.Time(), eventMap)
-	event.Data["action"] = action.(string)
+	if this.actionFieldType == als.KEY_TYPE_INT {
+		event.Data["action"] = "action_" + strconv.Itoa(action.(int))
+	} else {
+		event.Data["action"] = action
+	}
 
 	// objectId is uid string
 	err = this.table.AddEvent(strconv.Itoa(uid.(int)), event, sky.Merge)
