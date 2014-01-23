@@ -76,5 +76,37 @@
             ]
         }
 
+        {
+            name: "rs_levelup"
+            props: [
+                {
+                    name:   "action"
+                    type:   "factor"
+                }
+
+                {
+                    name:   "uid"
+                    type:   "integer"
+                    transient: false
+                }
+
+                {
+                    name:   "create_time"
+                    type:   "integer"
+                }
+
+                {
+                    name:   "from"
+                    type:   "factor"
+                }
+
+                {
+                    name:   "to"
+                    type:   "factor"
+                }
+
+            ]
+        }
+
     ]
 }
