@@ -36,5 +36,45 @@
                 
             ]
         }
+
+
+        {
+            name: "rs_click"
+            props: [
+                {
+                    name:   "action"
+                    type:   "factor"
+                }
+
+                {
+                    name:   "guid"
+                    type:   "integer"
+                    transient: false
+                }
+
+                {
+                    name:   "snsid"
+                    type:   "string"
+                }
+
+                {
+                    name:   "ver"
+                    type:   "factor"
+                }
+
+                {
+                    name:   "lv"
+                    type:   "integer"
+                }
+
+                {
+                    name:   "type"
+                    type:   "factor"
+                }
+
+                
+            ]
+        }
+
     ]
 }
