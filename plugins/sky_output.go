@@ -10,13 +10,18 @@ import (
 )
 
 type SkyOutput struct {
-	table    *sky.Table
-	uidField string
-	project  string
+	table       *sky.Table
+	uidField    string
+	actionField string
+	project     string
 }
 
 func (this *SkyOutput) Init(config *conf.Conf) {
 	this.uidField = config.String("uid_field", "_log_info.uid")
+	this.actionField = config.String("action_field", "")
+	if this.actionField == "" {
+		panic("empty action field")
+	}
 	this.project = config.String("project", "")
 	var (
 		host string = config.String("host", "localhost")
@@ -68,8 +73,9 @@ LOOP:
 func (this *SkyOutput) feedSky(project *engine.ConfProject,
 	pack *engine.PipelinePack) {
 	var (
-		uid interface{}
-		err error
+		uid    interface{}
+		action interface{}
+		err    error
 	)
 
 	// get uid
@@ -77,6 +83,15 @@ func (this *SkyOutput) feedSky(project *engine.ConfProject,
 	if err != nil {
 		if project.ShowError {
 			project.Printf("invalid uid: %v %s", err, *pack)
+		}
+
+		return
+	}
+
+	action, err = pack.Message.FieldValue(this.actionField, als.KEY_TYPE_STRING)
+	if err != nil {
+		if project.ShowError {
+			project.Printf("invalid action: %v %s", err, *pack)
 		}
 
 		return
@@ -92,6 +107,7 @@ func (this *SkyOutput) feedSky(project *engine.ConfProject,
 	}
 
 	event := sky.NewEvent(pack.Message.Time(), eventMap)
+	event.Data["action"] = action.(string)
 
 	// objectId is uid string
 	err = this.table.AddEvent(strconv.Itoa(uid.(int)), event, sky.Merge)
