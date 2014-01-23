@@ -5,6 +5,7 @@ import (
 	"fmt"
 	conf "github.com/funkygao/jsconf"
 	"os"
+	"strings"
 	"time"
 )
 
@@ -17,11 +18,13 @@ const (
 
 type identEntry struct {
 	disabled bool
+	isInput  bool
 	matches  []string
 }
 
 var (
-	graph map[string]*identEntry
+	graph     map[string]*identEntry
+	identName map[string]string
 )
 
 func main() {
@@ -36,6 +39,7 @@ func main() {
 	}
 
 	graph = make(map[string]*identEntry)
+	identName = make(map[string]string)
 
 	// only visualize the plugins section
 	for i := 0; i < len(cf.List("plugins", nil)); i++ {
@@ -62,8 +66,15 @@ func handleSection(section *conf.Conf) {
 		ie := &identEntry{}
 		ie.matches = make([]string, 0, 10)
 		ie.disabled = section.Bool(DISABLED, false)
+		if section.StringList(MATCH, nil) == nil {
+			ie.isInput = true
+		}
 
 		graph[ident] = ie
+		pluginName := section.String(NAME, "")
+		if pluginName != "" {
+			identName[pluginName] = ident
+		}
 	}
 
 	matches := section.StringList(MATCH, nil)
@@ -111,12 +122,31 @@ func handleSection(section *conf.Conf) {
 
 func showGraph() {
 	fmt.Println()
+	fmt.Printf("%18s%24s%24s\n", "Input ->", "Filter ->", "Output")
+	fmt.Println(strings.Repeat("=", 66))
 	for ident, ie := range graph {
+		if !ie.isInput {
+			continue
+		}
+
 		var flag = "△"
 		if ie.disabled {
 			flag = "▼"
 		}
 
-		fmt.Printf("%15s[%s] -> %v\n", ident, flag, ie.matches)
+		fmt.Printf("%15s[%s]", ident, flag)
+		for _, m := range ie.matches {
+			if strings.HasSuffix(m, "Output") {
+				fmt.Printf(" %47s", m)
+			} else {
+				fmt.Printf(" %23s", m)
+			}
+			if next, present := identName[m]; present {
+				fmt.Printf(" %23v\n", graph[next].matches[0])
+				fmt.Printf("%18s", "")
+			}
+		}
+		fmt.Println()
+		fmt.Println(strings.Repeat("-", 66))
 	}
 }
