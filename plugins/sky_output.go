@@ -20,18 +20,19 @@ type SkyOutput struct {
 }
 
 func (this *SkyOutput) Init(config *conf.Conf) {
+	const TYPE_SEP = ":"
 	this.uidFieldType, this.actionFieldType = als.KEY_TYPE_INT, als.KEY_TYPE_STRING
 	this.uidField = config.String("uid_field", "_log_info.uid")
-	if strings.Contains(this.uidField, "@") {
-		p := strings.SplitN(this.uidField, "@", 2)
+	if strings.Contains(this.uidField, TYPE_SEP) {
+		p := strings.SplitN(this.uidField, TYPE_SEP, 2)
 		this.uidField, this.uidFieldType = p[0], p[1]
 	}
 	this.actionField = config.String("action_field", "")
 	if this.actionField == "" {
 		panic("empty action field")
 	}
-	if strings.Contains(this.actionField, "@") {
-		p := strings.SplitN(this.actionField, "@", 2)
+	if strings.Contains(this.actionField, TYPE_SEP) {
+		p := strings.SplitN(this.actionField, TYPE_SEP, 2)
 		this.actionField, this.actionFieldType = p[0], p[1]
 	}
 
