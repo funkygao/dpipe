@@ -33,8 +33,8 @@ var (
 type alarmWorkerConfigField struct {
 	name        string
 	typ         string
-	contains    string
-	isColumn    bool
+	contains    string // deprecated TODO
+	isColumn    bool   // deprecated
 	normalizers []string
 	ignores     []string
 }
