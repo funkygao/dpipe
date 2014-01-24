@@ -1,6 +1,7 @@
 {
     // global conf shared by all projects
     cpu_num:   "auto"
+    diagnostic_interval: 30
     http_addr: "127.0.0.1:9876"
     
     projects: [
@@ -51,33 +52,27 @@
         }
 
         {
-            name:   "rsUserSkyOutput"
-            class:  "SkyOutput"
-            match:  ["rsUser", ]
-            disabled: true
-            project:    "RS"
-            table:      "rs_user"
-            uid_field:  "uid"
-        }
-
-        {
             name:   "AlsLogInput"
             class:  "AlsLogInput"
             show_pregress: true
             ticker_interval: 30
-            poll_interval_ms: 500
+            poll_interval_ms: 250
             sources: [
                 {
                     ident:   "ffsBi"
                     project:   "FFS"
                     glob:   "/mnt/funplus/logs/fp_ffseaside/bi_*.log"
-                    tail:   true
+                }
+
+                {
+                    ident:      "rsMongoError"
+                    project:    "RS"
+                    glob:   "/mnt/funplus/logs/fp_rstory/mongo_err*.log"
                 }
 
                 {
                     ident:      "rsPv"
                     project:    "RS"
-                    disabled:   true
                     glob:   "/mnt/funplus/logs/fp_rstory/pv*.log"
                 }
 
@@ -145,7 +140,7 @@
 
         {
             name:   "EsBufferFilter"
-            match:  ["rsDau", "rsPv", ]
+            match:  ["rsPv", ]
             ident:   "esBuffer"
             disabled: false
             workers: [
@@ -178,7 +173,7 @@
         {
             name:   "EsFilter"
             geodbfile: "/opt/local/share/GeoIP/GeoIP.dat"
-            match:  ["ffsBi", "rsLogs", ]
+            match:  ["rsDau", "ffsBi", "rsLogs", "rsMongoError", ]
             ident:   "esFiltered"
             index_pattern:  "@ym"
             converts: [
@@ -219,14 +214,14 @@
 
         {
             name:   "AlarmOutput"
-            match:  ["rsLogs", ]
+            match:  ["rsLogs", "rsMongoError", ]
             projects: [
                 {
                     name:   "RS"
                     workers: [
                         {
                             title:  "MongoError"
-                            camel_name: "error"
+                            camel_name: "rsMongoError"
                             colors: [ "FgCyan", "Bright", "BgRed", ]
                             dbname:         "mongoError"
                             window_size:    15
@@ -239,11 +234,6 @@
                             printf:         "%5d %3s %s"
                             iprintf:        "MongoError %3s %s"
                             fields: [
-                                {
-                                    name: "class"
-                                    contains: "MongoException"
-                                    is_column: false
-                                }
                                 {
                                     name: "message"
                                 }
@@ -266,7 +256,6 @@
                             fields: [
                                 {
                                     name: "class"
-                                    ignores: ["MongoException", ]
                                 }
                                 {
                                     name: "message"
@@ -408,6 +397,17 @@
 
             ]
         }
+
+        {
+            name:   "rsSkyOutput"
+            class:  "SkyOutput"
+            match:  ["rsClick", "rsUser", ]
+            disabled: true
+            project:    "RS"
+            table:      "rs_click"
+            uid_field:  "uid"
+        }
+
     ]
 
 }
