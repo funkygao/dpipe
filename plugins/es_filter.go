@@ -112,8 +112,8 @@ func (this *EsFilter) handlePack(pack *engine.PipelinePack, project *engine.Conf
 	}
 
 	// each ES item has area and ts fields
-	pack.Message.SetField("area", pack.Message.Area)
-	pack.Message.SetField("ts", pack.Message.Timestamp)
+	pack.Message.SetField("_area", pack.Message.Area)
+	pack.Message.SetField("_ts", pack.Message.Timestamp)
 
 	for _, conv := range this.converters {
 		switch conv.typ {
