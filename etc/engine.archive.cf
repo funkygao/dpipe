@@ -9,17 +9,6 @@
 
     plugins: [
         {
-            name:   "dau"
-            class:  "ArchiveInput"
-            ident:   "rsDau"
-            ticker_interval: 30
-            root_dir: "/data2/als/dau"
-            project:   "rs"
-            concurrent_num: 10
-            chkpntfile: "dau.gob"
-        }
-
-        {
             name:   "ArchiveInput"
             class:  "ArchiveInput"
             ident:   "allInput"
@@ -30,24 +19,10 @@
             chkpntfile: "_.gob"
             ignores: [
                 "bigdata", "bigdata_rcfail", "cheat_check", "cheater", "index", "load_data",
-                "newpay", "post", "quest", "session", "dau", "pv",
+                "newpay", "post", "quest", "session", "pv",
             ]
         }
 
-        {
-            name:   "EsBufferFilter"
-            match:  ["rsDau", ]
-            ident:   "esBuffer"
-            workers: [
-                {
-                    camel_name: "dau"
-                    project:    "rs"
-                    index_pattern:  "@ym"
-                    expression: "count"
-                    interval:   2
-                }
-            ]
-        }
         {
             name:   "EsFilter"
             geodbfile: "/opt/local/share/GeoIP/GeoIP.dat"
@@ -79,7 +54,7 @@
 
         {
             name:   "EsOutput"
-            match:  ["esFiltered", "esBuffer", ]
+            match:  ["esFiltered", ]
             domain: "localhost"
             port: "9200"
             report_interval: 10
