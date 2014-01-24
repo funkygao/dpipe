@@ -17,8 +17,8 @@ curl -XPUT localhost:9200/_template/fun -d '
             "number_of_shards": 3,
             "number_of_replicas": 0,
             "warmer.enabled": true,
-            "refresh_interval": "25s",
-            "query" : { "default_field" : "area" }
+            "refresh_interval": "29s",
+            "query" : { "default_field" : "_area" }
         }
     },
 
@@ -36,7 +36,7 @@ curl -XPUT localhost:9200/_template/fun -d '
             },
 	        "_timestamp": {
 	            "enabled": true,
-	            "path": "t",
+	            "path": "_t",
                 "store": true,
                 "index": "not_analyzed"
 	        },
@@ -52,15 +52,20 @@ curl -XPUT localhost:9200/_template/fun -d '
             ],
 
             "properties" : {
-                "area": {
+                "_area": {
                     "type": "string",
                     "index": "not_analyzed"
                 },
-                "t": {
+                "_cntry": {
+                    "type": "string",
+                    "index": "not_analyzed"
+                },
+                "_t": {
                     "type": "date"
                 },
-                "loc": {
-                    "type": "geo_point"
+                "msg": {
+                    "type": "string",
+                    "index": "standard"
                 },
                 "typ": {
                     "type": "string",
