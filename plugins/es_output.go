@@ -4,6 +4,7 @@ package plugins
 import (
 	"github.com/funkygao/dpipe/engine"
 	"github.com/funkygao/golib"
+	"github.com/funkygao/golib/gofmt"
 	"github.com/funkygao/golib/observer"
 	"github.com/funkygao/golib/sortedmap"
 	conf "github.com/funkygao/jsconf"
@@ -118,12 +119,13 @@ func (this *EsOutput) handlePeriodicalCounters() {
 		val := this.counters.Get(key)
 		if val > 0 {
 			total += val
-			engine.Globals().Printf("%-50s %8d", key, val)
+			engine.Globals().Printf("%-50s %12s", key, gofmt.Comma(int64(val)))
 
 			this.counters.Set(key, 0)
 		}
 	}
-	engine.Globals().Printf("%50s %8d", "Sum", total)
+
+	engine.Globals().Printf("%50s %12s", "Sum", gofmt.Comma(int64(total)))
 }
 
 func (this *EsOutput) feedEs(project *engine.ConfProject, pack *engine.PipelinePack) {
