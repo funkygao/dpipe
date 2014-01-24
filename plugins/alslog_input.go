@@ -261,6 +261,8 @@ LOOP:
 					pack.Recycle()
 					continue
 				}
+			} else {
+				pack.Message.SetSize(len(line.Text))
 			}
 
 			this.counters.Inc(source.ident, 1)
