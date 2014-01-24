@@ -16,16 +16,44 @@ import (
 	"time"
 )
 
-type logfileSource struct {
-	glob     string
-	ignores  []string
-	project  string
-	ident    string
-	disabled bool
-	decode   bool
-	tail     bool
+type logfileProject struct {
+	name    string
+	decode  bool
+	sources []*logfileSource
+}
 
-	_files []string
+func (this *logfileProject) load(config *conf.Conf) {
+	this.name = config.String("name", "")
+	if this.name == "" {
+		panic("empty project name")
+	}
+
+	this.decode = config.Bool("decode", true)
+	this.sources = make([]*logfileSource, 0, 10)
+	for i := 0; i < len(config.List("sources", nil)); i++ {
+		section, err := config.Section(fmt.Sprintf("sources[%d]", i))
+		if err != nil {
+			panic(err)
+		}
+
+		source := new(logfileSource)
+		source.project = this
+		source.load(section)
+		this.sources = append(this.sources, source)
+	}
+}
+
+type logfileSource struct {
+	glob  string // required
+	ident string // required
+
+	disabled bool
+	tail     bool
+	ignores  []string
+
+	project *logfileProject
+
+	_files []string // cache
 }
 
 func (this *logfileSource) load(config *conf.Conf) {
@@ -33,17 +61,15 @@ func (this *logfileSource) load(config *conf.Conf) {
 	if this.glob == "" {
 		panic("glob cannot be empty")
 	}
-
-	this.project = config.String("project", "")
-	this.tail = config.Bool("tail", true)
-	this.ignores = config.StringList("ignores", nil)
-	this.disabled = config.Bool("disabled", false)
 	this.ident = config.String("ident", "")
-	this.decode = config.Bool("decode", true)
 	if this.ident == "" {
 		panic("empty ident")
 	}
-	this._files = make([]string, 0, 100)
+	this.tail = config.Bool("tail", true)
+	this.ignores = config.StringList("ignores", nil)
+	this.disabled = config.Bool("disabled", false)
+
+	this._files = make([]string, 0, 50)
 }
 
 func (this *logfileSource) ignored(fn string) bool {
@@ -80,7 +106,7 @@ type AlsLogInput struct {
 	stopChan     chan bool
 	showProgress bool
 	counters     *sortedmap.SortedMap // ident -> N
-	sources      []*logfileSource
+	projects     []*logfileProject
 }
 
 func (this *AlsLogInput) Init(config *conf.Conf) {
@@ -94,17 +120,16 @@ func (this *AlsLogInput) Init(config *conf.Conf) {
 	watch.POLL_DURATION =
 		time.Duration(config.Int("poll_interval_ms", 250)) * time.Millisecond
 
-	// get the sources
-	this.sources = make([]*logfileSource, 0, 20)
-	for i := 0; i < len(config.List("sources", nil)); i++ {
-		section, err := config.Section(fmt.Sprintf("sources[%d]", i))
+	this.projects = make([]*logfileProject, 0, 5)
+	for i := 0; i < len(config.List("projects", nil)); i++ {
+		section, err := config.Section(fmt.Sprintf("projects[%d]", i))
 		if err != nil {
 			panic(err)
 		}
 
-		source := new(logfileSource)
-		source.load(section)
-		this.sources = append(this.sources, source)
+		project := new(logfileProject)
+		project.load(section)
+		this.projects = append(this.projects, project)
 	}
 }
 
@@ -132,14 +157,16 @@ func (this *AlsLogInput) Run(r engine.InputRunner, h engine.PluginHelper) error 
 		}
 		this.refreshSources()
 
-		for _, source := range this.sources {
-			for _, fn := range source._files {
-				if _, present := opened[fn]; present {
-					continue
-				}
+		for _, project := range this.projects {
+			for _, source := range project.sources {
+				for _, fn := range source._files {
+					if _, present := opened[fn]; present {
+						continue
+					}
 
-				opened[fn] = true
-				go this.runSingleAlsLogInput(fn, r, h, *source, &stopped)
+					opened[fn] = true
+					go this.runSingleAlsLogInput(fn, r, h, *source, &stopped)
+				}
 			}
 		}
 
@@ -208,7 +235,7 @@ func (this *AlsLogInput) runSingleAlsLogInput(fn string, r engine.InputRunner,
 	)
 
 	if globals.Verbose {
-		globals.Printf("[%s]%s started", source.project, fn)
+		globals.Printf("[%s]%s started", source.project.name, fn)
 	}
 
 LOOP:
@@ -224,9 +251,9 @@ LOOP:
 			}
 
 			pack = <-inChan
-			if source.decode {
+			if source.project.decode {
 				if err := pack.Message.FromLine(line.Text); err != nil {
-					project := h.Project(source.project)
+					project := h.Project(source.project.name)
 					if project.ShowError && err != als.ErrEmptyLine {
 						project.Printf("[%s]%v: %s", fn, err, line.Text)
 					}
@@ -237,7 +264,7 @@ LOOP:
 			}
 
 			this.counters.Inc(source.ident, 1)
-			pack.Project = source.project
+			pack.Project = source.project.name
 			pack.Logfile.SetPath(fn)
 			pack.Ident = source.ident
 			r.Inject(pack)
@@ -250,18 +277,19 @@ LOOP:
 	if globals.Verbose {
 		globals.Printf("[%s]%s stopped", source.project, fn)
 	}
-
 }
 
 func (this *AlsLogInput) refreshSources() {
 	wg := new(sync.WaitGroup)
-	for _, s := range this.sources {
-		if s.disabled {
-			continue
-		}
+	for _, project := range this.projects {
+		for _, source := range project.sources {
+			if source.disabled {
+				continue
+			}
 
-		wg.Add(1)
-		go s.refresh(wg)
+			wg.Add(1)
+			go source.refresh(wg)
+		}
 	}
 
 	wg.Wait()

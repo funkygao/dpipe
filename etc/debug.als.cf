@@ -1,41 +1,36 @@
 {
-    // global conf shared by all projects
-
     projects: [
         {
-            name: "fun"
+            name: "funplus"
         }
     ]
 
     plugins: [
         {
             name:   "AlsLogInput"
-            class:  "AlsLogInput"
             ticker_interval: 30
-            sources: [
+            projects: [
                 {
-                    glob:       "/mnt/funplus/logs/fp_rstory/*.log"
-                    project:   "fun"
-                    decode:     false
-                    ident:      "rs"
-                }
-                {
-                    glob:       "/mnt/funplus/logs/fp_ffseaside/*.log"
-                    decode:     false
-                    project:    "fun"
-                    ident:      "ffs"
-                }
-                {
-                    glob:       "/mnt/funplus/logs/fp_ff2mobile/*.log"
-                    decode:     false
-                    project:    "fun"
-                    ident:      "ff2"
-                }
-                {
-                    glob:       "/mnt/funplus/logs/fp_fslots/*.log"
-                    decode:     false
-                    project:    "fun"
-                    ident:      "slots"
+                    name: "funplus"
+                    decode: false
+                    sources: [
+                        {
+                            glob: "/mnt/funplus/logs/fp_rstory/*.log"
+                            ident: "rs"
+                        }
+                        {
+                            glob: "/mnt/funplus/logs/fp_ffseaside/*.log"
+                            ident: "ffs"
+                        }
+                        {
+                            glob: "/mnt/funplus/logs/fp_ff2mobile/*.log"
+                            ident: "ff2"
+                        }
+                        {
+                            glob: "/mnt/funplus/logs/fp_fslots/*.log"
+                            ident: "slots"
+                        }
+                    ]
                 }
             ]
         }

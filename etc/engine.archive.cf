@@ -9,17 +9,6 @@
 
     plugins: [
         {
-            name:   "pv"
-            class:  "ArchiveInput"
-            ident:   "rsPv"
-            ticker_interval: 10
-            root_dir: "/data2/als/pv"
-            project:   "rs"
-            concurrent_num: 30
-            chkpntfile: "pv.gob"
-        }
-
-        {
             name:   "dau"
             class:  "ArchiveInput"
             ident:   "rsDau"
@@ -33,69 +22,36 @@
         {
             name:   "ArchiveInput"
             class:  "ArchiveInput"
-            ident:   "allIn"
+            ident:   "allInput"
             ticker_interval: 10
             root_dir: "/data2/als"
             project:   "rs"
-            concurrent_num: 50
+            concurrent_num: 30
             chkpntfile: "_.gob"
-            except: [
+            ignores: [
                 "bigdata", "bigdata_rcfail", "cheat_check", "cheater", "index", "load_data",
                 "newpay", "post", "quest", "session", "dau", "pv",
             ]
         }
 
         {
-            name:   "rsSkyOutput"
-            class:  "SkyOutput"
-            match:  ["rsDau", ]
-            project: "rs"
-            uid_field: "uid"
-            disabled: false
-            table:  "rs_user"
-            fields: [
-                {
-                    camel_name: "dau"
-                    action: "visit"
-                }
-            ]
-        }
-
-        {
             name:   "EsBufferFilter"
-            match:  ["rsDau", "rsPv", ]
+            match:  ["rsDau", ]
             ident:   "esBuffer"
-            disabled: false
             workers: [
                 {
                     camel_name: "dau"
                     project:    "rs"
                     index_pattern:  "@ym"
                     expression: "count"
-                    interval:   5
-                }
-                {
-                    camel_name: "pv"
-                    project:    "rs"
-                    index_pattern:  "@ym"
-                    field_name: "_log_info.elapsed"
-                    field_type: "float"
-                    expression: "mean"
-                    interval:   5
-                }
-                {
-                    camel_name: "pv"
-                    project:    "rs"
-                    index_pattern:  "@ym"
-                    expression: "count"
-                    interval:   5
+                    interval:   2
                 }
             ]
         }
         {
             name:   "EsFilter"
             geodbfile: "/opt/local/share/GeoIP/GeoIP.dat"
-            match:  ["allIn", ]
+            match:  ["allInput", ]
             index_pattern:  "@ym"
             ident:   "esFiltered"
             converts: [

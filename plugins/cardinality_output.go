@@ -13,12 +13,10 @@ import (
 type CardinalityOutput struct {
 	counters   *stats.CardinalityCounter
 	checkpoint string
-	project    string
 }
 
 func (this *CardinalityOutput) Init(config *conf.Conf) {
 	this.checkpoint = config.String("checkpoint", "")
-	this.project = config.String("project", "")
 	this.counters = stats.NewCardinalityCounter()
 	if this.checkpoint != "" {
 		this.counters.Load(this.checkpoint)

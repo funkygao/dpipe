@@ -20,7 +20,7 @@ type ArchiveInput struct {
 	lineN       int64
 	workerNChan chan int
 	rootDir     string
-	excepts     []string
+	ignores     []string
 	ident       string
 	project     string
 	leftN       int
@@ -35,7 +35,7 @@ func (this *ArchiveInput) Init(config *conf.Conf) {
 	this.project = config.String("project", "rs")
 	this.workerNChan = make(chan int, config.Int("concurrent_num", 20))
 	this.chkpnt = als.NewFileCheckpoint(config.String("chkpntfile", ""))
-	this.excepts = config.StringList("except", nil)
+	this.ignores = config.StringList("ignores", nil)
 }
 
 func (this *ArchiveInput) CleanupForRestart() bool {
@@ -95,8 +95,8 @@ func (this *ArchiveInput) shouldRunSingleLogfile(path string) bool {
 		return false
 	}
 
-	for _, ex := range this.excepts {
-		if strings.HasPrefix(filepath.Base(path), ex) {
+	for _, ignore := range this.ignores {
+		if strings.HasPrefix(filepath.Base(path), ignore) {
 			return false
 		}
 	}

@@ -1,24 +1,24 @@
 {
-    // global conf shared by all projects
-
     projects: [
         {
-            name:       "rs"
+            name: "mac"
         }
     ]
 
     plugins: [
         {
             name:   "AlsLogInput"
-            class:  "AlsLogInput"
             ticker_interval: 30
-            sources: [
-                {
-                    glob:   "/var/log/a*.log"
-                    project:   "rs"
-                    tail: false
-                    ident:   "alog"
-                }
+            projects: [
+                name: "mac"
+                sources: [
+                    {
+                        glob: "/var/log/a*.log"
+                        ident: "alog"
+                        tail: false
+                    }
+                ]
+
             ]
         }
         

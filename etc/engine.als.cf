@@ -53,59 +53,49 @@
 
         {
             name:   "AlsLogInput"
-            class:  "AlsLogInput"
             show_pregress: true
             ticker_interval: 30
             poll_interval_ms: 250
-            sources: [
+            projects: [
                 {
-                    ident:   "ffsBi"
-                    project:   "FFS"
-                    glob:   "/mnt/funplus/logs/fp_ffseaside/bi_*.log"
+                    name: "FFS"
+                    sources: [
+                        {
+                            glob: "/mnt/funplus/logs/fp_ffseaside/bi_*.log"
+                            ident: "ffsBi"
+                        }
+                    ]
                 }
 
                 {
-                    ident:      "rsMongoError"
-                    project:    "RS"
-                    glob:   "/mnt/funplus/logs/fp_rstory/mongo_err*.log"
-                }
-
-                {
-                    ident:      "rsPv"
-                    project:    "RS"
-                    glob:   "/mnt/funplus/logs/fp_rstory/pv*.log"
-                }
-
-                {
-                    ident:   "rsUser"
-                    project:   "RS"
-                    disabled:   true
-                    glob:   "/mnt/funplus/logs/fp_rstory/user.*.log"
-                }
-
-                {
-                    ident:   "rsDau"
-                    project:   "RS"
-                    glob:   "/mnt/funplus/logs/fp_rstory/dau*.log"
-                }
-
-                {
-                    ident:   "rsLogs"
-                    project:   "RS"
-                    glob:   "/mnt/funplus/logs/fp_rstory/*.log"
-                    ignores: [
-                        "post", "index", "session", "load_data", "dau", "pv",
-                        "cheat_check", "quest", "user.", "bigdata.",
+                    name: "RS"
+                    sources: [
+                        {
+                            ident: "rsMongoError"
+                            glob: "/mnt/funplus/logs/fp_rstory/mongo_err*.log"
+                        }
+                        {
+                            ident: "rsDau"
+                            glob: "/mnt/funplus/logs/fp_rstory/dau*.log"
+                        }
+                        {
+                            ident: "rsLogs"
+                            glob: "/mnt/funplus/logs/fp_rstory/*.log"
+                            ignores: [
+                                "post", "index", "session", "load_data", "dau", "pv",
+                                "cheat_check", "quest", "bigdata.",
+                            ]
+                        }
                     ]
                 }
             ]
+
         }
 
         {
             name:   "CardinalityFilter"
             match:  ["rsDau", ]
             ident:   "rsDauCardinal"
-            disabled: false
             converts: [
                 {
                     log_prefix: "dau"
@@ -131,11 +121,9 @@
         }
         
         {
-            name:   "CardinalityOutputRs"
-            class:  "CardinalityOutput"
+            name:   "CardinalityOutput"
             checkpoint: "var/rsCard.gob"
             match:  ["rsDauCardinal", ]
-            project:   "RS"
         }
 
         {
@@ -401,7 +389,7 @@
         {
             name:   "rsSkyOutput"
             class:  "SkyOutput"
-            match:  ["rsClick", "rsUser", ]
+            match:  ["rsClick", ]
             disabled: true
             project:    "RS"
             table:      "rs_click"
