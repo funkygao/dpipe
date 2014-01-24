@@ -65,7 +65,7 @@ curl -XPUT localhost:9200/_template/fun -d '
                 },
                 "msg": {
                     "type": "string",
-                    "index": "standard"
+                    "index": "analyzed"
                 },
                 "typ": {
                     "type": "string",
