@@ -40,6 +40,10 @@
                     type: "ip"
                 }
                 {
+                    key: "trace"
+                    type: "del"
+                }
+                {
                     key: "data.amount"
                     type: "money"
                     currency: "data.currency"
