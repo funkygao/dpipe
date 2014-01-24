@@ -130,7 +130,7 @@ func (this *EsFilter) handlePack(pack *engine.PipelinePack, project *engine.Conf
 				return false
 			}
 
-			pack.Message.SetField("usd",
+			pack.Message.SetField("_usd",
 				als.MoneyInUsdCents(currency.(string), amount.(int)))
 
 		case "ip":
@@ -139,7 +139,7 @@ func (this *EsFilter) handlePack(pack *engine.PipelinePack, project *engine.Conf
 				continue
 			}
 
-			pack.Message.SetField("cntry", als.IpToCountry(ip.(string)))
+			pack.Message.SetField("_cntry", als.IpToCountry(ip.(string)))
 
 		case "range":
 			if len(conv.rang) < 2 {
