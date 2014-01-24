@@ -125,7 +125,9 @@ func (this *EsOutput) handlePeriodicalCounters() {
 		}
 	}
 
-	engine.Globals().Printf("%50s %12s", "Sum", gofmt.Comma(int64(total)))
+	if len(this.counters.SortedKeys()) > 1 {
+		engine.Globals().Printf("%50s %12s", "Sum", gofmt.Comma(int64(total)))
+	}
 }
 
 func (this *EsOutput) feedEs(project *engine.ConfProject, pack *engine.PipelinePack) {
