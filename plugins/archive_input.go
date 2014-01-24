@@ -72,15 +72,20 @@ func (this *ArchiveInput) Run(r engine.InputRunner, h engine.PluginHelper) error
 
 	this.workersWg = new(sync.WaitGroup)
 
-	filepath.Walk(this.rootDir, this.runSingleLogfile)
-
+	filepath.Walk(this.rootDir, this.setLeftN)
+	globals := engine.Globals()
+	if globals.Verbose {
+		globals.Printf("Total files:%d", this.leftN)
+	}
 	go this.showProgress(r)
+
+	// do the real job
+	filepath.Walk(this.rootDir, this.runSingleLogfile)
 
 	// wait for all workers done
 	this.workersWg.Wait()
 	this.chkpnt.Dump()
 
-	globals := engine.Globals()
 	if globals.Verbose {
 		globals.Printf("[%s]Total msg: %d", r.Name(), this.lineN)
 	}
@@ -102,7 +107,18 @@ func (this *ArchiveInput) shouldRunSingleLogfile(path string) bool {
 	return true
 }
 
-func (this *ArchiveInput) runSingleLogfile(path string, f os.FileInfo, err error) (e error) {
+func (this *ArchiveInput) setLeftN(path string, f os.FileInfo,
+	err error) (e error) {
+	if f == nil || f.IsDir() || !this.shouldRunSingleLogfile(path) {
+		return
+	}
+
+	this.leftN += 1
+	return nil
+}
+
+func (this *ArchiveInput) runSingleLogfile(path string, f os.FileInfo,
+	err error) (e error) {
 	if f == nil || f.IsDir() || !this.shouldRunSingleLogfile(path) {
 		return
 	}
@@ -112,7 +128,6 @@ func (this *ArchiveInput) runSingleLogfile(path string, f os.FileInfo, err error
 	}
 
 	this.workersWg.Add(1)
-	atomic.AddInt32(&this.leftN, 1)
 
 	// limit concurrent workers
 	this.workerNChan <- 1
