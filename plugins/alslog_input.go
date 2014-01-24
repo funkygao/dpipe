@@ -277,7 +277,7 @@ LOOP:
 	}
 
 	if globals.Verbose {
-		globals.Printf("[%s]%s stopped", source.project, fn)
+		globals.Printf("[%s]%s stopped", source.project.name, fn)
 	}
 }
 
