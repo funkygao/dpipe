@@ -12,7 +12,7 @@
             name:   "ArchiveInput"
             class:  "ArchiveInput"
             ident:   "allInput"
-            ticker_interval: 10
+            ticker_interval: 40
             root_dir: "/data2/als"
             project:   "rs"
             concurrent_num: 30
