@@ -48,25 +48,21 @@ func (this *ArchiveInput) Stop() {
 	this.stopping = true
 }
 
-func (this *ArchiveInput) showProgress(r engine.InputRunner) {
-	for !this.stopping {
-		select {
-		case <-r.Ticker():
-			if this.leftN > 0 {
-				engine.Globals().Printf("[%s]Left %d files", r.Name(), this.leftN)
-			}
-		}
-	}
-}
-
 func (this *ArchiveInput) Run(r engine.InputRunner, h engine.PluginHelper) error {
 	this.runner = r
 	this.h = h
 
 	this.chkpnt.Load()
 	go func() {
-		for _ = range r.Ticker() {
-			this.chkpnt.Dump()
+		for !this.stopping {
+			select {
+			case <-r.Ticker():
+				this.chkpnt.Dump()
+
+				if this.leftN > 0 {
+					engine.Globals().Printf("[%s]Left %d files", r.Name(), this.leftN)
+				}
+			}
 		}
 	}()
 
@@ -77,7 +73,6 @@ func (this *ArchiveInput) Run(r engine.InputRunner, h engine.PluginHelper) error
 	if globals.Verbose {
 		globals.Printf("Total files:%d", this.leftN)
 	}
-	go this.showProgress(r)
 
 	// do the real job
 	filepath.Walk(this.rootDir, this.runSingleLogfile)
