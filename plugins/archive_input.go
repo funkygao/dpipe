@@ -13,6 +13,7 @@ import (
 )
 
 type ArchiveInput struct {
+	stopping    bool
 	runner      engine.InputRunner
 	h           engine.PluginHelper
 	chkpnt      *als.FileCheckpoint
@@ -44,21 +45,18 @@ func (this *ArchiveInput) CleanupForRestart() bool {
 }
 
 func (this *ArchiveInput) Stop() {
-
+	this.stopping = true
 }
 
 func (this *ArchiveInput) showProgress(r engine.InputRunner) {
-	for {
+	for !this.stopping {
 		select {
 		case <-r.Ticker():
-			if this.leftN == 0 {
-				return
+			if this.leftN > 0 {
+				engine.Globals().Printf("[%s]Left %d files", r.Name(), this.leftN)
 			}
-
-			engine.Globals().Printf("[%s]Left %d files", r.Name(), this.leftN)
 		}
 	}
-
 }
 
 func (this *ArchiveInput) Run(r engine.InputRunner, h engine.PluginHelper) error {
@@ -148,7 +146,7 @@ func (this *ArchiveInput) doRunSingleLogfile(path string) {
 		globals = engine.Globals()
 	)
 
-	for {
+	for !this.stopping {
 		line, err = reader.ReadLine()
 		switch err {
 		case nil:
@@ -156,9 +154,6 @@ func (this *ArchiveInput) doRunSingleLogfile(path string) {
 			atomic.AddInt64(&this.lineN, 1)
 			if globals.Verbose && lineN == 1 {
 				project.Printf("[%s]started\n", path)
-			}
-			if globals.Debug {
-				project.Printf("[%s]#%d\n", path, lineN)
 			}
 
 			pack = <-inChan
