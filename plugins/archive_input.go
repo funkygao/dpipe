@@ -23,7 +23,7 @@ type ArchiveInput struct {
 	ignores     []string
 	ident       string
 	project     string
-	leftN       int
+	leftN       int32
 }
 
 func (this *ArchiveInput) Init(config *conf.Conf) {
@@ -114,7 +114,10 @@ func (this *ArchiveInput) runSingleLogfile(path string, f os.FileInfo, err error
 	}
 
 	this.workersWg.Add(1)
-	this.leftN += 1
+	atomic.AddInt32(&this.leftN, 1)
+
+	// limit concurrent workers
+	this.workerNChan <- 1
 
 	go this.doRunSingleLogfile(path)
 
@@ -122,9 +125,6 @@ func (this *ArchiveInput) runSingleLogfile(path string, f os.FileInfo, err error
 }
 
 func (this *ArchiveInput) doRunSingleLogfile(path string) {
-	// limit concurrent workers
-	this.workerNChan <- 1
-
 	reader := als.NewAlsReader(path)
 	if e := reader.Open(); e != nil {
 		panic(e)
@@ -133,7 +133,7 @@ func (this *ArchiveInput) doRunSingleLogfile(path string) {
 	defer func() {
 		reader.Close()
 		this.workersWg.Done()
-		this.leftN -= 1
+		atomic.AddInt32(&this.leftN, -1)
 
 		<-this.workerNChan // release the lock
 	}()
