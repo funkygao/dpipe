@@ -32,24 +32,20 @@
             converts: [
                 // type: ip|money|range|del
                 {
-                    key: "ip"
+                    keys: ["ip", "_log_info.ip", ]
                     type: "ip"
                 }
                 {
-                    key: "_log_info.ip"
-                    type: "ip"
-                }
-                {
-                    key: "trace"
+                    keys: ["trace", ]
                     type: "del"
                 }
                 {
-                    key: "data.amount"
+                    keys: ["data.amount", ]
                     type: "money"
                     currency: "data.currency"
                 }
                 {
-                    key: "level"
+                    keys: ["level", "lv", ]
                     type: "range"
                     range: [1, 14, 19, 23, 27, 31, 36, 41, 46, 51, 57, 63, 69, 75, 101]
                 }
