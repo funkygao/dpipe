@@ -19,7 +19,7 @@
             chkpntfile: "_.gob"
             ignores: [
                 "bigdata", "bigdata_rcfail", "cheat_check", "cheater", "index", "load_data",
-                "newpay", "post", "quest", "session", "pv",
+                "newpay", "post", "quest", "session", "pv", "user",
             ]
         }
 
