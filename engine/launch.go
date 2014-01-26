@@ -56,9 +56,9 @@ func Launch(e *EngineConfig) {
 
 	if globals.Verbose {
 		globals.Printf("Initializing PipelinePack pools with size=%d\n",
-			globals.PoolSize)
+			globals.RecyclePoolSize)
 	}
-	for i := 0; i < globals.PoolSize; i++ {
+	for i := 0; i < globals.RecyclePoolSize; i++ {
 		inputPack := NewPipelinePack(e.inputRecycleChan)
 		inputPackTracker.AddPack(inputPack)
 		e.inputRecycleChan <- inputPack

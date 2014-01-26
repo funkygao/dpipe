@@ -67,8 +67,8 @@ func NewEngineConfig(globals *GlobalConfigStruct) (this *EngineConfig) {
 	this.OutputRunners = make(map[string]OutputRunner)
 	this.outputWrappers = make(map[string]*PluginWrapper)
 
-	this.inputRecycleChan = make(chan *PipelinePack, globals.PoolSize)
-	this.filterRecycleChan = make(chan *PipelinePack, globals.PoolSize)
+	this.inputRecycleChan = make(chan *PipelinePack, globals.RecyclePoolSize)
+	this.filterRecycleChan = make(chan *PipelinePack, globals.RecyclePoolSize)
 
 	this.diagnosticTrackers = make(map[string]*DiagnosticTracker)
 	this.projects = make(map[string]*ConfProject)

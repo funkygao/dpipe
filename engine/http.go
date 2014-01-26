@@ -47,7 +47,7 @@ func (this *EngineConfig) handleHttpQuery(w http.ResponseWriter, req *http.Reque
 
 	case "pool":
 		for poolName, _ := range this.diagnosticTrackers {
-			packs := make([]string, 0, globals.PoolSize)
+			packs := make([]string, 0, globals.RecyclePoolSize)
 			for _, pack := range this.diagnosticTrackers[poolName].packs {
 				s := fmt.Sprintf("[%s]%s",
 					bjtime.TimeToString(pack.diagnostics.LastAccess),
