@@ -99,6 +99,10 @@ func (this *ArchiveInput) shouldRunSingleLogfile(path string) bool {
 		}
 	}
 
+	if strings.HasSuffix(filepath.Base(path), ".gz") {
+		return false
+	}
+
 	return true
 }
 
