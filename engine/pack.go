@@ -102,7 +102,7 @@ func (this *PipelinePack) Reset() {
 }
 
 func (this *PipelinePack) CopyTo(that *PipelinePack) {
-	that.Project = this.RecycleChan
+	that.RecycleChan = this.RecycleChan
 	that.Project = this.Project
 	that.Ident = this.Ident
 	that.Input = this.Input
