@@ -79,9 +79,12 @@ LOOP:
 				globals.Println(*pack)
 			}
 
-			count += 1
-			this.handlePack(r, h, pack)
-			pack.Recycle()
+			if this.handlePack(pack, h.Project(pack.Project)) {
+				count += 1
+				r.Inject(pack)
+			} else {
+				pack.Recycle()
+			}
 		}
 	}
 
@@ -90,18 +93,14 @@ LOOP:
 	return nil
 }
 
-func (this *EsFilter) handlePack(r engine.FilterRunner,
-	h engine.PluginHelper, p *engine.PipelinePack) {
-	if p.EsType == "" {
-		p.EsType = p.Logfile.CamelCaseName()
+func (this *EsFilter) handlePack(pack *engine.PipelinePack, project *engine.ConfProject) bool {
+	if pack.EsType == "" {
+		pack.EsType = pack.Logfile.CamelCaseName()
 	}
-	if p.EsIndex == "" {
-		p.EsIndex = indexName(h.Project(p.Project), this.indexPattern,
-			time.Unix(int64(p.Message.Timestamp), 0))
+	if pack.EsIndex == "" {
+		pack.EsIndex = indexName(project, this.indexPattern,
+			time.Unix(int64(pack.Message.Timestamp), 0))
 	}
-
-	pack := h.PipelinePack(p.MsgLoopCount)
-	p.CopyTo(pack)
 
 	// each ES item has area and ts fields
 	pack.Ident = this.ident
@@ -138,7 +137,7 @@ func (this *EsFilter) handlePack(r engine.FilterRunner,
 				currency, err := pack.Message.FieldValue(conv.currency, als.KEY_TYPE_STRING)
 				if err != nil {
 					// has money field, but no currency field?
-					return
+					return false
 				}
 
 				pack.Message.SetField("_usd",
@@ -171,8 +170,7 @@ func (this *EsFilter) handlePack(r engine.FilterRunner,
 
 	}
 
-	r.Inject(pack)
-
+	return true
 }
 
 func init() {
