@@ -100,6 +100,10 @@ func (this *messageRouter) addOutputMatcher(matcher *Matcher) {
 func (this *messageRouter) reportMatcherQueues(logger *log.Logger) {
 	globals := Globals()
 	s := fmt.Sprintf("router.in=%d", len(this.inChan))
+	if len(this.inChan) == globals.PluginChanSize {
+		s = fmt.Sprintf("%s(F)", s)
+	}
+
 	for _, m := range this.filterMatchers {
 		s = fmt.Sprintf("%s %s:%d", s, m.runner.Name(), len(m.InChan()))
 		if len(m.InChan()) == globals.PluginChanSize {
