@@ -164,8 +164,6 @@
             match:  ["rsDau", "ffsBi", "rsLogs", "rsMongoError", ]
             ident:   "esFiltered"
             index_pattern:  "@ym"
-            ignores: [
-            ]
             converts: [
                 // type: ip|money|range|del
                 {

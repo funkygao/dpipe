@@ -27,7 +27,6 @@ func (this *esConverter) load(section *conf.Conf) {
 type EsFilter struct {
 	ident        string
 	indexPattern string
-	ignores      []string
 	converters   []esConverter
 }
 
@@ -36,7 +35,6 @@ func (this *EsFilter) Init(config *conf.Conf) {
 	if this.ident == "" {
 		panic("empty ident")
 	}
-	this.ignores = config.StringList("ignores", nil)
 	this.converters = make([]esConverter, 0, 10)
 	this.indexPattern = config.String("index_pattern", "")
 	for i := 0; i < len(config.List("converts", nil)); i++ {
