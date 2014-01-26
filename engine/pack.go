@@ -79,6 +79,9 @@ func (this PipelinePack) String() string {
 		s = fmt.Sprintf("%s, cardinal{%s, %s, %v}", s, this.CardinalityKey,
 			this.CardinalityInterval, this.CardinalityData)
 	}
+	if this.diagnostics != nil {
+		s = fmt.Sprintf("%s, lastAccess=%s", this.diagnostics.LastAccess)
+	}
 
 	return s
 }
