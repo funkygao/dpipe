@@ -98,7 +98,7 @@ func (this *PipelinePack) Reset() {
 	this.Message.Reset()
 }
 
-func (this *PipelinePack) Copy(that *PipelinePack) {
+func (this *PipelinePack) CopyTo(that *PipelinePack) {
 	that.Project = this.Project
 	that.Ident = this.Ident
 	that.Input = this.Input
