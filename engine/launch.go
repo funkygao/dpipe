@@ -73,6 +73,10 @@ func Launch(e *EngineConfig) {
 
 	go e.router.Start()
 
+	for _, project := range e.projects {
+		project.Start()
+	}
+
 	if globals.Verbose {
 		globals.Println("Launching Input(s)...")
 	}

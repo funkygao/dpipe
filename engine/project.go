@@ -56,6 +56,10 @@ func (this *ConfProject) FromConfig(c *conf.Conf) {
 	this.Logger = log.New(logWriter, "", logOptions)
 }
 
+func (this *ConfProject) Start() {
+	this.Println("Started")
+}
+
 func (this *ConfProject) Stop() {
 	this.Println("Stopped")
 }
