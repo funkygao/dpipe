@@ -56,20 +56,20 @@ curl -XPUT localhost:9200/_template/fun -d '
                     "type": "string",
                     "index": "not_analyzed"
                 },
+                "_t": {
+                    "type": "date"
+                },
                 "_cntry": {
                     "type": "string",
                     "index": "not_analyzed"
-                },
-                "_t": {
-                    "type": "date"
                 },
                 "msg": {
                     "type": "string",
                     "index": "analyzed"
                 },
-                "typ": {
+                "message": {
                     "type": "string",
-                    "index": "not_analyzed"
+                    "index": "analyzed"
                 }
             }
         },
