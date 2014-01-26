@@ -89,6 +89,7 @@ func (this *PipelinePack) Reset() {
 	this.Project = ""
 	this.EsIndex = ""
 	this.EsType = ""
+	this.Input = false
 	this.CardinalityKey = ""
 	this.CardinalityData = nil
 	this.CardinalityInterval = ""
@@ -99,7 +100,16 @@ func (this *PipelinePack) Reset() {
 
 func (this *PipelinePack) Copy(that *PipelinePack) {
 	that.Project = this.Project
+	that.Ident = this.Ident
+	that.Input = this.Input
+	that.EsIndex = this.EsIndex
+	that.EsType = this.EsType
+	that.CardinalityKey = this.CardinalityKey
+	that.CardinalityData = this.CardinalityData
+	that.CardinalityInterval = this.CardinalityInterval
+
 	that.Message = this.Message.Clone()
+	that.Logfile.SetPath(this.Logfile.Path())
 }
 
 /*
