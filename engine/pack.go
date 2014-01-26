@@ -170,6 +170,15 @@ func (this *PacketTracking) PluginNames() (names []string) {
 	return
 }
 
+func (this *PacketTracking) LastPluginName() string {
+	l := len(this.pluginRunners)
+	if l == 0 {
+		return ""
+	}
+
+	return this.pluginRunners[l-1].Name()
+}
+
 func (this *PacketTracking) Runners() []PluginRunner {
 	return this.pluginRunners
 }
