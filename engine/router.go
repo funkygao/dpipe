@@ -1,6 +1,7 @@
 package engine
 
 import (
+	"fmt"
 	"github.com/funkygao/golib/gofmt"
 	"log"
 	"sync/atomic"
@@ -96,6 +97,18 @@ func (this *messageRouter) addOutputMatcher(matcher *Matcher) {
 	this.outputMatchers = append(this.outputMatchers, matcher)
 }
 
+func (this *messageRouter) reportMatcherQueues(logger *log.Logger) {
+	s := fmt.Sprintf("router.in=%d", len(this.inChan))
+	for _, m := range this.filterMatchers {
+		s = fmt.Sprintf("%s %s:%d", s, m.runner.Name(), len(m.InChan()))
+	}
+	for _, m := range this.outputMatchers {
+		s = fmt.Sprintf("%s %s:%d", s, m.runner.Name(), len(m.InChan()))
+	}
+
+	logger.Println(s)
+}
+
 // Dispatch pack from Input to MatchRunners
 func (this *messageRouter) Start() {
 	var (
@@ -112,6 +125,17 @@ func (this *messageRouter) Start() {
 
 	if globals.Verbose {
 		globals.Printf("Router started with ticker=%ds\n", globals.TickerLength)
+	}
+
+	if globals.Verbose {
+		go func() {
+			t := time.NewTicker(time.Second * time.Duration(globals.TickerLength))
+			defer t.Stop()
+
+			for _ = range t.C {
+				this.reportMatcherQueues(globals.Logger)
+			}
+		}()
 	}
 
 LOOP:
