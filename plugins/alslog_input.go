@@ -251,6 +251,8 @@ LOOP:
 			}
 
 			pack = <-inChan
+			pack.Project = source.project.name
+			pack.Logfile.SetPath(fn)
 			if source.project.decode {
 				if err := pack.Message.FromLine(line.Text); err != nil {
 					project := h.Project(source.project.name)
@@ -266,8 +268,6 @@ LOOP:
 			}
 
 			this.counters.Inc(source.ident, 1)
-			pack.Project = source.project.name
-			pack.Logfile.SetPath(fn)
 			pack.Ident = source.ident
 			r.Inject(pack)
 
