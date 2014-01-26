@@ -306,12 +306,12 @@
                                 {
                                     name: "msg"
                                     ignores: [
-                                        "Log statistics",
                                         "regex: child \\d+ started",
                                         "regex: child \\d+ exited with code 0",
+                                        "regex: spawning \\d+ children",
+                                        "Log statistics",
                                         "you may need to increase start_servers",
                                         "dhclient: bound to",
-                                        "spawning \\d+ children",
                                         "dhclient: DHCPREQUEST",
                                         "dhclient: DHCPACK",
                                     ]

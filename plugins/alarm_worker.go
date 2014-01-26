@@ -23,11 +23,6 @@ import (
 var (
 	errIgnored = errors.New("message ignored")
 	errEmpty   = errors.New("empty")
-
-	normalizers = map[string]*regexp.Regexp{
-		"digit":       regexp.MustCompile(`\d+`),
-		"batch_token": regexp.MustCompile(`pre: .*; current: .*`),
-	}
 )
 
 type alarmWorkerConfigField struct {

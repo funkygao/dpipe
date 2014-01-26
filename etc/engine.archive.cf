@@ -36,6 +36,10 @@
                     type: "ip"
                 }
                 {
+                    keys: ["key", ]
+                    normalizers: ["digit", ]
+                }
+                {
                     keys: ["trace", ]
                     type: "del"
                 }

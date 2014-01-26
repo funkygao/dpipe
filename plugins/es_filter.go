@@ -9,10 +9,11 @@ import (
 )
 
 type esConverter struct {
-	keys     []string // key name
-	typ      string   // type
-	currency string   // currency field name
-	rang     []int    // range
+	keys        []string // key name
+	typ         string   // type
+	currency    string   // currency field name
+	rang        []int    // range
+	normalizers []string
 }
 
 func (this *esConverter) load(section *conf.Conf) {
@@ -20,6 +21,7 @@ func (this *esConverter) load(section *conf.Conf) {
 	this.typ = section.String("type", "")
 	this.currency = section.String("currency", "")
 	this.rang = section.IntList("range", nil)
+	this.normalizers = section.StringList("normalizers", nil)
 }
 
 type EsFilter struct {
@@ -109,6 +111,23 @@ func (this *EsFilter) handlePack(pack *engine.PipelinePack, project *engine.Conf
 
 	for _, conv := range this.converters {
 		for _, key := range conv.keys {
+			if conv.normalizers != nil {
+				for _, norm := range conv.normalizers {
+					val, err := pack.Message.FieldValue(key, als.KEY_TYPE_STRING)
+					if err != nil {
+						// no such field
+						break
+					}
+
+					normed := normalizers[norm].ReplaceAll([]byte(val.(string)),
+						[]byte("?"))
+					val = string(normed)
+					pack.Message.SetField(key+"_norm", val)
+				}
+
+				continue
+			}
+
 			switch conv.typ {
 			case "money":
 				amount, err := pack.Message.FieldValue(key, als.KEY_TYPE_MONEY)
