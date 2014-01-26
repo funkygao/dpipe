@@ -97,6 +97,11 @@ func (this *PipelinePack) Reset() {
 	this.Message.Reset()
 }
 
+func (this *PipelinePack) Copy(that *PipelinePack) {
+	that.Project = this.Project
+	that.Message = this.Message.Clone()
+}
+
 /*
                     IncRef2
                    -------> Output -------------> DecRef2 --+
