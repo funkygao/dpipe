@@ -26,12 +26,13 @@ var (
 )
 
 type alarmWorkerConfigField struct {
-	name        string
-	typ         string
-	contains    string // deprecated TODO
-	isColumn    bool   // deprecated
-	normalizers []string
-	ignores     []string
+	name          string
+	typ           string
+	contains      string // deprecated TODO
+	isColumn      bool   // deprecated
+	normalizers   []string
+	ignores       []string
+	_regexIgnores []*regexp.Regexp
 }
 
 func (this *alarmWorkerConfigField) init(config *conf.Conf) {
@@ -43,6 +44,19 @@ func (this *alarmWorkerConfigField) init(config *conf.Conf) {
 	this.typ = config.String("type", als.KEY_TYPE_STRING)
 	this.contains = config.String("contains", "")
 	this.ignores = config.StringList("ignores", nil)
+	this._regexIgnores = make([]*regexp.Regexp, 0)
+	// build the precompiled regex matcher
+	for _, ignore := range this.ignores {
+		if strings.HasPrefix(ignore, "regex:") {
+			pattern := strings.TrimSpace(ignore[6:])
+			r, err := regexp.Compile(pattern)
+			if err != nil {
+				panic(err)
+			}
+
+			this._regexIgnores = append(this._regexIgnores, r)
+		}
+	}
 	this.isColumn = config.Bool("is_column", true)
 	this.normalizers = config.StringList("normalizers", nil)
 }
@@ -71,20 +85,19 @@ func (this *alarmWorkerConfigField) value(msg *als.AlsMessage) (val interface{},
 
 	// ignores
 	if this.ignores != nil {
+		valstr := val.(string)
+
 		for _, ignore := range this.ignores {
-			valstr := val.(string)
 			if strings.Contains(valstr, ignore) {
 				err = errIgnored
 				return
 			}
+		}
 
-			if strings.HasPrefix(ignore, "regex:") {
-				pattern := strings.TrimSpace(ignore[6:])
-				// TODO lessen the overhead
-				if matched, _ := regexp.MatchString(pattern, valstr); matched {
-					err = errIgnored
-					return
-				}
+		for _, ignore := range this._regexIgnores {
+			if ignore.MatchString(valstr) {
+				err = errIgnored
+				return
 			}
 		}
 	}
