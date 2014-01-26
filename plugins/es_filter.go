@@ -9,14 +9,14 @@ import (
 )
 
 type esConverter struct {
-	key      string // key name
-	typ      string // type
-	currency string // currency field name
-	rang     []int  // range
+	keys     []string // key name
+	typ      string   // type
+	currency string   // currency field name
+	rang     []int    // range
 }
 
 func (this *esConverter) load(section *conf.Conf) {
-	this.key = section.String("key", "")
+	this.keys = section.StringList("keys", nil)
 	this.typ = section.String("type", "")
 	this.currency = section.String("currency", "")
 	this.rang = section.IntList("range", nil)
@@ -25,6 +25,7 @@ func (this *esConverter) load(section *conf.Conf) {
 type EsFilter struct {
 	ident        string
 	indexPattern string
+	ignores      []string
 	converters   []esConverter
 }
 
@@ -33,6 +34,7 @@ func (this *EsFilter) Init(config *conf.Conf) {
 	if this.ident == "" {
 		panic("empty ident")
 	}
+	this.ignores = config.StringList("ignores", nil)
 	this.converters = make([]esConverter, 0, 10)
 	this.indexPattern = config.String("index_pattern", "")
 	for i := 0; i < len(config.List("converts", nil)); i++ {
@@ -92,8 +94,6 @@ LOOP:
 }
 
 func (this *EsFilter) handlePack(pack *engine.PipelinePack, project *engine.ConfProject) bool {
-	pack.Ident = this.ident
-
 	if pack.EsType == "" {
 		pack.EsType = pack.Logfile.CamelCaseName()
 	}
@@ -102,60 +102,55 @@ func (this *EsFilter) handlePack(pack *engine.PipelinePack, project *engine.Conf
 			time.Unix(int64(pack.Message.Timestamp), 0))
 	}
 
-	if pack.EsType == "" {
-		engine.Globals().Printf("%s %v\n", pack.EsType, *pack)
-		return false
-	}
-	if pack.EsIndex == "" {
-		engine.Globals().Printf("%s %v\n", pack.EsIndex, *pack)
-		return false
-	}
-
 	// each ES item has area and ts fields
+	pack.Ident = this.ident
 	pack.Message.SetField("_area", pack.Message.Area)
 	pack.Message.SetField("_t", pack.Message.Timestamp)
 
 	for _, conv := range this.converters {
-		switch conv.typ {
-		case "money":
-			amount, err := pack.Message.FieldValue(conv.key, als.KEY_TYPE_MONEY)
-			if err != nil {
-				// has no such field
-				continue
+		for _, key := range conv.keys {
+			switch conv.typ {
+			case "money":
+				amount, err := pack.Message.FieldValue(key, als.KEY_TYPE_MONEY)
+				if err != nil {
+					// has no such field
+					continue
+				}
+
+				currency, err := pack.Message.FieldValue(conv.currency, als.KEY_TYPE_STRING)
+				if err != nil {
+					// has money field, but no currency field?
+					return false
+				}
+
+				pack.Message.SetField("_usd",
+					als.MoneyInUsdCents(currency.(string), amount.(int)))
+
+			case "ip":
+				ip, err := pack.Message.FieldValue(key, als.KEY_TYPE_IP)
+				if err != nil {
+					continue
+				}
+
+				pack.Message.SetField("_cntry", als.IpToCountry(ip.(string)))
+
+			case "range":
+				if len(conv.rang) < 2 {
+					continue
+				}
+
+				val, err := pack.Message.FieldValue(key, als.KEY_TYPE_INT)
+				if err != nil {
+					continue
+				}
+
+				pack.Message.SetField(key+"_rg", als.GroupInt(val.(int), conv.rang))
+
+			case "del":
+				pack.Message.DelField(key)
 			}
-
-			currency, err := pack.Message.FieldValue(conv.currency, als.KEY_TYPE_STRING)
-			if err != nil {
-				// has money field, but no currency field?
-				return false
-			}
-
-			pack.Message.SetField("_usd",
-				als.MoneyInUsdCents(currency.(string), amount.(int)))
-
-		case "ip":
-			ip, err := pack.Message.FieldValue(conv.key, als.KEY_TYPE_IP)
-			if err != nil {
-				continue
-			}
-
-			pack.Message.SetField("_cntry", als.IpToCountry(ip.(string)))
-
-		case "range":
-			if len(conv.rang) < 2 {
-				continue
-			}
-
-			val, err := pack.Message.FieldValue(conv.key, als.KEY_TYPE_INT)
-			if err != nil {
-				continue
-			}
-
-			pack.Message.SetField(conv.key+"_rg", als.GroupInt(val.(int), conv.rang))
-
-		case "del":
-			pack.Message.DelField(conv.key)
 		}
+
 	}
 
 	return true
