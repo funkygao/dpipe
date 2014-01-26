@@ -32,3 +32,11 @@ func BenchmarkRegexpMatch(b *testing.B) {
 		regexp.MatchString(pattern, line)
 	}
 }
+
+func BenchmarkRegexpMatchCompiled(b *testing.B) {
+	pattern := regexp.MustCompile("child \\d+ started")
+	line := "adfasdf  asdfas dfasdf child 12 started with asdfasf"
+	for i := 0; i < b.N; i++ {
+		pattern.MatchString(line)
+	}
+}
