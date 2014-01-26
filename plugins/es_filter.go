@@ -79,8 +79,8 @@ LOOP:
 				globals.Println(*pack)
 			}
 
-			this.handlePack(r, h, pack)
 			count += 1
+			this.handlePack(r, h, pack)
 			pack.Recycle()
 		}
 	}

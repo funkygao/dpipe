@@ -479,12 +479,16 @@ func (this *alarmWorker) getWindowBorder(wheres ...string) (head, tail int, err 
 
 	row := this.db.QueryRow(query)
 	err = row.Scan(&head, &tail)
-	if err == nil && tail == 0 {
+	if head == 0 && tail == 0 {
+		err = errEmpty
+		return
+	}
+	if row == nil {
 		err = errEmpty
 		return
 	}
 
-	if engine.Globals().Debug {
+	if err != nil && engine.Globals().Debug {
 		this.project.Println(head, tail, err)
 	}
 
