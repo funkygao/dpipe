@@ -80,7 +80,7 @@ func (this PipelinePack) String() string {
 			this.CardinalityInterval, this.CardinalityData)
 	}
 	if this.diagnostics != nil {
-		s = fmt.Sprintf("%s, lastAccess=%s", s, this.diagnostics.LastAccess)
+		s = fmt.Sprintf("%s, lastAccess=%s", s, time.Since(this.diagnostics.LastAccess)
 	}
 
 	return s
