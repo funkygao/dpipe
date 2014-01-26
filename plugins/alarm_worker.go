@@ -26,12 +26,13 @@ var (
 )
 
 type alarmWorkerConfigField struct {
-	name          string
-	typ           string
-	contains      string // deprecated TODO
-	isColumn      bool   // deprecated
-	normalizers   []string
-	ignores       []string
+	name        string
+	typ         string
+	contains    string // deprecated TODO
+	isColumn    bool   // deprecated
+	normalizers []string
+	ignores     []string
+
 	_regexIgnores []*regexp.Regexp
 }
 

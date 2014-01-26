@@ -1,6 +1,7 @@
 package plugins
 
 import (
+	"github.com/funkygao/tail"
 	"regexp"
 	"strings"
 	"testing"
@@ -39,4 +40,18 @@ func BenchmarkRegexpMatchCompiled(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		pattern.MatchString(line)
 	}
+}
+
+func BenchmarkTailFile(b *testing.B) {
+	var tailConf tail.Config
+	for i := 0; i < b.N; i++ {
+		b.StopTimer()
+		t, err := tail.TailFile("/var/log/system.log", tailConf)
+		if err != nil {
+			panic(err)
+		}
+		b.StartTimer()
+		<-t.Lines
+	}
+
 }
