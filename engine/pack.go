@@ -108,7 +108,7 @@ func (this *PipelinePack) CopyTo(that *PipelinePack) {
 	that.CardinalityData = this.CardinalityData
 	that.CardinalityInterval = this.CardinalityInterval
 
-	that.Message = this.Message.Clone()
+	that.Message = this.Message.QuickClone()
 	that.Logfile.SetPath(this.Logfile.Path())
 }
 
