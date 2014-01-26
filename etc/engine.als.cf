@@ -312,6 +312,7 @@
                                         "dhclient: bound to",
                                         "dhclient: DHCPREQUEST",
                                         "dhclient: DHCPACK",
+                                        "Undefined property: MapModel",
                                     ]
                                 }
                             ]
