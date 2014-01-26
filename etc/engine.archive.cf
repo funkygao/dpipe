@@ -45,7 +45,7 @@
                     currency: "data.currency"
                 }
                 {
-                    keys: ["level", "lv", ]
+                    keys: ["level", "lv", "_log_info.level", ]
                     type: "range"
                     range: [1, 14, 19, 23, 27, 31, 36, 41, 46, 51, 57, 63, 69, 75, 101]
                 }
