@@ -9,6 +9,17 @@
 
     plugins: [
         {
+            name:   "user"
+            class:  "ArchiveInput"
+            ident:   "user"
+            ticker_interval: 60
+            root_dir: "/data2/als/user"
+            project:   "rs"
+            concurrent_num: 10
+            chkpntfile: "rs_user.gob"
+        }
+
+        {
             name:   "ArchiveInput"
             class:  "ArchiveInput"
             ident:   "allInput"
@@ -66,6 +77,20 @@
             bulk_max_conn: 20
             bulk_max_docs: 100
         }
+
+        {
+            name:   "rsUserSky"
+            class:  "SkyOutput"
+            match:  ["user", ]
+            disabled: true
+            host:   "localhost"
+            port:   8585
+            project:"rs"
+            table:  "rs_user"
+            uid_field:  "uid"
+            action_field: "action"
+        }
+
     ]
 
 }

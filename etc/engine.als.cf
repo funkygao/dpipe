@@ -18,7 +18,7 @@
                 line_threshold: 10
                 sleep_start:    600
                 sleep_step:     60
-                sleep_max:      1600
+                sleep_max:      3600
                 sleep_min:      250
             }
             logfile: "var/rs.log"    
