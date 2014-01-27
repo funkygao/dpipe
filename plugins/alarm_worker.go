@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"github.com/funkygao/als"
 	"github.com/funkygao/dpipe/engine"
+	"github.com/funkygao/dpipe/parser"
 	"github.com/funkygao/golib/bjtime"
 	sqldb "github.com/funkygao/golib/db"
 	"github.com/funkygao/golib/stats"
@@ -30,6 +31,7 @@ type alarmWorkerConfigField struct {
 	typ         string
 	contains    string // deprecated TODO
 	isColumn    bool   // deprecated
+	parser      string
 	normalizers []string
 	ignores     []string
 
@@ -44,6 +46,7 @@ func (this *alarmWorkerConfigField) init(config *conf.Conf) {
 
 	this.typ = config.String("type", als.KEY_TYPE_STRING)
 	this.contains = config.String("contains", "")
+	this.parser = config.String("parser", "")
 	this.ignores = config.StringList("ignores", nil)
 	this._regexIgnores = make([]*regexp.Regexp, 0)
 	// build the precompiled regex matcher
@@ -330,9 +333,14 @@ func (this *alarmWorker) run(h engine.PluginHelper, goAhead chan bool) {
 }
 
 func (this *alarmWorker) inject(msg *als.AlsMessage) {
-	args, err := this.fieldValues(msg)
+	args, alarm, err := this.fieldValues(msg)
 	if err != nil {
 		return
+	}
+
+	if alarm != "" {
+		this.colorPrintfLn(true, "%s", alarm)
+		this.feedAlarmMail("%s", alarm)
 	}
 
 	if this.conf.instantFormat != "" {
@@ -352,7 +360,8 @@ func (this *alarmWorker) inject(msg *als.AlsMessage) {
 	this.insert(args...)
 }
 
-func (this *alarmWorker) fieldValues(msg *als.AlsMessage) (values []interface{}, err error) {
+func (this *alarmWorker) fieldValues(msg *als.AlsMessage) (values []interface{},
+	alarm string, err error) {
 	var val interface{}
 	values = make([]interface{}, 0, 5)
 
@@ -367,6 +376,10 @@ func (this *alarmWorker) fieldValues(msg *als.AlsMessage) (values []interface{},
 		}
 
 		values = append(values, val)
+
+		if field.parser != "" {
+			alarm, _ = parser.Parse(field.parser, val.(string))
+		}
 	}
 
 	return
@@ -512,5 +525,4 @@ func (this *alarmWorker) colorPrintfLn(beep bool, format string, args ...interfa
 		msg += "\a"
 	}
 	this.project.Println(als.Colorize(this.conf.colors, msg))
-
 }
