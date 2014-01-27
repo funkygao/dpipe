@@ -313,6 +313,7 @@
                                         "dhclient: DHCPREQUEST",
                                         "dhclient: DHCPACK",
                                         "Undefined property: MapModel",
+                                        "nrpe[",
                                     ]
                                 }
                             ]
