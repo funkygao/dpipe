@@ -8,13 +8,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"sync"
-)
-
-var (
-	allUsers = map[string]bool{}
-	rwMutex  = new(sync.RWMutex)
-	present  = false
 )
 
 func shouldDownloadUser(snsid string) bool {
@@ -44,7 +37,7 @@ func fetchAvatar(snsid string) {
 	defer response.Body.Close()
 
 	body, _ := ioutil.ReadAll(response.Body)
-	if err := ioutil.WriteFile(snsid+".jpg", body, 0644); err != nil {
+	if err := ioutil.WriteFile(targetDir+snsid+".jpg", body, 0644); err != nil {
 		panic(err)
 	}
 }
@@ -53,7 +46,7 @@ func generateAvatarHtml() {
 	buf := new(bytes.Buffer)
 	for snsid, _ := range allUsers {
 		buf.WriteString("<img src='")
-		buf.WriteString(snsid)
+		buf.WriteString(targetDir + snsid)
 		buf.WriteString(".jpg' />\n")
 	}
 

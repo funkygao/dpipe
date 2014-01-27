@@ -1,9 +1,9 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"github.com/funkygao/als"
-	"os"
 	"path/filepath"
 	"sync"
 )
@@ -46,12 +46,11 @@ func (this *worker) run(fn string) {
 }
 
 func main() {
-	if len(os.Args) == 1 {
-		fmt.Fprintf(os.Stderr, "Usage: %s logfile\n", os.Args[0])
-		os.Exit(1)
-	}
+	flag.StringVar(&srcDir, "s", "/data2/als/pv/", "source logfile dir")
+	flag.StringVar(&targetDir, "d", "var/", "target dir")
+	flag.Parse()
 
-	logfiles, err := filepath.Glob("/data2/als/pv/*")
+	logfiles, err := filepath.Glob(srcDir + "*")
 	if err != nil {
 		panic(err)
 	}
@@ -60,6 +59,7 @@ func main() {
 
 	for _, logfile := range logfiles {
 		fmt.Printf("[%s]is being analyzed...\n", logfile)
+
 		w := worker{wg: wg}
 		wg.Add(1)
 		go w.run(logfile)
@@ -69,5 +69,4 @@ func main() {
 	wg.Wait()
 
 	generateAvatarHtml()
-
 }
