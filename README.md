@@ -154,3 +154,34 @@ Main pipeline data structure containing a AlsMessage and other metadata
         router ----- wait for FO runner finish --- close router.inChan 
           |
         done
+
+
+
+##### performance
+
+        tail.readLine 5405 ns/op
+          |
+          |          26242 ns/op
+        msg.FromLine ----------- parse line     228 ns/op
+          |                 |
+          |                  --- jsonize        25179 ns/op
+          |
+          | chan 109 ns/op
+          |
+          |         5500 ns/op
+        filters ---------------- CamelCaseName  86.4 ns/op
+          |                 |
+          |                 |--- RegexMatch     1570 ns/op
+          |                 |
+          |                 |--- IndexName      1029 ns/op
+          |                 |
+          |                 |--- FieldValue     455  ns/op
+          |                 |
+          |                 |--- SetField       116  ns/op
+          |                 |
+          |                  --- PackCopy       3438 ns/op
+          |
+          |
+        output ---------------- UUID            1622 ns/op
+                            |
+                             --- MarshalPayload 16673 ns/op
