@@ -303,11 +303,11 @@
                                 {name: "host"}
                                 {
                                     name: "msg"
+                                    parser: "syslogngStats"
                                     ignores: [
                                         "regex: child \\d+ started",
                                         "regex: child \\d+ exited with code 0",
                                         "regex: spawning \\d+ children",
-                                        "Log statistics",
                                         "you may need to increase start_servers",
                                         "dhclient: bound to",
                                         "dhclient: DHCPREQUEST",
