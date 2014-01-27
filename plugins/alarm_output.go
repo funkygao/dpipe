@@ -122,7 +122,8 @@ func (this *AlarmOutput) sendAlarmMailsLoop(project *engine.ConfProject,
 		case <-time.After(time.Second * time.Duration(mailSleep)):
 			if *bodyLines >= bodyLineThreshold {
 				go Sendmail(mailConf.Recipients,
-					fmt.Sprintf("ALS[%s] - %d alarms", project.Name, *bodyLines),
+					fmt.Sprintf("ALS[%s] - %d alarms(within %ds)",
+						project.Name, *bodyLines, mailSleep),
 					mailBody.String())
 				project.Printf("alarm sent=> %s, sleep=%d\n", mailConf.Recipients, mailSleep)
 
