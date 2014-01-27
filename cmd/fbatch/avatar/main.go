@@ -4,8 +4,10 @@ import (
 	"flag"
 	"fmt"
 	"github.com/funkygao/als"
+	"log"
 	"path/filepath"
 	"sync"
+	"time"
 )
 
 type worker struct {
@@ -56,6 +58,12 @@ func main() {
 	}
 
 	wg := new(sync.WaitGroup)
+	go func() {
+		ticker := time.NewTicker(time.Second * 10)
+		for _ = range ticker.C {
+			log.Printf("got avatars: %d", len(allUsers))
+		}
+	}()
 
 	for _, logfile := range logfiles {
 		fmt.Printf("[%s]is being analyzed...\n", logfile)
