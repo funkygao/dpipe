@@ -387,16 +387,6 @@
             ]
         }
 
-        {
-            name:   "rsSkyOutput"
-            class:  "SkyOutput"
-            match:  ["rsClick", ]
-            disabled: true
-            project:    "RS"
-            table:      "rs_click"
-            uid_field:  "uid"
-        }
-
     ]
 
 }
