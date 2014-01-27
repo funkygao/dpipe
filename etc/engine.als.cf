@@ -213,8 +213,8 @@
                             colors: [ "FgCyan", "Bright", "BgRed", ]
                             dbname:         "mongoError"
                             window_size:    15
-                            beep_threshold: 10
-                            abnormal_base:  10
+                            beep_threshold: 1
+                            abnormal_base:  1
                             abnormal_percent: 0.5
                             create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, msg VARCHAR(200));"
                             insert_stmt:    "INSERT INTO %s(area, ts, msg) VALUES(?,?,?)"
@@ -234,12 +234,12 @@
                             colors: [ "FgRed", ]
                             dbname:         "error"
                             window_size:    587
-                            beep_threshold: 120
-                            abnormal_base:  10
+                            beep_threshold: 10
+                            abnormal_base:  5
                             abnormal_percent: 0.8
                             create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, cls VARCHAR(50), msg VARCHAR(200));"
                             insert_stmt:    "INSERT INTO %s(area, ts, cls, msg) VALUES(?,?,?,?)"
-                            stats_stmt:     "SELECT COUNT(*) AS c, area, cls, msg FROM %s where ts<=? GROUP BY area, cls, msg ORDER BY c DESC"
+                            stats_stmt:     "SELECT COUNT(*) AS c, area, cls, msg FROM %s where ts<=? GROUP BY area, cls, msg HAVING c>1 ORDER BY c DESC"
                             printf:         "%5d %3s %20s %s"
                             fields: [
                                 {
@@ -291,7 +291,7 @@
                             colors: ["FgWhite", "Reverse", ]
                             dbname:         "kernal"
                             window_size:    1715
-                            beep_threshold: 10
+                            beep_threshold: 1
                             abnormal_base:  5
                             abnormal_percent: 0.8
                             create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, host VARCHAR(50), msg VARCHAR(200));"
@@ -324,8 +324,8 @@
                             colors: [ "FgYellow", "Reverse", ]
                             dbname:         "mongoSlow"
                             window_size:    393
-                            beep_threshold: 10
-                            abnormal_base:  5
+                            beep_threshold: 1
+                            abnormal_base:  2
                             abnormal_percent: 0.8
                             create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, tbl VARCHAR(50), method VARCHAR(30), t FLOAT, host CHAR(30), server CHAR(60));"
                             insert_stmt:    "INSERT INTO %s(area, ts, tbl, method, t, host, server) VALUES(?,?,?,?,?,?,?)"
@@ -369,7 +369,7 @@
                             colors: [ "FgMagenta", "Bright", ]
                             dbname:         "slowresp"
                             window_size:    523
-                            beep_threshold: 10
+                            beep_threshold: 1
                             abnormal_base:  10
                             abnormal_percent: 0.6
                             create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, uri VARCHAR(200));"
