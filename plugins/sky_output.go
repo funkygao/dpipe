@@ -27,7 +27,7 @@ func (this *SkyOutput) Init(config *conf.Conf) {
 		p := strings.SplitN(this.uidField, TYPE_SEP, 2)
 		this.uidField, this.uidFieldType = p[0], p[1]
 	}
-	this.actionField = config.String("action_field", "")
+	this.actionField = config.String("action_field", "action")
 	if this.actionField == "" {
 		panic("empty action field")
 	}
