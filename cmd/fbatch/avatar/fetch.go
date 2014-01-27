@@ -28,7 +28,7 @@ func avatarUrl(snsid string) string {
 	return fmt.Sprintf("http://graph.facebook.com/%s/picture", snsid)
 }
 
-func fetchAvatar(snsid string) {
+func fetchAvatar(area, snsid string) {
 	if !shouldDownloadUser(snsid) {
 		return
 	}
@@ -43,7 +43,8 @@ func fetchAvatar(snsid string) {
 			return
 		}
 
-		ioutil.WriteFile(targetDir+snsid+".jpg", body, 0644)
+		targetFile := targetDir + area + "_" + snsid + jpegExt
+		ioutil.WriteFile(targetFile, body, 0644)
 	}
 }
 

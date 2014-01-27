@@ -10,4 +10,5 @@ var (
 	present   = false
 	targetDir string
 	srcDir    string
+	jpegExt   = ".jpg"
 )

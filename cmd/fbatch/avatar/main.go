@@ -42,7 +42,7 @@ func (this *worker) run(fn string) {
 				continue
 			}
 
-			fetchAvatar(snsid.(string))
+			fetchAvatar(msg.Area, snsid.(string))
 		}
 	}
 }
