@@ -18,6 +18,10 @@ var (
 )
 
 func Parse(typ string, msg string) (string, error) {
+	if typ == "" {
+		return "", ErrInvaidParser
+	}
+
 	parse, present := allParsers[typ]
 	if !present {
 		return "", ErrInvaidParser
