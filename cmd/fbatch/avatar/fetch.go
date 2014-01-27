@@ -34,7 +34,9 @@ func fetchAvatar(snsid string) {
 	}
 
 	response, _ := http.Get(avatarUrl(snsid))
-	defer response.Body.Close()
+	if response != nil && response.Body != nil {
+		defer response.Body.Close()
+	}
 
 	body, _ := ioutil.ReadAll(response.Body)
 	if err := ioutil.WriteFile(targetDir+snsid+".jpg", body, 0644); err != nil {
