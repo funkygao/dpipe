@@ -342,6 +342,7 @@ func (this *alarmWorker) inject(msg *als.AlsMessage) {
 		this.workersMutex.Unlock()
 
 		if this.instantAlarmOnly {
+			this.feedAlarmMail(this.conf.instantFormat, iargs...)
 			return
 		}
 	}

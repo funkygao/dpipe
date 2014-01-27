@@ -171,10 +171,6 @@ func (this *AlarmOutput) runSendAlarmsWatchdog(project *engine.ConfProject,
 
 func (this *AlarmOutput) handlePack(pack *engine.PipelinePack) {
 	if worker, present := this.workers[pack.Project][pack.Logfile.CamelCaseName()]; present {
-		if pack.Message == nil {
-			engine.Globals().Panicf("%s", *pack)
-		}
-
 		worker.inject(pack.Message)
 	}
 }

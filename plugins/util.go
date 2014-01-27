@@ -78,7 +78,7 @@ X-MSMail-Priority: High
 ——————————————————————
 {{.Body}}
 ====
-dpiped
+dpipe
 `
 
 	data := letterVar{to, subject, body}
