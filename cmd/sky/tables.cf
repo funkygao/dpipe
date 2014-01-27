@@ -20,8 +20,21 @@
                 }
 
                 {
+                    name:   "user.cash"
+                    type:   "integer"
+                    transient: false
+                }
+
+                {
+                    name:   "user.coins"
+                    type:   "integer"
+                    transient: false
+                }
+
+                {
                     name:   "user.level"
                     type:   "integer"
+                    transient: false
                 }
 
                 {
@@ -30,10 +43,28 @@
                 }
 
                 {
+                    name:   "user.energy"
+                    type:   "integer"
+                    transient: false
+                }
+
+                {
                     name:   "user.reputation"
                     type:   "integer"
+                    transient: false
                 }
-                
+
+                {
+                    name:   "user.pcher"
+                    type:   "integer"
+                    transient: true
+                }
+
+                {
+                    name:   "user.gcher"
+                    type:   "integer"
+                    transient: true
+                }
             ]
         }
 
