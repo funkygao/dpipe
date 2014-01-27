@@ -1,4 +1,4 @@
-Release Notes - Flume - Version v0.5.0.rc
+Release Notes - dpipe - Version v0.5.0.rc
 
 ** New Feature
 
@@ -9,6 +9,7 @@ Release Notes - Flume - Version v0.5.0.rc
     . init.d script added
     . cardinality output uses gob to checkpoint state between restarts
     . config file validation and visualization[dpconf]
+    . alarm when syslog-ng drops messages(ad-hoc parsers)
 
 ** Improvement
 
@@ -25,5 +26,9 @@ Release Notes - Flume - Version v0.5.0.rc
 ** Todo
 
     . change logger to code.google.com/p/log4go
+    . Reload on HUP
+    . faster json marshal/unmarshal, currently its 20000ns/op, that's 50K msg/s
+    . send alarm according to priority instead of accumulated lines num
+    . alarm can compare now with same clock yesterday
 
 ----
