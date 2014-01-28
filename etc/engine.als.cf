@@ -325,8 +325,8 @@
                             colors: [ "FgYellow", "Reverse", ]
                             dbname:         "mongoSlow"
                             window_size:    393
-                            beep_threshold: 1
-                            abnormal_base:  2
+                            beep_threshold: 5
+                            abnormal_base:  8
                             abnormal_percent: 0.8
                             create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, tbl VARCHAR(50), method VARCHAR(30), t FLOAT, host CHAR(30), server CHAR(60));"
                             insert_stmt:    "INSERT INTO %s(area, ts, tbl, method, t, host, server) VALUES(?,?,?,?,?,?,?)"
@@ -369,10 +369,10 @@
                             camel_name: "slowresponse"
                             colors: [ "FgMagenta", "Bright", ]
                             dbname:         "slowresp"
-                            window_size:    523
-                            beep_threshold: 1
-                            abnormal_base:  10
-                            abnormal_percent: 0.6
+                            window_size:    923
+                            beep_threshold: 5
+                            abnormal_base:  5
+                            abnormal_percent: 0.8
                             create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, uri VARCHAR(200));"
                             insert_stmt:    "INSERT INTO %s(area, ts, uri) VALUES(?,?,?)"
                             stats_stmt:     "SELECT COUNT(*) AS c, area, uri FROM %s where ts<=? GROUP BY area, uri ORDER BY c DESC"
