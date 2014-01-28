@@ -38,7 +38,7 @@ func (this *AlarmOutput) Init(config *conf.Conf) {
 	for i := 0; i < len(config.List("projects", nil)); i++ {
 		keyPrefix := fmt.Sprintf("projects[%d].", i)
 		proj := config.String(keyPrefix+"name", "")
-		this.emailChans[proj] = make(chan alarmMailMessage, 20)
+		this.emailChans[proj] = make(chan alarmMailMessage, 50)
 		this.workers[proj] = make(map[string]*alarmWorker)
 
 		workersMutex := new(sync.Mutex)
