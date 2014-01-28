@@ -14,7 +14,7 @@ var (
 	syslogngDropped = regexp.MustCompile(`dropped=\'program\((.+?)\)=(\d+)\'`)
 )
 
-func parseSyslogNgStats(msg string) (alarm string) {
+func parseSyslogNgStats(msg string) (alarm string, severity int) {
 	parts := strings.Split(msg, SYSLOGNG_STATS)
 	if len(parts) == 2 {
 		// it is syslog-ng msg in /var/log/messages
@@ -29,6 +29,7 @@ func parseSyslogNgStats(msg string) (alarm string) {
 			}
 
 			// 丢东西啦
+			severity = 100
 			alarm = fmt.Sprintf("%s [%s]dropped:%s", alarm, d[1], num)
 		}
 	}

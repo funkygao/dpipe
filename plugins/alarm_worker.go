@@ -360,7 +360,7 @@ func (this *alarmWorker) fieldValues(msg *als.AlsMessage) (values []interface{},
 		}
 
 		if field.parser != "" {
-			alarm, _ := parser.Parse(field.parser, val.(string))
+			alarm, _, _ := parser.Parse(field.parser, val.(string))
 			if alarm != "" {
 				values = append(values, alarm)
 			}
