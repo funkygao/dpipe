@@ -15,7 +15,7 @@
             alarm_email: {
                 recipients:   "peng.gao@funplusgame.com,zhengkai@gmail.com,yan.zhang@funplusgame.com"
                 severity_pool_size: 80
-                severity_threshold: 10
+                severity_threshold: 6
                 interval:   300
             }
             logfile: "var/rs.log"    
@@ -281,7 +281,12 @@
                             iprintf:        "%3s %15s %s"
                             fields: [
                                 {name: "host"}
-                                {name: "msg"}
+                                {
+                                    name: "msg"
+                                    ignores: [
+                                        "Undefined property: MapModel",
+                                    ]
+                                }
                             ]
                         }
 
@@ -313,7 +318,6 @@
                                         "dhclient: bound to",
                                         "dhclient: DHCPREQUEST",
                                         "dhclient: DHCPACK",
-                                        "Undefined property: MapModel",
                                         "nrpe[",
                                     ]
                                 }
@@ -350,7 +354,7 @@
                         {
                             title: "MemcacheSlow"
                             camel_name: "memcacheTo"
-                            severity:       3
+                            severity:       8
                             colors: [ "FgYellow", ]
                             window_size:    0
                             iprintf:        "CacheSlow %3s %20s %8.4f %15s"
