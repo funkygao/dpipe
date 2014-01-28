@@ -1,5 +1,6 @@
 /*
-Parser for some special messages
+Parser for some special message fields
+Currently soly for alarm
 */
 package parser
 
@@ -17,7 +18,7 @@ var (
 	}
 )
 
-func Parse(typ string, msg string) (string, error) {
+func Parse(typ string, msg string) (alarm string, err error) {
 	if typ == "" {
 		return "", ErrInvaidParser
 	}
