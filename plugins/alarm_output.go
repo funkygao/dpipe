@@ -157,7 +157,7 @@ func (this *AlarmOutput) runSendAlarmsWatchdog(project *engine.ConfProject,
 			}
 
 			go Sendmail(project.MailConf.Recipients,
-				fmt.Sprintf("ALS[%s]alarms", project.Name), mailBody.String())
+				fmt.Sprintf("ALS[%s] alarms", project.Name), mailBody.String())
 
 			project.Printf("alarm sent=> %s", project.MailConf.Recipients)
 
