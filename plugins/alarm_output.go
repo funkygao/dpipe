@@ -119,18 +119,20 @@ func (this *AlarmOutput) stop() {
 func (this *AlarmOutput) sendAlarmMailsLoop(project *engine.ConfProject,
 	queue *pqueue.PriorityQueue) {
 	var (
-		globals    = engine.Globals()
-		mailConf   = project.MailConf
-		mailSleep  = mailConf.SleepStart
-		mailBody   bytes.Buffer
-		bodyLinesN int
-		mailLine   interface{}
+		globals       = engine.Globals()
+		mailConf      = project.MailConf
+		mailSleep     = mailConf.SleepStart
+		mailBody      bytes.Buffer
+		bodyLinesN    int
+		totalSeverity int
+		mailLine      interface{}
 	)
 
 	for !globals.Stopping {
 		select {
 		case <-time.After(time.Second * time.Duration(mailSleep)):
-			if queue.PrioritySum() > project.MailConf.SeverityThreshold {
+			totalSeverity = queue.PrioritySum()
+			if totalSeverity > project.MailConf.SeverityThreshold {
 				bodyLinesN = queue.Len()
 
 				// backoff sleep
@@ -158,10 +160,12 @@ func (this *AlarmOutput) sendAlarmMailsLoop(project *engine.ConfProject,
 				}
 
 				go Sendmail(mailConf.Recipients,
-					fmt.Sprintf("ALS[%s] - %d alarms(within %s)",
-						project.Name, bodyLinesN, time.Duration(mailSleep)*time.Second),
+					fmt.Sprintf("ALS[%s] - %d alarms(within %s), severity=%d",
+						project.Name, bodyLinesN,
+						time.Duration(mailSleep)*time.Second, totalSeverity),
 					mailBody.String())
-				project.Printf("alarm sent=> %s, sleep=%d\n", mailConf.Recipients, mailSleep)
+				project.Printf("alarm sent=> %s, sleep=%d\n",
+					mailConf.Recipients, mailSleep)
 
 				mailBody.Reset()
 			}
