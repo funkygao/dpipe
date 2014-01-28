@@ -30,5 +30,6 @@ Release Notes - dpipe - Version v0.5.0.rc
     . faster json marshal/unmarshal, currently its 20000ns/op, that's 50K msg/s
     . send alarm according to priority instead of accumulated lines num
     . alarm can compare now with same clock yesterday
+    . cardinality of uid doesn't work
 
 ----

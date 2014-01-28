@@ -333,14 +333,9 @@ func (this *alarmWorker) run(h engine.PluginHelper, goAhead chan bool) {
 }
 
 func (this *alarmWorker) inject(msg *als.AlsMessage) {
-	args, alarm, err := this.fieldValues(msg)
+	args, alarmed, err := this.fieldValues(msg)
 	if err != nil {
 		return
-	}
-
-	if alarm != "" {
-		this.colorPrintfLn(true, "%s", alarm)
-		this.feedAlarmMail("%s", alarm)
 	}
 
 	if this.conf.instantFormat != "" {
@@ -349,7 +344,7 @@ func (this *alarmWorker) inject(msg *als.AlsMessage) {
 		this.colorPrintfLn(true, this.conf.instantFormat, iargs...)
 		this.workersMutex.Unlock()
 
-		if this.instantAlarmOnly {
+		if this.instantAlarmOnly || alarmed {
 			this.feedAlarmMail(this.conf.instantFormat, iargs...)
 			return
 		}
@@ -361,7 +356,7 @@ func (this *alarmWorker) inject(msg *als.AlsMessage) {
 }
 
 func (this *alarmWorker) fieldValues(msg *als.AlsMessage) (values []interface{},
-	alarm string, err error) {
+	alarm bool, err error) {
 	var val interface{}
 	values = make([]interface{}, 0, 5)
 
@@ -375,10 +370,12 @@ func (this *alarmWorker) fieldValues(msg *als.AlsMessage) (values []interface{},
 			return
 		}
 
-		values = append(values, val)
-
 		if field.parser != "" {
-			alarm, _ = parser.Parse(field.parser, val.(string))
+			alarm = true
+			parsedMsg, _ := parser.Parse(field.parser, val.(string))
+			values = append(values, parsedMsg)
+		} else {
+			values = append(values, val)
 		}
 	}
 
