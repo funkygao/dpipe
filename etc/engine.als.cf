@@ -122,7 +122,7 @@
         
         {
             name:   "CardinalityOutput"
-            checkpoint: "var/rsCard.gob"
+            checkpoint: "data/rsCard.gob"
             match:  ["rsDauCardinal", ]
         }
 
