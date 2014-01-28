@@ -9,7 +9,7 @@ import (
 type projectEmailConf struct {
 	Recipients                                string
 	BusyLineThreshold                         int
-	LineThreshold                             int
+	SeverityThreshold                         int
 	SleepStart, SleepStep, SleepMax, SleepMin int
 }
 
@@ -30,8 +30,8 @@ func (this *ConfProject) FromConfig(c *conf.Conf) {
 	mailSection, err := c.Section("alarm_email")
 	if err == nil {
 		this.MailConf = projectEmailConf{}
+		this.MailConf.SeverityThreshold = mailSection.Int("severity_threshold", 50)
 		this.MailConf.Recipients = mailSection.String("recipients", "")
-		this.MailConf.LineThreshold = mailSection.Int("line_threshold", 10)
 		this.MailConf.BusyLineThreshold = mailSection.Int("busy_line_threshold", 25)
 		this.MailConf.SleepStart = mailSection.Int("sleep_start", 600)
 		this.MailConf.SleepMin = mailSection.Int("sleep_min", 240)

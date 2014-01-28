@@ -111,6 +111,7 @@ type alarmWorkerConfig struct {
 	beepThreshold   int
 	abnormalPercent float64
 	abnormalBase    int
+	severity        int
 
 	dbName    string
 	tableName string
@@ -133,6 +134,7 @@ func (this *alarmWorkerConfig) init(config *conf.Conf) {
 	this.colors = config.StringList("colors", nil)
 	this.printFormat = config.String("printf", "")
 	this.instantFormat = config.String("iprintf", "")
+	this.severity = config.Int("severity", 1)
 	this.windowSize = time.Duration(config.Int("window_size", 0)) * time.Second
 	this.showSummary = config.Bool("show_summary", false)
 	this.beepThreshold = config.Int("beep_threshold", 0)
@@ -166,7 +168,7 @@ type alarmWorker struct {
 
 	project      *engine.ConfProject
 	projName     string
-	emailChan    chan string
+	emailChan    chan alarmMailMessage
 	workersMutex *sync.Mutex // accross all alarm workers in a project
 
 	conf alarmWorkerConfig
@@ -294,8 +296,10 @@ func (this *alarmWorker) run(h engine.PluginHelper, goAhead chan bool) {
 			// beep and feed alarmMail
 			if this.conf.beepThreshold > 0 && int(amount) >= this.conf.beepThreshold {
 				beep = true
-				this.feedAlarmMail(this.conf.printFormat, values...)
 			}
+
+			this.feedAlarmMail(this.conf.severity*int(amount),
+				this.conf.printFormat, values...)
 
 			// abnormal blink
 			if amount >= int64(this.conf.abnormalBase) &&
@@ -338,7 +342,8 @@ func (this *alarmWorker) inject(msg *als.AlsMessage) {
 		this.workersMutex.Unlock()
 
 		if this.instantAlarmOnly {
-			this.feedAlarmMail(this.conf.instantFormat, iargs...)
+			severity := this.conf.severity
+			this.feedAlarmMail(severity, this.conf.instantFormat, iargs...)
 			return
 		}
 	}
@@ -395,13 +400,18 @@ func (this *alarmWorker) isAbnormalChange(amount int64, key string) bool {
 	return false
 }
 
-func (this *alarmWorker) feedAlarmMail(format string, args ...interface{}) {
-	msg := fmt.Sprintf(format, args...)
-	if !strings.HasPrefix(msg, this.conf.title) {
-		msg = fmt.Sprintf("%10s %s", this.conf.title, msg)
+func (this *alarmWorker) feedAlarmMail(severity int, format string, args ...interface{}) {
+	if severity < 1 {
+		return
 	}
 
-	this.emailChan <- msg
+	msg := fmt.Sprintf(format, args...)
+	if !strings.HasPrefix(msg, this.conf.title) {
+		msg = fmt.Sprintf("%15s %s", this.conf.title, msg)
+	}
+
+	this.emailChan <- alarmMailMessage{msg: msg, severity: severity,
+		receivedAt: time.Now()}
 }
 
 func (this *alarmWorker) historyKey(printf string, values []interface{}) string {

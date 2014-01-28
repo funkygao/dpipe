@@ -29,7 +29,7 @@ func parseSyslogNgStats(msg string) (alarm string, severity int) {
 			}
 
 			// 丢东西啦
-			severity = 100
+			severity = 56
 			alarm = fmt.Sprintf("%s [%s]dropped:%s", alarm, d[1], num)
 		}
 	}

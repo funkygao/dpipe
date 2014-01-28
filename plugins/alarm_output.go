@@ -2,31 +2,43 @@ package plugins
 
 import (
 	"bytes"
+	"container/heap"
 	"fmt"
 	"github.com/funkygao/dpipe/engine"
 	"github.com/funkygao/golib/bjtime"
 	"github.com/funkygao/golib/observer"
+	"github.com/funkygao/golib/pqueue"
 	conf "github.com/funkygao/jsconf"
 	"sync"
 	"time"
 )
 
+type alarmMailMessage struct {
+	msg        string
+	severity   int
+	receivedAt time.Time
+}
+
+func (this alarmMailMessage) String() string {
+	return fmt.Sprintf("[%d]%s", this.severity, this.msg)
+}
+
 type AlarmOutput struct {
 	// {project: chan}
-	emailChans map[string]chan string
+	emailChans map[string]chan alarmMailMessage
 
 	// {project: {camelName: worker}}
 	workers map[string]map[string]*alarmWorker
 }
 
 func (this *AlarmOutput) Init(config *conf.Conf) {
-	this.emailChans = make(map[string]chan string)
+	this.emailChans = make(map[string]chan alarmMailMessage)
 	this.workers = make(map[string]map[string]*alarmWorker)
 
 	for i := 0; i < len(config.List("projects", nil)); i++ {
 		keyPrefix := fmt.Sprintf("projects[%d].", i)
 		proj := config.String(keyPrefix+"name", "")
-		this.emailChans[proj] = make(chan string, 20)
+		this.emailChans[proj] = make(chan alarmMailMessage, 20)
 		this.workers[proj] = make(map[string]*alarmWorker)
 
 		workersMutex := new(sync.Mutex)
@@ -105,69 +117,76 @@ func (this *AlarmOutput) stop() {
 }
 
 func (this *AlarmOutput) sendAlarmMailsLoop(project *engine.ConfProject,
-	mailBody *bytes.Buffer, bodyLines *int) {
+	queue *pqueue.PriorityQueue) {
 	var (
-		globals           = engine.Globals()
-		mailConf          = project.MailConf
-		mailSleep         = mailConf.SleepStart
-		busyLineThreshold = mailConf.BusyLineThreshold
-		bodyLineThreshold = mailConf.LineThreshold
-		maxSleep          = mailConf.SleepMax
-		minSleep          = mailConf.SleepMin
-		sleepStep         = mailConf.SleepStep
+		globals    = engine.Globals()
+		mailConf   = project.MailConf
+		mailSleep  = mailConf.SleepStart
+		mailBody   bytes.Buffer
+		bodyLinesN int
+		mailLine   interface{}
 	)
 
 	for !globals.Stopping {
 		select {
 		case <-time.After(time.Second * time.Duration(mailSleep)):
-			if *bodyLines >= bodyLineThreshold {
-				go Sendmail(mailConf.Recipients,
-					fmt.Sprintf("ALS[%s] - %d alarms(within %ds)",
-						project.Name, *bodyLines, time.Duration(mailSleep)*time.Second),
-					mailBody.String())
-				project.Printf("alarm sent=> %s, sleep=%d\n", mailConf.Recipients, mailSleep)
+			if queue.PrioritySum() > project.MailConf.SeverityThreshold {
+				bodyLinesN = queue.Len()
 
 				// backoff sleep
-				if *bodyLines >= busyLineThreshold {
-					mailSleep -= sleepStep
-					if mailSleep < minSleep {
-						mailSleep = minSleep
+				if bodyLinesN >= mailConf.BusyLineThreshold {
+					mailSleep -= mailConf.SleepStep
+					if mailSleep < mailConf.SleepMin {
+						mailSleep = mailConf.SleepMin
 					}
 				} else {
 					// idle alarm
-					mailSleep += sleepStep
-					if mailSleep > maxSleep {
-						mailSleep = maxSleep
+					mailSleep += mailConf.SleepStep
+					if mailSleep > mailConf.SleepMax {
+						mailSleep = mailConf.SleepMax
 					}
 				}
 
+				// gather mail body content
+				for {
+					if queue.Len() == 0 {
+						break
+					}
+
+					mailLine = heap.Pop(queue)
+					mailBody.WriteString(mailLine.(*pqueue.Item).Value.(string))
+				}
+
+				go Sendmail(mailConf.Recipients,
+					fmt.Sprintf("ALS[%s] - %d alarms(within %s)",
+						project.Name, bodyLinesN, time.Duration(mailSleep)*time.Second),
+					mailBody.String())
+				project.Printf("alarm sent=> %s, sleep=%d\n", mailConf.Recipients, mailSleep)
+
 				mailBody.Reset()
-				*bodyLines = 0
 			}
 		}
 	}
 }
 
 func (this *AlarmOutput) runSendAlarmsWatchdog(project *engine.ConfProject,
-	emailChan chan string) {
+	emailChan chan alarmMailMessage) {
 	var (
-		globals   = engine.Globals()
-		mailLines int
-		mailBody  bytes.Buffer
+		mailQueue = pqueue.New()
 	)
 
-	go this.sendAlarmMailsLoop(project, &mailBody, &mailLines)
+	heap.Init(mailQueue)
 
-	for line := range emailChan {
-		if globals.Debug {
-			project.Printf("got email alarm: %s\n", line)
-		}
+	go this.sendAlarmMailsLoop(project, mailQueue)
 
-		mailBody.WriteString(fmt.Sprintf("%s %s\n",
-			bjtime.TsToString(int(time.Now().UTC().Unix())), line))
-		mailLines += 1
+	for alarmMessage := range emailChan {
+		heap.Push(mailQueue,
+			&pqueue.Item{
+				Value: fmt.Sprintf("%s[%3d] %s\n",
+					bjtime.TimeToString(alarmMessage.receivedAt),
+					alarmMessage.severity, alarmMessage.msg),
+				Priority: alarmMessage.severity})
 	}
-
 }
 
 func (this *AlarmOutput) handlePack(pack *engine.PipelinePack) {

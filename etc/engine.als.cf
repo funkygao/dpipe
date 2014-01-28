@@ -14,12 +14,12 @@
             show_error: true
             alarm_email: {
                 recipients:   "peng.gao@funplusgame.com,zhengkai@gmail.com,yan.zhang@funplusgame.com"
+                severity_threshold: 50
                 busy_line_threshold: 25
-                line_threshold: 10
-                sleep_start:    600
+                sleep_start:    300
                 sleep_step:     60
-                sleep_max:      3600
-                sleep_min:      250
+                sleep_max:      9600
+                sleep_min:      150
             }
             logfile: "var/rs.log"    
             index_prefix: "rs"      
@@ -212,6 +212,7 @@
                             camel_name: "rsMongoError"
                             colors: [ "FgCyan", "Bright", "BgRed", ]
                             dbname:         "mongoError"
+                            severity:       50
                             window_size:    15
                             beep_threshold: 1
                             abnormal_base:  1
@@ -233,6 +234,7 @@
                             camel_name: "error"
                             colors: [ "FgRed", ]
                             dbname:         "error"
+                            severity:       1
                             window_size:    587
                             beep_threshold: 10
                             abnormal_base:  5
@@ -270,6 +272,7 @@
                             camel_name: "phperror"
                             colors: [ "FgYellow", "Bright", ]
                             dbname:         "phperror"
+                            severity:       25
                             window_size:    99
                             beep_threshold: 1
                             abnormal_base:  5
@@ -324,6 +327,7 @@
                             camel_name: "mongoSlow"
                             colors: [ "FgYellow", "Reverse", ]
                             dbname:         "mongoSlow"
+                            severity:       1
                             window_size:    393
                             beep_threshold: 5
                             abnormal_base:  8
@@ -348,6 +352,7 @@
                         {
                             title: "MemcacheSlow"
                             camel_name: "memcacheTo"
+                            severity:       1
                             colors: [ "FgYellow", ]
                             window_size:    0
                             iprintf:        "CacheSlow %3s %20s %8.4f %15s"
@@ -369,6 +374,7 @@
                             camel_name: "slowresponse"
                             colors: [ "FgMagenta", "Bright", ]
                             dbname:         "slowresp"
+                            severity:       1
                             window_size:    923
                             beep_threshold: 5
                             abnormal_base:  5
