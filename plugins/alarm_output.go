@@ -116,72 +116,17 @@ func (this *AlarmOutput) stop() {
 	}
 }
 
-func (this *AlarmOutput) sendAlarmMailsLoop(project *engine.ConfProject,
-	queue *pqueue.PriorityQueue) {
-	var (
-		globals       = engine.Globals()
-		mailConf      = project.MailConf
-		mailSleep     = mailConf.SleepStart
-		mailBody      bytes.Buffer
-		bodyLinesN    int
-		totalSeverity int
-		mailLine      interface{}
-	)
-
-	for !globals.Stopping {
-		select {
-		case <-time.After(time.Second * time.Duration(mailSleep)):
-			totalSeverity = queue.PrioritySum()
-			if totalSeverity > project.MailConf.SeverityThreshold {
-				bodyLinesN = queue.Len()
-
-				// backoff sleep
-				if bodyLinesN >= mailConf.BusyLineThreshold {
-					mailSleep -= mailConf.SleepStep
-					if mailSleep < mailConf.SleepMin {
-						mailSleep = mailConf.SleepMin
-					}
-				} else {
-					// idle alarm
-					mailSleep += mailConf.SleepStep
-					if mailSleep > mailConf.SleepMax {
-						mailSleep = mailConf.SleepMax
-					}
-				}
-
-				// gather mail body content
-				for {
-					if queue.Len() == 0 {
-						break
-					}
-
-					mailLine = heap.Pop(queue)
-					mailBody.WriteString(mailLine.(*pqueue.Item).Value.(string))
-				}
-
-				go Sendmail(mailConf.Recipients,
-					fmt.Sprintf("ALS[%s] - %d alarms(within %s), severity=%d",
-						project.Name, bodyLinesN,
-						time.Duration(mailSleep)*time.Second, totalSeverity),
-					mailBody.String())
-				project.Printf("alarm sent=> %s, sleep=%d\n",
-					mailConf.Recipients, mailSleep)
-
-				mailBody.Reset()
-			}
-		}
-	}
-}
-
 func (this *AlarmOutput) runSendAlarmsWatchdog(project *engine.ConfProject,
 	emailChan chan alarmMailMessage) {
 	var (
-		mailQueue = pqueue.New()
+		mailQueue     = pqueue.New()
+		totalSeverity int
+		mailBody      bytes.Buffer
+		lastSending   time.Time
+		mailLine      interface{}
 	)
 
 	heap.Init(mailQueue)
-
-	go this.sendAlarmMailsLoop(project, mailQueue)
 
 	for alarmMessage := range emailChan {
 		heap.Push(mailQueue,
@@ -190,6 +135,35 @@ func (this *AlarmOutput) runSendAlarmsWatchdog(project *engine.ConfProject,
 					bjtime.TimeToString(alarmMessage.receivedAt),
 					alarmMessage.severity, alarmMessage.msg),
 				Priority: alarmMessage.severity})
+
+		// check if send it out now
+		totalSeverity = mailQueue.PrioritySum()
+		if totalSeverity >= project.MailConf.SeverityThreshold {
+			if !lastSending.IsZero() &&
+				time.Since(lastSending).Seconds() < float64(project.MailConf.Interval) {
+				// we can't send too many emails in emergancy
+				continue
+			}
+
+			// gather mail body content
+			for {
+				if mailQueue.Len() == 0 {
+					break
+				}
+
+				mailLine = heap.Pop(mailQueue)
+				mailBody.WriteString(mailLine.(*pqueue.Item).Value.(string))
+			}
+
+			go Sendmail(project.MailConf.Recipients,
+				fmt.Sprintf("ALS[%s]total severity=%d",
+					project.Name, totalSeverity), mailBody.String())
+
+			project.Printf("alarm sent=> %s", project.MailConf.Recipients)
+
+			mailBody.Reset()
+			lastSending = time.Now()
+		}
 	}
 }
 

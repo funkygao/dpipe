@@ -14,12 +14,8 @@
             show_error: true
             alarm_email: {
                 recipients:   "peng.gao@funplusgame.com,zhengkai@gmail.com,yan.zhang@funplusgame.com"
-                severity_threshold: 50
-                busy_line_threshold: 25
-                sleep_start:    300
-                sleep_step:     60
-                sleep_max:      9600
-                sleep_min:      150
+                severity_threshold: 80
+                interval:   300
             }
             logfile: "var/rs.log"    
             index_prefix: "rs"      
@@ -212,7 +208,7 @@
                             camel_name: "rsMongoError"
                             colors: [ "FgCyan", "Bright", "BgRed", ]
                             dbname:         "mongoError"
-                            severity:       50
+                            severity:       100
                             window_size:    15
                             beep_threshold: 1
                             abnormal_base:  1
@@ -293,7 +289,7 @@
                             camel_name: "kernal"
                             colors: ["FgWhite", "Reverse", ]
                             dbname:         "kernal"
-                            severity:       2
+                            severity:       1
                             window_size:    1715
                             beep_threshold: 1
                             abnormal_base:  5

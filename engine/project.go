@@ -7,10 +7,9 @@ import (
 )
 
 type projectEmailConf struct {
-	Recipients                                string
-	BusyLineThreshold                         int
-	SeverityThreshold                         int
-	SleepStart, SleepStep, SleepMax, SleepMin int
+	Recipients        string
+	SeverityThreshold int
+	Interval          int
 }
 
 type ConfProject struct {
@@ -32,11 +31,7 @@ func (this *ConfProject) FromConfig(c *conf.Conf) {
 		this.MailConf = projectEmailConf{}
 		this.MailConf.SeverityThreshold = mailSection.Int("severity_threshold", 50)
 		this.MailConf.Recipients = mailSection.String("recipients", "")
-		this.MailConf.BusyLineThreshold = mailSection.Int("busy_line_threshold", 25)
-		this.MailConf.SleepStart = mailSection.Int("sleep_start", 600)
-		this.MailConf.SleepMin = mailSection.Int("sleep_min", 240)
-		this.MailConf.SleepMax = mailSection.Int("sleep_max", 1600)
-		this.MailConf.SleepStep = mailSection.Int("sleep_step", 60)
+		this.MailConf.Interval = mailSection.Int("interval", 300)
 	}
 
 	logfile := c.String("logfile", "var/"+this.Name+".log")
