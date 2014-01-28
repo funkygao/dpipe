@@ -327,6 +327,7 @@ func (this *alarmWorker) inject(msg *als.AlsMessage) {
 	}
 
 	if len(args) != len(this.conf.fields) {
+		// message ignored
 		return
 	}
 
@@ -362,8 +363,6 @@ func (this *alarmWorker) fieldValues(msg *als.AlsMessage) (values []interface{},
 			parsedMsg, _ := parser.Parse(field.parser, val.(string))
 			if parsedMsg != "" {
 				values = append(values, parsedMsg)
-			} else {
-				// ignore this message
 			}
 		} else {
 			values = append(values, val)
