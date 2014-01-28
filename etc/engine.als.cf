@@ -293,6 +293,7 @@
                             camel_name: "kernal"
                             colors: ["FgWhite", "Reverse", ]
                             dbname:         "kernal"
+                            severity:       2
                             window_size:    1715
                             beep_threshold: 1
                             abnormal_base:  5
@@ -327,7 +328,7 @@
                             camel_name: "mongoSlow"
                             colors: [ "FgYellow", "Reverse", ]
                             dbname:         "mongoSlow"
-                            severity:       1
+                            severity:       3
                             window_size:    393
                             beep_threshold: 5
                             abnormal_base:  8
@@ -352,7 +353,7 @@
                         {
                             title: "MemcacheSlow"
                             camel_name: "memcacheTo"
-                            severity:       1
+                            severity:       3
                             colors: [ "FgYellow", ]
                             window_size:    0
                             iprintf:        "CacheSlow %3s %20s %8.4f %15s"
@@ -374,7 +375,7 @@
                             camel_name: "slowresponse"
                             colors: [ "FgMagenta", "Bright", ]
                             dbname:         "slowresp"
-                            severity:       1
+                            severity:       2
                             window_size:    923
                             beep_threshold: 5
                             abnormal_base:  5
