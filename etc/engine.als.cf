@@ -14,7 +14,8 @@
             show_error: true
             alarm_email: {
                 recipients:   "peng.gao@funplusgame.com,zhengkai@gmail.com,yan.zhang@funplusgame.com"
-                severity_threshold: 80
+                severity_pool_size: 80
+                severity_threshold: 10
                 interval:   300
             }
             logfile: "var/rs.log"    

@@ -119,26 +119,27 @@ func (this *AlarmOutput) stop() {
 func (this *AlarmOutput) runSendAlarmsWatchdog(project *engine.ConfProject,
 	emailChan chan alarmMailMessage) {
 	var (
-		mailQueue     = pqueue.New()
-		totalSeverity int
-		mailBody      bytes.Buffer
-		lastSending   time.Time
-		mailLine      interface{}
+		mailQueue   = pqueue.New()
+		mailBody    bytes.Buffer
+		lastSending time.Time
+		mailLine    interface{}
 	)
 
 	heap.Init(mailQueue)
 
 	for alarmMessage := range emailChan {
-		heap.Push(mailQueue,
-			&pqueue.Item{
-				Value: fmt.Sprintf("%s[%3d] %s\n",
-					bjtime.TimeToString(alarmMessage.receivedAt),
-					alarmMessage.severity, alarmMessage.msg),
-				Priority: alarmMessage.severity})
+		if alarmMessage.severity >= project.MailConf.SeverityThreshold {
+			// ignore little severity messages
+			heap.Push(mailQueue,
+				&pqueue.Item{
+					Value: fmt.Sprintf("%s[%3d] %s\n",
+						bjtime.TimeToString(alarmMessage.receivedAt),
+						alarmMessage.severity, alarmMessage.msg),
+					Priority: alarmMessage.severity})
+		}
 
 		// check if send it out now
-		totalSeverity = mailQueue.PrioritySum()
-		if totalSeverity >= project.MailConf.SeverityThreshold {
+		if mailQueue.PrioritySum() >= project.MailConf.SeverityPoolSize {
 			if !lastSending.IsZero() &&
 				time.Since(lastSending).Seconds() < float64(project.MailConf.Interval) {
 				// we can't send too many emails in emergancy
@@ -156,8 +157,7 @@ func (this *AlarmOutput) runSendAlarmsWatchdog(project *engine.ConfProject,
 			}
 
 			go Sendmail(project.MailConf.Recipients,
-				fmt.Sprintf("ALS[%s]total severity=%d",
-					project.Name, totalSeverity), mailBody.String())
+				fmt.Sprintf("ALS[%s]alarms", project.Name), mailBody.String())
 
 			project.Printf("alarm sent=> %s", project.MailConf.Recipients)
 
