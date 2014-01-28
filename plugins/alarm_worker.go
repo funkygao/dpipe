@@ -29,8 +29,6 @@ var (
 type alarmWorkerConfigField struct {
 	name        string
 	typ         string
-	contains    string // deprecated TODO
-	isColumn    bool   // deprecated
 	parser      string
 	normalizers []string
 	ignores     []string
@@ -45,7 +43,6 @@ func (this *alarmWorkerConfigField) init(config *conf.Conf) {
 	}
 
 	this.typ = config.String("type", als.KEY_TYPE_STRING)
-	this.contains = config.String("contains", "")
 	this.parser = config.String("parser", "")
 	this.ignores = config.StringList("ignores", nil)
 	this._regexIgnores = make([]*regexp.Regexp, 0)
@@ -61,7 +58,6 @@ func (this *alarmWorkerConfigField) init(config *conf.Conf) {
 			this._regexIgnores = append(this._regexIgnores, r)
 		}
 	}
-	this.isColumn = config.Bool("is_column", true)
 	this.normalizers = config.StringList("normalizers", nil)
 }
 
@@ -69,14 +65,6 @@ func (this *alarmWorkerConfigField) value(msg *als.AlsMessage) (val interface{},
 	val, err = msg.FieldValue(this.name, this.typ)
 	if err != nil {
 		return
-	}
-
-	// contains
-	if this.contains != "" {
-		if !strings.Contains(val.(string), this.contains) {
-			err = errIgnored
-			return
-		}
 	}
 
 	// normalization
@@ -333,8 +321,12 @@ func (this *alarmWorker) run(h engine.PluginHelper, goAhead chan bool) {
 }
 
 func (this *alarmWorker) inject(msg *als.AlsMessage) {
-	args, alarmed, err := this.fieldValues(msg)
+	args, err := this.fieldValues(msg)
 	if err != nil {
+		return
+	}
+
+	if len(args) != len(this.conf.fields) {
 		return
 	}
 
@@ -344,7 +336,7 @@ func (this *alarmWorker) inject(msg *als.AlsMessage) {
 		this.colorPrintfLn(true, this.conf.instantFormat, iargs...)
 		this.workersMutex.Unlock()
 
-		if this.instantAlarmOnly || alarmed {
+		if this.instantAlarmOnly {
 			this.feedAlarmMail(this.conf.instantFormat, iargs...)
 			return
 		}
@@ -356,24 +348,23 @@ func (this *alarmWorker) inject(msg *als.AlsMessage) {
 }
 
 func (this *alarmWorker) fieldValues(msg *als.AlsMessage) (values []interface{},
-	alarm bool, err error) {
+	err error) {
 	var val interface{}
 	values = make([]interface{}, 0, 5)
 
 	for _, field := range this.conf.fields {
-		if !field.isColumn {
-			continue
-		}
-
 		val, err = field.value(msg)
 		if err != nil {
 			return
 		}
 
 		if field.parser != "" {
-			alarm = true
 			parsedMsg, _ := parser.Parse(field.parser, val.(string))
-			values = append(values, parsedMsg)
+			if parsedMsg != "" {
+				values = append(values, parsedMsg)
+			} else {
+				// ignore this message
+			}
 		} else {
 			values = append(values, val)
 		}
