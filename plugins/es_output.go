@@ -3,10 +3,10 @@ package plugins
 
 import (
 	"github.com/funkygao/dpipe/engine"
-	"github.com/funkygao/golib"
 	"github.com/funkygao/golib/gofmt"
 	"github.com/funkygao/golib/observer"
 	"github.com/funkygao/golib/sortedmap"
+	"github.com/funkygao/golib/uuid"
 	conf "github.com/funkygao/jsconf"
 	"github.com/mattbaird/elastigo/api"
 	"github.com/mattbaird/elastigo/core"
@@ -70,7 +70,7 @@ LOOP:
 			ok = false
 
 		case <-reportTicker.C:
-			this.handlePeriodicalCounters()
+			this.showPeriodicalStats()
 
 		case <-reloadChan:
 			// TODO
@@ -109,12 +109,17 @@ LOOP:
 	return nil
 }
 
-func (this *EsOutput) handlePeriodicalCounters() {
+func (this *EsOutput) showPeriodicalStats() {
 	if !this.showProgress {
 		return
 	}
 
-	total := 0
+	var (
+		globals = engine.Globals()
+		total   = 0
+	)
+
+	globals.Printf("ES types: %d, within %s", this.counters.Len(), this.reportInterval)
 	for _, key := range this.counters.SortedKeys() {
 		val := this.counters.Get(key)
 		if val > 0 {
@@ -153,7 +158,7 @@ func (this *EsOutput) feedEs(project *engine.ConfProject, pack *engine.PipelineP
 		project.Println(err, *pack)
 		return
 	}
-	id, _ := golib.UUID()
+	id, _ := uuid.UUID()
 	this.indexer.Index(pack.EsIndex, pack.EsType, id, "", &date, data) // ttl empty
 }
 
