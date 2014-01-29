@@ -31,6 +31,6 @@ func cleanup() {
 func shutdown() {
 	cleanup()
 
-	globals.Printf("Terminated after %s.\n", time.Since(engine.Globals().StartedAt))
+	globals.Printf("Terminated after %s.", time.Since(engine.Globals().StartedAt))
 	os.Exit(0)
 }

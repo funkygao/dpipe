@@ -112,25 +112,25 @@ func (this *foRunner) runMainloop(wg *sync.WaitGroup) {
 	for {
 		if filter, ok := this.plugin.(Filter); ok {
 			if globals.Verbose {
-				globals.Printf("Filter[%s]starting", this.name)
+				globals.Printf("Filter[%s] starting", this.name)
 			}
 
 			pluginType = "filter"
 			filter.Run(this, this.engine)
 
 			if globals.Verbose {
-				globals.Printf("Filter[%s]done", this.name)
+				globals.Printf("Filter[%s] ended", this.name)
 			}
 		} else if output, ok := this.plugin.(Output); ok {
 			if globals.Verbose {
-				globals.Printf("Output[%s]starting", this.name)
+				globals.Printf("Output[%s] starting", this.name)
 			}
 
 			pluginType = "output"
 			output.Run(this, this.engine)
 
 			if globals.Verbose {
-				globals.Printf("Output[%s]done", this.name)
+				globals.Printf("Output[%s] ended", this.name)
 			}
 		} else {
 			panic("unkown plugin type")
@@ -147,7 +147,7 @@ func (this *foRunner) runMainloop(wg *sync.WaitGroup) {
 		}
 
 		if globals.Verbose {
-			globals.Printf("[%s]restarting", this.name)
+			globals.Printf("[%s] restarting", this.name)
 		}
 
 		// Re-initialize our plugin using its wrapper

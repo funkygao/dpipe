@@ -88,7 +88,7 @@ func (this *iRunner) runMainloop(e *EngineConfig, wg *sync.WaitGroup) {
 	globals := Globals()
 	for {
 		if globals.Verbose {
-			globals.Printf("Input[%s]starting", this.name)
+			globals.Printf("Input[%s] starting", this.name)
 		}
 
 		if err := this.Input().Run(this, e); err != nil {
@@ -96,7 +96,7 @@ func (this *iRunner) runMainloop(e *EngineConfig, wg *sync.WaitGroup) {
 		}
 
 		if globals.Verbose {
-			globals.Printf("Input[%s]ended", this.name)
+			globals.Printf("Input[%s] ended", this.name)
 		}
 
 		if globals.Stopping {
@@ -115,7 +115,7 @@ func (this *iRunner) runMainloop(e *EngineConfig, wg *sync.WaitGroup) {
 		}
 
 		if globals.Verbose {
-			globals.Printf("Input[%s]restarting", this.name)
+			globals.Printf("Input[%s] restarting", this.name)
 		}
 
 		// Re-initialize our plugin with its wrapper
