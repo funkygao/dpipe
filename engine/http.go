@@ -68,7 +68,8 @@ func (this *EngineConfig) handleHttpQuery(w http.ResponseWriter, req *http.Reque
 	case "stat":
 		output["runtime"] = this.stats.Runtime()
 		output["router"] = this.router.stats
-		output["start"] = globals.StartedAt
+		output["started"] = globals.StartedAt
+		output["elapsed"] = time.Since(globals.StartedAt)
 		output["pid"] = this.pid
 		output["hostname"] = this.hostname
 
