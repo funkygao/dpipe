@@ -61,7 +61,8 @@ func (this *alarmWorkerConfigField) init(config *conf.Conf) {
 	this.normalizers = config.StringList("normalizers", nil)
 }
 
-func (this *alarmWorkerConfigField) value(msg *als.AlsMessage) (val interface{}, err error) {
+func (this *alarmWorkerConfigField) value(msg *als.AlsMessage) (val interface{},
+	err error) {
 	val, err = msg.FieldValue(this.name, this.typ)
 	if err != nil {
 		return
