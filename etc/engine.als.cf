@@ -52,7 +52,7 @@
         {
             name:   "AlsLogInput"
             show_pregress: true
-            ticker_interval: 30
+            ticker_interval: 70
             poll_interval_ms: 250
             projects: [
                 {

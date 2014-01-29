@@ -40,8 +40,8 @@ func (this *DiagnosticTracker) Run(interval int) {
 	defer ticker.Stop()
 
 	if globals.Debug {
-		globals.Printf("Diagnostic[%s] started with %ds", this.PoolName,
-			interval)
+		globals.Printf("Diagnostic[%s] started with %ds",
+			this.PoolName, interval)
 	}
 
 	for ever {
@@ -84,7 +84,6 @@ func (this *DiagnosticTracker) Run(interval int) {
 		case <-this.stopChan:
 			ever = false
 		}
-
 	}
 }
 
