@@ -152,7 +152,7 @@ func (this *AlsLogInput) Run(r engine.InputRunner, h engine.PluginHelper) error 
 	observer.Subscribe(engine.RELOAD, reloadChan)
 
 	for !stopped {
-		if globals.Verbose {
+		if this.showProgress {
 			globals.Println("refreshing...")
 		}
 		this.refreshSources()
@@ -175,7 +175,7 @@ func (this *AlsLogInput) Run(r engine.InputRunner, h engine.PluginHelper) error 
 			// TODO
 
 		case <-r.Ticker():
-			this.handlePeriodicalCounters(len(opened))
+			this.showPeriodicalStats(len(opened), r.TickLength())
 
 		case <-this.stopChan:
 			stopped = true
@@ -187,7 +187,7 @@ func (this *AlsLogInput) Run(r engine.InputRunner, h engine.PluginHelper) error 
 	return nil
 }
 
-func (this *AlsLogInput) handlePeriodicalCounters(opendFiles int) {
+func (this *AlsLogInput) showPeriodicalStats(opendFiles int, tl time.Duration) {
 	if !this.showProgress {
 		return
 	}
@@ -196,10 +196,10 @@ func (this *AlsLogInput) handlePeriodicalCounters(opendFiles int) {
 		n       = 0
 		globals = engine.Globals()
 	)
-	globals.Printf("Opened files: %d", opendFiles)
+	globals.Printf("Opened files: %d, tickerLen: %s", opendFiles, tl)
 	for _, ident := range this.counters.SortedKeys() {
 		if n = this.counters.Get(ident); n > 0 {
-			globals.Printf("%-15s %8d", ident, n)
+			globals.Printf("%-15s %8d messages", ident, n)
 
 			this.counters.Set(ident, 0)
 		}
@@ -234,7 +234,7 @@ func (this *AlsLogInput) runSingleAlsLogInput(fn string, r engine.InputRunner,
 		globals   = engine.Globals()
 	)
 
-	if globals.Verbose {
+	if this.showProgress {
 		globals.Printf("[%s]%s started", source.project.name, fn)
 	}
 
@@ -246,7 +246,7 @@ LOOP:
 				break LOOP
 			}
 
-			if globals.Debug {
+			if globals.VeryVerbose {
 				globals.Printf("[%s]got line: %s\n", filepath.Base(fn), line.Text)
 			}
 
