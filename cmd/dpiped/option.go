@@ -52,6 +52,10 @@ func setupProfiler() {
 		globals.Printf("CPU profiler %s enabled\n", options.cpuprof)
 		pprof.StartCPUProfile(f)
 	}
+
+	if options.memprof != "" {
+		globals.Printf("MEM profiler %s enabled\n", options.memprof)
+	}
 }
 
 func newLogger() *log.Logger {
