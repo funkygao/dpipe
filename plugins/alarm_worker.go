@@ -314,9 +314,9 @@ func (this *alarmWorker) run(h engine.PluginHelper, goAhead chan bool) {
 				this.feedAlarmMail(this.conf.severity*int(amount),
 					this.conf.printFormat, values...)
 
-				// abnormal blink
-				if amount >= int64(this.conf.abnormalBase) &&
-					this.isAbnormalChange(amount, this.historyKey(this.conf.printFormat, values)) {
+				// abnormal change? blink
+				if this.isAbnormalChange(amount,
+					this.historyKey(this.conf.printFormat, values)) {
 					this.blinkColorPrintfLn(this.conf.printFormat, values...)
 				}
 
@@ -402,11 +402,15 @@ func (this *alarmWorker) isAbnormalChange(amount int64, key string) bool {
 			// each parser consumes 5M history data
 			// each history entry consumes 64bytes
 			this.history = make(map[string]int64)
-			this.project.Printf("[%s]history data cleared\n", this.conf.title)
+			this.project.Printf("[%s] history data cleared", this.conf.title)
 		}
 
 		this.history[key] = amount // refresh
 	}()
+
+	if amount < int64(this.conf.abnormalBase) {
+		return false
+	}
 
 	if lastAmount, present := this.history[key]; present {
 		delta := math.Abs(float64(amount - lastAmount))
