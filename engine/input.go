@@ -26,6 +26,7 @@ type InputRunner interface {
 	Inject(pack *PipelinePack)
 
 	setTickLength(tickLength time.Duration)
+	TickLength() time.Duration
 	Ticker() (ticker <-chan time.Time)
 }
 
@@ -62,6 +63,10 @@ func (this *iRunner) Ticker() (t <-chan time.Time) {
 	return this.ticker
 }
 
+func (this *iRunner) TickLength() time.Duration {
+	return this.tickLength
+}
+
 func (this *iRunner) start(e *EngineConfig, wg *sync.WaitGroup) error {
 	this.engine = e
 	if this.tickLength > 0 {
@@ -89,7 +94,7 @@ func (this *iRunner) runMainloop(e *EngineConfig, wg *sync.WaitGroup) {
 		}
 
 		if globals.Verbose {
-			globals.Printf("Input[%s]done", this.name)
+			globals.Printf("Input[%s]ended", this.name)
 		}
 
 		if globals.Stopping {
