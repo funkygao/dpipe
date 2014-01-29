@@ -39,6 +39,13 @@ func BenchmarkMatcher(b *testing.B) {
 	}
 }
 
+func BenchmarkMakeChan(b *testing.B) {
+	b.ReportAllocs()
+	for i := 0; i < b.N; i++ {
+		_ = make(chan interface{})
+	}
+}
+
 func BenchmarkGoroutine(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		go func() {
