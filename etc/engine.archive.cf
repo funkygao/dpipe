@@ -12,6 +12,7 @@
             name:   "user"
             class:  "ArchiveInput"
             ident:   "user"
+            disabled: true
             ticker_interval: 60
             root_dir: "/data2/als/user"
             project:   "rs"
