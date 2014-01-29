@@ -181,7 +181,7 @@ type alarmWorker struct {
 
 	history map[string]int64 // TODO LRU incase of OOM
 
-	instantAlarmOnly bool
+	_instantAlarmOnly bool
 }
 
 func (this *alarmWorker) init(config *conf.Conf, stopChan chan interface{}) {
@@ -193,34 +193,43 @@ func (this *alarmWorker) init(config *conf.Conf, stopChan chan interface{}) {
 	this.conf.init(config)
 	globals := engine.Globals()
 	if this.conf.windowSize.Seconds() < 1.0 {
-		this.instantAlarmOnly = true
+		this._instantAlarmOnly = true
 
 		if this.conf.beepThreshold > 0 {
-			globals.Printf("[%s]instant only alarm needn't set 'beep_threshold'", this.conf.camelName)
+			globals.Printf("[%s]instant only alarm needn't set 'beep_threshold'",
+				this.conf.camelName)
 		}
 		if this.conf.abnormalBase != 10 {
-			globals.Printf("[%s]instant only alarm needn't set 'abnormal_base'", this.conf.camelName)
+			globals.Printf("[%s]instant only alarm needn't set 'abnormal_base'",
+				this.conf.camelName)
 		}
 		if this.conf.abnormalPercent != 1.5 {
-			globals.Printf("[%s]instant only alarm needn't set 'abnormal_percent'", this.conf.camelName)
+			globals.Printf("[%s]instant only alarm needn't set 'abnormal_percent'",
+				this.conf.camelName)
 		}
 		if this.conf.showSummary {
-			globals.Printf("[%s]instant only alarm needn't set 'show_summary'", this.conf.camelName)
+			globals.Printf("[%s]instant only alarm needn't set 'show_summary'",
+				this.conf.camelName)
 		}
 		if this.conf.createTable != "" {
-			globals.Printf("[%s]instant only alarm needn't set 'create_table'", this.conf.camelName)
+			globals.Printf("[%s]instant only alarm needn't set 'create_table'",
+				this.conf.camelName)
 		}
 		if this.conf.statsStmt != "" {
-			globals.Printf("[%s]instant only alarm needn't set 'stats_stmt'", this.conf.camelName)
+			globals.Printf("[%s]instant only alarm needn't set 'stats_stmt'",
+				this.conf.camelName)
 		}
 		if this.conf.insertStmt != "" {
-			globals.Printf("[%s]instant only alarm needn't set 'insert_stmt'", this.conf.camelName)
+			globals.Printf("[%s]instant only alarm needn't set 'insert_stmt'",
+				this.conf.camelName)
 		}
 		if this.conf.printFormat != "" {
-			globals.Printf("[%s]instant only alarm needn't set 'printf'", this.conf.camelName)
+			globals.Printf("[%s]instant only alarm needn't set 'printf'",
+				this.conf.camelName)
 		}
 		if this.conf.dbName != "" {
-			globals.Printf("[%s]instant only alarm needn't set 'dbname'", this.conf.camelName)
+			globals.Printf("[%s]instant only alarm needn't set 'dbname'",
+				this.conf.camelName)
 		}
 	}
 }
@@ -248,7 +257,7 @@ func (this *alarmWorker) run(h engine.PluginHelper, goAhead chan bool) {
 	// lazy assignment
 	this.project = h.Project(this.projName)
 
-	if globals.DryRun || this.instantAlarmOnly {
+	if globals.DryRun || this._instantAlarmOnly {
 		goAhead <- true
 		return
 	}
@@ -349,7 +358,7 @@ func (this *alarmWorker) inject(msg *als.AlsMessage) {
 		this.colorPrintfLn(true, this.conf.instantFormat, iargs...)
 		this.workersMutex.Unlock()
 
-		if this.instantAlarmOnly {
+		if this._instantAlarmOnly {
 			this.feedAlarmMail(severity, this.conf.instantFormat, iargs...)
 			return
 		}
