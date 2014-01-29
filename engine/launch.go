@@ -88,7 +88,7 @@ func Launch(e *EngineConfig) {
 		}
 	}
 
-	globals.Println("Engine waiting for signals...")
+	globals.Println("Engine mainloop, waiting for signals...")
 	go runShutdownWatchdog(e)
 
 	for !globals.Stopping {
