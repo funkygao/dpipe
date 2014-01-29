@@ -25,6 +25,9 @@ func parseFlags() {
 
 	flag.Parse()
 
+	if options.veryVerbose {
+		options.debug = true
+	}
 	if options.debug {
 		options.verbose = true
 	}

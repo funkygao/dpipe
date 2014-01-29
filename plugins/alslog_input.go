@@ -234,7 +234,7 @@ func (this *AlsLogInput) runSingleAlsLogInput(fn string, r engine.InputRunner,
 		globals = engine.Globals()
 	)
 
-	if this.showProgress {
+	if globals.Debug {
 		globals.Printf("[%s]%s started", source.project.name, fn)
 	}
 
@@ -277,7 +277,7 @@ LOOP:
 		}
 	}
 
-	if globals.Verbose {
+	if globals.Debug {
 		globals.Printf("[%s]%s stopped", source.project.name, fn)
 	}
 }
