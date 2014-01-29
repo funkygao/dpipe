@@ -71,6 +71,8 @@ func (this *iRunner) start(e *EngineConfig, wg *sync.WaitGroup) error {
 	this.engine = e
 	if this.tickLength > 0 {
 		this.ticker = time.Tick(this.tickLength)
+	} else {
+		this.ticker = nil
 	}
 
 	// got the engine's recylable PipelinePack pool
