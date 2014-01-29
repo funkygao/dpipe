@@ -29,7 +29,7 @@ func runShutdownWatchdog(e *EngineConfig) {
 			e.Unlock()
 
 			if allInputsDone {
-				globals.Println("All Input done, shutdown...")
+				globals.Println("All Input terminated, shutdown...")
 				globals.Shutdown()
 				return
 			}
