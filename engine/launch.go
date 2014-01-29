@@ -16,13 +16,13 @@ func Launch(e *EngineConfig) {
 		outputsWg = new(sync.WaitGroup)
 		filtersWg = new(sync.WaitGroup)
 		inputsWg  = new(sync.WaitGroup)
+		globals   = Globals()
 		err       error
 	)
 
 	// setup signal handler first to avoid race condition
 	// if Input terminates very soon, global.Shutdown will
 	// not be able to trap it
-	globals := Globals()
 	globals.sigChan = make(chan os.Signal)
 	signal.Notify(globals.sigChan, syscall.SIGINT, syscall.SIGHUP,
 		syscall.SIGUSR2, syscall.SIGUSR1)
@@ -72,18 +72,22 @@ func Launch(e *EngineConfig) {
 	go inputPackTracker.Run(e.Int("diagnostic_interval", 20))
 	go filterPackTracker.Run(e.Int("diagnostic_interval", 20))
 
-	if globals.Verbose {
-		go func() {
-			t := time.NewTicker(time.Second * time.Duration(globals.TickerLength))
-			defer t.Stop()
+	// check if we have enough recycle pool reservation
+	go func() {
+		t := time.NewTicker(time.Second * time.Duration(globals.TickerLength))
+		defer t.Stop()
 
-			for _ = range t.C {
-				globals.Printf("Recycle chan queue, input:%d filter:%d",
-					len(e.inputRecycleChan),
-					len(e.filterRecycleChan))
+		var inputPoolSize, filterPoolSize int
+
+		for _ = range t.C {
+			inputPoolSize = len(e.inputRecycleChan)
+			filterPoolSize = len(e.filterRecycleChan)
+			if globals.Verbose || inputPoolSize == 0 || filterPoolSize == 0 {
+				globals.Printf("Recycle poolSize: [input]%d [filter]%d",
+					inputPoolSize, filterPoolSize)
 			}
-		}()
-	}
+		}
+	}()
 
 	go e.router.Start()
 
