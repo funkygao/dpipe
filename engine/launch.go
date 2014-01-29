@@ -78,7 +78,7 @@ func Launch(e *EngineConfig) {
 			defer t.Stop()
 
 			for _ = range t.C {
-				globals.Printf("Recycle chan queue, input: %d filter: %d",
+				globals.Printf("Recycle chan queue, input:%d filter:%d",
 					len(e.inputRecycleChan),
 					len(e.filterRecycleChan))
 			}
