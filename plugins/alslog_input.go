@@ -198,7 +198,7 @@ func (this *AlsLogInput) showPeriodicalStats(opendFiles int, tl time.Duration) {
 	for _, ident := range this.counters.SortedKeys() {
 		if n = this.counters.Get(ident); n > 0 {
 			total += n
-			globals.Printf("%-15s %12s messages", ident, gofmt.Comma(int64(n)))
+			globals.Printf("%-15s %12s", ident, gofmt.Comma(int64(n)))
 
 			this.counters.Set(ident, 0)
 		}
