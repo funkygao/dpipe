@@ -165,7 +165,7 @@ func (this *AlsLogInput) Run(r engine.InputRunner, h engine.PluginHelper) error 
 					}
 
 					opened[fn] = true
-					go this.runSingleAlsLogInput(fn, r, h, *source, &stopped)
+					go this.runSingleAlsLogInput(fn, r, h, *source)
 				}
 			}
 		}
@@ -207,7 +207,7 @@ func (this *AlsLogInput) showPeriodicalStats(opendFiles int, tl time.Duration) {
 }
 
 func (this *AlsLogInput) runSingleAlsLogInput(fn string, r engine.InputRunner,
-	h engine.PluginHelper, source logfileSource, stopped *bool) {
+	h engine.PluginHelper, source logfileSource) {
 	var tailConf tail.Config
 	if source.tail {
 		tailConf = tail.Config{
@@ -226,12 +226,11 @@ func (this *AlsLogInput) runSingleAlsLogInput(fn string, r engine.InputRunner,
 	defer t.Stop()
 
 	var (
-		pack      *engine.PipelinePack
-		inChan    = r.InChan()
-		line      *tail.Line
-		ok        bool
-		checkStop = time.Duration(time.Second)
-		globals   = engine.Globals()
+		pack    *engine.PipelinePack
+		inChan  = r.InChan()
+		line    *tail.Line
+		ok      bool
+		globals = engine.Globals()
 	)
 
 	if this.showProgress {
@@ -239,8 +238,11 @@ func (this *AlsLogInput) runSingleAlsLogInput(fn string, r engine.InputRunner,
 	}
 
 LOOP:
-	for !*stopped {
+	for {
 		select {
+		case <-this.stopChan:
+			break LOOP
+
 		case line, ok = <-t.Lines:
 			if !ok {
 				break LOOP
@@ -270,9 +272,6 @@ LOOP:
 			this.counters.Inc(source.ident, 1)
 			pack.Ident = source.ident
 			r.Inject(pack)
-
-		case <-time.After(checkStop):
-
 		}
 	}
 
