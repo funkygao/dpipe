@@ -12,9 +12,11 @@ func runWatchdog(ticker *time.Ticker) {
 	for _ = range ticker.C {
 		runtime.ReadMemStats(ms)
 
-		globals.Printf("ver:%s, goroutine:%d, mem:%s, elapsed:%s\n",
+		globals.Printf("ver:%s, tick:%ds goroutine:%d, mem:%s, elapsed:%s\n",
 			BuildID,
-			runtime.NumGoroutine(), gofmt.ByteSize(ms.Alloc),
+			options.tick,
+			runtime.NumGoroutine(),
+			gofmt.ByteSize(ms.Alloc),
 			time.Since(startTime))
 	}
 }
