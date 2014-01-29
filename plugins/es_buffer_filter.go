@@ -8,8 +8,9 @@ import (
 
 // buffering pv, pv latency and the alike statistics before feeding ES
 type EsBufferFilter struct {
-	ident  string
-	wokers []*esBufferWorker
+	ident    string
+	wokers   []*esBufferWorker
+	stopChan chan interface{}
 }
 
 func (this *EsBufferFilter) Init(config *conf.Conf) {
@@ -18,6 +19,7 @@ func (this *EsBufferFilter) Init(config *conf.Conf) {
 		panic("empty ident")
 	}
 
+	this.stopChan = make(chan interface{})
 	this.wokers = make([]*esBufferWorker, 0, 10)
 	for i := 0; i < len(config.List("workers", nil)); i++ {
 		section, err := config.Section(fmt.Sprintf("workers[%d]", i))
@@ -26,7 +28,7 @@ func (this *EsBufferFilter) Init(config *conf.Conf) {
 		}
 
 		worker := new(esBufferWorker)
-		worker.init(section, this.ident)
+		worker.init(section, this.ident, this.stopChan)
 		this.wokers = append(this.wokers, worker)
 	}
 }
@@ -65,6 +67,10 @@ LOOP:
 		total += worker.summary.N
 		worker.flush(r, h)
 	}
+
+	// all workers will get notified and stop running
+	close(this.stopChan)
+
 	globals.Printf("[%s]Total filtered: %d", r.Name(), total)
 
 	return nil

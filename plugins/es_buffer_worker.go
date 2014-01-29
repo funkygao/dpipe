@@ -22,15 +22,19 @@ type esBufferWorker struct {
 	esField   string
 	esType    string
 	timestamp uint64
+
+	stopChan chan interface{}
 }
 
-func (this *esBufferWorker) init(config *conf.Conf, ident string) {
+func (this *esBufferWorker) init(config *conf.Conf, ident string,
+	stopChan chan interface{}) {
 	this.camelName = config.String("camel_name", "")
 	if this.camelName == "" {
 		panic("empty camel_name")
 	}
 
 	this.ident = ident
+	this.stopChan = stopChan
 	this.interval = time.Duration(config.Int("interval", 10)) * time.Second
 	this.projectName = config.String("project", "")
 	this.indexPattern = config.String("index_pattern", "@ym")
@@ -124,11 +128,14 @@ func (this *esBufferWorker) flush(r engine.FilterRunner, h engine.PluginHelper) 
 }
 
 func (this *esBufferWorker) run(r engine.FilterRunner, h engine.PluginHelper) {
-	globals := engine.Globals()
-	for !globals.Stopping {
+	ever := true
+	for ever {
 		select {
 		case <-time.After(this.interval):
 			this.flush(r, h)
+
+		case <-this.stopChan:
+			ever = false
 		}
 	}
 }
