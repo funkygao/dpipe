@@ -8,6 +8,7 @@
     plugins: [
         {
             name:   "AlsLogInput"
+            show_progress: true
             ticker_interval: 30
             projects: [
                 {

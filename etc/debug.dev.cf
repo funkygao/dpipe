@@ -9,16 +9,18 @@
         {
             name:   "AlsLogInput"
             ticker_interval: 30
+            show_progress: true
             projects: [
-                name: "mac"
-                sources: [
-                    {
-                        glob: "/var/log/a*.log"
-                        ident: "alog"
-                        tail: false
-                    }
-                ]
-
+                {
+                    name: "mac"
+                    sources: [
+                        {
+                           glob: "/var/log/a*.log"
+                           ident: "alog"
+                           tail: false
+                        }   
+                    ]
+                }
             ]
         }
         
