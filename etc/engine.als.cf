@@ -80,8 +80,8 @@
                             ident: "rsLogs"
                             glob: "/mnt/funplus/logs/fp_rstory/*.log"
                             ignores: [
-                                "post", "index", "session", "load_data", "dau", "pv",
-                                "cheat_check", "quest", "bigdata.",
+                                "post", "session", "load_data", "dau", "pv",
+                                "cheat_check", "bigdata", "user.",
                             ]
                         }
                     ]
