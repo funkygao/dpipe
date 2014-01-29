@@ -46,7 +46,7 @@ func (this *EngineConfig) handleHttpQuery(w http.ResponseWriter, req *http.Reque
 	case "ping":
 		output["status"] = "ok"
 
-	case "pool":
+	case "pools":
 		for poolName, _ := range this.diagnosticTrackers {
 			packs := make([]string, 0, globals.RecyclePoolSize)
 			for _, pack := range this.diagnosticTrackers[poolName].packs {
@@ -113,7 +113,8 @@ func (this *EngineConfig) RegisterHttpApi(path string,
 		}
 		w.WriteHeader(status)
 
-		if globals.Verbose {
+		// debug request body content
+		if globals.Debug {
 			globals.Printf("req body: %+v", params)
 		}
 		// access log
