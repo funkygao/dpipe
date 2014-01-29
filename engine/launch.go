@@ -132,6 +132,8 @@ func Launch(e *EngineConfig) {
 	}
 
 	// cleanup after shutdown
+	inputPackTracker.Stop()
+	filterPackTracker.Stop()
 
 	for _, runner := range e.InputRunners {
 		if runner == nil {

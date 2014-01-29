@@ -167,6 +167,7 @@ func (this *alarmWorkerConfig) statsSql() string {
 type alarmWorker struct {
 	*sync.Mutex
 
+	stopChan     chan interface{}
 	project      *engine.ConfProject
 	projName     string
 	emailChan    chan alarmMailMessage
@@ -183,8 +184,9 @@ type alarmWorker struct {
 	instantAlarmOnly bool
 }
 
-func (this *alarmWorker) init(config *conf.Conf) {
+func (this *alarmWorker) init(config *conf.Conf, stopChan chan interface{}) {
 	this.Mutex = new(sync.Mutex)
+	this.stopChan = stopChan
 	this.history = make(map[string]int64)
 
 	this.conf = alarmWorkerConfig{}
@@ -223,7 +225,7 @@ func (this *alarmWorker) init(config *conf.Conf) {
 	}
 }
 
-func (this *alarmWorker) stop() {
+func (this *alarmWorker) cleanup() {
 	if this.insertStmt != nil {
 		this.insertStmt.Close()
 	}
@@ -240,6 +242,7 @@ func (this *alarmWorker) run(h engine.PluginHelper, goAhead chan bool) {
 		globals = engine.Globals()
 		summary = stats.Summary{}
 		beep    bool
+		ever    = true
 	)
 
 	// lazy assignment
@@ -255,72 +258,76 @@ func (this *alarmWorker) run(h engine.PluginHelper, goAhead chan bool) {
 	this.prepareStatsStmt()
 	goAhead <- true
 
-	for !globals.Stopping {
-		time.Sleep(this.conf.windowSize)
-
-		this.Lock()
-		windowHead, windowTail, err := this.getWindowBorder()
-		if err != nil {
-			this.Unlock()
-			continue
-		}
-
-		if this.conf.showSummary {
-			summary.Reset()
-		}
-
-		rows, _ := this.statsStmt.Query(windowTail)
-		cols, _ := rows.Columns()
-		colsN := len(cols)
-		values := make([]interface{}, colsN)
-		valuePtrs := make([]interface{}, colsN)
-		this.workersMutex.Lock()
-		this.printWindowTitle(windowHead, windowTail, this.conf.title)
-		for rows.Next() {
-			beep = false
-			for i, _ := range cols {
-				valuePtrs[i] = &values[i]
-			}
-
-			rows.Scan(valuePtrs...)
-
-			// 1st column always being aggregated quantile
-			var amount = values[0].(int64)
-			if amount == 0 {
-				break
+	for ever {
+		select {
+		case <-time.After(this.conf.windowSize):
+			this.Lock()
+			windowHead, windowTail, err := this.getWindowBorder()
+			if err != nil {
+				this.Unlock()
+				continue
 			}
 
 			if this.conf.showSummary {
-				summary.Add(float64(amount))
+				summary.Reset()
 			}
 
-			// beep and feed alarmMail
-			if this.conf.beepThreshold > 0 && int(amount) >= this.conf.beepThreshold {
-				beep = true
+			rows, _ := this.statsStmt.Query(windowTail)
+			cols, _ := rows.Columns()
+			colsN := len(cols)
+			values := make([]interface{}, colsN)
+			valuePtrs := make([]interface{}, colsN)
+			this.workersMutex.Lock()
+			this.printWindowTitle(windowHead, windowTail, this.conf.title)
+			for rows.Next() {
+				beep = false
+				for i, _ := range cols {
+					valuePtrs[i] = &values[i]
+				}
+
+				rows.Scan(valuePtrs...)
+
+				// 1st column always being aggregated quantile
+				var amount = values[0].(int64)
+				if amount == 0 {
+					break
+				}
+
+				if this.conf.showSummary {
+					summary.Add(float64(amount))
+				}
+
+				// beep and feed alarmMail
+				if this.conf.beepThreshold > 0 && int(amount) >= this.conf.beepThreshold {
+					beep = true
+				}
+
+				this.feedAlarmMail(this.conf.severity*int(amount),
+					this.conf.printFormat, values...)
+
+				// abnormal blink
+				if amount >= int64(this.conf.abnormalBase) &&
+					this.isAbnormalChange(amount, this.historyKey(this.conf.printFormat, values)) {
+					this.blinkColorPrintfLn(this.conf.printFormat, values...)
+				}
+
+				this.colorPrintfLn(beep, this.conf.printFormat, values...)
 			}
 
-			this.feedAlarmMail(this.conf.severity*int(amount),
-				this.conf.printFormat, values...)
-
-			// abnormal blink
-			if amount >= int64(this.conf.abnormalBase) &&
-				this.isAbnormalChange(amount, this.historyKey(this.conf.printFormat, values)) {
-				this.blinkColorPrintfLn(this.conf.printFormat, values...)
+			// show summary
+			if this.conf.showSummary && summary.N > 0 {
+				this.colorPrintfLn(false, "Total: %.1f, Mean: %.1f", summary.Sum, summary.Mean)
 			}
 
-			this.colorPrintfLn(beep, this.conf.printFormat, values...)
+			this.workersMutex.Unlock()
+			rows.Close()
+
+			this.moveWindowForward(windowTail)
+			this.Unlock()
+
+		case <-this.stopChan:
+			ever = false
 		}
-
-		// show summary
-		if this.conf.showSummary && summary.N > 0 {
-			this.colorPrintfLn(false, "Total: %.1f, Mean: %.1f", summary.Sum, summary.Mean)
-		}
-
-		this.workersMutex.Unlock()
-		rows.Close()
-
-		this.moveWindowForward(windowTail)
-		this.Unlock()
 	}
 
 }

@@ -29,9 +29,12 @@ type AlarmOutput struct {
 
 	// {project: {camelName: worker}}
 	workers map[string]map[string]*alarmWorker
+
+	stopChan chan interface{}
 }
 
 func (this *AlarmOutput) Init(config *conf.Conf) {
+	this.stopChan = make(chan interface{})
 	this.emailChans = make(map[string]chan alarmMailMessage)
 	this.workers = make(map[string]map[string]*alarmWorker)
 
@@ -51,7 +54,7 @@ func (this *AlarmOutput) Init(config *conf.Conf) {
 
 			worker := &alarmWorker{projName: proj, emailChan: this.emailChans[proj],
 				workersMutex: workersMutex}
-			worker.init(section)
+			worker.init(section, this.stopChan)
 			this.workers[proj][worker.conf.camelName] = worker
 		}
 	}
@@ -97,16 +100,12 @@ LOOP:
 		}
 	}
 
-	this.stop()
+	close(this.stopChan)
 
-	return nil
-}
-
-func (this *AlarmOutput) stop() {
-	// stop all the workers
+	// all the workers cleanup
 	for _, workers := range this.workers {
 		for _, w := range workers {
-			w.stop()
+			w.cleanup()
 		}
 	}
 
@@ -114,6 +113,8 @@ func (this *AlarmOutput) stop() {
 	for _, ch := range this.emailChans {
 		close(ch)
 	}
+
+	return nil
 }
 
 func (this *AlarmOutput) runSendAlarmsWatchdog(project *engine.ConfProject,

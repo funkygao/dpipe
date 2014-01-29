@@ -18,12 +18,15 @@ func runShutdownWatchdog(e *EngineConfig) {
 		select {
 		case <-ticker.C:
 			allInputsDone = true
+
+			e.Lock()
 			for _, runner := range e.InputRunners {
 				if runner != nil {
 					allInputsDone = false
 					break
 				}
 			}
+			e.Unlock()
 
 			if allInputsDone {
 				globals.Println("All Input done, shutdown...")

@@ -98,6 +98,12 @@ func (this *EngineConfig) pluginNames() (names []string) {
 	return
 }
 
+func (this *EngineConfig) stopInputRunner(name string) {
+	this.Lock()
+	this.InputRunners[name] = nil
+	this.Unlock()
+}
+
 func (this *EngineConfig) EngineConfig() *EngineConfig {
 	return this
 }
