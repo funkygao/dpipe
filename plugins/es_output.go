@@ -124,13 +124,13 @@ func (this *EsOutput) showPeriodicalStats() {
 		val := this.counters.Get(key)
 		if val > 0 {
 			total += val
-			engine.Globals().Printf("%-50s %12s", key, gofmt.Comma(int64(val)))
+			globals.Printf("%-50s %12s", key, gofmt.Comma(int64(val)))
 
 			this.counters.Set(key, 0)
 		}
 	}
 
-	engine.Globals().Printf("%50s %12s", "Sum", gofmt.Comma(int64(total)))
+	globals.Printf("%50s %12s", "Sum", gofmt.Comma(int64(total)))
 }
 
 func (this *EsOutput) feedEs(project *engine.ConfProject, pack *engine.PipelinePack) {

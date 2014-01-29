@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/funkygao/als"
 	"github.com/funkygao/dpipe/engine"
+	"github.com/funkygao/golib/gofmt"
 	"github.com/funkygao/golib/observer"
 	"github.com/funkygao/golib/sortedmap"
 	conf "github.com/funkygao/jsconf"
@@ -143,18 +144,14 @@ func (this *AlsLogInput) CleanupForRestart() bool {
 
 func (this *AlsLogInput) Run(r engine.InputRunner, h engine.PluginHelper) error {
 	var (
-		globals    = engine.Globals()
 		reloadChan = make(chan interface{})
-		stopped    = false
+		ever       = true
 		opened     = make(map[string]bool) // safe because within a goroutine
 	)
 
 	observer.Subscribe(engine.RELOAD, reloadChan)
 
-	for !stopped {
-		if this.showProgress {
-			globals.Println("refreshing...")
-		}
+	for ever {
 		this.refreshSources()
 
 		for _, project := range this.projects {
@@ -178,7 +175,7 @@ func (this *AlsLogInput) Run(r engine.InputRunner, h engine.PluginHelper) error 
 			this.showPeriodicalStats(len(opened), r.TickLength())
 
 		case <-this.stopChan:
-			stopped = true
+			ever = false
 		}
 	}
 
@@ -194,16 +191,20 @@ func (this *AlsLogInput) showPeriodicalStats(opendFiles int, tl time.Duration) {
 
 	var (
 		n       = 0
+		total   = 0
 		globals = engine.Globals()
 	)
 	globals.Printf("Opened files: %d, tickerLen: %s", opendFiles, tl)
 	for _, ident := range this.counters.SortedKeys() {
 		if n = this.counters.Get(ident); n > 0 {
-			globals.Printf("%-15s %8d messages", ident, n)
+			total += n
+			globals.Printf("%-15s %12s messages", ident, gofmt.Comma(int64(n)))
 
 			this.counters.Set(ident, 0)
 		}
 	}
+
+	globals.Printf("%15s %12s", "Sum", gofmt.Comma(int64(total)))
 }
 
 func (this *AlsLogInput) runSingleAlsLogInput(fn string, r engine.InputRunner,
