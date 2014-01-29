@@ -9,6 +9,7 @@ import (
 	"net"
 	"net/http"
 	"runtime"
+	"time"
 )
 
 func (this *EngineConfig) launchHttpServ() {
@@ -33,14 +34,13 @@ func (this *EngineConfig) launchHttpServ() {
 
 func (this *EngineConfig) handleHttpQuery(w http.ResponseWriter, req *http.Request,
 	params map[string]interface{}) (interface{}, error) {
-	vars := mux.Vars(req)
-	cmd := vars["cmd"]
-	globals := Globals()
-	if globals.Verbose {
-		globals.Println(req.Method, cmd)
-	}
+	var (
+		vars    = mux.Vars(req)
+		cmd     = vars["cmd"]
+		globals = Globals()
+		output  = make(map[string]interface{})
+	)
 
-	output := make(map[string]interface{})
 	switch cmd {
 	case "ping":
 		output["status"] = "ok"
@@ -85,7 +85,12 @@ func (this *EngineConfig) RegisterHttpApi(path string,
 	handlerFunc func(http.ResponseWriter,
 		*http.Request, map[string]interface{}) (interface{}, error)) *mux.Route {
 	wrappedFunc := func(w http.ResponseWriter, req *http.Request) {
-		var ret interface{}
+		var (
+			ret     interface{}
+			globals = Globals()
+			t1      = time.Now()
+		)
+
 		params, err := this.decodeHttpParams(w, req)
 		if err == nil {
 			ret, err = handlerFunc(w, req, params)
@@ -103,6 +108,21 @@ func (this *EngineConfig) RegisterHttpApi(path string,
 			status = http.StatusInternalServerError
 		}
 		w.WriteHeader(status)
+
+		if globals.Verbose {
+			globals.Printf("req body: %+v", params)
+		}
+		// access log
+		globals.Printf("%s \"%s %s %s\" %d %s",
+			req.RemoteAddr,
+			req.Method,
+			req.RequestURI,
+			req.Proto,
+			status,
+			time.Since(t1))
+		if status != http.StatusOK {
+			globals.Printf("ERROR %v", err)
+		}
 
 		if ret != nil {
 			// pretty write json result

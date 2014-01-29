@@ -168,11 +168,11 @@ func (this *AlsLogInput) Run(r engine.InputRunner, h engine.PluginHelper) error 
 		}
 
 		select {
-		case <-reloadChan:
-			// TODO
-
 		case <-r.Ticker():
 			this.showPeriodicalStats(len(opened), r.TickLength())
+
+		case <-reloadChan:
+			// TODO
 
 		case <-this.stopChan:
 			ever = false
