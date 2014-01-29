@@ -10,6 +10,7 @@ type projectEmailConf struct {
 	Recipients        string
 	SeverityPoolSize  int
 	SeverityThreshold int
+	SuppressHours     []int
 	Interval          int
 }
 
@@ -32,6 +33,7 @@ func (this *ConfProject) FromConfig(c *conf.Conf) {
 		this.MailConf = projectEmailConf{}
 		this.MailConf.SeverityPoolSize = mailSection.Int("severity_pool_size", 100)
 		this.MailConf.SeverityThreshold = mailSection.Int("severity_threshold", 8)
+		this.MailConf.SuppressHours = mailSection.IntList("suppress_hours", nil)
 		this.MailConf.Recipients = mailSection.String("recipients", "")
 		this.MailConf.Interval = mailSection.Int("interval", 300)
 	}

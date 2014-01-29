@@ -125,6 +125,19 @@ func (this *AlarmOutput) runSendAlarmsWatchdog(project *engine.ConfProject,
 		mailLine    interface{}
 	)
 
+	suppressedHour := func(hour int) bool {
+		// At night we are sleeping and will never checkout the alarms
+		// So queue it up till we've got up from bed
+		// FIXME will the mail queue overflow?
+		for _, h := range project.MailConf.SuppressHours {
+			if hour == h {
+				return true
+			}
+		}
+
+		return false
+	}
+
 	heap.Init(mailQueue)
 
 	for alarmMessage := range emailChan {
@@ -139,7 +152,8 @@ func (this *AlarmOutput) runSendAlarmsWatchdog(project *engine.ConfProject,
 		}
 
 		// check if send it out now
-		if mailQueue.PrioritySum() >= project.MailConf.SeverityPoolSize {
+		if !suppressedHour(bjtime.NowBj().Hour()) &&
+			mailQueue.PrioritySum() >= project.MailConf.SeverityPoolSize {
 			if !lastSending.IsZero() &&
 				time.Since(lastSending).Seconds() < float64(project.MailConf.Interval) {
 				// we can't send too many emails in emergancy
