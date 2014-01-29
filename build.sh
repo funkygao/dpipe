@@ -11,6 +11,7 @@ if [[ $1 = "-linux" ]]; then
     # cd $GOROOT/src; CGO_ENABLED=0 GOOS=linux GOARCH=386 ./make.bash
     CGO_ENABLED=0 GOOS=linux GOARCH=386 go build -ldflags "-X main.BuildID $ID"
 else
+    #go build -race -v -ldflags "-X main.BuildID $ID"
     go build -ldflags "-X main.BuildID $ID"
 fi
 
