@@ -27,7 +27,7 @@ func (this *cardinalityConverter) load(section *conf.Conf) {
 		field := cardinalityField{}
 		field.key = section.String(keyPrefix+"key", "")
 		field.typ = section.String(keyPrefix+"type", "string")
-		field.intervals = section.StringList(keyPrefix+"interval", nil)
+		field.intervals = section.StringList(keyPrefix+"intervals", nil)
 		this.fields = append(this.fields, field)
 	}
 }

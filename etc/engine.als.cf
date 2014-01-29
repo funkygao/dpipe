@@ -102,16 +102,12 @@
                         {
                             key:   "uid"
                             type:  "int"
-                            interval: [
-                                "week", "month",
-                            ]
+                            intervals: [ "week", "month", ]
                         }
                         {
                             key:   "ip"
                             type:  "string"
-                            interval: [
-                                "week", "month",
-                            ]
+                            intervals: [ "week", "month", ]
                         }
                     ]
                 }
