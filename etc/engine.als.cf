@@ -206,9 +206,10 @@
                             camel_name: "rsMongoError"
                             colors: [ "FgCyan", "Bright", "BgRed", ]
                             dbname:         "mongoError"
-                            severity:       100
                             window_size:    15
                             beep_threshold: 1
+                            severity:       100
+                            abnormal_severity_factor: 3
                             abnormal_base:  1
                             abnormal_percent: 0.5
                             create_table:   "CREATE TABLE IF NOT EXISTS %s (area CHAR(10), ts INT, msg VARCHAR(200));"

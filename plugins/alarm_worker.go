@@ -104,15 +104,16 @@ type alarmWorkerConfig struct {
 
 	fields []alarmWorkerConfigField // besides area,ts
 
-	colors          []string // fg, effects, bg
-	printFormat     string
-	instantFormat   string // 'area' is always 1st col
-	showSummary     bool
-	windowSize      time.Duration
-	beepThreshold   int
-	abnormalPercent float64
-	abnormalBase    int
-	severity        int
+	colors                 []string // fg, effects, bg
+	printFormat            string
+	instantFormat          string // 'area' is always 1st col
+	showSummary            bool
+	windowSize             time.Duration
+	beepThreshold          int
+	abnormalPercent        float64
+	abnormalBase           int
+	abnormalSeverityFactor int
+	severity               int
 
 	dbName    string
 	tableName string
@@ -140,6 +141,7 @@ func (this *alarmWorkerConfig) init(config *conf.Conf) {
 	this.showSummary = config.Bool("show_summary", false)
 	this.beepThreshold = config.Int("beep_threshold", 0)
 	this.abnormalBase = config.Int("abnormal_base", 10)
+	this.abnormalSeverityFactor = config.Int("abnormal_severity_factor", 3)
 	this.abnormalPercent = config.Float("abnormal_percent", 1.5)
 	this.dbName = config.String("dbname", "")
 	this.tableName = this.dbName
@@ -286,6 +288,7 @@ func (this *alarmWorker) run(h engine.PluginHelper, goAhead chan bool) {
 			colsN := len(cols)
 			values := make([]interface{}, colsN)
 			valuePtrs := make([]interface{}, colsN)
+			rowSeverity := 0
 			this.workersMutex.Lock()
 			this.printWindowTitle(windowHead, windowTail, this.conf.title)
 			for rows.Next() {
@@ -311,21 +314,26 @@ func (this *alarmWorker) run(h engine.PluginHelper, goAhead chan bool) {
 					beep = true
 				}
 
-				this.feedAlarmMail(this.conf.severity*int(amount),
-					this.conf.printFormat, values...)
+				rowSeverity = this.conf.severity * int(amount)
 
 				// abnormal change? blink
 				if this.isAbnormalChange(amount,
 					this.historyKey(this.conf.printFormat, values)) {
 					this.blinkColorPrintfLn(this.conf.printFormat, values...)
+
+					// multiply factor
+					rowSeverity *= this.conf.abnormalSeverityFactor
 				}
 
 				this.colorPrintfLn(beep, this.conf.printFormat, values...)
+
+				this.feedAlarmMail(rowSeverity, this.conf.printFormat, values...)
 			}
 
 			// show summary
 			if this.conf.showSummary && summary.N > 0 {
-				this.colorPrintfLn(false, "Total: %.1f, Mean: %.1f", summary.Sum, summary.Mean)
+				this.colorPrintfLn(false, "Total: %.1f, Mean: %.1f", summary.Sum,
+					summary.Mean)
 			}
 
 			this.workersMutex.Unlock()
@@ -397,15 +405,15 @@ func (this *alarmWorker) fieldValues(msg *als.AlsMessage) (values []interface{},
 
 func (this *alarmWorker) isAbnormalChange(amount int64, key string) bool {
 	defer func() {
-		// will reset when history size is large enough
+		// reset when history size is large enough
 		if len(this.history) > (5<<20)/64 {
-			// each parser consumes 5M history data
-			// each history entry consumes 64bytes
+			// each alarm worker consumes at most 5M history data
+			// remark: each history entry consumes 64bytes
 			this.history = make(map[string]int64)
-			this.project.Printf("[%s] history data cleared", this.conf.title)
+			this.project.Printf("[%s] history data restart", this.conf.title)
 		}
 
-		this.history[key] = amount // refresh
+		this.history[key] = amount
 	}()
 
 	if amount < int64(this.conf.abnormalBase) {
