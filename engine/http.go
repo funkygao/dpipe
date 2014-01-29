@@ -2,6 +2,7 @@ package engine
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/funkygao/golib/bjtime"
 	"github.com/gorilla/mux"
@@ -76,6 +77,9 @@ func (this *EngineConfig) handleHttpQuery(w http.ResponseWriter, req *http.Reque
 
 	case "uris":
 		output["all"] = this.httpPaths
+
+	default:
+		return nil, errors.New("not found")
 	}
 
 	return output, nil
