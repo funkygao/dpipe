@@ -184,6 +184,22 @@ func (this *AlsLogInput) Run(r engine.InputRunner, h engine.PluginHelper) error 
 	return nil
 }
 
+func (this *AlsLogInput) refreshSources() {
+	wg := new(sync.WaitGroup)
+	for _, project := range this.projects {
+		for _, source := range project.sources {
+			if source.disabled {
+				continue
+			}
+
+			wg.Add(1)
+			go source.refresh(wg)
+		}
+	}
+
+	wg.Wait()
+}
+
 func (this *AlsLogInput) showPeriodicalStats(opendFiles int, tl time.Duration) {
 	if !this.showProgress {
 		return
@@ -280,22 +296,6 @@ LOOP:
 	if globals.Debug {
 		globals.Printf("[%s]%s stopped", source.project.name, fn)
 	}
-}
-
-func (this *AlsLogInput) refreshSources() {
-	wg := new(sync.WaitGroup)
-	for _, project := range this.projects {
-		for _, source := range project.sources {
-			if source.disabled {
-				continue
-			}
-
-			wg.Add(1)
-			go source.refresh(wg)
-		}
-	}
-
-	wg.Wait()
 }
 
 func init() {
