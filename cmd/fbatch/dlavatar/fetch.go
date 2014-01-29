@@ -33,19 +33,21 @@ func fetchAvatar(area, snsid string) {
 		return
 	}
 
-	response, _ := http.Get(avatarUrl(snsid))
-	if response != nil && response.Body != nil {
-		defer response.Body.Close()
-
-		body, _ := ioutil.ReadAll(response.Body)
-		if len(body) < 1024 {
-			// not a valid avatar image
-			return
-		}
-
-		targetFile := targetDir + area + "_" + snsid + jpegExt
-		ioutil.WriteFile(targetFile, body, 0644)
+	response, err := http.Get(avatarUrl(snsid))
+	if err != nil {
+		return
 	}
+
+	defer response.Body.Close()
+
+	body, _ := ioutil.ReadAll(response.Body)
+	if len(body) < 1024 {
+		// not a valid avatar image
+		return
+	}
+
+	targetFile := targetDir + area + "_" + snsid + jpegExt
+	ioutil.WriteFile(targetFile, body, 0644)
 }
 
 func generateAvatarHtml() {
