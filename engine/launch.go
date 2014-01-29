@@ -135,6 +135,7 @@ func Launch(e *EngineConfig) {
 	inputPackTracker.Stop()
 	filterPackTracker.Stop()
 
+	e.Lock()
 	for _, runner := range e.InputRunners {
 		if runner == nil {
 			// this Input plugin already exit
@@ -147,6 +148,7 @@ func Launch(e *EngineConfig) {
 
 		runner.Input().Stop()
 	}
+	e.Unlock()
 	inputsWg.Wait() // wait for all inputs done
 	if globals.Verbose {
 		globals.Println("All Inputs terminated")
