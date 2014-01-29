@@ -7,6 +7,7 @@ import (
 	"os/signal"
 	"sync"
 	"syscall"
+	"time"
 )
 
 // Start all runners and listens for signals
@@ -70,6 +71,19 @@ func Launch(e *EngineConfig) {
 
 	go inputPackTracker.Run(e.Int("diagnostic_interval", 20))
 	go filterPackTracker.Run(e.Int("diagnostic_interval", 20))
+
+	if globals.Verbose {
+		go func() {
+			t := time.NewTicker(time.Second * time.Duration(globals.TickerLength))
+			defer t.Stop()
+
+			for _ = range t.C {
+				globals.Printf("Recycle chan queue, input: %d filter: %d",
+					len(e.inputRecycleChan),
+					len(e.filterRecycleChan))
+			}
+		}()
+	}
 
 	go e.router.Start()
 
