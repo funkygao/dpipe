@@ -12,13 +12,6 @@
         {
             name:   "RS"
             show_error: true
-            alarm_email: {
-                recipients:   "peng.gao@funplusgame.com,zhengkai@gmail.com,yan.zhang@funplusgame.com"
-                suppress_hours: [23, 0, 1, 2, 3, 4, 5, 6, 7,]
-                severity_pool_size: 80
-                severity_threshold: 6
-                interval:   300
-            }
             logfile: "var/rs.log"    
             index_prefix: "rs"      
         }
@@ -200,6 +193,13 @@
             projects: [
                 {
                     name:   "RS"
+                    alarm_email: {
+                        recipients:   "peng.gao@funplusgame.com,zhengkai@gmail.com,yan.zhang@funplusgame.com"
+                        suppress_hours: [23, 0, 1, 2, 3, 4, 5, 6, 7,]
+                        severity_pool_size: 80
+                        severity_threshold: 6
+                        interval:   300
+                    }
                     workers: [
                         {
                             title:  "MongoError"

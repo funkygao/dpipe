@@ -23,42 +23,86 @@ func (this alarmMailMessage) String() string {
 	return fmt.Sprintf("[%d]%s", this.severity, this.msg)
 }
 
+type alarmProjectMailConf struct {
+	recipients        string
+	severityPoolSize  int
+	severityThreshold int
+	suppressHours     []int
+	interval          int
+}
+
+type alarmProjectConf struct {
+	name     string
+	mailConf alarmProjectMailConf
+	workers  map[string]*alarmWorker // key is camelName
+
+	emailChan chan alarmMailMessage
+	stopChan  chan interface{}
+}
+
+func (this *alarmProjectConf) fromConfig(config *conf.Conf) {
+	this.name = config.String("name", "")
+	if this.name == "" {
+		panic("project has no 'name'")
+	}
+
+	mailSection, err := config.Section("alarm_email")
+	if err == nil {
+		this.mailConf = alarmProjectMailConf{}
+		this.mailConf.severityPoolSize = mailSection.Int("severity_pool_size", 100)
+		this.mailConf.severityThreshold = mailSection.Int("severity_threshold", 8)
+		this.mailConf.suppressHours = mailSection.IntList("suppress_hours", nil)
+		this.mailConf.recipients = mailSection.String("recipients", "")
+		if this.mailConf.recipients == "" {
+			panic("mail alarm can't have no recipients")
+		}
+		this.mailConf.interval = mailSection.Int("interval", 300)
+	}
+
+	this.emailChan = make(chan alarmMailMessage)
+	workersMutex := new(sync.Mutex)
+	this.workers = make(map[string]*alarmWorker)
+	for i := 0; i < len(config.List("workers", nil)); i++ {
+		section, err := config.Section(fmt.Sprintf("workers[%d]", i))
+		if err != nil {
+			panic(err)
+		}
+
+		worker := &alarmWorker{projName: this.name,
+			emailChan: this.emailChan, workersMutex: workersMutex}
+		worker.init(section, this.stopChan)
+		this.workers[worker.conf.camelName] = worker
+	}
+	if len(this.workers) == 0 {
+		panic(fmt.Sprintf("%s empty 'workers'", this.name))
+	}
+}
+
 type AlarmOutput struct {
-	// {project: chan}
-	emailChans map[string]chan alarmMailMessage
-
-	// {project: {camelName: worker}}
-	workers map[string]map[string]*alarmWorker
-
+	projects map[string]alarmProjectConf // key is project name
 	stopChan chan interface{}
 }
 
 func (this *AlarmOutput) Init(config *conf.Conf) {
 	this.stopChan = make(chan interface{})
-	this.emailChans = make(map[string]chan alarmMailMessage)
-	this.workers = make(map[string]map[string]*alarmWorker)
-
+	this.projects = make(map[string]alarmProjectConf)
 	for i := 0; i < len(config.List("projects", nil)); i++ {
-		keyPrefix := fmt.Sprintf("projects[%d].", i)
-		proj := config.String(keyPrefix+"name", "")
-		this.emailChans[proj] = make(chan alarmMailMessage, 50)
-		this.workers[proj] = make(map[string]*alarmWorker)
-
-		workersMutex := new(sync.Mutex)
-
-		for j := 0; j < len(config.List(keyPrefix+"workers", nil)); j++ {
-			section, err := config.Section(fmt.Sprintf("%sworkers[%d]", keyPrefix, j))
-			if err != nil {
-				panic(err)
-			}
-
-			worker := &alarmWorker{projName: proj, emailChan: this.emailChans[proj],
-				workersMutex: workersMutex}
-			worker.init(section, this.stopChan)
-			this.workers[proj][worker.conf.camelName] = worker
+		section, err := config.Section(fmt.Sprintf("projects[%d]", i))
+		if err != nil {
+			panic(err)
 		}
-	}
 
+		project := alarmProjectConf{}
+		project.stopChan = this.stopChan
+		project.fromConfig(section)
+		if _, present := this.projects[project.name]; present {
+			panic("dup project: " + project.name)
+		}
+		this.projects[project.name] = project
+	}
+	if len(this.projects) == 0 {
+		panic("empty projects")
+	}
 }
 
 func (this *AlarmOutput) Run(r engine.OutputRunner, h engine.PluginHelper) error {
@@ -69,15 +113,15 @@ func (this *AlarmOutput) Run(r engine.OutputRunner, h engine.PluginHelper) error
 		inChan     = r.InChan()
 	)
 
-	for projName, emailChan := range this.emailChans {
-		go this.runSendAlarmsWatchdog(h.Project(projName), emailChan)
+	for name, project := range this.projects {
+		go this.runSendAlarmsWatchdog(h.Project(name), project)
 	}
 
 	// start all the workers
 	goAhead := make(chan bool)
-	for _, projectWorkers := range this.workers {
-		for _, w := range projectWorkers {
-			go w.run(h, goAhead)
+	for _, project := range this.projects {
+		for _, worker := range project.workers {
+			go worker.run(h, goAhead)
 			<-goAhead // in case of race condition with worker.inject
 		}
 	}
@@ -95,7 +139,7 @@ LOOP:
 				break LOOP
 			}
 
-			this.handlePack(pack)
+			this.handlePack(pack, h)
 			pack.Recycle()
 		}
 	}
@@ -103,22 +147,29 @@ LOOP:
 	close(this.stopChan)
 
 	// all the workers cleanup
-	for _, workers := range this.workers {
-		for _, w := range workers {
-			w.cleanup()
+	for _, project := range this.projects {
+		for _, worker := range project.workers {
+			worker.cleanup()
 		}
 	}
 
-	// close alarm email channels
-	for _, ch := range this.emailChans {
-		close(ch)
+	for _, project := range this.projects {
+		close(project.emailChan)
 	}
 
 	return nil
 }
 
+func (this *AlarmOutput) handlePack(pack *engine.PipelinePack,
+	h engine.PluginHelper) {
+	if worker, present := this.projects[pack.Project].
+		workers[pack.Logfile.CamelCaseName()]; present {
+		worker.inject(pack.Message, h.Project(pack.Project))
+	}
+}
+
 func (this *AlarmOutput) runSendAlarmsWatchdog(project *engine.ConfProject,
-	emailChan chan alarmMailMessage) {
+	config alarmProjectConf) {
 	var (
 		mailQueue   = pqueue.New()
 		mailBody    bytes.Buffer
@@ -130,7 +181,7 @@ func (this *AlarmOutput) runSendAlarmsWatchdog(project *engine.ConfProject,
 		// At night we are sleeping and will never checkout the alarms
 		// So queue it up till we've got up from bed
 		// FIXME will the mail queue overflow?
-		for _, h := range project.MailConf.SuppressHours {
+		for _, h := range config.mailConf.suppressHours {
 			if hour == h {
 				return true
 			}
@@ -141,22 +192,25 @@ func (this *AlarmOutput) runSendAlarmsWatchdog(project *engine.ConfProject,
 
 	heap.Init(mailQueue)
 
-	for alarmMessage := range emailChan {
-		if alarmMessage.severity >= project.MailConf.SeverityThreshold {
+	for alarmMessage := range config.emailChan {
+		if alarmMessage.severity < config.mailConf.severityThreshold {
 			// ignore little severity messages
-			heap.Push(mailQueue,
-				&pqueue.Item{
-					Value: fmt.Sprintf("%s[%3d] %s\n",
-						bjtime.TimeToString(alarmMessage.receivedAt),
-						alarmMessage.severity, alarmMessage.msg),
-					Priority: alarmMessage.severity})
+			continue
 		}
+
+		// enque
+		heap.Push(mailQueue,
+			&pqueue.Item{
+				Value: fmt.Sprintf("%s[%3d] %s\n",
+					bjtime.TimeToString(alarmMessage.receivedAt),
+					alarmMessage.severity, alarmMessage.msg),
+				Priority: alarmMessage.severity})
 
 		// check if send it out now
 		if !suppressedHour(bjtime.NowBj().Hour()) &&
-			mailQueue.PrioritySum() >= project.MailConf.SeverityPoolSize {
+			mailQueue.PrioritySum() >= config.mailConf.severityPoolSize {
 			if !lastSending.IsZero() &&
-				time.Since(lastSending).Seconds() < float64(project.MailConf.Interval) {
+				time.Since(lastSending).Seconds() < float64(config.mailConf.interval) {
 				// we can't send too many emails in emergancy
 				continue
 			}
@@ -171,20 +225,14 @@ func (this *AlarmOutput) runSendAlarmsWatchdog(project *engine.ConfProject,
 				mailBody.WriteString(mailLine.(*pqueue.Item).Value.(string))
 			}
 
-			go Sendmail(project.MailConf.Recipients,
+			go Sendmail(config.mailConf.recipients,
 				fmt.Sprintf("ALS[%s] alarms", project.Name), mailBody.String())
 
-			project.Printf("alarm sent=> %s", project.MailConf.Recipients)
+			project.Printf("alarm sent=> %s", config.mailConf.recipients)
 
 			mailBody.Reset()
 			lastSending = time.Now()
 		}
-	}
-}
-
-func (this *AlarmOutput) handlePack(pack *engine.PipelinePack) {
-	if worker, present := this.workers[pack.Project][pack.Logfile.CamelCaseName()]; present {
-		worker.inject(pack.Message)
 	}
 }
 

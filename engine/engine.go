@@ -165,7 +165,7 @@ func (this *EngineConfig) LoadConfigFile(fn string) {
 		}
 
 		project := &ConfProject{}
-		project.FromConfig(section)
+		project.fromConfig(section)
 		if _, present := this.projects[project.Name]; present {
 			panic("dup project: " + project.Name)
 		}

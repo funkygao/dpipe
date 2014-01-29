@@ -126,7 +126,7 @@ type alarmWorkerConfig struct {
 func (this *alarmWorkerConfig) init(config *conf.Conf) {
 	this.camelName = config.String("camel_name", "")
 	if this.camelName == "" {
-		panic("empty camel_name")
+		panic("empty 'camel_name'")
 	}
 
 	this.title = config.String("title", "")
@@ -136,6 +136,9 @@ func (this *alarmWorkerConfig) init(config *conf.Conf) {
 	this.colors = config.StringList("colors", nil)
 	this.printFormat = config.String("printf", "")
 	this.instantFormat = config.String("iprintf", "")
+	if this.printFormat == "" && this.instantFormat == "" {
+		panic(fmt.Sprintf("%s empty 'printf' and 'iprintf'", this.title))
+	}
 	this.severity = config.Int("severity", 1)
 	this.windowSize = time.Duration(config.Int("window_size", 0)) * time.Second
 	this.showSummary = config.Bool("show_summary", false)
@@ -144,7 +147,7 @@ func (this *alarmWorkerConfig) init(config *conf.Conf) {
 	this.abnormalSeverityFactor = config.Int("abnormal_severity_factor", 3)
 	this.abnormalPercent = config.Float("abnormal_percent", 1.5)
 	this.dbName = config.String("dbname", "")
-	this.tableName = this.dbName
+	this.tableName = this.dbName // table name is db name
 	this.createTable = config.String("create_table", "")
 	this.insertStmt = config.String("insert_stmt", "")
 	this.statsStmt = config.String("stats_stmt", "")
@@ -159,6 +162,9 @@ func (this *alarmWorkerConfig) init(config *conf.Conf) {
 		field := alarmWorkerConfigField{}
 		field.init(section)
 		this.fields = append(this.fields, field)
+	}
+	if len(this.fields) == 0 {
+		panic(fmt.Sprintf("%s empty 'fields'", this.title))
 	}
 }
 
@@ -349,9 +355,13 @@ func (this *alarmWorker) run(h engine.PluginHelper, goAhead chan bool) {
 
 }
 
-func (this *alarmWorker) inject(msg *als.AlsMessage) {
+func (this *alarmWorker) inject(msg *als.AlsMessage, project *engine.ConfProject) {
 	args, severity, err := this.fieldValues(msg)
 	if err != nil {
+		if project.ShowError {
+			project.Println(err)
+		}
+
 		return
 	}
 
@@ -374,6 +384,7 @@ func (this *alarmWorker) inject(msg *als.AlsMessage) {
 
 	// insert_stmt must be like INSERT INTO (area, ts, ...)
 	args = append([]interface{}{msg.Area, msg.Timestamp}, args...)
+	// enque to slide window
 	this.insert(args...)
 }
 

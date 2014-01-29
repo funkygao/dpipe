@@ -19,6 +19,7 @@ Release Notes - dpipe - Version v0.5.0.rc
     . ES index patterns add support for ym/ymw/ymd
     . send alarm according to severity instead of accumulated lines num with priority queue
     . accumulate alarm email at night
+    . abnormal change severity factor is considered
 
 ** BugFixed
 
@@ -36,5 +37,6 @@ Release Notes - dpipe - Version v0.5.0.rc
     . alarm can compare now with same clock yesterday
     . cardinality of uid doesn't work
     . html alarm email
+    . plugins can kill themselves if conf error
 
 ----
