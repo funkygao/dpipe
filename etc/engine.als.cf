@@ -189,7 +189,7 @@
             name:   "EsOutput"
             match:  ["esFiltered", "alsSysStat", "esBuffer"]
             dryrun: false
-            show_progress: true
+            show_progress: false
             report_interval: 60
             domain: "localhost"
             port: "9200"

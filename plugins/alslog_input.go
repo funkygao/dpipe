@@ -248,6 +248,8 @@ LOOP:
 				break LOOP
 			}
 
+			this.counters.Inc(source.ident, 1)
+
 			if globals.VeryVerbose {
 				globals.Printf("[%s]got line: %s\n", filepath.Base(fn), line.Text)
 			}
@@ -269,7 +271,6 @@ LOOP:
 				pack.Message.SetSize(len(line.Text))
 			}
 
-			this.counters.Inc(source.ident, 1)
 			pack.Ident = source.ident
 			r.Inject(pack)
 		}
