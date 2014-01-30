@@ -45,7 +45,7 @@
         {
             name:   "AlsLogInput"
             show_pregress: true
-            ticker_interval: 70
+            ticker_interval: 370
             poll_interval_ms: 250
             projects: [
                 {
@@ -178,8 +178,8 @@
             name:   "EsOutput"
             match:  ["esFiltered", "alsSysStat", "esBuffer"]
             dryrun: false
-            show_progress: false
-            report_interval: 60
+            show_progress: true
+            report_interval: 366
             domain: "localhost"
             port: "9200"
             flush_interval: 30
