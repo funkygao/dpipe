@@ -22,8 +22,8 @@ import (
 )
 
 var (
-	errIgnored = errors.New("message ignored")
-	errEmpty   = errors.New("empty")
+	errMessageIgnored   = errors.New("message ignored")
+	errSlideWindowEmpty = errors.New("empty slide window")
 )
 
 type alarmWorkerConfigField struct {
@@ -82,14 +82,14 @@ func (this *alarmWorkerConfigField) value(msg *als.AlsMessage) (val interface{},
 
 		for _, ignore := range this.ignores {
 			if strings.Contains(valstr, ignore) {
-				err = errIgnored
+				err = errMessageIgnored
 				return
 			}
 		}
 
 		for _, ignore := range this._regexIgnores {
 			if ignore.MatchString(valstr) {
-				err = errIgnored
+				err = errMessageIgnored
 				return
 			}
 		}
@@ -358,7 +358,7 @@ func (this *alarmWorker) run(h engine.PluginHelper, goAhead chan bool) {
 func (this *alarmWorker) inject(msg *als.AlsMessage, project *engine.ConfProject) {
 	args, severity, err := this.fieldValues(msg)
 	if err != nil {
-		if project.ShowError {
+		if err != errMessageIgnored && project.ShowError {
 			project.Println(err)
 		}
 
@@ -531,12 +531,8 @@ func (this *alarmWorker) getWindowBorder(wheres ...string) (head, tail int, err 
 
 	row := this.db.QueryRow(query)
 	err = row.Scan(&head, &tail)
-	if head == 0 && tail == 0 {
-		err = errEmpty
-		return
-	}
-	if row == nil {
-		err = errEmpty
+	if row == nil || (head == 0 && tail == 0) {
+		err = errSlideWindowEmpty
 		return
 	}
 
