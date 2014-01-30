@@ -46,6 +46,10 @@ func (this *EngineConfig) handleHttpQuery(w http.ResponseWriter, req *http.Reque
 	case "ping":
 		output["status"] = "ok"
 
+	case "shutdown":
+		globals.Shutdown()
+		output["status"] = "ok"
+
 	case "pools":
 		for poolName, _ := range this.diagnosticTrackers {
 			packs := make([]string, 0, globals.RecyclePoolSize)
