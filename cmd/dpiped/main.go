@@ -60,9 +60,9 @@ func main() {
 	go runWatchdog(ticker)
 	defer ticker.Stop()
 
-	eng := engine.NewEngineConfig(globals)
-	eng.LoadConfigFile(options.configfile)
-	engine.Launch(eng)
+	engine.NewEngineConfig(globals).
+		LoadConfigFile(options.configfile).
+		ServeForever()
 
 	shutdown()
 }

@@ -10,8 +10,7 @@ import (
 	"time"
 )
 
-// Start all runners and listens for signals
-func Launch(e *EngineConfig) {
+func (e *EngineConfig) ServeForever() {
 	var (
 		outputsWg = new(sync.WaitGroup)
 		filtersWg = new(sync.WaitGroup)

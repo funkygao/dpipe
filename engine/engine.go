@@ -130,7 +130,7 @@ func (this *EngineConfig) PipelinePack(msgLoopCount int) *PipelinePack {
 	return pack
 }
 
-func (this *EngineConfig) LoadConfigFile(fn string) {
+func (this *EngineConfig) LoadConfigFile(fn string) *EngineConfig {
 	cf, err := conf.Load(fn)
 	if err != nil {
 		panic(err)
@@ -181,6 +181,8 @@ func (this *EngineConfig) LoadConfigFile(fn string) {
 
 		this.loadPluginSection(section)
 	}
+
+	return this
 }
 
 func (this *EngineConfig) loadPluginSection(section *conf.Conf) {
