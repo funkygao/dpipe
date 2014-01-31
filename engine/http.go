@@ -50,20 +50,10 @@ func (this *EngineConfig) handleHttpQuery(w http.ResponseWriter, req *http.Reque
 		globals.Shutdown()
 		output["status"] = "ok"
 
-	case "pools":
-		for poolName, _ := range this.diagnosticTrackers {
-			packs := make([]string, 0, globals.RecyclePoolSize)
-			for _, pack := range this.diagnosticTrackers[poolName].packs {
-				s := fmt.Sprintf("[%s]%s",
-					bjtime.TimeToString(pack.diagnostics.LastAccess),
-					*pack)
-				packs = append(packs, s)
-			}
-			output[poolName] = packs
-			output[poolName+"_len"] = len(packs)
-		}
+	case "reload", "restart":
+		break
 
-	case "stack":
+	case "debug":
 		stack := make([]byte, 1<<20)
 		stackSize := runtime.Stack(stack, true)
 		globals.Println(string(stack[:stackSize]))
@@ -77,6 +67,19 @@ func (this *EngineConfig) handleHttpQuery(w http.ResponseWriter, req *http.Reque
 		output["pid"] = this.pid
 		output["hostname"] = this.hostname
 
+	case "pools":
+		for poolName, _ := range this.diagnosticTrackers {
+			packs := make([]string, 0, globals.RecyclePoolSize)
+			for _, pack := range this.diagnosticTrackers[poolName].packs {
+				s := fmt.Sprintf("[%s]%s",
+					bjtime.TimeToString(pack.diagnostics.LastAccess),
+					*pack)
+				packs = append(packs, s)
+			}
+			output[poolName] = packs
+			output[poolName+"_len"] = len(packs)
+		}
+
 	case "plugins":
 		output["plugins"] = this.pluginNames()
 
@@ -84,7 +87,7 @@ func (this *EngineConfig) handleHttpQuery(w http.ResponseWriter, req *http.Reque
 		output["all"] = this.httpPaths
 
 	default:
-		return nil, errors.New("not found")
+		return nil, errors.New("Not Found")
 	}
 
 	return output, nil
