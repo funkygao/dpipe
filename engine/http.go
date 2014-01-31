@@ -141,6 +141,7 @@ func (this *EngineConfig) RegisterHttpApi(path string,
 			// pretty write json result
 			pretty, _ := json.MarshalIndent(ret, "", "    ")
 			w.Write(pretty)
+			w.Write([]byte("\n"))
 		}
 	}
 
