@@ -50,6 +50,23 @@ func (this *EngineConfig) handleHttpQuery(w http.ResponseWriter, req *http.Reque
 		globals.Shutdown()
 		output["status"] = "ok"
 
+	case "reload", "restart":
+		break
+
+	case "debug":
+		stack := make([]byte, 1<<20)
+		stackSize := runtime.Stack(stack, true)
+		globals.Println(string(stack[:stackSize]))
+		output["result"] = "go to global logger to see result"
+
+	case "stat":
+		output["runtime"] = this.stats.Runtime()
+		output["router"] = this.router.stats
+		output["started"] = globals.StartedAt
+		output["elapsed"] = time.Since(globals.StartedAt).String()
+		output["pid"] = this.pid
+		output["hostname"] = this.hostname
+
 	case "pools":
 		for poolName, _ := range this.diagnosticTrackers {
 			packs := make([]string, 0, globals.RecyclePoolSize)
@@ -63,20 +80,6 @@ func (this *EngineConfig) handleHttpQuery(w http.ResponseWriter, req *http.Reque
 			output[poolName+"_len"] = len(packs)
 		}
 
-	case "stack":
-		stack := make([]byte, 1<<20)
-		stackSize := runtime.Stack(stack, true)
-		globals.Println(string(stack[:stackSize]))
-		output["result"] = "go to global logger to see result"
-
-	case "stat":
-		output["runtime"] = this.stats.Runtime()
-		output["router"] = this.router.stats
-		output["started"] = globals.StartedAt
-		output["elapsed"] = time.Since(globals.StartedAt)
-		output["pid"] = this.pid
-		output["hostname"] = this.hostname
-
 	case "plugins":
 		output["plugins"] = this.pluginNames()
 
@@ -84,7 +87,7 @@ func (this *EngineConfig) handleHttpQuery(w http.ResponseWriter, req *http.Reque
 		output["all"] = this.httpPaths
 
 	default:
-		return nil, errors.New("not found")
+		return nil, errors.New("Not Found")
 	}
 
 	return output, nil

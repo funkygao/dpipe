@@ -22,8 +22,8 @@ import (
 )
 
 var (
-	errIgnored = errors.New("message ignored")
-	errEmpty   = errors.New("empty")
+	errMessageIgnored   = errors.New("message ignored")
+	errSlideWindowEmpty = errors.New("empty slide window")
 )
 
 type alarmWorkerConfigField struct {
@@ -82,14 +82,14 @@ func (this *alarmWorkerConfigField) value(msg *als.AlsMessage) (val interface{},
 
 		for _, ignore := range this.ignores {
 			if strings.Contains(valstr, ignore) {
-				err = errIgnored
+				err = errMessageIgnored
 				return
 			}
 		}
 
 		for _, ignore := range this._regexIgnores {
 			if ignore.MatchString(valstr) {
-				err = errIgnored
+				err = errMessageIgnored
 				return
 			}
 		}
@@ -144,7 +144,7 @@ func (this *alarmWorkerConfig) init(config *conf.Conf) {
 	this.showSummary = config.Bool("show_summary", false)
 	this.beepThreshold = config.Int("beep_threshold", 0)
 	this.abnormalBase = config.Int("abnormal_base", 10)
-	this.abnormalSeverityFactor = config.Int("abnormal_severity_factor", 3)
+	this.abnormalSeverityFactor = config.Int("abnormal_severity_factor", 2)
 	this.abnormalPercent = config.Float("abnormal_percent", 1.5)
 	this.dbName = config.String("dbname", "")
 	this.tableName = this.dbName // table name is db name
@@ -295,6 +295,7 @@ func (this *alarmWorker) run(h engine.PluginHelper, goAhead chan bool) {
 			values := make([]interface{}, colsN)
 			valuePtrs := make([]interface{}, colsN)
 			rowSeverity := 0
+			abnormal := false
 			this.workersMutex.Lock()
 			this.printWindowTitle(windowHead, windowTail, this.conf.title)
 			for rows.Next() {
@@ -327,13 +328,14 @@ func (this *alarmWorker) run(h engine.PluginHelper, goAhead chan bool) {
 					this.historyKey(this.conf.printFormat, values)) {
 					this.blinkColorPrintfLn(this.conf.printFormat, values...)
 
+					abnormal = true
 					// multiply factor
 					rowSeverity *= this.conf.abnormalSeverityFactor
 				}
 
 				this.colorPrintfLn(beep, this.conf.printFormat, values...)
 
-				this.feedAlarmMail(rowSeverity, this.conf.printFormat, values...)
+				this.feedAlarmMail(abnormal, rowSeverity, this.conf.printFormat, values...)
 			}
 
 			// show summary
@@ -358,7 +360,7 @@ func (this *alarmWorker) run(h engine.PluginHelper, goAhead chan bool) {
 func (this *alarmWorker) inject(msg *als.AlsMessage, project *engine.ConfProject) {
 	args, severity, err := this.fieldValues(msg)
 	if err != nil {
-		if project.ShowError {
+		if err != errMessageIgnored && project.ShowError {
 			project.Println(err)
 		}
 
@@ -377,7 +379,7 @@ func (this *alarmWorker) inject(msg *als.AlsMessage, project *engine.ConfProject
 		this.workersMutex.Unlock()
 
 		if this._instantAlarmOnly {
-			this.feedAlarmMail(severity, this.conf.instantFormat, iargs...)
+			this.feedAlarmMail(false, severity, this.conf.instantFormat, iargs...)
 			return
 		}
 	}
@@ -441,7 +443,8 @@ func (this *alarmWorker) isAbnormalChange(amount int64, key string) bool {
 	return false
 }
 
-func (this *alarmWorker) feedAlarmMail(severity int, format string, args ...interface{}) {
+func (this *alarmWorker) feedAlarmMail(abnormal bool, severity int,
+	format string, args ...interface{}) {
 	if severity < 1 {
 		return
 	}
@@ -452,7 +455,7 @@ func (this *alarmWorker) feedAlarmMail(severity int, format string, args ...inte
 	}
 
 	this.emailChan <- alarmMailMessage{msg: msg, severity: severity,
-		receivedAt: time.Now()}
+		abnormal: abnormal, receivedAt: time.Now()}
 }
 
 func (this *alarmWorker) historyKey(printf string, values []interface{}) string {
@@ -531,12 +534,8 @@ func (this *alarmWorker) getWindowBorder(wheres ...string) (head, tail int, err 
 
 	row := this.db.QueryRow(query)
 	err = row.Scan(&head, &tail)
-	if head == 0 && tail == 0 {
-		err = errEmpty
-		return
-	}
-	if row == nil {
-		err = errEmpty
+	if row == nil || (head == 0 && tail == 0) {
+		err = errSlideWindowEmpty
 		return
 	}
 

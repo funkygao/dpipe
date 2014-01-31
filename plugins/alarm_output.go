@@ -16,6 +16,7 @@ import (
 type alarmMailMessage struct {
 	msg        string
 	severity   int
+	abnormal   bool
 	receivedAt time.Time
 }
 
@@ -201,7 +202,7 @@ func (this *AlarmOutput) runSendAlarmsWatchdog(project *engine.ConfProject,
 		// enque
 		heap.Push(mailQueue,
 			&pqueue.Item{
-				Value: fmt.Sprintf("%s[%3d] %s\n",
+				Value: fmt.Sprintf("%s[%4d] %s\n",
 					bjtime.TimeToString(alarmMessage.receivedAt),
 					alarmMessage.severity, alarmMessage.msg),
 				Priority: alarmMessage.severity})
