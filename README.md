@@ -28,7 +28,7 @@ Performing "in-flight" processing of collected data, real time streaming analysi
 *   cardinality statistics(for MAU alike counters where storing the data for statistics is prohibitive)
     
     In fact, if the data is stored only for the purpose of statistical calculations, incremental updates make storage unnecessary.
-*   write events to ElasticSearch 
+*   write decorated events to ElasticSearch(geoip, level range, del fields, auto sharding, currency convert)
 *   ElasticSearch buffering(lessen uneccessary load of ES, e,g. dau, pv, hits)
 *   behaviour db, dimensional funnel analysis(user based action series)
 *   batch processing of historical logs
