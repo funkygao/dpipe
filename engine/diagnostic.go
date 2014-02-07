@@ -76,8 +76,10 @@ func (this *DiagnosticTracker) Run(interval int) {
 					globals.Printf("\t%s: %d", runner.Name(), count)
 				}
 
-				for _, pack := range probablePacks {
-					globals.Printf("[%s]%s", this.PoolName, *pack)
+				if globals.Debug {
+					for _, pack := range probablePacks {
+						globals.Printf("[%s]%s", this.PoolName, *pack)
+					}
 				}
 			}
 
