@@ -82,7 +82,7 @@ func (e *EngineConfig) ServeForever() {
 			inputPoolSize = len(e.inputRecycleChan)
 			filterPoolSize = len(e.filterRecycleChan)
 			if globals.Verbose || inputPoolSize == 0 || filterPoolSize == 0 {
-				globals.Printf("Recycle poolSize: [input]%d [filter]%d",
+				globals.Printf("Recycle pool energy: [input]%d [filter]%d",
 					inputPoolSize, filterPoolSize)
 			}
 		}
