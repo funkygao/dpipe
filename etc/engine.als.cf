@@ -196,7 +196,7 @@
                     alarm_email: {
                         recipients:   "peng.gao@funplusgame.com,zhengkai@gmail.com,yan.zhang@funplusgame.com"
                         suppress_hours: [23, 0, 1, 2, 3, 4, 5, 6, 7,]
-                        severity_pool_size: 480
+                        severity_pool_size: 880
                         severity_threshold: 6
                         interval:   300
                     }
