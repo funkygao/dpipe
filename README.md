@@ -42,6 +42,8 @@ It's sentry+logstash+flunted+splunk.
 ### Currently Supported Plugins
 
 *   slide window based streaming biz alarm
+
+    colored log + console beep + email alarming
 *   cardinality statistics(for MAU alike counters where storing the data for statistics is prohibitive)
     
     In fact, if the data is stored only for the purpose of statistical calculations, incremental updates make storage unnecessary.
