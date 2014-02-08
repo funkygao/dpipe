@@ -23,10 +23,10 @@ It's sentry+logstash+flunted+splunk.
     - it's easy make complex of your config file, so visualization is a great help
 *   implementation highlights
     - high(universal) abstraction of data processing as input -> codec -> filter -> output
-    - high performance routing
-    - rich self monitoring/diagnostic interface
-    - reference counter based recyle channel buffer to lessen golang GC
     - plugin design for extenstion
+    - reference counter based recyle channel buffer to lessen golang GC
+    - rich self monitoring/diagnostic interface
+    - high performance routing
     - thanks to golang channel, self-healing when input/output speed doesn't match without message queue
     - most key checkpoint was under benchmark test and unit test
 
@@ -59,19 +59,20 @@ It's sentry+logstash+flunted+splunk.
     - alert email(aggregation, it is basically a priority queue)
 *   cardinality statistics(for MAU alike counters where storing the data for statistics is prohibitive)
 
-    In fact, if the data is stored only for the purpose of statistical calculations, incremental updates make storage unnecessary.
+    In fact, if the data is stored only for the purpose of statistical calculations, incremental updates makes storage unnecessary.
 *   ElasticSearch feeding
     - feed decorated events to ElasticSearch
         - auto ES sharding by date/week/month
-        - geoip
-        - user level range
-        - delete fields
+        - geoip filling
+        - user level range transformation
+        - delete unwanted fields
         - currency convert
         - and more
     - ElasticSearch buffering(lessen uneccessary load of ES, e,g. dau, pv, hits)
-*   behaviour db, dimensional funnel analysis(user based action series)
+*   behaviour db for dimensional funnel analysis(user/time based action series)
 *   batch processing of historical logs
-*   self monitoring
+    - some data does not need instant(within second) processing
+*   receiver/sender for hierarchy deployment
 *   to be more...
 
 ### Architecture
