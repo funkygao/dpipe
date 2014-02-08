@@ -138,20 +138,6 @@ It's sentry+logstash+flunted+splunk.
                    (streaming)               -- alarm ------
 
 
-#### PipelinePack
-
-Main pipeline data structure containing a AlsMessage and other metadata
-
-##### buffer size of PipelinePack
-
-* EngineConfig
-  - PoolSize
-* Runner
-  - PluginChanSize
-* Router
-  - PluginChanSize
-
-
 ##### data flow
 
                             -------<-------- 
