@@ -15,10 +15,12 @@ It's sentry+logstash+flunted+splunk.
 
 ### Features
 
-*   data pipeline by design, meets most data(log events) processing requirement
 *   multi-tenant
+*   data pipeline by design, meets most data(log events) processing requirement
 *   because of the engine design, it's very easy to create a new plugin to meet more requirement
-*   implementation
+*   visualization of data pipeline path
+*   thanks to golang channel, self-healing when input/output speed doesn't match without message queue
+*   implementation highlights
     - high(universal) abstraction of data processing as input -> codec -> filter -> output
     - high performance routing
     - rich self monitoring/diagnostic interface
