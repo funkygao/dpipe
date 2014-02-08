@@ -43,7 +43,7 @@ It's sentry+logstash+flunted+splunk.
 
 *   slide window based streaming biz alarm
 
-    colored log + console beep + email alarming
+    colored log(different color represent different event) + console beep(let you know instantly) + email alarming(aggregation)
 *   cardinality statistics(for MAU alike counters where storing the data for statistics is prohibitive)
     
     In fact, if the data is stored only for the purpose of statistical calculations, incremental updates make storage unnecessary.
