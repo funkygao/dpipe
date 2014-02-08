@@ -99,7 +99,7 @@ func (this *messageRouter) addOutputMatcher(matcher *Matcher) {
 
 func (this *messageRouter) reportMatcherQueues(logger *log.Logger) {
 	globals := Globals()
-	s := fmt.Sprintf("router.in=%d", len(this.inChan))
+	s := fmt.Sprintf("Queued hub=%d", len(this.inChan))
 	if len(this.inChan) == globals.PluginChanSize {
 		s = fmt.Sprintf("%s(F)", s)
 	}
