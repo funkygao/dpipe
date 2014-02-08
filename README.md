@@ -56,7 +56,7 @@ It's sentry+logstash+flunted+splunk.
 
 *   slide window based streaming biz alarm
     - console beep(let you know instantly)
-    - colored log(different color represent different kind of event) 
+    - colored log(different color represent different kind of event you specified) 
     - alert email(aggregation, it is basically a priority queue)
 *   cardinality statistics(for MAU alike counters where storing the data for statistics is prohibitive)
 
