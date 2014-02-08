@@ -2,6 +2,8 @@ dpipe
 =====
 Distributed Data Pipeline
 
+It's sentry+logstash+flunted+splunk.
+
          _       _           
         | |     (_)           
       __| |_ __  _ _ __   ___  
@@ -12,7 +14,6 @@ Distributed Data Pipeline
           |_|     |_|
             
 
-It's sentry+logstash+flunted+splunk.
 
 [![Build Status](https://travis-ci.org/funkygao/dpipe.png?branch=master)](https://travis-ci.org/funkygao/dpipe)
 
