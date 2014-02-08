@@ -120,7 +120,7 @@ Main pipeline data structure containing a AlsMessage and other metadata
         InputRunner.inChan
                 |
                 |     +--------------------------------------------------------+
-        consume |     |                     Router.inChan                      |
+        consume |     |                     Router.hub                         |
                 V     +--------------------------------------------------------+
               Input         ^           |               |                   ^
                 |           |           | put           | put               |
