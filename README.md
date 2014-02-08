@@ -74,7 +74,7 @@ It's sentry+logstash+flunted+splunk.
 *   batch processing of historical logs
     - some data does not need instant(latency within a second) processing
     - just want to have snapshot
-*   receiver/sender for hierarchy deployment
+*   tcp receiver/sender for hierarchy deployment
 *   to be more...
 
 ### Architecture
