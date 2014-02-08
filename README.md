@@ -15,8 +15,9 @@ It's sentry+logstash+flunted+splunk.
 
 ### Features
 
+*   engine + plugins and driven by configuration
 *   multi-tenant
-*   data pipeline by design, meets most data(log events) processing requirement
+*   data(log events) pipeline by design, meets most data processing requirement
 *   because of the engine design, it's very easy to create a new plugin to meet more requirements
 *   visualization of data pipeline path
     - it's easy make complex of your config file, so visualization is a great help
