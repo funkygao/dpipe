@@ -39,6 +39,10 @@ It's sentry+logstash+flunted+splunk.
     ./build.sh
     ./cmd/dpiped/dpiped -conf etc/engine.als.cf
 
+### Features
+
+*   multi-tenant
+
 ### Currently Supported Plugins
 
 *   slide window based streaming biz alarm
