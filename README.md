@@ -1,6 +1,6 @@
 dpipe
 =====
-
+Distributed Data Pipeline
 
          _       _           
         | |     (_)           
@@ -11,8 +11,6 @@ dpipe
           | |     | |
           |_|     |_|
             
-
-Distributed Data Pipeline
 
 It's sentry+logstash+flunted+splunk.
 
