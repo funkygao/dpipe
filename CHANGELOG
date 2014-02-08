@@ -26,8 +26,8 @@ Release Notes - dpipe - Version v0.5.0.rc
     . alslog_input sometimes freeze
       because sortedmap.SortedKeys will dead lock
     . alslog_input.go:260: [/mnt/funplus/logs/fp_rstory/user.0.log]unexpected EOF: fr,1390905013221,{"action":"sell","ide
-    . occasionally, EsOutput can't get EsIndex/EsType info
-      [maybe] because SkyOutput matches all and because of race condition it recyles first
+    . race condition of shared mem, concurrent modification 
+      copy on write
 
 ** Todo
 
