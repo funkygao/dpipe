@@ -34,5 +34,5 @@ func TestAlarmFieldIgnore(t *testing.T) {
 	assert.Equal(t, "ae", msg.Area)
 	value, err := f.value(msg)
 	assert.Equal(t, nil, err)
-	t.Logf("%v %v", value, err)
+	assert.Equal(t, "2014-02-08 06:01:35 [INFO] Update local version to e9818f0812b3933ac62d630b5b99aac5 for release royal.ae.php", value)
 }
