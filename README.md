@@ -47,13 +47,19 @@ It's sentry+logstash+flunted+splunk.
 
 *   slide window based streaming biz alarm
     - console beep(let you know instantly)
-    - colored log(different color represent different event) 
+    - colored log(different color represent different kind of event) 
     - alert email(aggregation, it is basically a priority queue)
 *   cardinality statistics(for MAU alike counters where storing the data for statistics is prohibitive)
 
     In fact, if the data is stored only for the purpose of statistical calculations, incremental updates make storage unnecessary.
 *   ElasticSearch feeding
-    - write decorated events to ElasticSearch(geoip, level range, del fields, auto sharding, currency convert)
+    - feed decorated events to ElasticSearch
+        - auto ES sharding
+        - geoip
+        - user level range
+        - delete fields
+        - currency convert
+        - and more
     - ElasticSearch buffering(lessen uneccessary load of ES, e,g. dau, pv, hits)
 *   behaviour db, dimensional funnel analysis(user based action series)
 *   batch processing of historical logs
