@@ -18,6 +18,8 @@ It's sentry+logstash+flunted+splunk.
 ### Install
 
     go get github.com/funkygao/dpipe
+    build.sh
+    ./cmd/dpiped/dpiped -conf etc/engine.als.cf
 
 ### Currently Supported Plugins
 
