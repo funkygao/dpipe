@@ -7,7 +7,7 @@ import (
 )
 
 const (
-	VERSION = "v0.5.0.rc"
+	VERSION = "v0.5.1.release"
 	AUTHOR  = "gaopeng@funplusgame.com"
 )
 
