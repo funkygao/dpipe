@@ -13,6 +13,10 @@ It's sentry+logstash+flunted+splunk.
             
 [![Build Status](https://travis-ci.org/funkygao/dpipe.png?branch=master)](https://travis-ci.org/funkygao/dpipe)
 
+### Features
+
+*   multi-tenant
+
 ### Install
 
     #========================================
@@ -39,20 +43,16 @@ It's sentry+logstash+flunted+splunk.
     ./build.sh
     ./cmd/dpiped/dpiped -conf etc/engine.als.cf
 
-### Features
-
-*   multi-tenant
-
 ### Currently Supported Plugins
 
 *   slide window based streaming biz alarm
-
-    colored log(different color represent different event) + console beep(let you know instantly) + email alarming(aggregation)
+    colored log(different color represent different event) + console beep(let you know instantly) + email 
+    alarming(aggregation, it is basically a priority queue)
 *   cardinality statistics(for MAU alike counters where storing the data for statistics is prohibitive)
-    
     In fact, if the data is stored only for the purpose of statistical calculations, incremental updates make storage unnecessary.
-*   write decorated events to ElasticSearch(geoip, level range, del fields, auto sharding, currency convert)
-*   ElasticSearch buffering(lessen uneccessary load of ES, e,g. dau, pv, hits)
+*   ElasticSearch feeding
+    - write decorated events to ElasticSearch(geoip, level range, del fields, auto sharding, currency convert)
+    - ElasticSearch buffering(lessen uneccessary load of ES, e,g. dau, pv, hits)
 *   behaviour db, dimensional funnel analysis(user based action series)
 *   batch processing of historical logs
 *   self monitoring
