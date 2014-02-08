@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"github.com/funkygao/als"
 	"github.com/funkygao/dpipe/engine"
-	"github.com/funkygao/dpipe/parser"
+	"github.com/funkygao/dpipe/plugins/parser"
 	"github.com/funkygao/golib/bjtime"
 	sqldb "github.com/funkygao/golib/db"
 	"github.com/funkygao/golib/stats"
