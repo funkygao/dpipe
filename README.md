@@ -46,9 +46,9 @@ It's sentry+logstash+flunted+splunk.
 ### Currently Supported Plugins
 
 *   slide window based streaming biz alarm
-
-    colored log(different color represent different event) + console beep(let you know instantly) + email 
-    alarming(aggregation, it is basically a priority queue)
+    - console beep(let you know instantly)
+    - colored log(different color represent different event) 
+    - alert email(aggregation, it is basically a priority queue)
 *   cardinality statistics(for MAU alike counters where storing the data for statistics is prohibitive)
 
     In fact, if the data is stored only for the purpose of statistical calculations, incremental updates make storage unnecessary.
