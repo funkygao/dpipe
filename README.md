@@ -1,7 +1,5 @@
-dpipe
-=====
-Distributed Data Pipeline
-
+dpipe - Distributed Data Pipeline
+=================================
 It's sentry+logstash+flunted+splunk.
 
          _       _           
