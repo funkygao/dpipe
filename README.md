@@ -16,6 +16,7 @@ It's sentry+logstash+flunted+splunk.
 ### Features
 
 *   multi-tenant
+*   because of the engine design, it's very easy to create a new plugin to meet more requirement
 
 ### Install
 
