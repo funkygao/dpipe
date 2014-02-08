@@ -151,7 +151,7 @@ Main pipeline data structure containing a AlsMessage and other metadata
           |     |
           |      --- close outRunner.inChan ------ Output stopped
           |
-        router ----- wait for FO runner finish --- close router.inChan 
+        router ----- wait for FO runner finish --- close router.hub
           |
         done
 
