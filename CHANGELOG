@@ -31,12 +31,11 @@ Release Notes - dpipe - Version v0.5.0.rc
 
 ** Todo
 
-    . change logger to code.google.com/p/log4go
     . Reload on HUP
     . faster json marshal/unmarshal, currently its 20000ns/op, that's 50K msg/s
     . alarm can compare now with same clock yesterday
     . cardinality of uid doesn't work
     . html alarm email
-    . plugins can kill themselves if conf error
+    . plugins can kill themselves if conf error without polution for others
 
 ----
