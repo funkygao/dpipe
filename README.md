@@ -11,8 +11,6 @@ It's sentry+logstash+flunted+splunk.
           | |     | |
           |_|     |_|
             
-
-
 [![Build Status](https://travis-ci.org/funkygao/dpipe.png?branch=master)](https://travis-ci.org/funkygao/dpipe)
 
 ### Install
