@@ -15,6 +15,7 @@ It's sentry+logstash+flunted+splunk.
 
 ### Features
 
+*   data pipeline by design, meets most data processing requirement
 *   multi-tenant
 *   because of the engine design, it's very easy to create a new plugin to meet more requirement
 
