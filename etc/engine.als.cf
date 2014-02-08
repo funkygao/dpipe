@@ -196,7 +196,7 @@
                     alarm_email: {
                         recipients:   "peng.gao@funplusgame.com,zhengkai@gmail.com,yan.zhang@funplusgame.com"
                         suppress_hours: [23, 0, 1, 2, 3, 4, 5, 6, 7,]
-                        severity_pool_size: 80
+                        severity_pool_size: 480
                         severity_threshold: 6
                         interval:   300
                     }
@@ -208,7 +208,7 @@
                             dbname:         "mongoError"
                             window_size:    15
                             beep_threshold: 1
-                            severity:       100
+                            severity:       500
                             abnormal_severity_factor: 2
                             abnormal_base:  1
                             abnormal_percent: 0.5
@@ -326,7 +326,7 @@
                             camel_name: "mongoSlow"
                             colors: [ "FgYellow", "Reverse", ]
                             dbname:         "mongoSlow"
-                            severity:       3
+                            severity:       2
                             window_size:    393
                             beep_threshold: 5
                             abnormal_base:  8
@@ -351,7 +351,7 @@
                         {
                             title: "MemcacheSlow"
                             camel_name: "memcacheTo"
-                            severity:       8
+                            severity:       2
                             colors: [ "FgYellow", ]
                             window_size:    0
                             iprintf:        "CacheSlow %3s %20s %8.4f %15s"
