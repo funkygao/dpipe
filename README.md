@@ -17,7 +17,8 @@ It's sentry+logstash+flunted+splunk.
 
 ### Install
 
-    #geoip lib
+    # install dependency: geoip c lib
+    #========================================
     git clone https://github.com/maxmind/geoip-api-c.git
     cd geoip-api-c/
     ./bootstrap
@@ -25,9 +26,12 @@ It's sentry+logstash+flunted+splunk.
     make
     make install
 
-    # install geoip go lib
+    # install dependency: geoip go lib
+    #========================================
     go get github.com/abh/geoip
 
+    # install dpipe
+    #========================================
     go get github.com/funkygao/dpipe
     cd $GOPATH/src/github.com/funkygao/dpipe
     go get
