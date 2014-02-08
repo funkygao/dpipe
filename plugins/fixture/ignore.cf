@@ -1,13 +1,13 @@
-                               {
-                                    name: "msg"
-                                    parser: "syslogngStats"
-                                    ignores: [
-                                        "regex: child \\d+ started",
-                                        "regex: child \\d+ exited with code 0",
-                                        "regex: spawning \\d+ children",
-                                        "dhclient: bound to",
-                                        "dhclient: DHCPREQUEST",
-                                        "dhclient: DHCPACK",
-                                        "nrpe[",
-                                    ]
-                                }
+{
+    name: "msg"
+    parser: "syslogngStats"
+    ignores: [
+        "regex: child \\d+ started",
+        "regex: child \\d+ exited with code 0",
+        "regex: spawning \\d+ children",
+        "dhclient: bound to",
+        "dhclient: DHCPREQUEST",
+        "dhclient: DHCPACK",
+        "nrpe[",
+    ]
+}
