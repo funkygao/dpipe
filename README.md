@@ -20,7 +20,7 @@ It's sentry+logstash+flunted+splunk.
 
     go get github.com/funkygao/dpipe
 
-### Plugins
+### Currently Supported Plugins
 
 *   slide window based streaming biz alarm
 *   cardinality statistics(for MAU alike counters where storing the data for statistics is prohibitive)
