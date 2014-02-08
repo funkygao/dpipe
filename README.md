@@ -54,7 +54,7 @@ It's sentry+logstash+flunted+splunk.
     In fact, if the data is stored only for the purpose of statistical calculations, incremental updates make storage unnecessary.
 *   ElasticSearch feeding
     - feed decorated events to ElasticSearch
-        - auto ES sharding
+        - auto ES sharding by date/week/month
         - geoip
         - user level range
         - delete fields
