@@ -45,6 +45,7 @@ func (this *alarmWorkerConfigField) init(config *conf.Conf) {
 	this.typ = config.String("type", als.KEY_TYPE_STRING)
 	this.parser = config.String("parser", "")
 	this.ignores = config.StringList("ignores", nil)
+	this.normalizers = config.StringList("normalizers", nil)
 	this._regexIgnores = make([]*regexp.Regexp, 0)
 	// build the precompiled regex matcher
 	for _, ignore := range this.ignores {
@@ -58,7 +59,6 @@ func (this *alarmWorkerConfigField) init(config *conf.Conf) {
 			this._regexIgnores = append(this._regexIgnores, r)
 		}
 	}
-	this.normalizers = config.StringList("normalizers", nil)
 }
 
 func (this *alarmWorkerConfigField) value(msg *als.AlsMessage) (val interface{},
@@ -405,8 +405,12 @@ func (this *alarmWorker) fieldValues(msg *als.AlsMessage) (values []interface{},
 		if field.parser != "" {
 			alarm, s, _ := parser.Parse(field.parser, val.(string))
 			if alarm != "" {
+				// it's a parser alarm
 				severity = s
 				values = append(values, alarm)
+			} else {
+				// it's a normal alarm, didn't change severity
+				values = append(values, val)
 			}
 		} else {
 			values = append(values, val)
