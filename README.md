@@ -70,9 +70,10 @@ It's sentry+logstash+flunted+splunk.
         - currency convert
         - and more
     - ElasticSearch buffering(lessen uneccessary load of ES, e,g. dau, pv, hits)
-*   behaviour db for dimensional funnel analysis(user/time based action series)
+*   behaviour db integration for dimensional funnel analysis(user/time based action series)
 *   batch processing of historical logs
-    - some data does not need instant(within second) processing
+    - some data does not need instant(latency within a second) processing
+    - just want to have snapshot
 *   receiver/sender for hierarchy deployment
 *   to be more...
 
