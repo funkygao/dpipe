@@ -66,7 +66,7 @@ func (this *routerStats) render(logger *log.Logger, elapsed int) {
 }
 
 type messageRouter struct {
-	inChan chan *PipelinePack
+	hub chan *PipelinePack
 
 	stats routerStats
 
@@ -79,7 +79,7 @@ type messageRouter struct {
 
 func NewMessageRouter() (this *messageRouter) {
 	this = new(messageRouter)
-	this.inChan = make(chan *PipelinePack, Globals().PluginChanSize)
+	this.hub = make(chan *PipelinePack, Globals().PluginChanSize)
 	this.stats = routerStats{}
 	this.removeFilterMatcher = make(chan *Matcher)
 	this.removeOutputMatcher = make(chan *Matcher)
@@ -99,8 +99,8 @@ func (this *messageRouter) addOutputMatcher(matcher *Matcher) {
 
 func (this *messageRouter) reportMatcherQueues(logger *log.Logger) {
 	globals := Globals()
-	s := fmt.Sprintf("Queued hub=%d", len(this.inChan))
-	if len(this.inChan) == globals.PluginChanSize {
+	s := fmt.Sprintf("Queued hub=%d", len(this.hub))
+	if len(this.hub) == globals.PluginChanSize {
 		s = fmt.Sprintf("%s(F)", s)
 	}
 
@@ -162,7 +162,7 @@ LOOP:
 			this.stats.render(globals.Logger, globals.TickerLength)
 			this.stats.resetPeriodCounters()
 
-		case pack, ok = <-this.inChan:
+		case pack, ok = <-this.hub:
 			if !ok {
 				globals.Stopping = true
 				break LOOP
@@ -206,7 +206,7 @@ LOOP:
 
 			if !foundMatch {
 				// Maybe we closed all filter/output inChan, but there
-				// still exits some remnant packs in router.inChan
+				// still exits some remnant packs in router.hub
 				globals.Printf("Found no match: " + pack.String())
 			}
 

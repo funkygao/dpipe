@@ -44,7 +44,7 @@ func (this *iRunner) Inject(pack *PipelinePack) {
 	}
 
 	pack.Input = true
-	this.engine.router.inChan <- pack
+	this.engine.router.hub <- pack
 }
 
 func (this *iRunner) InChan() chan *PipelinePack {

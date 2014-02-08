@@ -181,7 +181,7 @@ func (e *EngineConfig) ServeForever() {
 		globals.Println("All Outputs terminated")
 	}
 
-	//close(e.router.inChan)
+	//close(e.router.hub)
 
 	e.stopHttpServ()
 
