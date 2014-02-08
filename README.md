@@ -96,6 +96,8 @@ It's sentry+logstash+flunted+splunk.
                             +-----------------+
                             |   ALS Server    |
                             |-----------------| 
+                            |   log files     |
+                            |-----------------| 
                             |     dpiped      |
                             +-----------------+
                                         |
