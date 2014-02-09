@@ -8,7 +8,7 @@ import (
 	"errors"
 )
 
-type ParseMsg func(msg string) (alarm string, severity int)
+type ParseMsg func(msg string) (match bool, alarm string, severity int)
 
 var (
 	ErrInvaidParser = errors.New("invalid parser type")
@@ -18,7 +18,7 @@ var (
 	}
 )
 
-func Parse(typ string, msg string) (alarm string, severity int, err error) {
+func Parse(typ string, msg string) (match bool, alarm string, severity int, err error) {
 	if typ == "" {
 		return "", 0, ErrInvaidParser
 	}
@@ -28,6 +28,6 @@ func Parse(typ string, msg string) (alarm string, severity int, err error) {
 		return "", 0, ErrInvaidParser
 	}
 
-	alarm, severity = parse(msg)
+	match, alarm, severity = parse(msg)
 	return
 }

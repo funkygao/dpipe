@@ -6,17 +6,17 @@ import (
 	"strings"
 )
 
-const (
-	SYSLOGNG_STATS = "Log statistics; "
-)
-
 var (
 	syslogngDropped = regexp.MustCompile(`dropped=\'program\((.+?)\)=(\d+)\'`)
 )
 
-func parseSyslogNgStats(msg string) (alarm string, severity int) {
+func parseSyslogNgStats(msg string) (match bool, alarm string, severity int) {
+	const SYSLOGNG_STATS = "Log statistics; "
+
 	parts := strings.Split(msg, SYSLOGNG_STATS)
 	if len(parts) == 2 {
+		match = true
+
 		// it is syslog-ng msg in /var/log/messages
 		rawStats := parts[1]
 
@@ -32,6 +32,8 @@ func parseSyslogNgStats(msg string) (alarm string, severity int) {
 			severity = 500
 			alarm = fmt.Sprintf("%s [%s]dropped:%s", alarm, d[1], num)
 		}
+	} else {
+		match = false
 	}
 
 	return
