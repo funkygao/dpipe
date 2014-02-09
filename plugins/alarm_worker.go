@@ -403,14 +403,14 @@ func (this *alarmWorker) fieldValues(msg *als.AlsMessage) (values []interface{},
 		}
 
 		if field.parser != "" {
-			alarm, s, _ := parser.Parse(field.parser, val.(string))
-			if alarm != "" {
-				// it's a parser alarm
+			match, alarm, s, _ := parser.Parse(field.parser, val.(string))
+			if !match {
+				// this msg doesn't apply to this parser
+				values = append(values, val)
+			} else if alarm != "" {
+				// it's a parser processed alarm
 				severity = s
 				values = append(values, alarm)
-			} else {
-				// it's a normal alarm, didn't change severity
-				values = append(values, val)
 			}
 		} else {
 			values = append(values, val)
