@@ -20,12 +20,12 @@ var (
 
 func Parse(typ string, msg string) (match bool, alarm string, severity int, err error) {
 	if typ == "" {
-		return "", 0, ErrInvaidParser
+		return false, "", 0, ErrInvaidParser
 	}
 
 	parse, present := allParsers[typ]
 	if !present {
-		return "", 0, ErrInvaidParser
+		return false, "", 0, ErrInvaidParser
 	}
 
 	match, alarm, severity = parse(msg)
