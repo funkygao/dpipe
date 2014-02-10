@@ -315,6 +315,7 @@
                                         "dhclient: bound to",
                                         "dhclient: DHCPREQUEST",
                                         "dhclient: DHCPACK",
+                                        "ecute post script for release",
                                         "nrpe[",
                                     ]
                                 }
