@@ -75,7 +75,6 @@ Subject: {{.Subject}}
 Importance: High
 X-Priority: 1 (Highest)
 X-MSMail-Priority: High
-bjtime[severity] tag msg
 ——————————————————————
 {{.Body}}
 ====
