@@ -24,7 +24,7 @@ It's sentry+logstash+flunted+splunk.
 *   implementation highlights
     - high(universal) abstraction of data processing as input -> codec -> filter -> output
     - plugin design for extenstion
-    - reference counter based recyle channel buffer to lessen golang GC
+    - reference counter based recyle channel buffer to reduce golang GC
     - shared memory with copy on write mechanism
     - rich self monitoring/diagnostic interface
     - high performance routing
