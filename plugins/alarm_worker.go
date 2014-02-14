@@ -144,7 +144,7 @@ func (this *alarmWorkerConfig) init(config *conf.Conf) {
 	this.showSummary = config.Bool("show_summary", false)
 	this.beepThreshold = config.Int("beep_threshold", 0)
 	this.abnormalBase = config.Int("abnormal_base", 10)
-	this.abnormalSeverityFactor = config.Int("abnormal_severity_factor", 2)
+	this.abnormalSeverityFactor = config.Int("abnormal_severity_factor", 1)
 	this.abnormalPercent = config.Float("abnormal_percent", 1.5)
 	this.dbName = config.String("dbname", "")
 	this.tableName = this.dbName // table name is db name

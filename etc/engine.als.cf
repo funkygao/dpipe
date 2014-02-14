@@ -196,9 +196,9 @@
                     alarm_email: {
                         recipients:   "peng.gao@funplusgame.com,zhengkai@gmail.com,yan.zhang@funplusgame.com,junjie.ning@funplusgame.com"
                         suppress_hours: [23, 0, 1, 2, 3, 4, 5, 6, 7,]
-                        severity_pool_size: 880
-                        severity_threshold: 6
-                        interval:   300
+                        severity_pool_size: 1280
+                        severity_threshold: 9
+                        interval:   100
                     }
                     workers: [
                         {
@@ -208,7 +208,7 @@
                             dbname:         "mongoError"
                             window_size:    15
                             beep_threshold: 1
-                            severity:       500
+                            severity:       700
                             abnormal_severity_factor: 2
                             abnormal_base:  1
                             abnormal_percent: 0.5
