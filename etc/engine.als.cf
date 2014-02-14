@@ -178,7 +178,7 @@
             name:   "EsOutput"
             match:  ["esFiltered", "alsSysStat", "esBuffer"]
             dryrun: false
-            show_progress: true
+            show_progress: false
             report_interval: 366
             domain: "localhost"
             port: "9200"
@@ -194,7 +194,7 @@
                 {
                     name:   "RS"
                     alarm_email: {
-                        recipients:   "peng.gao@funplusgame.com,zhengkai@gmail.com,yan.zhang@funplusgame.com"
+                        recipients:   "peng.gao@funplusgame.com,zhengkai@gmail.com,yan.zhang@funplusgame.com,junjie.ning@funplusgame.com"
                         suppress_hours: [23, 0, 1, 2, 3, 4, 5, 6, 7,]
                         severity_pool_size: 880
                         severity_threshold: 6
