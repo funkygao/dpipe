@@ -197,7 +197,7 @@
                         recipients:   "peng.gao@funplusgame.com,zhengkai@gmail.com,yan.zhang@funplusgame.com,junjie.ning@funplusgame.com"
                         suppress_hours: [23, 0, 1, 2, 3, 4, 5, 6, 7,]
                         severity_pool_size: 1280
-                        severity_threshold: 9
+                        severity_threshold: 12
                         interval:   100
                     }
                     workers: [
