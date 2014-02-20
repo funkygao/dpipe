@@ -10,6 +10,7 @@ import (
 	"github.com/funkygao/dpipe/engine"
 	"github.com/funkygao/dpipe/plugins/parser"
 	"github.com/funkygao/golib/bjtime"
+	"github.com/funkygao/golib/color"
 	sqldb "github.com/funkygao/golib/db"
 	"github.com/funkygao/golib/stats"
 	conf "github.com/funkygao/jsconf"
@@ -557,7 +558,7 @@ func (this *alarmWorker) printWindowTitle(head, tail int, title string) {
 
 func (this *alarmWorker) blinkColorPrintfLn(format string, args ...interface{}) {
 	msg := fmt.Sprintf(format, args...) + "\a"
-	this.project.Println(als.Colorize(append(this.conf.colors, "Blink"), msg))
+	this.project.Println(color.Colorize(append(this.conf.colors, "Blink"), msg))
 }
 
 func (this *alarmWorker) colorPrintfLn(beep bool, format string, args ...interface{}) {
@@ -565,5 +566,5 @@ func (this *alarmWorker) colorPrintfLn(beep bool, format string, args ...interfa
 	if beep {
 		msg += "\a"
 	}
-	this.project.Println(als.Colorize(this.conf.colors, msg))
+	this.project.Println(color.Colorize(this.conf.colors, msg))
 }
