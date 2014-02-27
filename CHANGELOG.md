@@ -1,6 +1,15 @@
-Release Notes - dpipe - Version v0.5.0.rc
+Release Notes - dpipe - Version v0.5.2.stable
+=============================================
 
-** New Feature
+### Improvement
+
+### BugFixed
+
+
+Release Notes - dpipe - Version v0.5.0.rc
+=============================================
+
+### New Feature
 
     . EsOutput periodically report statistics
     . engine permits plugins to register HTTP REST api callback
@@ -11,7 +20,7 @@ Release Notes - dpipe - Version v0.5.0.rc
     . config file validation and visualization[dpconf]
     . alarm when syslog-ng drops messages(ad-hoc parsers)
 
-** Improvement
+### Improvement
 
     . http monitoring with cmd: [ping, stat, plugins]
     . when timestamp is obviously invalid, correct it[als pkg]
@@ -21,7 +30,7 @@ Release Notes - dpipe - Version v0.5.0.rc
     . accumulate alarm email at night
     . abnormal change severity factor is considered
 
-** BugFixed
+### BugFixed
 
     . alslog_input sometimes freeze
       because sortedmap.SortedKeys will dead lock
@@ -29,7 +38,7 @@ Release Notes - dpipe - Version v0.5.0.rc
     . race condition of shared mem, concurrent modification 
       copy on write
 
-** Todo
+### Todo
 
     . Reload on HUP
     . faster json marshal/unmarshal, currently its 20000ns/op, that's 50K msg/s
