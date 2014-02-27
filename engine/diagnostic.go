@@ -55,7 +55,7 @@ func (this *DiagnosticTracker) Run(interval int) {
 			// that are not recycled
 			earliestAccess = time.Now().Add(-idleMax)
 			for _, pack = range this.packs {
-				if len(pack.diagnostics.pluginRunners) == 0 {
+				if pack.diagnostics.RunnerCount() == 0 {
 					continue
 				}
 

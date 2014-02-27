@@ -3,6 +3,7 @@ package engine
 import (
 	"fmt"
 	"github.com/funkygao/als"
+	"sync"
 	"sync/atomic"
 	"time"
 )
@@ -57,10 +58,6 @@ func NewPipelinePack(recycleChan chan *PipelinePack) (this *PipelinePack) {
 
 func (this *PipelinePack) IncRef() {
 	atomic.AddInt32(&this.RefCount, 1)
-}
-
-func (this *PipelinePack) PluginNames() (names []string) {
-	return this.diagnostics.PluginNames()
 }
 
 func (this PipelinePack) String() string {
@@ -142,43 +139,41 @@ func (this *PipelinePack) Recycle() {
 
 type PacketTracking struct {
 	LastAccess time.Time
+	mutex      sync.Mutex
 
 	// Records the plugins the packet has been handed to
 	pluginRunners []PluginRunner
 }
 
 func NewPacketTracking() *PacketTracking {
-	return &PacketTracking{time.Now(), make([]PluginRunner, 0, 8)}
+	return &PacketTracking{LastAccess: time.Now(),
+		mutex:         sync.Mutex{},
+		pluginRunners: make([]PluginRunner, 0, 8)}
 }
 
 func (this *PacketTracking) AddStamp(pluginRunner PluginRunner) {
+	this.mutex.Lock()
 	this.pluginRunners = append(this.pluginRunners, pluginRunner)
+	this.mutex.Unlock()
 	this.LastAccess = time.Now()
 }
 
 func (this *PacketTracking) Reset() {
+	this.mutex.Lock()
 	this.pluginRunners = this.pluginRunners[:0] // a tip in golang to avoid re-alloc
+	this.mutex.Unlock()
 	this.LastAccess = time.Now()
 }
 
-func (this *PacketTracking) PluginNames() (names []string) {
-	names = make([]string, 0, 4)
-	for _, pr := range this.pluginRunners {
-		names = append(names, pr.Name())
-	}
-
-	return
-}
-
-func (this *PacketTracking) LastPluginName() string {
-	l := len(this.pluginRunners)
-	if l == 0 {
-		return ""
-	}
-
-	return this.pluginRunners[l-1].Name()
-}
-
 func (this *PacketTracking) Runners() []PluginRunner {
+	this.mutex.Lock()
+	defer this.mutex.Unlock()
 	return this.pluginRunners
+}
+
+func (this *PacketTracking) RunnerCount() int {
+	this.mutex.Lock()
+	defer this.mutex.Unlock()
+	return len(this.pluginRunners)
+
 }
