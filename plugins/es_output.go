@@ -136,8 +136,7 @@ func (this *EsOutput) showPeriodicalStats() {
 func (this *EsOutput) feedEs(project *engine.ConfProject, pack *engine.PipelinePack) {
 	if pack.EsType == "" || pack.EsIndex == "" {
 		if project.ShowError {
-			project.Printf("Empty ES meta: %s plugins:%v",
-				*pack, pack.PluginNames())
+			project.Printf("Empty ES meta: %s", *pack)
 		}
 
 		this.counters.Inc("_error_", 1)
