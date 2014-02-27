@@ -8,7 +8,7 @@ import (
 
 const (
 	VERSION = "v0.5.2.stable"
-	AUTHOR  = "gaopeng@funplusgame.com"
+	AUTHOR  = "peng.gao@funplusgame.com"
 )
 
 func showVersionAndExit() {
