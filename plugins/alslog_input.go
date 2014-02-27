@@ -104,6 +104,7 @@ func (this *logfileSource) refresh(wg *sync.WaitGroup) {
 }
 
 type AlsLogInput struct {
+	mu           sync.Mutex
 	stopChan     chan bool
 	showProgress bool
 	counters     *sortedmap.SortedMap // ident -> N
@@ -265,7 +266,9 @@ LOOP:
 				break LOOP
 			}
 
+			this.mu.Lock()
 			this.counters.Inc(source.ident, 1)
+			this.mu.Unlock()
 
 			if globals.VeryVerbose {
 				globals.Printf("[%s]got line: %s\n", filepath.Base(fn), line.Text)
