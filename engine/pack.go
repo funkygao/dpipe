@@ -62,7 +62,7 @@ func (this *PipelinePack) IncRef() {
 
 func (this PipelinePack) String() string {
 	s := fmt.Sprintf("%s@%s, rc=%d, loop=%d, runner=%v", this.Ident, this.Project,
-		this.RefCount, this.MsgLoopCount, this.diagnostics.PluginNames())
+		this.RefCount, this.MsgLoopCount)
 	if this.Logfile != nil {
 		s = fmt.Sprintf("%s src=%s", s, this.Logfile.Base())
 	}
