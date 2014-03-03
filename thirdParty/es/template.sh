@@ -70,6 +70,10 @@ curl -XPUT localhost:9200/_template/fun -d '
                 "message": {
                     "type": "string",
                     "index": "analyzed"
+                },
+                "_log_info.sid": {
+                    "type": "string",
+                    "index": "not_analyzed"
                 }
             }
         },
