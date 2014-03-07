@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-func (e *EngineConfig) ServeForever() {
+func (this *EngineConfig) ServeForever() {
 	var (
 		outputsWg = new(sync.WaitGroup)
 		filtersWg = new(sync.WaitGroup)
@@ -26,14 +26,14 @@ func (e *EngineConfig) ServeForever() {
 	signal.Notify(globals.sigChan, syscall.SIGINT, syscall.SIGHUP,
 		syscall.SIGUSR2, syscall.SIGUSR1)
 
-	e.launchHttpServ()
+	this.launchHttpServ()
 
 	if globals.Verbose {
 		globals.Println("Launching Output(s)...")
 	}
-	for _, runner := range e.OutputRunners {
+	for _, runner := range this.OutputRunners {
 		outputsWg.Add(1)
-		if err = runner.start(e, outputsWg); err != nil {
+		if err = runner.start(this, outputsWg); err != nil {
 			panic(err)
 		}
 	}
@@ -41,35 +41,35 @@ func (e *EngineConfig) ServeForever() {
 	if globals.Verbose {
 		globals.Println("Launching Filter(s)...")
 	}
-	for _, runner := range e.FilterRunners {
+	for _, runner := range this.FilterRunners {
 		filtersWg.Add(1)
-		if err = runner.start(e, filtersWg); err != nil {
+		if err = runner.start(this, filtersWg); err != nil {
 			panic(err)
 		}
 	}
 
 	// setup the diagnostic trackers
 	inputPackTracker := NewDiagnosticTracker("inputPackTracker")
-	e.diagnosticTrackers[inputPackTracker.PoolName] = inputPackTracker
+	this.diagnosticTrackers[inputPackTracker.PoolName] = inputPackTracker
 	filterPackTracker := NewDiagnosticTracker("filterPackTracker")
-	e.diagnosticTrackers[filterPackTracker.PoolName] = filterPackTracker
+	this.diagnosticTrackers[filterPackTracker.PoolName] = filterPackTracker
 
 	if globals.Verbose {
 		globals.Printf("Initializing PipelinePack pools with size=%d\n",
 			globals.RecyclePoolSize)
 	}
 	for i := 0; i < globals.RecyclePoolSize; i++ {
-		inputPack := NewPipelinePack(e.inputRecycleChan)
+		inputPack := NewPipelinePack(this.inputRecycleChan)
 		inputPackTracker.AddPack(inputPack)
-		e.inputRecycleChan <- inputPack
+		this.inputRecycleChan <- inputPack
 
-		filterPack := NewPipelinePack(e.filterRecycleChan)
+		filterPack := NewPipelinePack(this.filterRecycleChan)
 		filterPackTracker.AddPack(filterPack)
-		e.filterRecycleChan <- filterPack
+		this.filterRecycleChan <- filterPack
 	}
 
-	go inputPackTracker.Run(e.Int("diagnostic_interval", 20))
-	go filterPackTracker.Run(e.Int("diagnostic_interval", 20))
+	go inputPackTracker.Run(this.Int("diagnostic_interval", 20))
+	go filterPackTracker.Run(this.Int("diagnostic_interval", 20))
 
 	// check if we have enough recycle pool reservation
 	go func() {
@@ -79,8 +79,8 @@ func (e *EngineConfig) ServeForever() {
 		var inputPoolSize, filterPoolSize int
 
 		for _ = range t.C {
-			inputPoolSize = len(e.inputRecycleChan)
-			filterPoolSize = len(e.filterRecycleChan)
+			inputPoolSize = len(this.inputRecycleChan)
+			filterPoolSize = len(this.filterRecycleChan)
 			if globals.Verbose || inputPoolSize == 0 || filterPoolSize == 0 {
 				globals.Printf("Recycle pool energy: [input]%d [filter]%d",
 					inputPoolSize, filterPoolSize)
@@ -88,25 +88,25 @@ func (e *EngineConfig) ServeForever() {
 		}
 	}()
 
-	go e.router.Start()
+	go this.router.Start()
 
-	for _, project := range e.projects {
+	for _, project := range this.projects {
 		project.Start()
 	}
 
 	if globals.Verbose {
 		globals.Println("Launching Input(s)...")
 	}
-	for _, runner := range e.InputRunners {
+	for _, runner := range this.InputRunners {
 		inputsWg.Add(1)
-		if err = runner.start(e, inputsWg); err != nil {
+		if err = runner.start(this, inputsWg); err != nil {
 			inputsWg.Done()
 			panic(err)
 		}
 	}
 
 	globals.Println("Engine mainloop, waiting for signals...")
-	go runShutdownWatchdog(e)
+	go runShutdownWatchdog(this)
 
 	for !globals.Stopping {
 		select {
@@ -134,8 +134,8 @@ func (e *EngineConfig) ServeForever() {
 	inputPackTracker.Stop()
 	filterPackTracker.Stop()
 
-	e.Lock()
-	for _, runner := range e.InputRunners {
+	this.Lock()
+	for _, runner := range this.InputRunners {
 		if runner == nil {
 			// this Input plugin already exit
 			continue
@@ -147,7 +147,7 @@ func (e *EngineConfig) ServeForever() {
 
 		runner.Input().Stop()
 	}
-	e.Unlock()
+	this.Unlock()
 	inputsWg.Wait() // wait for all inputs done
 	if globals.Verbose {
 		globals.Println("All Inputs terminated")
@@ -157,24 +157,24 @@ func (e *EngineConfig) ServeForever() {
 	// still may be filter injected packs and output not consumed packs
 	// we must wait for all the packs to be consumed before shutdown
 
-	for _, runner := range e.FilterRunners {
+	for _, runner := range this.FilterRunners {
 		if globals.Verbose {
 			globals.Printf("Stop message sent to '%s'", runner.Name())
 		}
 
-		e.router.removeFilterMatcher <- runner.Matcher()
+		this.router.removeFilterMatcher <- runner.Matcher()
 	}
 	filtersWg.Wait()
 	if globals.Verbose {
 		globals.Println("All Filters terminated")
 	}
 
-	for _, runner := range e.OutputRunners {
+	for _, runner := range this.OutputRunners {
 		if globals.Verbose {
 			globals.Printf("Stop message sent to '%s'", runner.Name())
 		}
 
-		e.router.removeOutputMatcher <- runner.Matcher()
+		this.router.removeOutputMatcher <- runner.Matcher()
 	}
 	outputsWg.Wait()
 	if globals.Verbose {
@@ -183,13 +183,13 @@ func (e *EngineConfig) ServeForever() {
 
 	//close(e.router.hub)
 
-	e.stopHttpServ()
+	this.stopHttpServ()
 
-	for _, project := range e.projects {
+	for _, project := range this.projects {
 		project.Stop()
 	}
 
 	globals.Printf("Shutdown with input:%s, dispatched:%s",
-		gofmt.Comma(e.router.stats.TotalInputMsgN),
-		gofmt.Comma(e.router.stats.TotalProcessedMsgN))
+		gofmt.Comma(this.router.stats.TotalInputMsgN),
+		gofmt.Comma(this.router.stats.TotalProcessedMsgN))
 }
