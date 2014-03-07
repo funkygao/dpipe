@@ -18,6 +18,7 @@ type EngineConfig struct {
 	*conf.Conf
 	*sync.Mutex
 
+	// REST exporter
 	listener   net.Listener
 	httpServer *http.Server
 	httpRouter *mux.Router
